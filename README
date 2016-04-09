@@ -1,0 +1,266 @@
+                                NetPanzer
+                            an open source RTS
+
+Contents:
+1. Introduction
+2. Building and Installation
+3. Gameplay
+4. Dedicated Server and Game Configuration
+5. Bot Player
+6. Contact
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1. Introduction
+netPanzer is an online multiplayer tactical warfare game designed for FAST
+ACTION combat. Gameplay concentrates on the core -- no resource management is
+needed. The game is based on quick tactical action and unit management in
+real-time. Battles progress quickly and constantly as destroyed players respawn
+with a set of new units. Players can join or leave multiplayer games at any
+time.
+
+1.1 A bit of history
+The original development of netpanzer was done from PyroSoft inc. Though in
+1999 they stop development and released the game 2002 in GPL and it was nearly
+forgotten, until Ingo announce it at happypenguin.org. Soon after this
+announcement a group of coders did the linux port in roughly 2 weeks, with
+another 2 weeks polishing for this release. Now we'll go along and improve the
+game...
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+2. Building and Installation
+
+2.1 Prerequesites
+The game depends on some tools and libraries to be present, before you can start
+building it. Here's a list of them:
+
+* normal gnu compiler and additional tools (g++ version 3.2 or later is
+  required at the moment)
+
+* SCons build tool
+  http://www.scons.org/
+
+* SDL 1.2.5 or later
+  http://www.libsdl.org
+
+* SDL_mixer 1.2.4 or later
+  http://www.libsdl.org/projects/SDL_mixer/
+
+* subversion (needed to download the source code)
+  http://subversion.tigris.org/
+
+Thanks to all the authors of these helpful libraries that made our development
+easy and straightforward.
+
+To download the code use the subversion client to download from
+  svn://svn.berlios.de/netpanzer/tags/netpanzer/<wanted_version>
+
+An explample for version 0.8.3 would be:
+  svn export svn://svn.berlios.de/netpanzer/tags/netpanzer/0.8.3 netpanzer
+
+Note that I use "export" instead of "checkout" to avoid having all the ".svn"
+folders spread over the source. This is interesting for Linux distributions.
+
+2.2 Building without installing on non Windows
+
+To build the game and run as normal user do the following:
+
+# scons
+
+When scons finish without errors the game is ready to play, type this:
+
+# ./netpanzer
+
+Remember that next time you want to play you have to go to the same folder where
+you compiled and type './netpanzer'
+
+2.3 Building on Windows
+
+Building on windows is a little bit more complicated, developers shouldn't have
+any big problem.
+
+MinGW should be installed in C:\mingw
+
+Get the development libraries of SDL for mingw32, copy the include directory to
+C:\mingw\include\SDL so you have the file "C:\mingw\include\SDL\SDL.h", and the
+lib folder to C:\mingw\lib
+
+Get SDL_mixer development libraries for VC8, copy the header file to
+C:\mingw\include\SDL and the .lib file to c:\mingw\lib
+
+Python and scons should be installed and working.
+
+To compile netpanzer run scons on the folder where you have the netpanzer source
+code:
+
+C:\Some\Folder\With\Netpanzer> scons
+
+After scons finish without errors you have to copy all the .DLL files from SDL
+and from SDL_mixer to the netpanzer folder.
+
+To run you can type 'netpanzer' or click on the netpanzer.exe file in explorer.
+
+2.4 Building for distribution on non Windows operating systems
+
+If you plan to distribute NetPanzer for installation (on Linux systems, for example)
+there are some extra steps to be taken care.
+
+NetPanzer needs to know where the data files will be stored when the game runs. To
+set this data you have to add the parameter "datadir=/some/dir/" at compile time
+and NetPanzer will look there for its data files. Example:
+
+# scons datadir=/usr/local/games/netpanzer
+
+Using the sample line, after NetPanzer is built, it will look in /usr/local/games/netpanzer
+for it's data files.
+
+For versioning, there is a file called "RELEASE_VERSION", the first line on that file will
+be the version that NetPanzer will show. You can use that file to change the version of
+the game shown. You should modify the file before compilation.
+
+Actually there is no install script, you will have to prepare the script by yourself.
+The installation is actually easy, and you only have to copy several files. The following
+directories should be copied on the "datadir" destination:
+- cache/
+- fonts/
+- maps/
+- pics/
+- powerups/
+- scripts/
+- sound/
+- units/
+- wads/
+
+If you want to copy some documentation, the "doc" folder has it. There is also the BUGS,
+COPYING, ChangeLog, README (this file), RELNOTES and TODO.
+
+"netpanzer.desktop" is a sample file for using on desktop systems.
+
+"netpanzer.png" and "netpanzer.xpm" are some sample icons to be use with the game.
+
+And of course, the file "netpanzer" is the main binary that should be on the PATH.
+
+2.5 Music
+
+Netpanzer doesn't come with own musicfiles yet. However you can place your
+favourite .mp3, .ogg or .mod files into the sound/music directory and netpanzer
+will play these in random order while you play.
+
+2.6 Starting the game
+
+You can start the game in several ways:
+
+If you compiled yourself NetPanzer (and didn't install), first "cd" to the folder where
+you compiled it and type:
+# ./netpanzer
+
+If NetPanzer was installed and is in the PATH, type
+# netpanzer
+
+It is possible that in your distribution NetPanzer was installed and has a menu item,
+if that is the case, just click on the item.
+
+On Windows, you can click on the "netpanzer.exe" file.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+3. Gameplay
+
+This section needs to be written... Press F1 in the game for a quick overview of
+keys and in general trust your intuition :)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+4. Dedicated Server and Configuration Files
+
+Note: This has to be reviewed.
+
+You can start a dedicated netpanzer server (a pure server, without any video
+output). By starting netpanzer with the -d commandline option.
+
+The server reads the configuration from
+    $HOME/.netpanzer/config/netpanzer-dedicated.ini
+The format is basically the same as the normal configuration file of
+netpanzer. Here's a short introduction into the option specific to a server in
+the server section of the file:
+
+*serverport [number], default 3030
+    Specifies the port which the server will be using.
+    (The server is doing both, TCP and UDP connections on this port)
+
+*bindaddress [string], default ""
+    Allows you to bind the server to a specific IP address (usefull if you have
+    multiple IP addresses on 1 box)
+
+*logging [yes,no], default no
+    When enabled the server creates detailed logs about the matches in the
+    $HOME/logs directory. This can be usefull for creating statistics about the
+    matches.
+
+*public [yes,no], default yes
+    Register at the internet masterservers so that the server will appear in the
+    serverlist of other players.
+
+*maxplayers [number], default 8
+    Number of players and bots that are able to play simultaneously on the
+    server.
+
+*mapcycle [name], default "Cramped, Tight Quarters, Two Villages"
+    A comma separated list of maps that this server will use.
+
+*maxunits [number], default 500
+    Number of maximum available units for all players. (Each
+            player will be able to have maxplayers/maxunits units at once)
+    
+*gametype [0,1,2], default 0
+    Type of game: (0=Objectives, 1=FragLimit, 2=TimeLimit)
+
+*timelimit [number], default 50
+    timelimit of the map in minutes (used when gametype = 2)
+
+*fraglimit [number], default 500
+    fraglimit of the map (used when gametype=1)
+
+*objectivepercentage [number], default 50
+    Percentage of outposts that has to be captured to win the game.
+    (used when gametype=0)
+
+*mapcycling [yes,no], default no
+    cycle to next map after a map ended.
+
+*powerups [yes,no], default yes
+    enable/disable powerups
+
+*allowallies [yes,no], default yes
+    allow/disallow players to allie
+
+*cloudcoverage [number], default 65
+    Number of clouds flying over the map.
+
+*windspeed [number], default 30
+    windspeed that affects particles and clouds
+
+*respawntype [0,1], default 1
+    Spawn mode: 0=Round Robin, 1=Random
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+5. Bot Players
+
+Bot players can be spawn only on the dedicated server. To do that enter the 
+server console and type:
+> addbot
+
+A new bot will appear on the game. Type help on the server console for more
+info and commands.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+6. Contact
+
+Bugs should be reported to the netPanzer forum:
+    http://www.netpanzer.org/forum
+
+or you might be able to catch someone in irc at irc.freenode.net #netpanzer.
+

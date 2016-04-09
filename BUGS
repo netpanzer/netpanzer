@@ -1,0 +1,9 @@
+- cursor scroll is always same speed, should use scrollrate
+- when a client connect to a server, it will save the configuration that
+  the server sent to him when exit netpanzer.
+- sometimes 2 players spawn at the same place - hard to fix, low priority
+- Astar sometimes calculates strange paths. Very obvious if you try to capture
+  and outpost from the left side: Your panzers will drive around it before
+  entering it. (it is not a complete Astar, needs to rewrite)
+- The no allies flag in the server config has no effect
+- The Abort button when connecting doesn't really aborts the operation, just hide the window

@@ -1,0 +1,140 @@
+*** 0.8.3 ***
+Fixed:
+
+- fix playing in 64 bit machines.
+- fix many small bugs.
+- fix production bug when loosing the base.
+- fix problem of not able to capture some bases.
+- fix bad colors on some systems.
+- fix alliance, new alliance method (click to request ally).
+- fix frag limit mode.
+- fixed some flags and added Spain and Bulgaria flags.
+
+Added:
+
+- added a Mac OS X universal binary of netPanzer.
+- added lua support, currently for configuration.
+- added screenshoot function (press F9).
+- added any resolution support (>= 640x480) and resizable window.
+- added sound configuration (volume, enable/disable).
+- added some new maps done by community.
+- new unit selection modes, double and tripple click.
+- player flags appears in chat messages.
+- player name appear over tanks (configurable, press "n").
+
+*** 0.8.1 ***
+
+* Change default masterserver to netpanzer.dyndns.org
+* Fix remote DOS when sending invalid frame number
+* Fix gcc 4.1 compilation
+* Make server handle clients more gracefully that drop during connect
+
+*** 0.8 ***
+
+* Call this final release 0.8 to better reflect the state of development
+* You can move the camera to a defined group by pressing group key twice
+* Server shuts itself down instead of stying in an endless loop
+* The -c command handles netpanzer:// URLs now
+* Some additional infos are sent out by the server which help server browser
+* Distribute cached palettes so that the first start should be faster now
+* The code finally works on the Mac and probably other big-endian boxes
+
+*** 0.2.0-rc4 ***
+
+* Really fixed Duell map
+* Fixed servercrash introduced in rc3
+* Fixed connecting to servers on different port than 3030
+
+*** 0.2.0-rc3 ***
+
+* Fixed Duell map
+* Fixed servers not always registering at all masterservers but only one
+* Fixed some crashs in game
+* Fixed several crashs and misbehaviour in the serverlist
+* open a new console for win32 server and bot
+* Fixed problem in log code that manifested on linux/ppc (thanks to Johannes
+   Mockenhaupt for report+patch)
+* Adding units with shift key now also works for groups and boxes (thanks to
+   Rex Tsai for the patch)
+* packet handling is more robust against malformed packets
+* Added Support for pidfiles in server
+* Wrote an HowTo on setting up a dedicated server
+
+*** 0.2.0-rc2 ***
+
+* Fixed a problem where servers started from menu crashed
+
+*** 0.2.0-rc1 ***
+
+This is a prerelease open for public testing. Especiacially the new ppc code is
+not tested yet. I'd be happy about some feedback if it works or not
+(matze@braunis.de).
+
+* New masterserver protocol which should eleminate all problems with the server
+  browser (also next xqf version will support netpanzer)
+* Added a serverconsole
+* Fixed endianess problems. ppc users can play with x86 users now.
+* The server creates logfiles now that can be used for statistics or reports on
+  webpages
+* Replaced SDL_net with custom socket wrappers (this allows binding servers to
+  addresses and eleminates a dependency)
+* libxml2 replaced with a simple ini parser (eleminates another dependency)
+* gcc 3.4 fixes
+* lots and lots of bugfixes
+
+*** 0.1.5 ***
+
+This is an emergency bugfix release.
+
+* fixed a bug where pressing "m" or 1-9 in chat messages would toggle the
+  minimap or panzer groups
+* fixed a map in the dedicated server where the mapcycle string wasn't
+  properly parsed.
+* added an xpm icon.
+
+*** 0.1.4 ***
+
+Some small feature additions. Unfortunatley we changed the network protocol
+again, so servers and clients should get updated soon. There's a bug in the old
+0.1.3 server code that makes it crash when a 0.1.4 client connects.
+                                                                                
+    * It's possible to configure the mapcycle in the server
+    * Players now have colors on the radar (thanks Viras)
+    * small fixes to make netpanzer run on win32
+    * a new quickconnect option for the commandline (usefull for external server      browsers like KNetpanzerbrowser 
+	(http://www.suselinuxsupport.de/index.php?location=download)
+
+*** 0.1.3 ***
+
+This is still a maintenance and bugfix release. We're working on an editor and a
+UI rewrite, but these have to wait for a later release. Changes:
+
+    * fix bug where the lobby view would always display 0/x players
+    * some robustness and usability fixes for the irc lobby code
+    * new slovakian flag
+    * lots of code cleanups and rewrites (and still lots more to do)
+    * unit spawnpoint can be choosen at the outposts now
+    * some small UI improvements
+    * reorganised build environment
+    * network packets are smaller and more robust now
+
+*** 0.1.2 ***
+
+netPanzer 0.1.2 is available now:
+
+    * A new lobby view and server browser has been added
+    * a man page has been added
+    * The deciated server reads it's setting from a configuration file now
+    * The bot player can now be started as a separate process.
+    * polish and swedish flag has been added (we happily accept more flags)
+    * several smaller bugfixes and improvements
+
+*** 0.1.1 ***
+
+    * checkboxes are clickable now
+    * game no longer crashes after output occupation
+
+*** 0.1 ***
+
+Initial linux port
+

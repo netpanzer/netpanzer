@@ -1,0 +1,33 @@
+You can define the location where newly built panzers move by holding your
+left mouse button and dragging the mouse from the outpost to the desired
+location.
+%%
+You can scroll the map by holding the right mouse button and moving the mouse
+around.
+%%
+You can allie with other players by holding down the "a"-key and selecting a
+unit of your desired allie. Your allie has todo the same, otherwise his units
+will keep shooting at your units.
+%%
+You can send a message to all players by pressing RETURN and typing the message.
+You can chat to your allies only by pressing CTRL+a.
+%%
+Some servers randomly place powerups on the map. Sometimes a powerup can turn
+the tide of war.
+%%
+Panzers that move don't shoot. However you can force them to do so by pressing
+CTRL and selecting a target location with your mouse.
+%%
+You can change the screen resolution in the Options/Visuals menu. A higher
+resolution can be a tactical advantage.
+%%
+You can use ALT+Enter to toggle fullscreen mode.
+%%
+You can help the netpanzer development team! If you know how to code C++, are
+a good artist, musician, leveldesigner, writer or betatester, then contact us
+at netpanzer-devel@lists.berlios.de or join #netpanzer at the irc.freenode.net
+network.
+%%
+You can send suggestions for more tips of the day to
+netpanzer-devel@lists.berlios.de
+

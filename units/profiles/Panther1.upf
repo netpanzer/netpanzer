@@ -1,0 +1,17 @@
+hitpoints =  525;
+attack =  80;
+reload =  50;
+range =  20;
+regen =  45;
+defend_range =  15;
+speed_rate =  18;
+speed_factor =  2;
+image =  "pics/menus/vehicleSelectionView/panther1.bmp"
+bodysprite =  "units/pics/pak/PantHNSD.pak"
+bodyshadow =  "units/pics/pak/PantHSSD.pak"
+turretsprite =  "units/pics/pak/PantTNSD.pak"
+turretshadow =  "units/pics/pak/PantTSSD.pak"
+soundselected =  "mt-selected"
+soundfire =  "mt-fire"
+weapon =  "SHELL"
+boundbox =  50

@@ -1,0 +1,527 @@
+NOTE: I stopped writting this long ago, use the svn log to see the changes, this is double work.
+
+04-May-2008 by Aaron Perez
+- Deleted AbstractButton
+- Deleted the classes for each unit type, only use Vehicle now.
+- Removed LoadUnitSurfaces functions (2 in 2 different places)
+- fix bug in Surface::getRect()
+- fix #include in FileSystem.cpp
+- GameConfig will load the spawnconfig as list
+- Added some fields to UnitProfile: image, bodysprite, bodyshadow, turretsprite, turretshadow, soundselected, firesound, weapon, boundbox
+- UnitProfileInterface, PlayerUnitConfig and ParticleInterface  uses a vector instead of static array
+- UnitProfileInterface new functions getProfileByName and getNumUnitTypes, it will also load the unit sprites when loading the profile
+- MissleWeapon has new parameter for missile size, 0 for small 1 for medium
+- Player POINTS for killing tanks are NOT counted any more.
+- Removed some of the cButton types in View and added to Button or in some case in a dedicated Button class
+- VehicleSelectionView creates the buttons (custom button) and order the buttons in the order the unit profiles are loaded. May order them by strength in future.
+- FlagSelectionView uses a custom button
+- Updated unit profiles with new configuration
+
+01-May-2008 by Aaron Perez
+- Deleted GetSessionHostView.* it was not used.
+
+27-Apr-2008 by Aaron Perez
+- removed unused line in MenuTemplateView
+- removed classes LobbyView, ProgressView and ConsoleLoadingView functionality
+  is done by LoadingView
+- View uses a list for components now.
+- removed cLabel from View and created a Label component
+
+16-Sep-2007 by Aaron Perez
+- added a timer to the right click function to unselect units only if some
+  time passed. (100 miliseconds)
+- units are selected while moving the mouse on real time
+- double-click will select all units in screen of the same type
+
+15-Sep-2007 by Aaron Perez
+- fixed problem when starting a game with more than 255 initial units.
+- when using int config variables, use minimum value if requested was less than
+  minimum, and max value if it was more than maximum.
+- fixed stopping the tank idle sound when a player host a non dedicated game 
+  and resigns
+- new sound options window (the base code was already done before), able to 
+  enable/disable and change volumes
+
+... ChangeLog is not up to date...
+
+21-Feb-2005 by Matthias Braun
+- fixed 2 more endianess typos
+- added more sanity checking to prevent cheating
+- fixed typo in NetMessageEncoder which resulted in TerminalCommands being sent
+  out to clients in server hosting mode
+- more cleanups all around the place
+
+15-Feb-2005 by Matthias Braun
+- fixed typo in UnitIniSyncMessage packet, had to increase network protocol
+  version because of that
+- improved parsing of , separated list for masterservers. it's robust against
+  spaces now
+
+5-Oct-2004 by Matthias Braun
+- more cleanups
+- fix dedicated server not updateing internal masterserverlist
+- replaced SDL_net with custom socket wrappers
+
+30-Sep-2004 by Matthias Braun
+-BIIG cleanup:
+  lots of endianness work in the network packets (only very few is missing)
+  rewrite of Multi/Opcode Encoders/Decoders
+  Removed UnitID class and replaced with a simple uint16_t
+  Changed UnitList to be a std::map
+  Fixed several possible bugs on the way
+  Lots of random cleanup in Vehicle and UnitInterface code
+
+15-Sep-2004 by Matthias Braun
+-more warning fixes for gcc3.4
+-made PlayerInterface lockable, so that the InfoThread should be threadsafe now
+-server sends quit to masterserver now when exiting
+
+30-Jun-2004 by Matthias Braun
+-lots of warning fixes
+-improvements to the masterserver code
+
+04-Jun-2004 by Matthias Braun
+-applied KROM_X's patch, but revised the mainloop parts by moving
+ handleSDLEvents to NetPanzer/System.
+
+07-Mai-2004 by Matthias Braun
+-started work on new serverbrowsing window
+-nearly eleminated deprecated UtilInterface class
+-dropped incomplete editor. (There's flexlay now)
+
+04-Mai-2004 by Matthias Braun
+-fixed some gcc 3.4 issues and warnings
+-fixed some errors where nonpacked classes where used inside packed
+ datastructures
+-fixed some bugs in IOFileStream classes (no sync when destructing)
+-added new INIFile parser to replace the xml code/congigfiles
+-cleaned up pathfinding code a bit in preparation for further experiments
+
+18-Mar-2004 by Matthias Braun
+-integrated masterserver support into the dedicated server
+
+11-Mar-2004 by Matthias Braun
+-started work on a serverconsole
+
+8-Mar-2004 by Matthias Braun
+-fixed a bug in colortable saving which I introduced with my last commit
+-added timestamp to serverconsole and cleaned related code a bit
+
+4-Mar-2004 by Matthias Braun
+-applied a bunch of endianess patches from Hollis Blanchard
+-added doxygen comments to Endian.hpp and did a few other fixes/style
+ improvements
+-tried to fix problems on alpha64 build and made ReadFile::read and
+ FileWrite::write return exceptions
+    
+1-Mar-2004 by Matthias Braun
+-applied some fixes to Jamfiles (thanks Hollis Blanchard)
+
+21-Feb-2004 by Matthias Braun
+-added a mapcycle variable to the server config.
+-fixed a bug in map loading while mapcycling on the client
+-changed some keybinding (m for minimapview, disabled some obsolete views)
+
+01-Feb-2004 by Matthias Braun
+-added a jam rule to create doxygen documentation
+-implemented scrolling in netpanzeredit mapview
+
+19-Jan-2004 by Wolfgang Koller
+-Fixed WinnerMesgView and RankView so that they now display the correct colors
+
+18-Jan-2004 by Wolfgang Koller
+-Changed the ServerBrowser so that it now really supports the query-timeout
+-It's now possible to scroll with the arrow key of your keyboard
+-WinnerMesgView now also uses the colors
+
+17-Jan-2004 by Wolfgang Koller
+-Each player now has a color (defined in PlayerState)
+-Minimap uses that color to display captured objectives and units
+-Rank list now uses that color to display statistics
+
+16-Jan-2004 by Matthias Braun
+-rewrote the SDL_Video code and moved it into netpanzer dir
+-initialize SDL_net at application start instead of when network is used first.
+ This simplifies things and fixes a bug in lobby view on windows.
+-more work on the jam build rules
+
+12-Jan-2004 by Matthias Braun
+-added netpanzer icon and jam rules to install icons
+
+11-Jan-2004 by Matthias Braun
+-implement possibility to set DESTDIR for installation
+
+10-Jan-2004 by Matthias Braun
+-implemented tiletemplate view in editor
+-fixed several bugs and problems in the editor
+
+08-Jan-2004 by Matthias Braun
+-hacked a quick connect option into netpanzer, so that external tools can easily
+ invoke netpanzer to join directly on a specific server. (Maybe some commandline
+ freaks also prefer this method...)
+
+05-Jan-2004 by Matthias Braun
+-server browser works so far
+-converted yet another array like class in ProjectileInterface to std::list
+-make IRC lib abort earlier if server address can't be resolved
+
+04-Jan-2004 by Matthias Braun
+-started a new IRC library
+-started a commandline server browser tool
+
+21-Dec-2003 by Matthias Braun
+-rewrote some parts of the UnitList and Unit synchronisation code
+
+10-Dec-2003 by Matthias Braun
+-fixed crash when target unit of an attacking unit was destroyed too early
+
+05-Dec-2003 by Matthias Braun
+-added network paket debugger class
+-removed some more unused code from the Surface class
+
+04-Dec-2003 by Matthias Braun
+-eleminated usage of cGrowList class and replaced it with std::vector
+
+01-Dec-2003 by Matthias Braun
+-eleminated a few more valgrind warnings
+-converted an ArrayTemplate in ObjectiveInterface to an std::vector
+
+29-Nov-2003 by Matthias Braun
+-fixed wrong read in blitWorld when we're rendering to lower right edge of the
+ map.
+
+28-Nov-2003 by Matthias Braun
+-converted UI classes to use SDL_Surface
+
+28-Nov-2003 by Michel Metzger
+-first release of the new UI lib.
+-add a temporary test panel to the game (F12)
+	
+26-Nov-2003 by Matthias Braun
+-made scrolling in tilesetview working correctly
+-template loading and saving in the editor should work now
+-started working on map rendering code for the editor and future netpanzer
+ versions
+
+24-Nov-2003 by Hankin Chick
+-created IRCLobbyServer, so IRCLobby should work by itself.
+-fixed repeatitive mouse move/dragged messages even when mouse didn't move
+-added scale/shade/dotsize buttons on the minimap
+
+24-Nov-2003 by Matthias Braun
+-converted the SelectionList to std::vector, also removed limit of maximum
+ select units while doing this.
+-eleminated the String class and replaced it with std::string
+-eleminated the FileList class and replaced it with std::vector<std::string>
+
+22-Nov-2003 by Matthias Braun
+-big reorganisation. Created several real libs in the lib directory and moved
+some stuff inside NetPanzer directory.
+
+21-Nov-2003 by Matthias Braun
+-Applied a patch by Michel Metzger (metzger@essi.fr) which makes it possible to
+ select the location where built units move.
+-added a possibility to use custom config files. This makes it possible to
+ spawn several different bots or servers on the same user account.
+-adding new tiles to Tileset works now in editor
+
+20-Nov-2003 by Matthias Braun
+-removed lots of remaining nonused code handling with UDP networking
+-convert PlayerStats to use STL
+-small robustness fixes for network
+-only enable the signal handling for clean shutdown, when not compiling in debug
+ mode
+-added sound configuration variables
+-removed stopIRC argument. No need to overly complicate commands. There already
+ is sendIRCMessageLine.
+-some fixes for valgrind complaints
+-fixed some bugs where the original netpanzer authors used memmove?!? instead of
+ = to copy objects.
+
+19-Nov-2003 by Matthias Braun
+-several robustness fixes to editor tileset code
+-some small UI improvements for the editor
+
+18-Nov-2003 by Matthias Braun
+-added slovakian flag by Ales <ales@chello.sk>
+
+12-Nov-2003 by Matthias Braun
+-fixed a bug where the server browser wouldn't display the correct usercount for
+ servers
+-added configure options, for the case where libs aren't installed in the
+ default dirs
+
+11-Nov-2003 by Matthias Braun
+-fixed irclobby view to not crash on refresh button, when connection is broken
+-report exceptions in the irclobby view
+-fixed serveraddress view to not contain the ok and abort buttons
+-make irc lobby change nickname when the player changes it's name
+-put a message on screen, when palettes are calculated
+
+07-Nov-2003 by Matthias Braun
+-fixed HOM effect while joining server
+-added new poland flag by Bartosz Fenski
+
+06-Nov-2003 by Matthias Braun
+-cleanups and imporvements to the IRC Lobby code
+-added a callback ability to input lines, when enter is pressed
+-removed chat button and make chat happen on return key
+-eleminated usage of DoubleLinkList template in PowerupInterface (using
+        std::vector now)
+
+05-Nov-2003 by Matthias Braun
+-added manpage contributed by Bartosz Fenski <fenio@o2.pl>
+
+25-Oct-2003 by Matthias Braun
+-removed support for .til files and converted them to .bmp
+-tried to make .pak and .bmp loader endian safe
+
+23-Oct-2003 by Ivo Danihelka
+-implemented respawntype="Random" parameter
+
+23-Oct-2003 by Matthias Braun
+-make dedicated server start automatic. Only the configuration file is read, no
+ need interactively do settings anymore.
+-Documented dedicated server settings in README file
+-Changed exception class to inherid from std::exception
+-fixed signal handler to really shutdown the app
+
+22-Oct-2003 by Ivo Danihelka
+-split GameManager to BotGameManager, DedicatedGameManager
+ and PlayerGameManager
+-bot can be started from command line (-b option)
+
+21-Oct-2003 by Matthias Braun
+-fixed the missing unit pictures in build menu
+
+14-Oct-2003 by Matthias Braun
+-fixed crash when client disconnects or connection is lost
+
+13-Oct-2003 by Matthias Braun
+-fixed wrong const in Surface class
+-don't allow copy constructing of surface class
+-fixed some views which could still be moved outside the screen
+
+12-Oct-2003 by Matthias Braun
+-Fixed a bug in iXY classes.
+-Added note about black screen to readme
+-fixed bug where MiniMapView was drawing outside it's view space, leading to
+ crashes.
+-add signal handlers to make it abort more nicely in error case (don't stay in
+ mouse/keyboard grab mode)
+-fixed a series of bugs where I accidently passed a Surface pointer instead of a
+ Surface to the blit functions. C++ was evil enough to use the
+ Surface::Surface(bool) constructor to create a new Surface instead of getting
+ me an error.
+-fixed another crasher when outpost was selected from a strange position
+
+11-Oct-2003 by Matthias Braun
+-added a release script
+
+05-Oct-2003 by Matthias Braun
+-did some more code cleanup. all the Rect and XY classes cleaned up a bit and
+ finally removed the codewiz.hpp file.
+
+04-Oct-2003 by Matthias Braun
+-rewrote the config system and completed config saving and loading
+-fixed bug where minimap could be moved outside screen
+
+02-Oct-2003 by Matthias Braun
+-did refactoring work on the surface/DDHardSurface interfaces. DDHardSurface is
+ now called ScreenSurface, and is used in 99% of all cases where we need to
+ access video memory.
+-screen is defined in ScreenSurface.hpp now. Consequently no code in the Lib
+ subdir has the ability to know details about the screen which makes the
+ separation alot cleaner.
+-Removed some unused code
+    
+24-Sep-2003 by Matthias Braun
+-converted lots of code to use physfs (not completely done yet)
+-removed the automake system
+-added a jam build system
+-added README
+
+23-Sep-2003 by Ivo Danihelka
+-Added bots, press 'b' for enable
+
+22-Sep-2003 by Matthias Braun
+-Commited automake stuff from Ivo and merged his autoconf script with mine
+-small cleanups/compile fixes
+-fixed all warnings (and did some smaller cleanups again)
+
+21-Sep-2003 by Ivo Danihelka
+-solved the higher resolutions problem in MainMenu
+-load/save GameConfig in XML format
+
+18-Sep-2003 by Matthias Braun
+-fixed the Choice-reset problem
+-removed lots of options from visualsview
+-changed sound back to 8 channels at 22k, no need to blow too much resources
+ away...
+
+16-Sep-2003 by Matthias Braun
+-randomly fixed stuff in the very ugly libview code (also removed several unused
+ files there)
+-added a statechangedcallback to Choice and CheckBox components
+-added the NoCopy class for cases where you want to forbid
+ assignment and copy-construction
+-Started save/loading capabilities for GameConfig
+-added a resolution and fullscreen setting to the Visual Options
+
+16-Sep-2003 by Ivo Danihelka
+-Alt+Enter don't start chat now
+-'d' display damage
+-cleaning code with valgrind
+
+15-Sep-2003 by Matthias Braun
+-removed the GetConnectionTypeView menu. We're only using tcp/ip.
+-made the Join view working again
+-made lobbyview scrolling topdown
+-made the app report connection errors
+
+14-Sep-2003 by Ivo Danihelka
+-converted sdlsound to use physfs, Mix_LoadMUS_RW is not used yet
+
+14-Sep-2003 by Matthias Braun
+-applied sound patch by Ivo Danihelka (thanks alot)
+-added code to construct SDL_RWops in physfs files
+
+12-Sep-2003 by Matthias Braun
+-use the physfs for the colortable cache now
+-removed lots of unused code from Surface class
+-removed the screenshot function (this allowed to remove the BMP saver too).
+ because there are external screenshot tools around.
+
+11-Sep-2003 by Matthias Braun
+-removed more win32 specific code
+-removed #ifdef USE_SDLs, the code is enabled by default now
+-added a new commandline parser
+-smaller fixes/cleanups
+
+10-Sep-2003 by Matthias Braun
+-more random cleanups
+-more cleanups so that the Stub directory is empty now
+-fixed the bug where the TileEngine didn't correctly draw the last line
+-removed the strange PObject class (still some utility classes which formerly
+ dealt with PObject are there and are - as before - quiet useless). The long
+  story:
+  It seemed like PObject was planed as some generic base type which provided a
+  uniform interface to functions like comparing 2 objects. But since the only
+  function is_equal in PObject wasn't virtual, and since it was never used I
+  decided that this stuff is quiet useless.
+-removed most of the win32 specific code
+
+9-Sep-2003 by Matthias Braun
+-worked around issues with the block allocator code for Particl2D (new operator
+ is overloaded, but laste C++ draft doesn't allow to return 0 from such an
+ overloaded new.) I added exceptions and lots of try {} catch{} blocks, let's
+ hope I didn't miss something.
+-eleminated isValidPtr, Util.hpp and GOTTA_HAVE_IT from codewiz.hpp
+
+8-Sep-2003 by Matthias Braun
+-added some basic music plying support (all files in sfx/music are played in
+		random order, so simply put some .mp3 or .ogg there)
+-enabled Tile engine code again
+-fixed some bugs in the blitting routines
+-fixed some more small bugs I introduced while porting
+-Added new keyboard handling code
+-fixed lots of code that assumed a key scancode is "only" a char
+-added possibility to switch windows/fullscreen mode on ALT+ENTER
+-fixed some smaller bugs in Splitpath and FileUtil
+-added an fps counter to the info window
+-lots of small fixes in the network code
+-applied a patch from Raphael Bosshard which fixes a few warnings
+
+7-Sep-2003 by Matthias Braun
+-removed NetMessageLog class (because it only contained shit ;-)
+-slightly changed NetworkServer and NetworkClient interfaces
+-Added a SDL_Net version of the network code
+-cleaned up socket code alot, by removing all this UDP code (a complete new
+ and clean network code will be needed sometime anyway...)
+-more cleanup in the network code
+-added a client version of the SDLNet code
+-replaced all FUBARs with throw Exception, so I could remove terminate.cpp
+
+6-Sep-2003 by Matthias Braun
+-added a unix implementation of _findfirst, _findnext and _findclose
+-removed some getDrive functions, was never used and supporting drives in unix
+ is hard :)
+-we still need a big commit to replace all \\ in paths with /
+-added a fastly hacked configure script (no autoconf yet)
+-randomly replaced some \\ in pathnames with /
+-More news on my crusade against codewiz.hpp:
+  *removed some unused stuff from codewiz.hpp and terminate.cpp
+  *added new but alot simpler logging functions to Log.hpp
+-replaced all \\ in paths with / (gotta love sed). Yes, I made sure that I only
+ change paths (I looked at the list of stuff I change, before applying the sed
+ command)
+-added Stub for SDLSound implementation
+-added a basic SDL Event loop
+-fixed more small issues
+=> the main menu is displayed now and the Exit and Options buttons work :)
+-added a unix verison of _splitpath
+-some code cleanups:
+ *removed JoystickInterface completely
+ *removed netPanzerGlobals.*
+ *removed netPanzerMain.*
+
+------------
+prior changes (not complete)
+............
+
+-Added very basic makefile
+-removed #include "Stdafx.h" from all source files, gcc doesn't have precompiled
+ headers like msvc.
+-Added some missing include in several files
+-Removed strange double-include protection from codewiz.hpp
+-Removed DOS-compilation stuff from codewiz.hpp
+-Renamed TRUE to true, FALSE to false, BOOL to bool and removed the definitions
+ for them from codewiz.hpp
+-Removed BYTE,WORD,DWORD definitions from codewiz.hpp these are already defined
+ in Types/LibTypes.hpp
+-Commented memset assembler routines in codewiz.hpp
+-removed special WATCOM/MSVC #pragmas in lots of places in codewiz.hpp
+-changed type of PALETTE_LENGTH to size_t
+-added a SWAP function to codewiz.hpp, couldn't find one elsewhere in the
+ project. Also added a SWAP function with an explicit temporary variable which
+ is used at some places in the project (does this bring speed?)
+-made destructor of Surface, Component, SpritePacked virtual
+-changed usage of zeroMem to memset
+-use memcpy instead of memcpyB
+-Added a stub of RDTSC function to cTimeStamp.cpp, need an implementation there.
+-Added a dummy GameTemplateView.hpp. Needs investigation why the Lib includes
+ files from the main game.
+-copied KeyScanCodeDefs.h from main game
+-removed #if _MSC_VER > 1000 #pragma once #endif randomly from several files...
+-removed /= (const float&) in fXYZ class (/= (float) is enough)
+-gave up with the Lib/Main Game dependencies and added include paths to the main
+game in the Makefiles...
+-removed "aliasdef.h" from several files (it contained yet another definition of
+  a boolean type...), several renames again :-/
+-added int return type to getUnitInfoDrawLayer in GameConfig
+-changed iRect constructor to use const types
+-disabled all joystick code
+-casted several floats to ints in ColorTable.cpp to avoid warnings
+-Commented out several uses of _splitpath (which is win32 only) at FileList.cpp
+-fixed some upper/lowercase errors in #include statements
+-commented out code that uses _findfirst in Surface.cpp and PackedSurface.cpp,
+ this is a win32 only function
+-casted some floats to int in Palette.cpp to avoid warnings
+-commented out several assembler routines in Span.cpp
+-removed custom memcpy from Surface.cpp
+-changed a MessageBox to fprintf(stderr, ...) in Surface.cpp
+-added implementation of MIN and MAX to codewiz.hpp
+-renamed stricmp to strcasecmp in UtilInterface.cpp
+-made some functions in SpritePacked and Sprite const-correct
+-commented out lots of code in DirtKickParticle2D, because a variable didn't
+seem to be defined. Did teh same in GroundExplosionParticle
+-some more const-correctness fixes in GroundExplosionParticle and
+TrajectoryParticle.
+-made some functions in WorldViewInterface const-correct, same in ViewCamera
+-commented out some direct sound code in ParticleInterface.cpp
+-renamed some occurences of NULL to 0 in ParticleSystem2D
+-commented out isRolloverEnabled in AbstractButton.hpp, this variable doesn't
+seem to exist.
+-removed Lib/loadSaveData.* it wasn't used (some joystick stuff, we wanna remove
+		the joystick anyway).
+

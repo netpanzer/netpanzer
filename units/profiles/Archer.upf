@@ -1,0 +1,17 @@
+hitpoints =  120;
+attack =  350;
+reload =  110;
+range =  48;
+regen =  90;
+defend_range =  119;
+speed_rate =  16;
+speed_factor =  2;
+image =  "pics/menus/vehicleSelectionView/archer.bmp"
+bodysprite =  "units/pics/pak/ArchHNSD.pak"
+bodyshadow =  "units/pics/pak/ArchHSSD.pak"
+turretsprite =  "units/pics/pak/ArchTNSD.pak"
+turretshadow =  "units/pics/pak/ArchTSSD.pak"
+soundselected =  "mu-selected"
+soundfire =  "mu-fire"
+weapon =  "DOUBLEMISSILE"
+boundbox =  40

@@ -1,0 +1,98 @@
+TODO Now:
+- Remove remaining exception code from networking.
+- Create a task manager for the game main loop. These tasks will run each loop,
+  with a defined priority to select the running order,
+  should have a "runable" like interface.
+
+*** Old todo
+-after having a full nodelist in A* the server is getting slow
+    - no idea how to solve this, have to leave it open I guess...
+-create a new netpanzer-music package which adds pronobozos music to the game
+-you get wrong capture messages when capturing an outpost that belonged to a
+player that just left the game.
+
+*** Miscelaneous
+ * I had an offer from http://forgottenhope.bf1942files.com/main.html people to
+   share/use their models and sounds in a freeware like license (ie. copyright
+   stays with them, modifications only allowed with their permissions, but free
+   to distribute and download).
+   Would be very interesting to use this, but we should update netpanzer to
+   truecolor graphics first, and we need to look more in detail how to properly
+   separate the GPL game engine and this graphics then.
+
+*** New Masterserver code
+ * Create UDP broadcast code for LAN games
+
+*** Server related
+ * let dedicated server output statistics on console or in some log files. 
+ * the Server has a massive memory leak somewhere - might be fixed now
+ * synchronize resources between server and clients, both should have same flags
+   collection and map. Let them automatically download these things.
+ * server console doesn't react really way with all the messages of players
+   scrolling by...
+*** Improvements   
+ * Use gettext (or tinygettext from supertux) and translate netpanzer
+ * Add special chars to functions displaying text that allow to set text
+   color/style. (^ like in quake based games?)
+ * Convert the 256 color stuff to truecolor, usage of opengl is probably a good
+   idea.
+ * display alliances in the status screens.
+ * think about setting unit spawnpoint/opening outpost view. It's very hard to
+   select units standing in your base because of the other 2 functions.
+
+*** Tools
+ * tool for changing the (server?) configuration
+
+*** Feature Additions
+ * Display tip of the day while loading the map.
+ * Improve userinterface:
+ * Make usual shortcuts (known from other RTSes) work:
+  -a key to cycle through all (offline) outposts
+  -add possibilty for setting waypoints (ALT+leftclick?)
+  -add possibility to set markers for allies
+  -"subclassing" like in WC3: A key that cycles though different unit types in
+   the currently selected group.
+  - S key stops tanks
+
+  -...
+ * Display targets of marked panzers with lines (ie. a green line if the panzer
+   is moving, a red line if it is attacking some point)
+ * Create a nice static! skin which is at the bottom of the screen
+   and combines a map, statusdisplay of selected units and outpost buildmenu
+ * Redesign menus and UI code (use new font code, sfont or freefont maybe?)
+ * Create possibilities to save and play replays of the matches
+ * Create possibility to save and restore matches
+ * Convert the 256 color stuff to truecolor and eventually use opengl for
+   displaying stuff.
+ * add an in-game console like in quake-like games
+
+*** Graphics
+ * pulsing circle on the radar at places where battle happens (bigger circle if
+   heavier?)
+
+*** GUI
+
+*** gameplay
+/ Note that these are just random ideas. We should be very careful when 
+/ tuning the gameplay. 1 of the strengths of netpanzer is that it is simple 
+/ to understand and play. We should try hard not to destroy this by adding 
+/ too many options.
+ * adjust points for killings tanks based, on their type. Killing a spahpanzer
+   should get fewer points than killing a Titan.
+ * Add a mode where nothing is produced (maps without outposts). Players can
+   select some tanks based on a points system and can then fight with this fixed
+   amount of tanks
+ * Add different types of outposts. (only selected types of panzers, 
+   possibility to repair units at helipad, ...)
+ * Add possibilities to repair units (helipad at outpost or repair tank)
+ * Add fog of war (eventually with special things like radar jammers 
+   or radar tanks?)
+ * add infantry? anti-tank style ones, and anti-infantry ones?
+ * different terrain types (some terrain where you can move slower) maybe also
+   with a heightmap.
+ * more map elements? bridges that can be destroyed (and repaired?)
+ * a unit that can deploy mines
+ * special game modes and objectives? capture the flag or "escort a VIP", or
+   defend an objective would be things that come to mind
+ * make panzers always hit their targets instead of missing moving units?
+

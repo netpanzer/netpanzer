@@ -1,0 +1,365 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<title>NetPanzer Readme</title>
+	<meta name="generator" content="Notepad++">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="article" lang="en">
+	<div class="titlepage">
+		<div>
+			<div>
+				<h1 class="title"><a name="id2243511"></a>NetPanzer Readme</h1>
+				Visit the site at <a href="http://www.netpanzer.org">http://www.netpanzer.org</a>		
+			</div>
+			<div>
+			<p class="copyright">Copyright © 2011, NetPanzer Team</p>
+			</div>
+		</div>
+		<hr>
+	</div>
+	<div class="toc">
+		<p><b>Table of Contents</b></p>
+		<dl>
+			<dt><span class="sect1"><a href="#Introduction">Introduction</a></span></dt>
+			<dt><span class="sect1"><a href="#BuildingandInstallation">Building and Installation</a></span></dt>
+			<dd>
+				<dl>
+					<dt><span class="sect2"><a href="#Prerequesites">Prerequesites</a></span></dt>
+					<dt><span class="sect2"><a href="#BuildingnonWindows">Building without installing on non Windows</a></span></dt>
+					<dt><span class="sect2"><a href="#BuildingonWindows">Building on Windows</a></span></dt>
+					<dt><span class="sect2"><a href="#Buildingfordistribution">Building for distribution on non Windows operating systems</a></span></dt>
+					<dt><span class="sect2"><a href="#Startinggame">Starting the game</a></span></dt>
+				</dl>
+			</dd>
+			<dt><span class="sect1"><a href="#Gameplay">Gameplay</a></span></dt>
+			<dt><span class="sect1"><a href="#DedicatedServer">Dedicated Server and Configuration Files</a></span></dt>
+			<dt><span class="sect1"><a href="#BotPlayers">Bot Players</a></span></dt>
+			<dt><span class="sect1"><a href="#Contact">Contact</a></span></dt>
+		</dl>
+	</div>
+	<hr>
+	<div class="sect1" lang="en">
+		<div class="titlepage">
+			<div>
+				<div>
+					<h2 class="title" style="clear: both"><a name="Introduction"></a>Introduction</h2>
+				</div>
+			</div>
+		</div>
+		<p>
+		netPanzer is an online multiplayer tactical warfare game designed for FAST
+		ACTION combat. Gameplay concentrates on the core -- no resource management is
+		needed. The game is based on quick tactical action and unit management in
+		real-time. Battles progress quickly and constantly as destroyed players respawn
+		with a set of new units. Players can join or leave multiplayer games at any
+		time.
+		<h4>A bit of history</h4>
+		The original development of netpanzer was done from PyroSoft inc. Though in
+		1999 they stop development and released the game 2002 in GPL and it was nearly
+		forgotten, until Ingo announce it at happypenguin.org. Soon after this
+		announcement a group of coders did the linux port in roughly 2 weeks, with
+		another 2 weeks polishing for this release. Now we'll go along and improve the
+		game...	
+		</p>
+	</div>
+	<hr>
+	<div class="sect1" lang="en">
+		<div class="titlepage">
+			<div>
+				<div>
+					<h2 class="title" style="clear: both"><a name="BuildingandInstallation"></a>Building and Installation</h2>
+				</div>
+			</div>
+		</div>
+		<div class="sect2" lang="en">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title"><a name="Prerequesites"></a>Prerequesites</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+			The game depends on some tools and libraries to be present, before you can start
+			building it. Here's a list of them:<br>
+			<ul>
+				<li>normal gnu compiler and additional tools (g++ version 3.2 or later is required at the moment)</li>
+				<li>SCons build tool http://www.scons.org/</li>
+				<li>SDL 1.2.5 or later http://www.libsdl.org</li>
+				<li>SDL_mixer 1.2.4 or later http://www.libsdl.org/projects/SDL_mixer/</li>
+				<li>subversion (needed to download the source code) http://subversion.tigris.org/</li>
+			</ul>
+			Thanks to all the authors of these helpful libraries that made our development
+			easy and straightforward.<br><br>
+			To download the code use the subversion client to download from
+			  svn://svn.berlios.de/netpanzer/tags/netpanzer/<wanted_version><br>
+
+			An explample for version 0.8.3 would be:<br>
+			<pre>svn export svn://svn.berlios.de/netpanzer/tags/netpanzer/0.8.3 netpanzer</pre>
+
+			Note that I use "export" instead of "checkout" to avoid having all the ".svn"
+			folders spread over the source. This is interesting for Linux distributions.
+			</p>
+		</div>
+		<div class="sect2" lang="en">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title"><a name="BuildingnonWindows"></a>Building without installing on non Windows</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+			To build the game and run as normal user do the following:
+			<pre>scons</pre>
+			When scons finish without errors the game is ready to play, type this:
+			<pre>./netpanzer</pre>
+			Remember that next time you want to play you have to go to the same folder where
+			you compiled and type './netpanzer'
+			</p>
+		</div>
+		<div class="sect2" lang="en">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title"><a name="BuildingonWindows"></a>Building on Windows</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+			Building on windows is a little bit more complicated, developers shouldn't have
+			any big problem.<br>
+			MinGW should be installed in C:\mingw<br>
+			Get the development libraries of SDL for mingw32, copy the include directory to
+			C:\mingw\include\SDL so you have the file "C:\mingw\include\SDL\SDL.h", and the
+			lib folder to C:\mingw\lib<br>
+			Get SDL_mixer development libraries for VC8, copy the header file to
+			C:\mingw\include\SDL and the .lib file to c:\mingw\lib<br>
+			Python and scons should be installed and working.<br>
+			To compile netpanzer run scons on the folder where you have the netpanzer source
+			code:
+			<pre>C:\Some\Folder\With\Netpanzer> scons</pre>
+			After scons finish without errors you have to copy all the .DLL files from SDL
+			and from SDL_mixer to the netpanzer folder.<br>
+			To run you can type 'netpanzer' or click on the netpanzer.exe file in explorer.
+			</p>
+		</div>
+		<div class="sect2" lang="en">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title"><a name="Buildingfordistribution"></a>Building for distribution on non Windows operating systems</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+			If you plan to distribute NetPanzer for installation (on Linux systems, for example)
+			there are some extra steps to be taken care.<br><br>
+
+			NetPanzer needs to know where the data files will be stored when the game runs. To
+			set this data you have to add the parameter "datadir=/some/dir/" at compile time
+			and NetPanzer will look there for its data files. Example:
+
+			<pre>scons datadir=/usr/local/games/netpanzer</pre>
+
+			Using the sample line, after NetPanzer is built, it will look in /usr/local/games/netpanzer
+			for it's data files.<br><br>
+
+			For versioning, there is a file called "RELEASE_VERSION", the first line on that file will
+			be the version that NetPanzer will show. You can use that file to change the version of
+			the game shown. You should modify the file before compilation.<br><br>
+
+			Actually there is no install script, you will have to prepare the script by yourself.
+			The installation is actually easy, and you only have to copy several files. The following
+			directories should be copied on the "datadir" destination:
+			<pre>
+- cache/
+- fonts/
+- maps/
+- pics/
+- powerups/
+- scripts/
+- sound/
+- units/
+- wads/
+			</pre>
+			If you want to copy some documentation, the "doc" folder has it. There is also the BUGS,
+			COPYING, ChangeLog, README (this file), RELNOTES and TODO.<br><br>
+
+			"netpanzer.desktop" is a sample file for using on desktop systems.<br><br>
+
+			"netpanzer.png" and "netpanzer.xpm" are some sample icons to be use with the game.<br><br>
+
+			And of course, the file "netpanzer" is the main binary that should be on the PATH.<br>
+			</p>
+		</div>
+		<div class="sect2" lang="en">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title"><a name="Startinggame"></a>Starting the game</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+			You can start the game in several ways:<br><br>
+
+			If you compiled yourself NetPanzer (and didn't install), first "cd" to the folder where
+			you compiled it and type:
+			<pre>./netpanzer</pre>
+
+			If NetPanzer was installed and is in the PATH, type
+			<pre>netpanzer</pre>
+
+			It is possible that in your distribution NetPanzer was installed and has a menu item,
+			if that is the case, just click on the item.<br><br>
+
+			On Windows, you can click on the "netpanzer.exe" file.
+			</p>
+		</div>
+	</div>
+	<div class="sect1" lang="en">
+		<div class="titlepage">
+			<div>
+				<div>
+					<h2 class="title" style="clear: both"><a name="Gameplay"></a>Gameplay</h2>
+					<p>This section needs to be written... Press F1 in the game for a quick overview of
+					keys and in general trust your intuition :)</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr>
+	<div class="sect1" lang="en">
+		<div class="titlepage">
+			<div>
+				<div>
+					<h2 class="title" style="clear: both"><a name="DedicatedServer"></a>Dedicated Server and Configuration Files</h2>
+				</div>
+			</div>
+		</div>
+		<p>
+		You can start a dedicated netpanzer server (a pure server, without any video
+		output). By starting netpanzer with the -d commandline option.<br><br>
+
+		The server reads the configuration from
+		<pre>$HOME/.netpanzer/config/netpanzer-dedicated.ini</pre>
+		The format is basically the same as the normal configuration file of
+		netpanzer. Here's a short introduction into the option specific to a server in
+		the server section of the file:<br><br>
+
+		<ul>
+			<li>serverport [number], default 3030</li>
+			<ul>
+				<li>Specifies the port which the server will be using.(The server is doing both, 
+				TCP and UDP connections on this port)</li>
+			</ul><br>
+			<li>bindaddress [string], default ""</li>
+			<ul>
+				<li>Allows you to bind the server to a specific IP address (usefull if you have	
+				multiple IP addresses on 1 box)</li>
+			</ul><br>
+			<li>logging [yes,no], default no</li>
+			<ul>
+				<li>When enabled the server creates detailed logs about the matches in the
+				$HOME/logs directory. This can be usefull for creating statistics about the	matches.</li>
+			</ul><br>
+			<li>public [yes,no], default yes</li>
+			<ul>
+				<li>Register at the internet masterservers so that the server will appear in the
+				serverlist of other players.</li>
+			</ul><br>
+			<li>maxplayers [number], default 8</li>
+			<ul>
+				<li>Number of players and bots that are able to play simultaneously on the server.</li>
+			</ul><br>
+			<li>mapcycle [name], default "Cramped, Tight Quarters, Two Villages"</li>
+			<ul>
+				<li>A comma separated list of maps that this server will use.</li>
+			</ul><br>
+			<li>maxunits [number], default 500</li>
+			<ul>
+				<li>Number of maximum available units for all players. (Each
+				player will be able to have maxplayers/maxunits units at once)</li>
+			</ul><br>
+			<li>gametype [0,1,2], default 0</li>
+			<ul>
+				<li>Type of game: (0=Objectives, 1=FragLimit, 2=TimeLimit)</li>
+			</ul><br>
+			<li>timelimit [number], default 50</li>
+			<ul>
+				<li>timelimit of the map in minutes (used when gametype = 2)</li>
+			</ul><br>
+			<li>fraglimit [number], default 500</li>
+			<ul>
+				<li>fraglimit of the map (used when gametype=1)</li>
+			</ul><br>
+			<li>objectivepercentage [number], default 50</li>
+			<ul>
+				<li>Percentage of outposts that has to be captured to win the game.(used when gametype=0)</li>
+			</ul><br>
+			<li>mapcycling [yes,no], default no</li>
+			<ul>
+				<li>cycle to next map after a map ended.</li>
+			</ul><br>
+			<li>powerups [yes,no], default yes</li>
+			<ul>
+				<li>enable/disable powerups</li>
+			</ul><br>
+			<li>allowallies [yes,no], default yes</li>
+			<ul>
+				<li>allow/disallow players to allie</li>
+			</ul><br>
+			<li>cloudcoverage [number], default 65</li>
+			<ul>
+				<li>Number of clouds flying over the map.</li>
+			</ul><br>
+			<li>windspeed [number], default 30</li>
+			<ul>
+				<li>windspeed that affects particles and clouds</li>
+			</ul><br>
+			<li>respawntype [0,1], default 1</li>
+			<ul>
+				<li>Spawn mode: 0=Round Robin, 1=Random</li>
+			</ul><br>
+			<li>autokicktime [number], default 10</li>
+			<ul>
+				<li>Time before the server rejects the inactive players (in minutes)</li>
+			</ul><br>
+		</ul>
+		</p>
+	</div>
+	<hr>
+	<div class="sect1" lang="en">
+		<div class="titlepage">
+			<div>
+				<div>
+					<h2 class="title" style="clear: both"><a name="BotPlayers"></a>Bot Players</h2>
+					<p>Bot players can be spawn only on the dedicated server. To do that enter the 
+					server console and type:
+					<pre> > addbot</pre> 
+
+					A new bot will appear on the game. Type help on the server console for more
+					info and commands.
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>	
+	<hr>
+	<div class="sect1" lang="en">
+		<div class="titlepage">
+			<div>
+				<div>
+					<h2 class="title" style="clear: both"><a name="Contact"></a>Contact</h2>
+					<p>Bugs should be reported to the netPanzer forum: 
+					<a href="http://www.netpanzer.org/forum">http://www.netpanzer.org/forum</a><br>
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>	
+</div>
+</body>
+</html>

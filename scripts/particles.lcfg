@@ -1,0 +1,82 @@
+-- clouds: required, single file
+
+clouds = { "pics/particles/clouds/clouds.png", 300, 300, 10, alpha=128 }
+flash  = { "pics/particles/lights/flash2.png", 240, 194, 20 }
+--flash  = { "pics/particles/lights/flash3.png", 256, 256, 17 }
+--flash  = { "pics/particles/lights/flash5.png", 240, 194, 20 }
+chunks = { "pics/particles/chunks/groundChunks.png", 2, 2, 256, alpha=128 }
+craters= { "pics/particles/craters/craters.png", 32, 32, 3, alpha=255 }
+
+-- puffs is required, must have: light, dark and dirt
+-- format is file_name, width, height, num_frames
+
+lightpuffs = 
+{
+    { "pics/particles/puff/smokeLightPuff0004.png",  4,  4, 26, alpha=128 },
+    { "pics/particles/puff/smokeLightPuff0008.png",  8,  8, 26, alpha=128 },
+    { "pics/particles/puff/smokeLightPuff0012.png", 12, 12, 26, alpha=128 },
+    { "pics/particles/puff/smokeLightPuff0016.png", 16, 16, 26, alpha=128 },
+    { "pics/particles/puff/smokeLightPuff0020.png", 20, 20, 26, alpha=128 },
+    { "pics/particles/puff/smokeLightPuff0024.png", 24, 24, 26, alpha=128 },
+    { "pics/particles/puff/smokeLightPuff0028.png", 28, 28, 26, alpha=128 },
+    { "pics/particles/puff/smokeLightPuff0032.png", 32, 32, 26, alpha=128 },
+    { "pics/particles/puff/smokeLightPuff0036.png", 36, 36, 26, alpha=128 },
+    { "pics/particles/puff/smokeLightPuff0040.png", 40, 40, 26, alpha=128 },
+    { "pics/particles/puff/smokeLightPuff0044.png", 44, 44, 26, alpha=128 },
+    { "pics/particles/puff/smokeLightPuff0048.png", 48, 48, 26, alpha=128 },
+}
+    
+darkpuffs =
+{
+    { "pics/particles/puff/smokeDarkPuff0004.png",  4,  4, 26, alpha=128 },
+    { "pics/particles/puff/smokeDarkPuff0008.png",  8,  8, 26, alpha=128 },
+    { "pics/particles/puff/smokeDarkPuff0012.png", 12, 12, 26, alpha=128 },
+    { "pics/particles/puff/smokeDarkPuff0016.png", 16, 16, 26, alpha=128 },
+    { "pics/particles/puff/smokeDarkPuff0020.png", 20, 20, 26, alpha=128 },
+    { "pics/particles/puff/smokeDarkPuff0024.png", 24, 24, 26, alpha=128 },
+    { "pics/particles/puff/smokeDarkPuff0028.png", 28, 28, 26, alpha=128 },
+    { "pics/particles/puff/smokeDarkPuff0032.png", 32, 32, 26, alpha=128 },
+    { "pics/particles/puff/smokeDarkPuff0036.png", 36, 36, 26, alpha=128 },
+    { "pics/particles/puff/smokeDarkPuff0040.png", 40, 40, 26, alpha=128 },
+    { "pics/particles/puff/smokeDarkPuff0044.png", 44, 44, 26, alpha=128 },
+    { "pics/particles/puff/smokeDarkPuff0048.png", 48, 48, 26, alpha=128 }
+}
+    
+dirtpuffs =
+{
+    { "pics/particles/puff/dirtPuff0004.png",  4,  4, 26, alpha=128 },
+    { "pics/particles/puff/dirtPuff0008.png",  8,  8, 26, alpha=128 },
+    { "pics/particles/puff/dirtPuff0012.png", 12, 12, 26, alpha=128 },
+    { "pics/particles/puff/dirtPuff0016.png", 16, 16, 26, alpha=128 },
+    { "pics/particles/puff/dirtPuff0020.png", 20, 20, 26, alpha=128 },
+    { "pics/particles/puff/dirtPuff0024.png", 24, 24, 26, alpha=128 },
+    { "pics/particles/puff/dirtPuff0028.png", 28, 28, 26, alpha=128 },
+    { "pics/particles/puff/dirtPuff0032.png", 32, 32, 26, alpha=128 },
+    { "pics/particles/puff/dirtPuff0036.png", 36, 36, 26, alpha=128 },
+    { "pics/particles/puff/dirtPuff0040.png", 40, 40, 26, alpha=128 },
+    { "pics/particles/puff/dirtPuff0044.png", 44, 44, 26, alpha=128 },
+    { "pics/particles/puff/dirtPuff0048.png", 48, 48, 26, alpha=128 }
+}
+
+explosions =
+{
+    {
+        { "pics/particles/explosion/explosion0_0001.png", 13, 18, 16 },
+        { "pics/particles/explosion/explosion0_0002.png", 27, 36, 16 },
+        { "pics/particles/explosion/explosion0_0003.png", 41, 54, 16 },
+        { "pics/particles/explosion/explosion0_0004.png", 54, 73, 16 },
+        { "pics/particles/explosion/explosion0_0005.png", 68, 91, 16 },
+        { "pics/particles/explosion/explosion0_0006.png", 82, 109, 16 },
+        { "pics/particles/explosion/explosion0_0007.png", 96, 128, 16 }
+    },
+    
+    {
+        { "pics/particles/explosion/explosion1_0001.png", 18, 13, 15 },
+        { "pics/particles/explosion/explosion1_0002.png", 36, 27, 15 },
+        { "pics/particles/explosion/explosion1_0003.png", 54, 41, 15 },
+        { "pics/particles/explosion/explosion1_0004.png", 73, 54, 15 },
+        { "pics/particles/explosion/explosion1_0005.png", 91, 68, 15 },
+        { "pics/particles/explosion/explosion1_0006.png", 109, 82, 15 },
+        { "pics/particles/explosion/explosion1_0007.png", 128, 96, 15 }
+    }
+}

@@ -1,0 +1,35 @@
+
+Some words on the used coding standards:
+
+Formating:
+-Indentation is done with 4 spaces, tabs are not allowed
+-braces are used like this:
+
+class SomeClass
+{
+public:
+    void someFunction()
+    {
+        if(foo) {
+            // ...
+        } else {
+            // ...
+        }
+
+        while(bar) {
+            // ...
+        }
+    }
+};
+-classnames are written LikeThis and This
+-member and attributenames are written likeThis and this
+-documentating comments are written in doxygen format
+-A single .hpp and .cpp only contains declarations/implementations for 1 class,
+ the filename is the same as the classname
+
+Code:
+-We only use libraries that claim to be portable to at least windows, linux and
+ MacOS/X
+-We use modern c++ standards where possible. This includes:
+    namespaces, RTTI, exceptions, iostreams, STL
+

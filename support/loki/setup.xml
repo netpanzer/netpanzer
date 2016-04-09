@@ -1,0 +1,31 @@
+<?xml version="1.0" standalone="yes"?>
+<install product="netpanzer" 
+         desc="netPanzer" 
+         version="0.1.5"
+         update_url="http://netpanzer.berlios.de/news.html">		
+    <readme>
+        README
+    </readme>
+    <option install="true" size="30M">
+        Base Install
+	<help>Base Install</help>
+        <binary symlink="netpanzer"  name="netpanzer"
+            icon="netpanzer.png" desc="online multiplay realtime strategy game">
+	    netpanzer
+	</binary> 
+        <binary>
+            netpanzer.bin
+        </binary>
+        <files>
+            netpanzer.png
+            docs
+            maps
+            pics
+            powerups
+            sound
+            units
+            wads
+        </files>
+    </option>
+</install>
+

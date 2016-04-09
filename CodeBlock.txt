@@ -1,0 +1,41 @@
+Create & Compile on Linux
+*************************
+Download & install codeblocks
+Needed SDL-1.2.14 & SDL_mixer-1.2.11
+
+Create new SDL project
+Add Files recursively /src/Lib
+Add Files recursively /src/NetPanzer
+Add compiler #define
+	PHYSFS_SUPPORTS_ZIP=1
+	Z_PREFIX=1
+	PHYSFS_NO_CDROM_SUPPORT=1
+Add Link libraries
+	SDL
+	SDL_mixer
+Add Search directories
+	../src/Lib
+	../src/NetPanzer
+	../src/Lib/physfs
+
+Create & Compile on Windows
+***************************
+Download & install codeblocks-10.05mingw-setup.exe
+Needed SDL-1.2.14 & SDL_mixer-1.2.11
+
+Create new SDL project
+Add Files recursively /src/Lib
+Add Files recursively /src/NetPanzer
+Add Files recursively /SDL_mixer-1.2.11
+Add compiler #define
+	socklen_t=int
+Add Link libraries
+	libws2_32.a
+	mingw32
+	SDLMain
+	SDL
+Add Search directories
+	../src/Lib
+	../src/NetPanzer
+	../src/SDL_mixer-1.2.11
+	../src/Lib/physfs

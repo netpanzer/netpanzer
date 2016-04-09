@@ -1,0 +1,364 @@
+Notes about NetPanzer code.
+
+1. Initialization
+
+Code starts in src/NetPanzer/Core/main.cpp netpanzer_main.
+
+ScriptManager is initialized (creates a lua state), and registers the Palette
+bindings.
+
+global_engine_state is created at this point.
+
+Ignore signals on non windows systems if DEBUG is not defined.
+
+Initializes SDL:
+    * timers only.
+    * no parachute.
+    * enables unicode support.
+
+Initializes PhysFS:
+    * sets write directory to the "user dir"/."netpanzer", "user dir" is $HOME
+      on non windows, C:\Documents And Settings\<username> on Windows.
+    * creates the write directory if needed.
+    * will EXIT if can't create or use the ".netpanzer" directory.
+    * search path:
+        - write dir.
+        - base dir (`pwd`).
+        - adds any zip file that is found at the current search path.
+        - NP_DATADIR if defined.
+        - in Mac OS X adds the Resource dir of the bundle.
+        - on non Windows, handles the attached "datadir=" at end of binary.
+
+Open log files, named "server" or "netpanzer" depends if user used -d option.
+
+On Windows if dedicated server, allocate a console.
+
+Random number generator inialized here, use time as seed.
+
+Creates the PID file if requested.
+
+Creates the BaseGameManager, depends on "-d" option used:
+    * PlayerGameManager
+        - sets all its poiters to null
+    * DedicatedGameManager
+        - sets all its pointers to null
+        - create mutex
+        - initialize Console
+
+Initialize the game manager
+    * creates "config" directory (note: on the define write dir)
+    * create the game config, uses the passed parameter as config file, if used,
+      gameconfig can be acceses from this point.
+    * creates the sound manager (handled in each concrete BaseGameManager)
+    * initializes video, only PlayerGameManager creates a SDLVideo and sets the
+      video mode (GameManager::setVideoMode).
+    * creates global_game_state.
+    * creates UnitProfileInterface and loads profiles. Need to move.
+    * ResourceManager loads default flags (sets all flags to black). Can move?
+    * calculates some values for Physics.
+    * loads images for weapons. Need to move.
+    * loads images for powerups. Need to move.
+    * initializes the game console (the messages that player or game prints on
+      screen). Need to move.
+    * initialies ServerConnectDaemon with the max plauers configuration. Need to
+      move.
+    * sets the NetworkState status to "server" state.
+    * resets all network stats.
+    * initializes input devices:
+        - PlayerGameManager initializes mouse:
+            # loads images in "pics/cursors".
+            # sets default cursor ("default.png").
+            # sets the clicktimer to 150ms.
+        - DedicagtedGameManager sets ConsoleInterface::setStdoutPipe to true.
+
+Handles a quick connect (-c <server> command line parameter), it sets
+gameconfig->serverConnect to the host and gameconfig->quickConnect to true.
+
+If the option for masterserver was passed, updates the
+gameconfig->masterservers (overrides config file).
+
+If the port option was used (server port default is 3030) updates
+gameconfig->serverport (overrides config file).
+
+At this point sets global_engine_state->game_manager to the just created and
+initialized game manager, if some error happened on initialization, will never
+get to this point.
+
+Launch the game, two completely different paths here, in concrete classes:
+    * PlayerGameManager:
+        - creates all Views.
+        - sets the "MainView" as visible (shows main menu).
+    * DedicatedGameManager:
+        - initializes MessageRouter.
+        - NetworkServer clears the client list and creates the listening socket.
+            *will fail* if can't create socket, nobody would be able to connect.
+        - GameControlRulesDaemon is set as dedicated server, state to loading
+          map.
+        - gameconfig->hostorjoin is host.
+        - disable creation of particles.
+        - if the server is public and there are configured masterservers,
+            creates the infosocket and the heartbeat.
+        - creates a ServerConsole (is a different thread), which will receive
+            the server admin commands.
+
+Initialization is finish, do the main loop while it returns true.
+
+1.1 Game configuration initialization (done in GameConfig constructor)
+
+Similar game settings are grouped on standard containers. The constructor
+initializes ALL the configuration variables with default values. The player name
+is always initialized as as "Player<random number>".
+
+The settings variable pointers is added to the containers, then loads the
+configuration from the config file (might be passed as command line parameter).
+
+2. Game Main Loop
+
+DedicatedGameManager:
+    * run heartbeat.
+    * do default main loop.
+
+PlayerGameManager:
+    * if first run, and is quick connect, joins game.
+    * check heartbeat.
+    * handles SDL events (quits if received quit message).
+    * do default main loop.
+
+default main loop (BaseGameManager):
+    * initializes frame timer
+    * checks game inputs:
+        - DedicatedGameManager:
+            # checks commands input in console.
+        - PlayerGameManager:
+            # handle key presses.
+            # handle mouse multi-click timer.
+            # handle mouse events.
+            # manage scroll of view.
+    * draw graphics (only PlayerGameManager):
+        - lock screen.
+        - draw all visible views.
+        - draw mouse.
+        - unlock scren.
+        - flip screen.
+    * run logic (called simLoop):
+        - deleted disconnected players on server, should move to server only
+            code.
+        - handle network events, always neede, should move out of logic to loop.
+        - runs GameControlRulesDaemon, right know it handles client connection
+            map loading and check for map rules in server.
+        - if we are server, run ServerConnectDaemon (manages connecting clients
+            on server).
+        - updates network statistics.
+        - run units simulation (tank movement, shoots, etc).
+        - run projectiles (flying weapons) simulation.
+        - run objective simulation (capture of outposts).
+        - run powerups simulation (generate powerup, check if player get one).
+        - run path generation.
+        - run physics simulation (calculates displacement by wind).
+        - run particles simulation (2 kinds?).
+        - sends unsent network data in client and server.
+        - run bot simulation
+
+3. Subsystems
+
+3.1 Graphics
+
+To better understand the current graphics state is better to know the original
+game graphics approach. This doesn't include views or sprites.
+
+3.1.1 Original Graphics Approach
+
+The graphics code was located on:
+    * src/NetPanzer/System/SDLVideo.*
+    * src/Netpanzer/Classes/ScreenSurface.*
+    * src/Lib/2D/*.*
+
+All the graphics was handled in 256 colors, paletted mode.
+
+Palettes was loaded from "act" files, an easy file format, made by an array red,
+green and blue colors for each of the 256 colors of the palette.
+
+There was 2 different palettes, the "menu" palette, used on the main menu views,
+and the game palette used in the game. The palettes was called "netpmenu" and
+"netp".
+
+To optain specific colors for drawing, there was a class to store the final
+colors "Color", it had named variables for colors. Each color stored the 8 bit
+index of the palette with the desired color.
+
+Each time the palette was loaded, the colors was initialized with the palette
+color that was more similar to the wanted rgb one.
+
+To simulate transparency and lighting effects, some tables was pregenerated
+to obtain the new color after applying of the effect. For example, if we wanted to
+brighten a color, by some value, we would do a table lookup with the old color
+and the brighten value, obtaining the new color. The same method was used for
+transparency effects.
+
+The all the image data was handled in 2 classes, Surface and PackedSurface.
+
+Each Surface contained one or more frames. The image data was stored as a big
+chunk of memory. Image blitting was done by copy the memory in blocks to the new
+location. Surfaces can be rotated and scaled. If transparency was used on this
+kind, it was a pixel by pixel copy, if the color 0 was used, the pixel was
+skipped, hence doing full transparency of the pixel.
+
+PackedSurface was similar to normal Surfaces, as it had frames and similar
+method names. It had 2 chunks of memory, one with the pixel data, other with the
+pixel indexes. It is a form of RLE encoded data. The pointer of the first table
+tells how many bytes of memory to skip, and how many bytes to copy to the
+screen, bytes of memory being pixels in thescreen, as it was a 8 bit paletted
+mode.
+
+There was a dedicated BMP loading function on Surface, and a PAK loading
+function for the PackedSurfaces.
+
+Text drawing on surfaces was done by loading a file with the font data. A value
+of 0 would skip the pixel, any other value would set the color that was passed
+to the string blitting method.
+
+SDLVideo had all the methods needed to work with the SDL_Surface of the video
+device (as returned by SDL_SetVideoMode, or the background surface if double
+buffer was not enabled in the SDL_Surface).
+
+ScreenSurface was a facade to allow the normal Surface and PacketSurface
+blitting functions to blit directly on the video surface. Because it was 8 color
+paletted mode the relationship was 1 on 1, after video surface was locked,
+normal memcpy would work the same as Surface blitting on the video surface.
+
+Blitting to the video:
+    * lock the back (hidden) surface, it could be the same as video surface, but
+      in practice, used to be a dedicated surface for doing double buffering.
+      The locking operation made the raw pixel data addresable.
+    * draw/copy pixels to video memory (--> the backbuffer).
+    * unlock the back surface (pixel might not be addresable now).
+    * copy to the video surface and update the visual.
+
+3.1.2 Current Graphics approach.
+
+Surface has a container for SDL_Surface, a container is needed to hold
+different frames. The SDL_Surfaces are created as 32 bit surface.
+
+PackedSurface does not exists any more, full transparency of pixels uses
+SDL_RLEACCEL and SDL_SRCCOLORKEY. Transparency of the full image is handled by
+SDL_SRCALPHA (no tables lookup).
+
+The palette is not loaded from files anymore, is stored in the code, there is
+only one palette (netp). Colors are initialized using a Lua script.
+
+The font is integrated in the code (BuiltinFont.cpp).
+
+All the blitting operations uses SDL for its blitting. The images has to be
+prepared beforehand to blit in the way it was intended, like setting the alpha
+and/or the color key.
+
+The images are loaded from PNG files. The code to load PNG was taken from
+SDL_image library (IMG_png.c). The libpng library is added to the source code.
+It is possible to load multiframed images, has to add the size parameters when
+loading the image, the loaded will autodetect the frames. The PAK files has been
+converted to PNG files.
+
+The shadows are created as a mask of the images. Blitting shadows has to enable
+the SDL_SRCALPHA flag to do transparency.
+
+The current approach is slower than the previous, try to show 100 tanks on
+screen and see the framerate to drop to slugish values. It needs optimization.
+
+Other possibility would be to use OpenGL for drawing.
+
+3.2 Views system
+
+Let the mess begin. All views related stuff is in src/NetPanzer/Views:
+    * Components: Some components for use in views, View and Desktop here.
+    * Game: Views used in game.
+    * MainMenu: don't need to explain.
+
+Desktop is the container for all the other views, is like the "Desktop" of the
+operating systems.
+
+View is a internal window, it can have "Component"s.
+
+Views are added to the desktop and never "deleted". Views has a name and are
+searched by name. Views can be hidden or shown.
+
+Views are activated when added to the Desktop or when the mouse enters the view.
+If the mouse leaves the View, they are deactivated. This causes that one of the
+components (cInputField) lose its focus when the mouse exits its view, so when
+players are typing their player name, or the address of some server, the mouse
+must stay inside the view.
+
+The old View system had a Surface created each time it wanted to draw, using the
+original memory of the destination Surface, clipped to the View size. It drew
+directly on the pixel memory of the destination Surface, in fact, the
+ScreenSurface.
+
+The modified View system, doesn't create any surface, it draws (blits mostly)
+on the ScreenSurface always, no new Surfaces are created for this drawing.
+
+It is difficult to follow the Views, some of them works as a multi view, and
+holds a string with the name of the real view.
+
+Views with focus will receive mouse events (only), and they must take care of
+read the keyboard events if they need them. The interesting case here is the
+GameView, it calls WorldInputCmdProcessor to handle the mouse/keyboard events.
+Input will be explained later.
+
+3.2.1 View Components
+
+There was 2 kind of Components, one handled in each View internally other
+handled as real "Components". When I took the code, it seems that there was some
+changes going on to convert from the internal View components to external
+Components, the developers found the mess and decided to rewrite the view
+system, called it Panels or something like that, but was really never used. I
+deleted that code and did more work to convert the components to Components.
+
+The current components can use some kind of pre-rendering, if nothing changes
+just blit the pre-rendered image. All the components has a name and may have a
+custom code.
+
+The current components are:
+    * Button: can have a text label, 1 to 3 images and border. The text can have
+        3 different colors for each state (normal, hover, pressed) and so does
+        the border. Border colors split between top left and bottom right
+        colors.
+        Buttons doesn't have a callback function, but you can create your own
+        Button subclass and override actionPerformed.
+        When the Button is crated, its component name is set to
+        "Button.<component_name_argument>".
+    * CheckBox: can have a label, the text color is always white.
+        CheckBoxes can have a StateChangedCallback object, will be called if
+        state changes.
+    * Choice: this is a ComboBox known in other languages. It has a list of
+        items that will be shown.
+        Choices can have a StateChangedCallback too. The colors are fixed.
+    * InfoBar: used in game (top bar) to show game information.
+    * Label: can have some text to show, foreground, background color and
+        shadow.
+        Labels has a component name "Label.<something>".
+        Labels uses the prerendering way.
+    * MiniMap: used in game to draw the minimap.
+    * cInputField: Uses old component method, allows to enter a line of text.
+
+The current in-game views are:
+    * GameView: Draws everything game related, also call the in-game key/mouse
+        handler.
+    * AreYouSureExitView, AreYouSureResignView, DisconnectedView: those are very
+        simple views, its name says what they do.
+    * CodeStatsView: Used for in-game developer information, shows things like
+        network stats (packets sent/received), pathfinding stats, unit stats...
+    * GameTemplateView: Base class for some other game related views, not for
+        GameView and it is not a c++ template.
+    * HelpScrollView: Shows the help.
+    * LibView: some some in-game developer information, allows to change some
+        of the engine configuration (mainly for tests).
+    * LoadingView: the window that is seen when the game is connecting to a
+        server and loading the resources as map, etc...
+    * MiniMapView: has a MiniMap component.
+    * RankView: shows the current player ranking.
+    * VehicleSelectionView: is the window to select which tank to create in the
+        outposts.
+
+----- Thats it for now -----
+
+
+

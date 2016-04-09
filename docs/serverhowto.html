@@ -1,0 +1,153 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>NetPanzer Server Setup HowTo</title><meta name="generator" content="DocBook XSL Stylesheets V1.66.1"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="article" lang="en"><div class="titlepage"><div><div><h1 class="title"><a name="id2243511"></a>NetPanzer Server Setup HowTo</h1></div><div><div class="author"><h3 class="author"><span class="firstname">Matthias</span> <span class="surname">Braun</span></h3></div></div><div><p class="copyright">Copyright © 2004 </p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="sect1"><a href="#Installation">Installation</a></span></dt><dt><span class="sect1"><a href="#Configuration">Configuration</a></span></dt><dd><dl><dt><span class="sect2"><a href="#firewalls">Firewalls</a></span></dt></dl></dd><dt><span class="sect1"><a href="#scripts">Startscripts and Tools</a></span></dt><dd><dl><dt><span class="sect2"><a href="#autorestart">Restart on crash</a></span></dt><dt><span class="sect2"><a href="#Screen">Screen</a></span></dt></dl></dd><dt><span class="sect1"><a href="#integration">Integration into the system</a></span></dt><dd><dl><dt><span class="sect2"><a href="#initscripts">Init Scripts</a></span></dt><dt><span class="sect2"><a href="#cron">Cron Jobs</a></span></dt></dl></dd><dt><span class="sect1"><a href="#security">Security Warning</a></span></dt><dt><span class="sect1"><a href="#tools">Additional Tools</a></span></dt><dd><dl><dt><span class="sect2"><a href="#phpbrowser">PHP Server Browser</a></span></dt><dt><span class="sect2"><a href="#qstat">QStat</a></span></dt></dl></dd></dl></div><p>
+    This is a preliminary version of the netpanzer server howto. Feedback and
+    improvement to the scripts, tips&amp;tricks are appreciated. Please send them
+    to <a href="mailto:matze@braunis.de" target="_top">matze@braunis.de</a>.
+  </p><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="Installation"></a>Installation</h2></div></div></div><p>
+The server comes with the normal netpanzer package, look into the README there
+on how to install netpanzer.
+    </p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="Configuration"></a>Configuration</h2></div></div></div><p>
+You can find the server configuration file in your home directory in
+<tt class="filename">.netpanzer/config/netpanzer-dedicated.ini</tt>. If this file doesn't exist yet, start
+your server once and quit (by using the quit command) and this file should have
+been created. You can find a description of all theconfig commands in the
+netpanzer README.
+    </p><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="firewalls"></a>Firewalls</h3></div></div></div><p>
+If your server is using a firewall, you have to forward port 3030 TCP+UDP.
+You can change this port with the port setting in the config file.
+      </p></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="scripts"></a>Startscripts and Tools</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="autorestart"></a>Restart on crash</h3></div></div></div><p>
+Unfortunately the netpanzer server is not as stable yet as it should be. So you
+should install a script that restarts the server automatically in case of a
+crash. This can be achieved with the following script (called
+<tt class="filename">start-netpanzer-dedicated.sh</tt>).
+      </p><p>
+        </p><pre class="programlisting">
+#!/bin/bash
+
+# insert the directory of the server binary here
+DIR=.
+
+cd $DIR
+running=yes
+while [ $running = "yes" ]; do
+    ./netpanzer -d $@
+    if [ $? -ge 128 ]; then
+        echo "`date`: Restarting server after crash"
+        # wait a bit to not blow cpu and logfiles on constant crashs
+        sleep 30
+    else
+        #normal exit
+        running=no
+    fi
+done
+        </pre><p>
+      </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="Screen"></a>Screen</h3></div></div></div><p>
+Typically you don't always want to monitor your server in a terminal window.
+Also in case your monitoring terminal terminates the server is normally stopped
+too. To solve these problems there's a handy little tool called
+<a href="http://www.gnu.org/software/screen/" target="_top">Screen</a> that allows
+you to run your applications in a virtual terminal to which you can
+attach/detach at any time.
+      </p><p>
+So typically you write another script with your startup parameters like this
+(also take a look at the Security Warning at the end of this document for the
+ commented variants).
+        </p><pre class="programlisting">
+#!/bin/bash
+
+# insert the directory of the start-netpanzer-dedicated.sh here 
+DIR=.
+
+cd $DIR
+
+# starts the server in a screen. Please consider using 1 of the 2 variants below
+# for increased security
+screen -A -m -d -S netpanzer ./start-netpanzer-dedicated.sh $@
+
+# This version switches to a more secure user account
+# screen -A -m -d -S netpanzer su - netpserver -c "./start-netpanzer-dedicated.sh $@"
+
+# This version starts the server in a chroot environment and with a different
+# user for even more security
+# screen -A -m -d -S netpanzer chroot /home/netpserver su - netpserver -c "./start-netpanzer-dedicated.sh $@"
+        </pre><p>
+      </p><p>
+You can attach to this virtual netpanzer terminal by typing
+<span><b class="command">screen -r netpanzer</b></span>. You can detach again by pressing
+CTRL+A and then CTRL+D. See the Screen documentation for details.
+      </p></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="integration"></a>Integration into the system</h2></div></div></div><p>
+Often you want to further integrate the server into your system so that it is
+automatically started on startup and checked on a regular basis.
+    </p><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="initscripts"></a>Init Scripts</h3></div></div></div><p>Most linux and bsd systems come with an init script system that
+      takes care of starting and stopping services on the system. Creating such
+      initscripts is distribution specific, so I just present the script for
+      gentoo here as an example:
+        </p><pre class="programlisting">
+#!/sbin/runscripts
+
+depend() {
+    need net
+}
+
+start() {
+    ebegin "Starting netpanzer server"
+    start-stop-daemon --start --quiet --pidfile /var/run/netpanzer.pid --exec /usr/local/scripts/netpanzer-screen.sh --pidfile=/var/run/netpanzer.pid
+    eend $?
+}
+
+stop() {
+    ebegin "Stopping netpanzer server"
+    start-stop-daemon --stop --quiet --pidfile /var/run/netpanzer.pid
+    eedn $?
+}
+        </pre><p>
+      </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="cron"></a>Cron Jobs</h3></div></div></div><p>If you can't integrate the server into the initscripts of your
+      system (if you have only a user account for example) then you can use cron
+      to make sure your server stays running even after system restarts. You
+      should write another script that checks for a running server and
+      eventually restarts it (called
+              <tt class="filename">check-netpanzer-server.sh</tt>
+      </p><pre class="programlisting">
+#!/bin/sh
+
+procs=`/bin/ps`
+if echo "$procs" | grep netpanzer &gt; /dev/null; then
+    exit
+fi
+
+# start netpanzer server
+cd /usr/local/scripts
+./netpanzer-screen.sh
+      </pre><p>
+      </p><p>
+You should start this script regularly in a cronjob. By adding the following
+line in your crontab (type <span><b class="command">crontab -e</b></span> to edit your crontab).
+This will check the server every hour (54 minutes after the full hour) to make
+sure it is still running. 
+        </p><pre class="programlisting">
+# min hour day month dayofweek command
+54 * * * * /bin/sh /usr/local/scripts/check-netpanzer-server.sh
+        </pre><p>
+      </p></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="security"></a>Security Warning</h2></div></div></div><p>
+The code of the server hasn't undergone an in-depth review for security holes
+yet, so you should expect the possibility that attackers can find buffer
+overflows to obtain control over the netpanzer executable and the user account
+the server is running. (Experience shows that this also happens with other
+servers that claim to be secure...)
+    </p><p>
+Therefore it is recommended to run the server in a special user account with
+limited rights. On linux/bsd you should also consider using a chroot
+environment for increased security. Consult external documentation about
+details. The screen startup script shown above also demonstrates in a comment
+how to do this with the su and chroot commands.
+    </p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="tools"></a>Additional Tools</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="phpbrowser"></a>PHP Server Browser</h3></div></div></div><p>
+        Tobias Blersch has written a php script which allows you display a list
+        of running netpanzer servers on your homepage. You can find it at the
+        <a href="https://developer.berlios.de/project/showfiles.php?group_id=1250" target="_top">download
+section</a> of netpanzer in the misc category.
+      </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="qstat"></a>QStat</h3></div></div></div><p>The netpanzer masterserver protocol is compatible with qstat
+(<a href="http://www.qstat.org" target="_top">http://www.qstat.org</a>).
+      You can query for netpanzer server with the command
+      <span><b class="command">qstat -gsm,netpanzer 81.169.185.36</b></span>. There are several
+      tools and scripts available to display server status on homepages with the
+      help of qstat.
+      </p></div></div></div></body></html>

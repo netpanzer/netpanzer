@@ -1,0 +1,90 @@
+#! /bin/bash
+
+#	This script launches netpanzer and have the server say specified recurring messages
+#	Edit the values to suit your needs, add/remove variables before the expect
+#	Don't forget to add/remove the variables as well after the expect
+#	Created in 15 mins by SibirskiiVolk <yuri@sphinux.org>
+#	License: Public Domain
+#	Requires expect to work.
+
+function help()
+{
+	echo "Please open this script with a text editor and change recurring messages values."
+	echo
+	echo "This is not intended to be a fancy launcher, it's just a lazy script"
+	echo
+	echo "Usage: $0 [interval]"
+	echo "[interval]: nn seconds			Specify interval between repeats (default 3600 sec)."
+	echo "-h, --help				print this help text."
+	echo
+	echo "Example: $0 7200			Sets the interval to 2 hours"
+}
+
+case "$1" in
+-h | --help )
+		help
+		exit 0
+		;;
+
+[0-9]* )
+		interval="$1"
+		;;
+
+*)
+		interval="3600"
+		;;
+
+esac
+
+
+### Messages to be repeated by the server							###
+### Add, remove or modify as you wish, If you don't understand the following, change strings	###
+### You'll have to do the same in the expect section If you add/remove a variable		###
+### (add/remove the new/deleted line containing the variable name after send)			###
+### Example: Add variable x="bla" in this sec. then add the line: send "$x" to expect sec.	###
+
+
+welcome="say Welcome to SphinUX Public Servers Network"
+srvname="say Server Name: Hydra"
+gamadmn="say Server Game Admins: SibirskiyVolk (Ahmed), AHMAD (Hegazy)"
+srvcycle="say Server Cycle: 24 hours"
+mntdat="say Server Maintainance: Each Friday, 12 AM EET (10 PM GMT) <Downtime: 1 hour>"
+sysadmin="say Server sysadmin: A. Tefa <sys@sphinux.org>"
+suggmail="say Send suggestions and issues to <netpanzer@sphinux.org>"
+outmes="say Have fun playing :)"
+
+###################################################################################################
+
+
+### expect section ###
+
+/usr/bin/expect << EOF
+set timeout 30
+spawn netpanzer -d -p 3030
+
+expect {
+    "netpanzer*" {
+
+    send "$welcome\n"
+    send "$srvname\n"
+    send "$srvcycle\n"
+    send "$mntdat\n"
+    send "$gamadmn\n"
+    send "$sysadmin\n"
+    send "$suggmail\n"
+    send "$outmes\n"
+
+    sleep $interval
+
+    exp_continue
+    }
+}
+expect eof
+
+
+###		I am too lazy to write a better script, sorry :(		###
+###		It's not fancy, but it works like a charm :)			###
+###										###
+###		This Comment has absloutely no purpose :D :p			###
+
+

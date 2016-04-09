@@ -1,0 +1,58 @@
+# -*-shell-script-*-
+
+[Meta]
+RootName: @netpanzer.berlios.de:$SOFTWAREVERSION
+DisplayName: NetPanzer
+ShortName: netpanzer
+Maintainer: Matthias Braun <matze@braunis.de>
+Packager: Matthias Braun <matze@braunis.de>
+Summary: Online Multiplayer Tactical Warfare Game
+URL: http://netpanzer.berlios.de
+License: GNU General Public License, Version 2
+SoftwareVersion: 0.8.0
+AutopackageTarget: 1.0
+
+# Only uncomment InterfaceVersion if your package exposes interfaces to other software,
+# for instance if it includes DSOs or python/perl modules. See the developer guide for more info,
+# or ask on autopackage-dev if you don't understand interface versioning in autopackage.
+#
+# InterfaceVersion: 0.0
+
+[Description]
+netPanzer is an online multiplayer tactical warfare game designed for FAST
+ACTION combat. Gameplay concentrates on the core -- no resource management is
+needed. The game is based on quick tactical action and unit management in
+real-time. Battles progress quickly and constantly as destroyed players respawn
+with a set of new units. Players can join or leave multiplayer games at any
+time.
+
+[BuildPrepare]
+echo "OldRoot: $build_root"
+old_build_root="$build_root"  #prepareBuild changes build_root :-/
+APKG_BUILD_SKIP_MAKE=1
+APKG_BUILD_ROOT=0
+prepareBuild --enable-binreloc
+jam
+jam "-sDESTDIR=$old_build_root" install
+
+[BuildUnprepare]
+unprepareBuild
+
+[Imports]
+echo '*' | import
+
+[Prepare]
+# Dependency checking
+require @libsdl.org/sdl 1.2
+require @icculus.org/physfs 1.0
+
+[Install]
+# Put your installation script here
+installExe ./bin/*
+installData ./share/netpanzer
+installIcon ./share/pixmaps/*.png
+installDesktop ./share/applications
+
+[Uninstall]
+# Usually just the following line is enough to uninstall everything
+uninstallFromLog

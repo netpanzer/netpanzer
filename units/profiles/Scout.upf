@@ -1,0 +1,8 @@
+hitpoints =  25;
+attack =  5;
+reload =  20;
+range =  90000;
+regen =  25;
+defend_range =  54000;
+speed_rate =  18;
+speed_factor =  4;

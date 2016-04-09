@@ -1,0 +1,17 @@
+hitpoints =  100;
+attack =  200;
+reload =  100;
+range =  40;
+regen =  80;
+defend_range =  97;
+speed_rate =  18;
+speed_factor =  2;
+image =  "pics/menus/vehicleSelectionView/stinger.bmp"
+bodysprite =  "units/pics/pak/StinHNSD.pak"
+bodyshadow =  "units/pics/pak/StinHSSD.pak"
+turretsprite =  "units/pics/pak/StinTNSD.pak"
+turretshadow =  "units/pics/pak/StinTSSD.pak"
+soundselected =  "mu-selected"
+soundfire =  "mu-fire"
+weapon =  "QUADMISSILE"
+boundbox =  40

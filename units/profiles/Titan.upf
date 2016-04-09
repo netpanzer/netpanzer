@@ -1,0 +1,17 @@
+hitpoints =  1300;
+attack =  140;
+reload =  60;
+range =  31;
+regen =  60;
+defend_range =  28;
+speed_rate =  16;
+speed_factor =  2;
+image =  "pics/menus/vehicleSelectionView/titan.bmp"
+bodysprite =  "units/pics/pak/TitaHNSD.pak"
+bodyshadow =  "units/pics/pak/TitaHSSD.pak"
+turretsprite =  "units/pics/pak/TitaTNSD.pak"
+turretshadow =  "units/pics/pak/TitaTSSD.pak"
+soundselected =  "ht-selected"
+soundfire =  "ht-fire"
+weapon =  "SHELL"
+boundbox =  60
