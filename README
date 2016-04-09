@@ -50,9 +50,12 @@ building it. Here's a list of them:
   http://www.libsdl.org/projects/SDL_mixer/
 
 * Git (to fetch the source from repository)
+  https://git-scm.com/
 
 Thanks to all the authors of these helpful libraries that made our development
 easy and straightforward.
+
+To fetch the code source: git clone git://git.code.sf.net/p/netpanzer/git netpanzer-git
 
 
 
