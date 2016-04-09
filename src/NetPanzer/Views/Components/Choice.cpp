@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -177,8 +177,11 @@ void Choice::draw(Surface &dest)
     pos.y = position.y - Surface::getFontHeight() - 4;
 
     // Draw the name of the choice.
-    dest.bltStringShadowed( position.x, pos.y + adjustedY,
-                            componentName.c_str(), componentActiveTextColor, Color::black);
+    //dest.bltStringShadowed( position.x, pos.y + adjustedY,
+                            //componentName.c_str(), componentActiveTextColor, Color::black);
+
+    dest.bltString( position.x, pos.y + adjustedY,
+                            componentName.c_str(), Color::black);
 
     getBounds(r);
 
@@ -190,7 +193,8 @@ void Choice::draw(Surface &dest)
     s.FillRoundRect(iRect(1, 1, s.getWidth() - 2, s.getHeight() - 2), 4, componentBodyColor);
 
     if (!isOpen)	{
-        s.bltStringShadowedCenter(choiceList[index].c_str(), componentActiveTextColor, Color::black);
+        //s.bltStringShadowedCenter(choiceList[index].c_str(), componentActiveTextColor, Color::black);
+        s.bltStringCenter(choiceList[index].c_str(), Color::black);
     } else {
         r = iRect(position.x, position.y, position.x + size.x, position.y + ChoiceItemHeight);
 
@@ -205,7 +209,8 @@ void Choice::draw(Surface &dest)
                 s.bltStringCenter(choiceList[i].c_str(), Color::black);
 
             } else {
-                s.bltStringShadowedCenter(choiceList[i].c_str(), componentActiveTextColor, Color::black);
+                //s.bltStringShadowedCenter(choiceList[i].c_str(), componentActiveTextColor, Color::black);
+                s.bltStringCenter(choiceList[i].c_str(), Color::black);
             }
 
             r.translate(iXY(0, ChoiceItemHeight));

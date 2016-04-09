@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -54,7 +54,7 @@ static void sendOutpostStatus()
     if (!changeMade) {
         return;
     }
-    
+
     ObjectiveInterface::sendChangeGeneratingUnit(CURRENT_SELECTED_OUTPOST_ID,
                                                  (char)vsvSelectedUnit,
                                                  vsvUnitGenOn);
@@ -71,7 +71,7 @@ static void bSetPowerOn()
 {
     vsvUnitGenOn = true;
     changeMade   = true;
-    
+
     VehicleSelectionView::setPowerOn();
 }
 
@@ -89,9 +89,9 @@ public:
         setLocation(x, y);
         setUnitSelectionBorder();
     }
-    
+
     void actionPerformed( const mMouseEvent &e )
-    {        
+    {
         if ( e.getID() == mMouseEvent::MOUSE_EVENT_PRESSED )
         {
             resetState();
@@ -99,7 +99,7 @@ public:
                 Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
                 return;
             }
-            
+
             vsvSelectedUnit = unitType;
             changeMade      = true;
             bSetPowerOn();
@@ -182,6 +182,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     pos.x = getClientRect().getSizeX() - 102;
     if ( !buttonStaticDisplay )
         buttonStaticDisplay = new Button( "ButtonStaticDisplay");
+    buttonStaticDisplay->setTextColors(Color::black,Color::red,Color::darkGray);
     buttonStaticDisplay->setLabel("On");
     buttonStaticDisplay->setLocation(pos.x, pos.y);
     buttonStaticDisplay->setSize( 100, 14);
@@ -195,7 +196,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     pos.x = getClientRect().getSizeX() - 102;
     if ( !buttonPower )
         buttonPower = new Button( "ButtonPower");
-    
+    buttonPower->setTextColors(Color::black,Color::red,Color::darkGray);
     buttonPower->setLabel("Off");
     buttonPower->setLocation(pos.x,pos.y);
     buttonPower->setSize( 100, 14);
@@ -205,7 +206,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
 
     // XXX hardcoded for now
     int CHAR_XPIX = 8;
-    
+
     pos.x = 0;
     add( new Label( pos.x+2, pos.y+2, "Production:", Color::white) );
     productionUnitPos.x = (strlen("Current Unit:") + 1) * CHAR_XPIX + 2;
@@ -227,7 +228,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     pos.x = 0;
 
     Surface tempSurface;
-    
+
     UnitSelectionButton *usb;
     UnitProfile *uprofile;
     unitImages.create(48, 48, UnitProfileInterface::getNumUnitTypes());
@@ -235,16 +236,16 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     for ( unsigned int ut=0; ut < UnitProfileInterface::getNumUnitTypes(); ut++)
     {
         uprofile = UnitProfileInterface::getUnitProfile(ut);
-        
+
         tempSurface.loadBMP(uprofile->imagefile.c_str());
         unitImages.setFrame(ut);
         tempSurface.blt(unitImages, 0, 0);
-        
+
         usb = new UnitSelectionButton(this, uprofile->unitname.c_str(),
                                       ut, pos.x, pos.y, tempSurface);
-        
+
         add(usb);
-        
+
         pos.x += 48 + gapSpace;
         if ( pos.x+48 > max.x-min.x )
         {
@@ -252,7 +253,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
             pos.y += 48 + gapSpace;
         }
     }
-    
+
     if ( pos.x == 0 )
     {
         pos.y += gapSpace * 3; // and the one just added before = 4
@@ -262,7 +263,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
         pos.y += 48 + gapSpace * 4;
         pos.x = 0;
     }
-    
+
     unitProfileDataY = pos.y;
     pos.y += 73;
 
@@ -274,7 +275,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     pos.x = (getClientRect().getSizeX() - 100) / 2;
     if ( !buttonOk )
         buttonOk = new Button( "buttonClose");
-    
+    buttonOk->setTextColors(Color::black,Color::red,Color::darkGray);
     buttonOk->setLabel("Close");
     buttonOk->setLocation(pos.x,pos.y);
     buttonOk->setSize(100, 14);
@@ -305,7 +306,7 @@ void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
         changeMade = false;
         return;
     }
-    
+
     char strBuf[256];
 
     const int color = Color::white;
@@ -376,6 +377,7 @@ void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
             // Draw the name of the outpost.
         }}
 
+
     bltViewBackground(viewArea);
 
     int remaining_time = 0;
@@ -391,24 +393,24 @@ void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
     if (vsvUnitGenOn)
     {
         sprintf(strBuf, "%s", getUnitName(vsvSelectedUnit));
-        clientArea.bltString(   productionUnitPos.x, productionUnitPos.y, 
+        clientArea.bltString(   productionUnitPos.x, productionUnitPos.y,
                                 strBuf, color);
 
         sprintf(strBuf, "%01d:%02d/%01d:%02d",
                         remaining_time / 60, remaining_time % 60,
                         generation_time / 60, generation_time % 60);
-         
-        clientArea.bltString(   timeRequiredPos.x, timeRequiredPos.y, 
+
+        clientArea.bltString(   timeRequiredPos.x, timeRequiredPos.y,
                                 strBuf, color);
     }
     else
     {
         sprintf(strBuf, "power off");
-        clientArea.bltString(   productionUnitPos.x, productionUnitPos.y, 
+        clientArea.bltString(   productionUnitPos.x, productionUnitPos.y,
                                 strBuf, color);
 
         sprintf(strBuf, "power off");
-        clientArea.bltString(   timeRequiredPos.x, timeRequiredPos.y, 
+        clientArea.bltString(   timeRequiredPos.x, timeRequiredPos.y,
                                 strBuf, color);
     }
 
@@ -444,7 +446,7 @@ const char *VehicleSelectionView::getUnitName(int unitType)
         return p->unitname.c_str();
     }
     return "Invalid unit type.";
-    
+
  /*   if (unitType == _unit_type_valentine) {
         return "Manta";
     } else if (unitType == _unit_type_leopard) {
@@ -541,7 +543,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
         miniProductionRect.min = obj->area.getAbsRect(obj->location).min - gameViewRect.min;
         miniProductionRect.max.x = miniProductionRect.min.x + 140;
         miniProductionRect.max.y = miniProductionRect.min.y + (owned ? 50 : 20);
-        if ( obj->occupying_player ) 
+        if ( obj->occupying_player )
         {
             miniProductionRect.min.y-=16;
             int length = strlen( obj->occupying_player->getName().c_str() );
@@ -617,7 +619,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
         else
         {
             dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
-            if ( obj->occupying_player) 
+            if ( obj->occupying_player)
             {
                 dest.bltString(pos.x, pos.y, outpostUserNameBuf, Color::cyan);
                 pos.y += 16;
@@ -755,7 +757,9 @@ void VehicleSelectionView::actionPerformed(mMouseEvent me)
                 buttonStaticDisplay->setLabel("On");
             }
 
-            VehicleSelectionView::displayMiniProductionStatus = !VehicleSelectionView::displayMiniProductionStatus;
+           VehicleSelectionView::displayMiniProductionStatus = !VehicleSelectionView::displayMiniProductionStatus;
+
+
         }
 
         if (me.getSource()==buttonPower) {

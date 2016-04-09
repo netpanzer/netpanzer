@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -20,8 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameView.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "Views/Components/Desktop.hpp"
-#include "Classes/WorldInputCmdProcessor.hpp"
-
+//#include "Classes/WorldInputCmdProcessor.hpp"
 // HelpScrollView
 //---------------------------------------------------------------------------
 HelpScrollView::HelpScrollView() : SpecialButtonView()
@@ -35,6 +34,9 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
 
     moveTo(bodyTextRect.min);
     resize(bodyTextRect.getSize());
+    //moveTo(iXY(0, 0));
+    //resize(iXY(800, 600));
+
 
     insert("Key");
     insert("");
@@ -79,7 +81,7 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     insert("Chat Related");
     insert("");
     insert("  Enter                            Send message to all");
-    insert("  Ctrl + 'A'                       Send message to allies");
+    insert("  'T'                              Send message to allies");
     insert("  'C'                              Send count down message");
     insert("");
     insert("");
@@ -155,6 +157,7 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     upButton->setLocation(pos.x, pos.y);
     upButton->setSize(size.x, size.y);
     upButton->setNormalBorder();
+    upButton->setTextColors(Color::darkGray, Color::red, Color::gray);
     add(upButton);
 
     pos = iXY(getClientRect().getSizeX() - size.x, getClientRect().getSizeY() - size.y);
@@ -163,18 +166,23 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     downButton->setLocation(pos.x, pos.y);
     downButton->setSize(size.x, size.y);
     downButton->setNormalBorder();
+    downButton->setTextColors(Color::darkGray, Color::red, Color::gray);
     add(downButton);
 
 } // end HelpScrollView::HelpScrollView
 
 // doDraw
 //---------------------------------------------------------------------------
+
 void HelpScrollView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    if (Desktop::getVisible("GameView")) {
-        bltViewBackground(viewArea);
-    }
+    //if (Desktop::getVisible("GameView")) {
+    //    bltViewBackground(viewArea);
+    //}
 
+
+
+    //clientArea.FillRoundRect(getClientRect(), 10, Color::darkGray);
     drawHelpText(clientArea, 0, 0);
 
     clientArea.bltString(   4,
@@ -186,14 +194,16 @@ void HelpScrollView::doDraw(Surface &viewArea, Surface &clientArea)
     //clientArea.bltStringCenter(strBuf, Color::red);
 
     View::doDraw(viewArea, clientArea);
+
 } // end HelpScrollView::doDraw
+
 
 // drawHelpText
 //--------------------------------------------------------------------------
 void HelpScrollView::drawHelpText(Surface &dest, const int &, const int &)
 {
-    PIX color   = windowTextColor;
-
+    //PIX color   = windowTextColor;
+    PIX color   = Color::black;
     //if (scrollBar != 0)
     //{
     //	int minView = scrollBar->getValue();
@@ -247,10 +257,10 @@ void HelpScrollView::doActivate()
 {
     /* empty */
 } // end HelpScrollView::doActivate
-
+/*
 void HelpScrollView::processEvents()
 {
     if ( Desktop::getVisible("GameView") )
         COMMAND_PROCESSOR.process(false);
 }
-
+*/

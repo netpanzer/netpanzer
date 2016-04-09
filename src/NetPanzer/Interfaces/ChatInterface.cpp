@@ -118,6 +118,15 @@ static void chatMessageRequest(const NetPacket* packet)
     int text_len = chat_request->getTextLen(packet->size);
     const NPString text(chat_request->message_text, 0, text_len);
 
+    //LOGGER.warning("CHAT PACKET LENGTH %u", text_len);
+
+    if (text_len > 150)
+    {
+        ChatInterface::serversayTo(packet->fromPlayer, "Max 150 chars allowed!");
+        return;
+    }
+
+
     chat_mesg.setSourcePlayerIndex(packet->fromPlayer);
     chat_mesg.message_scope = chat_request->message_scope;
     text.copy(chat_mesg.message_text, text_len);
@@ -177,6 +186,9 @@ static void chatMessageRequest(const NetPacket* packet)
 
         player_state = PlayerInterface::getPlayer(packet->fromPlayer);
 
+        if (PlayerInterface::isPlayerActive(packet->fromPlayer))
+        {
+
         PIX color = Color::white;
 
         switch (chat_request->message_scope)
@@ -198,6 +210,16 @@ static void chatMessageRequest(const NetPacket* packet)
         // TODO add unitcolor
         ConsoleInterface::postMessage(color, true, player_state->getFlag(),
                         "%s: %s", player_state->getName().c_str(), text.c_str());
+
+        }
+        else
+        {
+        LOGGER.warning("Player not active trying to send msg!");
+        //SERVER->kickClient(SERVER->getClientSocketByPlayerIndex((unsigned short) packet->fromPlayer));
+        return;
+        }
+
+
     }
 }
 

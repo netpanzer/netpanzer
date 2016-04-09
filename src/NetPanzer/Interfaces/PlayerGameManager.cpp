@@ -1,16 +1,16 @@
 /*
 Copyright (C) 2003 Ivo Danihelka <ivo@danihelka.net>
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -63,6 +63,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/OrderingView.hpp"
 #include "Views/MainMenu/SkirmishView.hpp"
 #include "Views/MainMenu/HelpView.hpp"
+#include "Views/MainMenu/CreditsView.hpp"
 #include "Views/MainMenu/Multi/JoinView.hpp"
 #include "Views/MainMenu/Multi/HostView.hpp"
 #include "Views/MainMenu/Multi/GetSessionView.hpp"
@@ -73,6 +74,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/Multi/PlayerNameView.hpp"
 #include "Views/MainMenu/Multi/IPAddressView.hpp"
 #include "Views/MainMenu/Multi/ServerListView.hpp"
+#include "Views/MainMenu/Multi/TipsView.hpp"
 
 #include "Views/Game/RankView.hpp"
 #include "Views/Game/EndRoundView.hpp"
@@ -81,6 +83,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Game/CodeStatsView.hpp"
 #include "Views/Game/LibView.hpp"
 #include "Views/Game/HelpScrollView.hpp"
+#include "Views/Game/HelpScrollViewAlt.hpp"
 #include "Views/Game/ResignView.hpp"
 #include "Views/Game/AreYouSureResignView.hpp"
 #include "Views/Game/AreYouSureExitView.hpp"
@@ -141,7 +144,7 @@ void PlayerGameManager::initializeSoundSubSystem()
 {
     delete sound;
     sound = 0;
-    
+
     LOGGER.info("Initializing sound system.");
     try {
         if ( GameConfig::sound_enable )
@@ -179,7 +182,7 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new CodeStatsView());
     Desktop::add(new LibView());
     Desktop::add(new HelpScrollView());
-
+    Desktop::add(new HelpScrollViewAlt());
     LoadingView *lv = new LoadingView();
     Desktop::add(lv);
 
@@ -192,13 +195,14 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new OptionsTemplateView());
     Desktop::add(new OrderingView());
     Desktop::add(new HelpView());
+    Desktop::add(new CreditsView());
     Desktop::add(new HostOptionsView());
     Desktop::add(new PlayerNameView());
     Desktop::add(new ResignView());
     Desktop::add(new AreYouSureResignView());
     Desktop::add(new AreYouSureExitView());
     Desktop::add(new DisconectedView());
-
+    Desktop::add(new TipsView());
     Desktop::add(new IPAddressView());
     Desktop::add(new ServerListView());
 
@@ -280,7 +284,7 @@ void PlayerGameManager::hostMultiPlayerGame()
     LoadingView::show();
     // refresh the view in each append
     LoadingView::append( "Launching Server ..." );
-    
+
     ScriptManager::runFile("server_commands_load","scripts/servercommands.lua");
     ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
 
@@ -327,7 +331,7 @@ void PlayerGameManager::hostMultiPlayerGame()
         LoadingView::loadError();
         return;
     }
-    
+
     // refresh views
     LoadingView::update( "Launching Server ... (100%) " );
     graphicsLoop();
@@ -337,7 +341,7 @@ void PlayerGameManager::hostMultiPlayerGame()
 
     LoadingView::append( "Loading Game Data ..." );
     graphicsLoop();
-    
+
     GameConfig::game_map->assign( MapsManager::getNextMap("") );
     const char* mapname = GameConfig::game_map->c_str();
 
@@ -401,16 +405,16 @@ void PlayerGameManager::hostMultiPlayerGame()
 
     LoadingView::update( "Initializing Game Logic ... (100%) " );
     graphicsLoop();
-    
+
     LoadingView::append( "Spawning Player ..." );
     graphicsLoop();
-    
+
     player_state = PlayerInterface::allocateLoopBackPlayer();
     const char* playername = GameConfig::player_name->c_str();
     player_state->setName(playername);
-    
+
     LoadingView::update( "Spawning Player ... (100%)" );
-    
+
     graphicsLoop();
 
     wait.changePeriod( 3 );
@@ -511,7 +515,7 @@ bool PlayerGameManager::mainLoop()
 //-----------------------------------------------------------------
 void PlayerGameManager::processSystemKeys()
 {
-    if (Desktop::getVisible("GameView")) 
+    if (Desktop::getVisible("GameView"))
     {
 
         if (KeyboardInterface::getKeyState( SDLK_LALT ) ||
@@ -530,9 +534,9 @@ void PlayerGameManager::processSystemKeys()
         if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE)) {
             if (!Desktop::getView("OptionsView")->getVisible())
             {
-                if ( Desktop::getVisible("HelpScrollView") )
+                if ( Desktop::getVisible("HelpScrollViewAlt") )
                 {
-                    Desktop::toggleVisibility("HelpScrollView");
+                    Desktop::toggleVisibility("HelpScrollViewAlt");
                 }
                 else if ( Desktop::getVisible("GFlagSelectionView") )
                 {

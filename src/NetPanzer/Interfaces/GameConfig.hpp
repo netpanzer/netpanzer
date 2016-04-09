@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -148,10 +148,14 @@ public:
     static int       game_cloudcoverage;
     static int       game_respawntype;
     static int       game_windspeed;
+    static int       game_lowscorelimit;
+    static int       game_anticheat;
+    //static int       game_maxchatlines;
     static NPString* game_map;
     static NPString* game_mapcycle;
 
     static Uint8 player_flag_data[FLAG_WIDTH*FLAG_HEIGHT];
+    static Uint8 bot_flag_data[FLAG_WIDTH*FLAG_HEIGHT];
 
     // game Settings (there are not saved to disk)
     ConfigInt       hostorjoin;         // 1=host, 2=join
@@ -195,7 +199,7 @@ public:
     static int       radar_alliedoutpostcolor;
     static int       radar_enemyoutpostcolor;
     static int       radar_unitsize;
-    
+
 public:
     const char* getGameTypeString() const
     {
@@ -248,7 +252,7 @@ public:
     {
         return( colorEnumToPix( radar_selectedunitcolor ) );
     }
-    
+
     PIX getAlliedRadarUnitColor() const
     {
         return( colorEnumToPix( radar_alliedunitcolor ) );
@@ -263,12 +267,12 @@ public:
     {
         return( colorEnumToPix( radar_alliedoutpostcolor ) );
     }
-    
+
     PIX getEnemyOutpostRadarColor() const
     {
         return( colorEnumToPix( radar_enemyoutpostcolor ) );
     }
-    
+
     PIX getVehicleSelectionBoxColor() const
     {
         return( colorEnumToPix( interface_vehicleselectioncolor ) );

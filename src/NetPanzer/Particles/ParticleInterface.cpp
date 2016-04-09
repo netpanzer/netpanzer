@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -381,15 +381,17 @@ void ParticleInterface::addExplosionSmokeSystem(const iXY &worldPos, const iRect
     (void) maxParticleCount;
     (void) maxParticleSpeed;
     // Chooses light or dark smoke.
+    /*
     int particleNum = rand() % 2;
 
     PUFF_TYPE particleType;
 
-    if      (particleNum == 0) {
+    if (particleNum == 0) {
         particleType = LIGHT;
     } else if (particleNum == 1) {
         particleType = DARK;
     }
+    */
     //if (particleNum == 2) { particleType = DIRT_PUFF; }
 
     //fXYZ  pos(worldPos.x, 0, worldPos.y);
@@ -743,7 +745,7 @@ void ParticleInterface::buildUnitTables()
 {
     unitHitPointTable.resize(UnitProfileInterface::getNumUnitTypes());
     unitAttackFactorTable.resize(UnitProfileInterface::getNumUnitTypes());
-    
+
     for (unsigned int i = 0; i < UnitProfileInterface::getNumUnitTypes(); i++) {
         UnitProfile *p = UnitProfileInterface::getUnitProfile(i);
 
@@ -980,12 +982,12 @@ void ParticleInterface::getUnitParticleInfo()
 {
     // Create the correct number of unit information slots.
     unitParticleInfo.resize(UnitProfileInterface::getNumUnitTypes());
-    
+
     for ( unsigned int i=0; i< UnitProfileInterface::getNumUnitTypes(); i++ )
     {
         UnitProfile * uprofile = UnitProfileInterface::getUnitProfile(i);
         getMuzzleTips(uprofile->turretSprite, unitParticleInfo[i].muzzleTip);
-        getMinBounds(uprofile->bodySprite, unitParticleInfo[i].minBounds);        
+        getMinBounds(uprofile->bodySprite, unitParticleInfo[i].minBounds);
     }
 }
 

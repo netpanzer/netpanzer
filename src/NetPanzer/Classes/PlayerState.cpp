@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Resources/ResourceManager.hpp"
 #include <sstream>
 
+
 PlayerID NetworkPlayerState::getPlayerIndex() const
 {
     return id;
@@ -92,7 +93,7 @@ Uint8 *playerColorArray[] = {
 	&Color::gray224
 };
 
-static const size_t playerColorCount 
+static const size_t playerColorCount
     = sizeof(playerColorArray) / sizeof(Uint8*);
 
 Uint8
@@ -137,16 +138,22 @@ void PlayerState::operator= (const PlayerState& other)
     autokick.reset();
 }
 
+
+
 void PlayerState::setName(const std::string& newname)
 {
-    if ( newname.length() > 63 )
+    if ( newname.length() > 24 )
     {
-        name = newname.substr(0,63);
+        name = newname.substr(0,24); //was 63
     }
     else
     {
         name = newname;
     }
+
+    //
+    // todo strip & trim
+    //
 
     int namenum=1;
     bool recheck;
@@ -158,7 +165,7 @@ void PlayerState::setName(const std::string& newname)
         {
             if ( p == id )
                 continue;
-                
+
             PlayerState *ps=PlayerInterface::getPlayer(p);
             if ( (ps->isConnecting() || ps->isActive())
                && ps->name == name
@@ -167,13 +174,13 @@ void PlayerState::setName(const std::string& newname)
                 std::stringstream ssnamenum;
                 ssnamenum << "(" << namenum++ << ")";
                 std::string strnum=ssnamenum.str();
-                
+
                 std::string::size_type newlen = newname.length();
-                if ( newlen+strnum.length() > 63 )
+                if ( newlen+strnum.length() > 24 )
                 {
-                    newlen -= strnum.length() - (63 - newlen);  
+                    newlen -= strnum.length() - (24 - newlen);
                 }
-                
+
                 name = newname.substr(0,newlen)+strnum;
                 recheck=true;
                 break;
@@ -317,7 +324,7 @@ NetworkPlayerState PlayerState::getNetworkPlayerState() const
     state.loss_points = htol16(loss_points);
     state.total = htol16(total);
     state.objectives_held = htol16(objectives_held);
-    
+
     return state;
 }
 
@@ -338,7 +345,7 @@ void PlayerState::getNetworkPlayerState(NetworkPlayerState& state) const
 void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
 {
     char tmp[64];
-    memcpy(tmp, state->name, 64); 
+    memcpy(tmp, state->name, 64);
     tmp[63] = 0;
     name = tmp;
     id = state->id;

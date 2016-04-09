@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -39,32 +39,32 @@ public:
         position.y = y;
         xend = endx;
     }
-    
+
     void draw(Surface &dest);
-    
+
     virtual void render()
     {
         // nothing
     }
-    
+
     void actionPerformed(const mMouseEvent &me)
     {
         // nothing
     }
-    
+
 private:
     string text;
     int xend;
 };
 
 void Separator::draw(Surface &dest)
-{    
+{
     dest.drawLine(position.x, position.y+3, position.x+20, position.y+3, foreground);
-    dest.drawLine(position.x, position.y+2, position.x+20, position.y+2, Color::black);
-    dest.bltStringShadowed(position.x+25,position.y, text.c_str(),  foreground, Color::black);
+    //dest.drawLine(position.x, position.y+2, position.x+20, position.y+2, Color::gray);
+    dest.bltStringShadowed(position.x+25,position.y, text.c_str(),  foreground, Color::gray);
     int lentxt = 30+dest.getTextLength(text);
     dest.drawLine(position.x+lentxt, position.y+3, xend, position.y+3, foreground);
-    dest.drawLine(position.x+lentxt, position.y+2, xend, position.y+2, Color::black);
+    //dest.drawLine(position.x+lentxt, position.y+2, xend, position.y+2, Color::gray);
 }
 
 static void bIncreaseScrollRate()
@@ -167,7 +167,7 @@ void OptionsTemplateView::initButtons()
     //----------------------------------------------------------------------
     int minWidth = 19 * 8;
 
-    add( new Separator( bodyTextRect.min.x, y, bodyTextRect.max.x,  "VISUAL", componentActiveTextColor) );
+    add( new Separator( bodyTextRect.min.x, y, bodyTextRect.max.x,  "VISUAL", Color::gray) );
     y += yOffset;
     x = xTextStart;
     checkBoxFullscreen = new CheckBox();
@@ -195,7 +195,7 @@ void OptionsTemplateView::initButtons()
     {
         while ( modes[cur_mode] )
         {
-            if ((modes[cur_mode]->w > 799) && (modes[cur_mode]->h > 599) ) 
+            if ((modes[cur_mode]->w > 799) && (modes[cur_mode]->h > 599) )
             {
                 snprintf(res_str,sizeof(res_str),"%dx%d", modes[cur_mode]->w, modes[cur_mode]->h);
                 res_str[sizeof(res_str)-1] = 0;
@@ -222,7 +222,7 @@ void OptionsTemplateView::initButtons()
     checkBoxBlendSmoke->setStateChangedCallback(this);
     add(checkBoxBlendSmoke);
     y += yOffset;
- 
+
 #ifdef _WIN32
     x = xTextStart;
     checkBoxUseDirectX = new CheckBox();
@@ -244,9 +244,9 @@ void OptionsTemplateView::initButtons()
     choiceMiniMapUnitSize->setStateChangedCallback(this);
     add(choiceMiniMapUnitSize);
     y += yOffset*2;
-   
+
 // VISUAL OPTIONS
-    add( new Separator( bodyTextRect.min.x, y, bodyTextRect.max.x,  "INTERFACE", componentActiveTextColor) );
+    add( new Separator( bodyTextRect.min.x, y, bodyTextRect.max.x,  "INTERFACE", Color::gray) );
 
     y += yOffset;
     x = xTextStart;
@@ -259,7 +259,7 @@ void OptionsTemplateView::initButtons()
 
 // SOUND OPTIONS
 
-    add( new Separator( bodyTextRect.min.x, y, bodyTextRect.max.x,  "SOUND", componentActiveTextColor) );
+    add( new Separator( bodyTextRect.min.x, y, bodyTextRect.max.x,  "SOUND", Color::gray) );
 
     y += yOffset;
     x = xTextStart;
@@ -281,7 +281,7 @@ void OptionsTemplateView::initButtons()
     addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseSoundVolume);
     y += yOffset;
 
-    y += yOffset; 
+    y += yOffset;
     x = xTextStart;
     add( new Label( x, y, "Music Status:", windowTextColor) );
     checkBoxMusicEnabled = new CheckBox();
@@ -330,7 +330,7 @@ void OptionsTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
     tempSurface.bltStringCenter(strBuf, meterTextColor);
     tempSurface.blt(clientArea, x, y);
     y += yOffset*2;
-    
+
     // Sound Volume
     y += yOffset*3;
     tempSurface.fill(meterColor);
@@ -417,7 +417,7 @@ void OptionsTemplateView::stateChanged(Component* source)
     else if ( source == checkBoxMusicEnabled )
     {
         GameConfig::sound_music = checkBoxMusicEnabled->getState();
-       
+
         if ( checkBoxMusicEnabled->getState() ) {
             sound->playMusic("sound/music/");
             checkBoxMusicEnabled->setLabel("Enabled");
@@ -457,6 +457,7 @@ void OptionsTemplateView::stateChanged(Component* source)
 //---------------------------------------------------------------------------
 void OptionsTemplateView::loadBackgroundSurface()
 {
+   MenuTemplateView::loadBackgroundSurface();
 } // end OptionsTemplateView::loadBackgroundSurface
 
 // loadTitleSurface

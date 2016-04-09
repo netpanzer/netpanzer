@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -201,7 +201,7 @@ void cInputField::addChar(int newChar)
     pressKey(newChar);
     // Check if the character should be excluded.
     if (strchr(excludedCharacters, newChar) == 0) {
-        
+
         // Add the character.
         if(insertMode) {
             // ins, move stuff forward
@@ -322,7 +322,7 @@ void cInputField::draw(Surface &dest)
 
     inputFieldSurface.fill(componentTextColor);
     inputFieldSurface.drawButtonBorder(topLeftBorderColor, Color::gray64);
-    inputFieldSurface.bltString(4, 2, destString+strDisplayStart, componentActiveTextColor);
+    inputFieldSurface.bltString(4, 2, destString+strDisplayStart, Color::white); // forced lightGray instead of global
     inputFieldSurface.blt(dest, pos.x, pos.y);
 } // draw
 
@@ -338,7 +338,7 @@ void cInputField::drawHighlighted(Surface &dest)
     inputFieldSurface.bltStringShadowed(4, 2,
                                         destString+strDisplayStart,
                                         Color::white,
-                                        Color::black);
+                                        Color::darkGray);
 
     static float timeForBlink = 0.0f;
     if ((timeForBlink += TimerInterface::getTimeSlice()) > 0.25f) {

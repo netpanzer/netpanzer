@@ -8,7 +8,7 @@ import subprocess
 # Set NetPanzer Version
 ################################################################
 
-NPVERSION = ''
+NPVERSION = '0.8.7'
 SVERSION = ''
 
 try:
@@ -131,15 +131,16 @@ env.Append( LINKFLAGS = [ '-static-libgcc' ] )
 
 if env['mode'] == 'debug':
     env.Append(CCFLAGS = ['-g', '-O0'])
-    exeappend = '-debug'
+    #exeappend = '-debug'
 else:
     if env['cross'] == 'mingw':
         # it seems -O2 makes the mingw port to crash, use -O1
         env.Append(CCFLAGS = '-O1')
     else:
         env.Append(CCFLAGS = '-O2')
-    env.Append(CCFLAGS = '-s')
-
+        env.Append(CCFLAGS = '-s')
+        # if needed to built static...
+        #env.Append( LINKFLAGS = [ '-static-libgcc', '-static-libstdc++' ] )
 env.Append(CCFLAGS = ['-Wall'])
 
 # keep for reference for when redoing the linux cross compilation
@@ -153,13 +154,13 @@ env.Append(CCFLAGS = ['-Wall'])
 #    #crosslinuxenv.Prepend( _LIBFLAGS = [ '-lstdc++' ] )
 #    #crosslinuxenv.Append( _LIBFLAGS = [ '`' + crosslinuxenv['CXX'] + ' -print-file-name=libstdc++.a`' ] )
 #    #crosslinuxenv.Prepend( _LIBFLAGS = [ '/usr/local/gcc/i686-linux/lib/gcc/i686-linux/4.2.4/../../../../i686-linux/lib/libstdc++.a' ] )
-    
+
 
 env.VariantDir(buildpath,'.',duplicate=0)
 
 luaenv = env.Clone()
 physfsenv = env.Clone()
-networkenv = env.Clone()    
+networkenv = env.Clone()
 
 ################################################################
 # Configure Environments
@@ -187,12 +188,15 @@ if thisplatform == 'darwin':
     env.AppendUnique(FRAMEWORKS=Split('SDL SDL_mixer Cocoa IOKit'))
     env.Append( NPSOURCES =  ['support/macosx/SDLMain.m'] )
 elif thisplatform == 'win32':
-    env.Append( CPPPATH = [ 'C:/mingw/include/SDL' ] )
+
+    env.Append( CPPPATH = [ 'C:/MinGW/include/SDL' ] )
+    networkenv.Append( CPPPATH = [ 'C:/MinGW/include/SDL' ] )
+    #env.Append( LIBPATH = [ 'C:/MinGW/lib' ] )
     env.Append( LIBS = [ 'ws2_32', 'mingw32', 'SDLMain', 'SDL' ] )
     env.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
     networkenv.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
     env.Append( _LIBFLAGS = [ '-mwindows' ] )
-    env.Prepend( _LIBFLAGS = [ 'c:/mingw/lib/SDL_mixer.lib' ] )
+    env.Prepend( _LIBFLAGS = [ 'C:/MinGW/lib/SDL_mixer.lib' ] )
     env['WINICON'] = env.RES( 'support/icon/npicon.rc' )
     SetupSpawn(env)
 else:

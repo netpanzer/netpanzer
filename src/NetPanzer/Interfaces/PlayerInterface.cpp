@@ -1,6 +1,6 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
@@ -10,7 +10,7 @@ This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -31,6 +31,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/PlayerNetMessage.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Util/Log.hpp"
+
+#include "Classes/Network/NetworkState.hpp" // needed to flag server or client state
 
 // ** PlayerInterface Statics
 PlayerState   * PlayerInterface::player_lists = 0;
@@ -444,7 +446,7 @@ bool PlayerInterface::testRulePlayerRespawn( bool *completed, PlayerState **play
     {
         *completed = false;
     }
-    
+
     if (  player_lists[ respawn_rule_player_index ].isPlaying()
        && UnitInterface::getUnitCount( respawn_rule_player_index ) == 0 )
     {
@@ -459,6 +461,8 @@ bool PlayerInterface::testRulePlayerRespawn( bool *completed, PlayerState **play
 
 void PlayerInterface::netMessageConnectID(const NetMessage* message)
 {
+    if ( NetworkState::status == _network_state_client ) // client only (security fix)
+    {
     const PlayerConnectID *connect_mesg
         = (const PlayerConnectID *) message;
 
@@ -472,10 +476,13 @@ void PlayerInterface::netMessageConnectID(const NetMessage* message)
 //    player_lists[local_player_index].setFromNetworkPlayerState
 //        (&connect_mesg->connect_state);
 //    SDL_mutexV(mutex);
+    }
 }
 
 void PlayerInterface::netMessageSyncState(const NetMessage* message)
 {
+    if ( NetworkState::status == _network_state_client ) // client only (security fix)
+    {
     const PlayerStateSync *sync_mesg
         = (const PlayerStateSync *) message;
     PlayerID player_id = sync_mesg->player_state.getPlayerIndex();
@@ -484,7 +491,7 @@ void PlayerInterface::netMessageSyncState(const NetMessage* message)
         LOGGER.warning("Malformed MessageSyncState message");
         return;
     }
-    
+
     SDL_mutexP(mutex);
         player_lists[player_id].setFromNetworkPlayerState(&sync_mesg->player_state);
         // XXX ALLY
@@ -497,15 +504,18 @@ void PlayerInterface::netMessageSyncState(const NetMessage* message)
             Desktop::setVisibility("GFlagSelectionView", true);
         }
     SDL_mutexV(mutex);
+    }
 }
 
 void PlayerInterface::netMessageScoreUpdate(const NetMessage *message)
 {
-    const PlayerScoreUpdate* score_update 
+    if ( NetworkState::status == _network_state_client ) // client only (security fix)
+    {
+    const PlayerScoreUpdate* score_update
         = (const PlayerScoreUpdate *) message;
 
     if(score_update->getKillByPlayerIndex() >= PlayerInterface::getMaxPlayers()
-            || score_update->getKillOnPlayerIndex() 
+            || score_update->getKillOnPlayerIndex()
             >= PlayerInterface::getMaxPlayers())
     {
         LOGGER.warning("Malformed score update packet.");
@@ -515,6 +525,7 @@ void PlayerInterface::netMessageScoreUpdate(const NetMessage *message)
     PlayerState* player1 = getPlayer(score_update->getKillByPlayerIndex());
     PlayerState* player2 = getPlayer(score_update->getKillOnPlayerIndex());
     setKill(player1, player2, (UnitType) score_update->unit_type );
+    }
 }
 
 void PlayerInterface::netMessageAllianceRequest(const NetMessage *message)
@@ -658,6 +669,6 @@ void PlayerInterface::disconnectPlayerCleanup( PlayerID player_id )
 void PlayerInterface::SyncFlagTimer()
 {
     PlayerFlagTimerUpdate player_flagtimer_update(gameconfig->game_changeflagtime);
-    
+
     SERVER->broadcastMessage(&player_flagtimer_update, sizeof(PlayerFlagTimerUpdate));
 }

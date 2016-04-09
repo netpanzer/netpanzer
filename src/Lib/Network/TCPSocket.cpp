@@ -49,8 +49,14 @@ TCPSocket::TCPSocket(const Address& address, TCPSocketObserver *o)
     throw(NetworkException)
     : SocketBase(address,true), observer(o)
 {
+#ifdef _WIN32
+    setNoDelay();
+    doConnect();
+#else
     doConnect();
     setNoDelay();
+#endif
+
 }
 
 TCPSocket::~TCPSocket()
@@ -63,8 +69,13 @@ TCPSocket::onResolved()
     create();
     setNonBlocking();
     setConfigured();
+#ifdef _WIN32
+    setNoDelay();
+    doConnect();
+#else
     doConnect();
     setNoDelay();
+#endif
 }
 
 void

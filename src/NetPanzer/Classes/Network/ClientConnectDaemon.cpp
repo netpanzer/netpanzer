@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -37,6 +37,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Core/NetworkGlobals.hpp"
 
 #include "System/Sound.hpp"
+
+//#include "Classes/Network/NetworkClient.hpp"
+#include "Classes/Network/NetworkState.hpp"
+#include "Classes/Network/SystemNetMessage.hpp"
+//#include "Classes/Network/ConnectNetMessage.hpp"
+#include "Classes/Network/PlayerNetMessage.hpp"
+
+
+
 
 enum { _connect_state_idle = 0,
        _connect_state_waiting_link,
@@ -76,14 +85,14 @@ void ClientConnectDaemon::shutdownConnectDaemon()
     CLIENT->sendRemaining();
 }
 
-void ClientConnectDaemon::startConnectionProcess( )
+void ClientConnectDaemon::startConnectionProcess()
 {
     failure_display_timer.changePeriod( 10 );
     time_out_timer.changePeriod( _CLIENT_CONNECT_TIME_OUT_TIME );
     time_out_counter = 0;
     connection_state = _connect_state_waiting_link;
     LoadingView::append("");
-    LoadingView::append(NPString("Conecting to server ") + gameconfig->serverConnect.c_str());
+    LoadingView::append(NPString("Connecting to server ") + gameconfig->serverConnect.c_str());
 }
 
 unsigned char ClientConnectDaemon::netMessageLinkAck(const NetMessage* message)
@@ -217,6 +226,21 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(const NetMessage* mess
             LoadingView::append( "Game Synchronized" );
             LoadingView::loadFinish();
             connection_state = _connect_state_idle;
+
+                    if ( NetworkState::status == _network_state_bot )
+                    {
+
+                       UpdatePlayerFlag upf;
+                       Uint8 cnupf[280];
+                       for(int i = 0; i < 280; i++)
+                       {
+                        cnupf[i] = 51;
+                       }
+                       memcpy(&upf.player_flag, cnupf, 280);
+                       CLIENT->sendMessage( &upf, sizeof(upf));
+                    }
+
+
         }
         break;
     }
@@ -365,6 +389,8 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                     CLIENT->sendMessage( &client_setting, sizeof(ConnectClientSettings));
 
                     connection_state = _connect_state_wait_for_server_game_setup;
+
+
                 }
             }
             else if ( time_out_timer.count() )
@@ -447,6 +473,12 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
 
 
         case _connect_state_sync_profiles : {
+
+
+                    //connection_state = _connect_state_idle;
+
+
+
                 // nothing, will change when sync complete
             }
             break;

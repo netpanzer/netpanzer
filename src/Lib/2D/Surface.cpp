@@ -1422,6 +1422,14 @@ void Surface::bltStringCenter(const char *string, PIX color)
 
 } // end Surface::bltStringCenter
 
+void Surface::bltStringCenterMin30(const char *string, PIX color)
+{
+    bltString(  (getWidth() - (strlen(string) * ascii8x8.getWidth())) / 2,
+                (getHeight() - getFontHeight()) / 2 - 30,
+                string, color);
+
+} // end Surface::bltStringCenter
+
 // bltStringShadowedCenter
 //---------------------------------------------------------------------------
 // Purpose: Blits a string of text and centers it horizontally and vertically

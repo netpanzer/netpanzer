@@ -108,7 +108,8 @@ void GFlagSelectionView::init()
 
     int tx = rect.min.x + 20;
     int ty = rect.min.y + 14 + (FLAG_HEIGHT - Surface::getFontHeight()) / 2;
-    add( new Label(tx, ty, "Current:", windowTextColor, windowTextColorShadow, true) );
+    //add( new Label(tx, ty, "Current:", windowTextColor, windowTextColorShadow, true) );
+    add( new Label(tx, ty, "Current:", Color::lightGray, Color::lightGray, false) );
 
     loc_player_flag.x = tx + Surface::getTextLength("Current:") + BORDER_SPACE;
     loc_player_flag.y = rect.min.y + 14;

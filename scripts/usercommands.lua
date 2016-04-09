@@ -2,10 +2,92 @@ UserCommands =
 {
     say_help = "Says something to all players",
     say = function(param)
-        if param then
-            netpanzer.say(param);
-        end
+
+
+
+    if param == "aff" then
+
+            netpanzer.say("   ###    ######## ########"); 
+            netpanzer.say("  ## ##   ##       ##      ");
+            netpanzer.say(" ##   ##  ##       ##      ");
+            netpanzer.say("##     ## ######   ######  ");
+            netpanzer.say("######### ##       ##      ");
+            netpanzer.say("##     ## ##       ##      ");
+            netpanzer.say("##     ## ##       ##      ");
+
+
+    elseif param == "war" then
+
+            netpanzer.say("##      ##    ###    ########     #### "); 
+            netpanzer.say("##  ##  ##   ## ##   ##     ##    #### ");
+            netpanzer.say("##  ##  ##  ##   ##  ##     ##    #### ");
+            netpanzer.say("##  ##  ## ##     ## ########      ##  ");
+            netpanzer.say("##  ##  ## ######### ##   ##           ");
+            netpanzer.say("##  ##  ## ##     ## ##    ##     #### ");
+            netpanzer.say(" ###  ###  ##     ## ##     ##    #### ");  
+
+
+    elseif param == "help" then
+
+            netpanzer.say("##    ## ######## ##       #######  "); 
+            netpanzer.say("##    ## ##       ##       ##    ## ");
+            netpanzer.say("##    ## ##       ##       ##    ## ");
+            netpanzer.say("######## ######   ##       #######  ");
+            netpanzer.say("##    ## ##       ##       ##       ");
+            netpanzer.say("##    ## ##       ##       ##       ");
+            netpanzer.say("##    ## ######## ######## ##       ");  
+
+
+    elseif param == "powned" then
+
+			netpanzer.say("#####   ####  #    # #    # ###### #####");
+			netpanzer.say("#    # #    # #    # ##   # #      #    #");
+			netpanzer.say("#    # #    # #    # # #  # #####  #    #");
+			netpanzer.say("#####  #    # # ## # #  # # #      #    #");
+			netpanzer.say("#      #    # ##  ## #   ## #      #    #");
+			netpanzer.say("#       ####  #    # #    # ###### #####");
+
+
+    elseif param == "omg" then
+
+			netpanzer.say(" ####  #    #  ####");
+			netpanzer.say("#    # ##  ## #    #");
+			netpanzer.say("#    # # ## # #");
+			netpanzer.say("#    # #    # #  ###");
+			netpanzer.say("#    # #    # #    #");
+			netpanzer.say(" ####  #    #  ####");
+
+
+    elseif param == "looser" then
+
+                        netpanzer.say("#                                             ###");
+                        netpanzer.say("#        ####   ####   ####  ###### #####     ###");
+                        netpanzer.say("#       #    # #    # #      #      #    #    ###");
+                        netpanzer.say("#       #    # #    #  ####  #####  #    #     #");
+                        netpanzer.say("#       #    # #    #      # #      #####");
+                        netpanzer.say("#       #    # #    # #    # #      #   #     ###");
+                        netpanzer.say("#######  ####   ####   ####  ###### #    #    ###");
+ 
+
+    elseif param == "holy" then
+
+                        netpanzer.say("#     #                         #####                    ###");
+                        netpanzer.say("#     #  ####  #      #   #    #     # #    # # #####    ###");
+                        netpanzer.say("#     # #    # #       # #     #       #    # #   #      ###");
+                        netpanzer.say("####### #    # #        #       #####  ###### #   #       #");
+                        netpanzer.say("#     # #    # #        #            # #    # #   #");
+                        netpanzer.say("#     # #    # #        #      #     # #    # #   #      ###");
+                        netpanzer.say("#     #  ####  ######   #       #####  #    # #   #      ###");
+
+
+
+    else
+      netpanzer.say(param)
+      end
     end,
+
+
+
 
     teamsay_help = "Says something to team players",
     teamsay = function(param)
@@ -71,7 +153,7 @@ UserCommands =
         local counttime, message = string.match(param, "(%d+) *(.*)");
 
         counttime = tonumber(counttime) or 5;
-        if counttime > 100 then
+        if counttime > 20 then
             netpanzer.scriptmessage("Time is too big");
             return;
         end
@@ -94,6 +176,5 @@ UserCommands =
             return counttime == 0;
         end);
     end
-
 };
 

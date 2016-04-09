@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -92,12 +92,13 @@ EndRoundView::EndRoundView() : SpecialButtonView()
 void EndRoundView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     unsigned int flagHeight = ResourceManager::getFlag(0)->getHeight();
-    clientArea.BltRoundRect(RectWinner, 14, Palette::green256.getColorArray());
+    clientArea.BltRoundRect(RectWinner, 14, Palette::darkGray256.getColorArray());
+    clientArea.FillRoundRect(RectWinner, 14, Color::red);
     clientArea.RoundRect(RectWinner,14, Color::gray);
-    
+
     clientArea.BltRoundRect(RectStates, 14, Palette::darkGray256.getColorArray());
     clientArea.RoundRect(RectStates, 14, Color::gray);
-    
+
     drawPlayerStats(clientArea, flagHeight);
 
     View::doDraw(viewArea, clientArea);
@@ -157,7 +158,7 @@ void EndRoundView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
     const PlayerState* Winner = states.front();
     snprintf(statBuf, sizeof(statBuf),
             "Winner is %s", Winner->getName().substr(0,20).c_str());
-    dest.bltStringCenteredInRect(RectWinner,statBuf, Color::yellow);
+    dest.bltStringCenteredInRect(RectWinner,statBuf, Color::white);
 
 
     int cur_line_pos = TABLE_START + ((ENTRY_HEIGHT - Surface::getFontHeight())/2);
@@ -180,14 +181,14 @@ void EndRoundView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
         dest.bltStringShadowed(NAME_START, cur_line_pos, statBuf,
                                (cur_state == selected_line)?Color::yellow:Color::gray224,
                                Color::gray64);
-        
+
         flag = ResourceManager::getFlag(state->getFlag());
         flag->blt( dest, FLAG_START, flag_pos );
         if ( state->getID() != PlayerInterface::getLocalPlayerIndex() )
         {
             // XXX ALLY
             bool meWithHim = PlayerInterface::isSingleAllied(PlayerInterface::getLocalPlayerIndex(), state->getID());
-            bool himWithMe = PlayerInterface::isSingleAllied(state->getID(), PlayerInterface::getLocalPlayerIndex());            
+            bool himWithMe = PlayerInterface::isSingleAllied(state->getID(), PlayerInterface::getLocalPlayerIndex());
             if ( meWithHim && himWithMe )
             {
                 allyImage.bltTrans(dest, ALLY_START, flag_pos );

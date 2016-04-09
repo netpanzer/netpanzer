@@ -1,16 +1,16 @@
 /*
 Copyright (C) 2003 Ivo Danihelka <ivo@danihelka.net>
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -71,7 +71,7 @@ DedicatedGameManager::~DedicatedGameManager()
     Console::shutdown();
 
     SDL_DestroyMutex(commandqueue_mutex);
-    commandqueue_mutex = 0;                  
+    commandqueue_mutex = 0;
 }
 
 void DedicatedGameManager::initializeVideoSubSystem()
@@ -160,19 +160,20 @@ void DedicatedGameManager::inputLoop()
                         << "' doesn't exist." << std::endl;
                     break;
                 }
-            
+
                 GameControlRulesDaemon::forceMapChange(command.argument);
                 std::cout << "Preparing mapchange..." << std::endl;
                 break;
             case ServerCommand::KICK:
                 std::stringstream idstream(command.argument);
                 PlayerID id = INVALID_PLAYER_ID;
-                idstream >> (int&)id; // XXX KREMOVE
+                idstream >> (unsigned short&)id; // XXX KREMOVE
                 if(id >= PlayerInterface::getMaxPlayers()) {
                     std::cout << "Unknown player." << std::endl;
                     break;
                 }
-                SERVER->kickClient(SERVER->getClientSocketByPlayerIndex(id));
+                //SERVER->kickClient(SERVER->getClientSocketByPlayerIndex(id));
+                SERVER->kickClient(SERVER->getClientSocketByPlayerIndex((unsigned short) id));
                 break;
         }
         commandqueue.pop();
@@ -187,7 +188,8 @@ DedicatedGameManager::mainLoop()
     if ( heartbeat )
         heartbeat->checkHeartbeat();
 
-    static NTimer aktimer(10000); //all 10 sec only
+    static NTimer aktimer(10000); //every 10 sec only
+
     if (aktimer.isTimeOut())
     {
         aktimer.reset();
@@ -198,20 +200,95 @@ DedicatedGameManager::mainLoop()
         {
             player = PlayerInterface::getPlayer((unsigned short) i);
             if ( player->isActive() )
-            {
+            {   /*
                 if ( player->checkAutokick() )
                 {
-                    char chat_string[256];
+                    char chat_string[140]; // was 256
                     sprintf(chat_string, "Server kicked '%s' due to inactivity",player->getName().c_str());
                     LOGGER.info("DED: %s", chat_string);
                     ChatInterface::serversay(chat_string);
                     SERVER->kickClient(SERVER->getClientSocketByPlayerIndex((unsigned short) i));
-
                 }
+                */
+
+                if ( player->getTotal()<GameConfig::game_lowscorelimit+1 )
+                {
+                    char chat_string_warning_k[140];
+                    sprintf(chat_string_warning_k, "Server kicked '%s' due to noobiness!",player->getName().c_str());
+                    LOGGER.info("DED: %s", chat_string_warning_k);
+                    ChatInterface::serversay(chat_string_warning_k);
+                    SERVER->kickClient(SERVER->getClientSocketByPlayerIndex((unsigned short) i));
+                }
+
+
             }
 
         }
     }
+
+
+    static NTimer aktimer30(16000); //every 16 sec only
+    if (aktimer30.isTimeOut())
+    {
+        aktimer30.reset();
+        PlayerState * player = 0;
+        unsigned long max_players2;
+        max_players2 = PlayerInterface::getMaxPlayers();
+        for (unsigned long i = 0; i < max_players2; i++)
+        {
+            player = PlayerInterface::getPlayer((unsigned short) i);
+            if ( player->isActive() )
+            {
+
+
+                if ( player->getTotal()<GameConfig::game_lowscorelimit+6 && player->getTotal()>GameConfig::game_lowscorelimit )
+                {
+                    char chat_string_warning[140];
+                    sprintf(chat_string_warning, "Warning '%s' - players with %i points or less get kicked!", player->getName().c_str(), GameConfig::game_lowscorelimit);
+                    //ChatInterface::serversay(chat_string_warning);
+                    ChatInterface::serversayTo(player->getID(), chat_string_warning);
+                }
+
+
+            }
+
+        }
+    }
+
+
+
+    // houserules reminder
+
+    static NTimer aktimerHR(600000); //every 10 mins
+    if (aktimerHR.isTimeOut())
+    {
+        aktimerHR.reset();
+
+        PlayerState * player = 0;
+        unsigned long max_players3;
+        max_players3 = PlayerInterface::getMaxPlayers();
+        for (unsigned long i = 0; i < max_players3; i++)
+        {
+            player = PlayerInterface::getPlayer((unsigned short) i);
+            if ( player->isActive() )
+            {
+
+            if ( GameConfig::server_motd->length() > 0 )
+            {
+                    // to be done: alternate motd for house rules
+                    //ChatInterface::serversay(GameConfig::server_motd->c_str());
+                    ChatInterface::serversayTo(player->getID(), GameConfig::server_motd->c_str());
+            }
+
+            }
+
+         }
+
+
+    }
+
+
+
     return BaseGameManager::mainLoop();
 }
 
@@ -232,6 +309,8 @@ bool DedicatedGameManager::launchNetPanzerGame()
     ScriptManager::runFile("server_commands_load","scripts/servercommands.lua");
     ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
 
+
+
     GameConfig::game_map->assign(MapsManager::getNextMap(""));
 
     GameManager::dedicatedLoadGameMap(GameConfig::game_map->c_str());
@@ -249,6 +328,16 @@ bool DedicatedGameManager::launchNetPanzerGame()
     NetworkState::setNetworkStatus( _network_state_server );
 
     GameManager::setNetPanzerGameOptions();
+
+    if (GameConfig::game_lowscorelimit > -15)
+    {
+    GameConfig::game_lowscorelimit = -15;
+    }
+
+    if (GameConfig::game_lowscorelimit < -100)
+    {
+    GameConfig::game_lowscorelimit = -100;
+    }
 
     gameconfig->hostorjoin=_game_session_host;
 

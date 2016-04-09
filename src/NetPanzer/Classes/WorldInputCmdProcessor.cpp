@@ -328,7 +328,7 @@ void
 WorldInputCmdProcessor::evaluateKeyCommands()
 {
     if (KeyboardInterface::getKeyPressed(SDLK_b)
-       && ! Desktop::getVisible("HelpScrollView") )
+       && ! Desktop::getVisible("HelpScrollViewAlt") )
     {
         if ( PlayerInterface::getLocalPlayer()->isSelectingFlag()
             || GameConfig::game_changeflagtime == 0
@@ -338,12 +338,12 @@ WorldInputCmdProcessor::evaluateKeyCommands()
             Desktop::toggleVisibility( "GFlagSelectionView" );
         }
     }
-    
+
     if ( KeyboardInterface::getKeyPressed(SDLK_m) )
     {
         Desktop::toggleVisibility( "MiniMapView" );
     }
-    
+
     if ( KeyboardInterface::getKeyPressed(SDLK_o) )
     {
         toggleDisplayOutpostNames();
@@ -364,6 +364,11 @@ WorldInputCmdProcessor::evaluateKeyCommands()
         GameConfig::interface_show_health = !GameConfig::interface_show_health;
     }
 
+    if ( KeyboardInterface::getKeyPressed(SDLK_t) )
+    {
+        setKeyboardInputModeAllieChatMesg();
+    }
+
     if ( KeyboardInterface::getKeyPressed(SDLK_c) )
     {
         static NTimer spamtimer(5000);
@@ -376,21 +381,21 @@ WorldInputCmdProcessor::evaluateKeyCommands()
 
     if ( KeyboardInterface::getKeyPressed(SDLK_F1)
        && ! Desktop::getVisible("GFlagSelectionView") ) {
-        Desktop::toggleVisibility( "HelpScrollView" );
+        Desktop::toggleVisibility( "HelpScrollViewAlt" );
     }
-    
+
     if (KeyboardInterface::getKeyPressed(SDLK_TAB) ) {
         Desktop::toggleVisibility( "RankView" );
     }
-    
+
     if (KeyboardInterface::getKeyPressed(SDLK_F3)) {
         Desktop::toggleVisibility( "DesktopView" );
     }
-    
+
     if (KeyboardInterface::getKeyPressed(SDLK_F4)) {
         Desktop::toggleVisibility( "CodeStatsView" );
     }
-    
+
     if (KeyboardInterface::getKeyPressed( SDLK_F5 )) {
         //  DEBUG VIEW
         Desktop::toggleVisibility( "LibView" );
@@ -403,11 +408,11 @@ WorldInputCmdProcessor::evaluateKeyCommands()
         setKeyboardInputModeChatMesg();
     }
 
-    if ( (KeyboardInterface::getKeyState(SDLK_LCTRL) || KeyboardInterface::getKeyState(SDLK_RCTRL))
-        && (KeyboardInterface::getKeyPressed(SDLK_a) ))
-    {
-        setKeyboardInputModeAllieChatMesg();
-    }
+    //if ( (KeyboardInterface::getKeyState(SDLK_LCTRL) || KeyboardInterface::getKeyState(SDLK_RCTRL))
+    //    && (KeyboardInterface::getKeyPressed(SDLK_a) ))
+    //{
+    //    setKeyboardInputModeAllieChatMesg();
+    //}
 
     //If space is pressed, jump to first currently attacked unit
     if( KeyboardInterface::getKeyPressed( SDLK_SPACE ) == true )
@@ -563,11 +568,15 @@ WorldInputCmdProcessor::keyboardInputModeAllieChatMesg()
 {
     char chat_string[256];
     if ( getConsoleInputString( chat_string ) == true ) {
+        if(strcmp(chat_string, "") != 0)
+        {
+        ChatInterface::teamsay( chat_string );
+        }
         keyboard_input_mode = _keyboard_input_mode_command;
         ConsoleInterface::setInputStringStatus( false );
-        ChatInterface::teamsay( chat_string );
     }
 }
+
 
 void
 WorldInputCmdProcessor::evaluateKeyboardEvents()
@@ -689,7 +698,7 @@ void WorldInputCmdProcessor::evalLeftMButtonDownEvents(const MouseEvent &event)
     }
 
     unsigned char click_status;
-    
+
     click_status = getCursorStatus(world_pos);
     switch(click_status)
     {
@@ -720,7 +729,7 @@ void WorldInputCmdProcessor::evalLeftMButtonUpEvents(const MouseEvent &event)
         && abs(box_release.y - box_press.y) > 3)
         {
             return;
-        } 
+        }
     }
 
     if (outpost_goal_selection != OBJECTIVE_NONE )
@@ -1116,7 +1125,7 @@ WorldInputCmdProcessor::getConsoleInputString(char *input_string)
                         return true;
                     }
                 }
-#ifdef WIN32                
+#ifdef WIN32
                 if ((key_char == SDLK_INSERT))
                 {
                     OpenClipboard(NULL);

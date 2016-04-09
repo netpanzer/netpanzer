@@ -1,16 +1,16 @@
 /*
 Copyright (C) 2003 Matthias Braun <matze@braunis.de>
-                                                                                
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-                                                                                
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-                                                                                
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -68,7 +68,7 @@ void shutdown()
         unlink(pidfile.c_str());
     }
 #endif
-    
+
     SDL_Quit();
     if(gameconfig)
         gameconfig->saveConfig();
@@ -81,7 +81,7 @@ void signalhandler(int signum)
 {
     // set signal handler back to default
     signal(signum, SIG_DFL);
-    
+
     const char* sigtype;
     switch(signum) {
         case SIGINT: sigtype = "SIGINT"; break;
@@ -96,7 +96,7 @@ void signalhandler(int signum)
         case SIGSYS: sigtype = "SIGSYS"; break;
         default: sigtype = "UNKNOWN"; break;
     }
-        
+
     std::cerr << "Received signal " << sigtype << "(" << signum << ")"
         << std::endl << "aborting and trying to shutdown." << std::endl;
     shutdown();
@@ -138,7 +138,7 @@ BaseGameManager *initialise(int argc, char** argv)
     option<std::string, true, false> bot_option('b', "bot", "Connect as bot to specific server", "");
     commandline.add(&bot_option);
 
-    bool_option need_password(0, "password", "Ask for password when connecting, only usefull on quick connect", false);
+    bool_option need_password(0, "password", "Ask for password when connecting, only useful on quick connect", false);
     commandline.add(&need_password);
 
     option<int> port_option('p', "port", "Run server on specific port", 0);
@@ -253,7 +253,7 @@ BaseGameManager *initialise(int argc, char** argv)
         fprintf(stderr, "Pidfiles not supported on win32.\n");
     }
 #endif
-    
+
     BaseGameManager *manager;
     // finally initialize the game objects
     try {
@@ -290,7 +290,7 @@ BaseGameManager *initialise(int argc, char** argv)
 
             gameconfig->serverConnect = connecthost;
             gameconfig->quickConnect = true;
-        }                                                               
+        }
         if (master_server_option.value().size() > 0) {
             if (master_server_option.value() == "none") {
                 *GameConfig::server_masterservers = "";
@@ -317,13 +317,13 @@ int netpanzer_main(int argc, char** argv)
 {
     network::NetworkManager::initialize();
     ScriptManager::initialize();
-    
+
     //ScriptManager::runStr("LuaInitialize","print('Lua is working just fine');");
 
     BaseGameManager *manager = initialise(argc, argv);
 
     ScriptManager::runFile("unused","scripts/initialize.lua");
-    
+
     // we'll catch every exception here, to be sure the user gets at least
     // a usefull error message and SDL has a chance to shutdown...
     try {
@@ -336,7 +336,7 @@ int netpanzer_main(int argc, char** argv)
         delete manager;
         LOGGER.info("successfull shutdown.");
         shutdown();
-    } 
+    }
 // in debug mode we want the exception to abort, so that we have the original
 // stack backtrace
 #if !defined(DEBUG) || defined(WIN32)
@@ -354,7 +354,7 @@ int netpanzer_main(int argc, char** argv)
     catch(const float dummy) {
     }
 #endif
-    
+
     ScriptManager::close();
     network::NetworkManager::cleanUp();
     return 0;

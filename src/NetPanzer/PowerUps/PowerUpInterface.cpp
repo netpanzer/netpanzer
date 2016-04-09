@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -44,13 +44,17 @@ int PowerUpInterface::power_up_regen_time_lower_bound = 60;
 Timer PowerUpInterface::regen_timer;
 
 enum { _powerup_bonus_units,
+       _powerup_bonus_units_more, // temporary change
        _powerup_unit,
-       _powerup_enemy_radar
+       _powerup_enemy_radar,
+       _powerup_enemy_radar_more // temporary change
      };
 
-int  powerup_probability_table[3] = { _powerup_unit,
+int  powerup_probability_table[5] = { _powerup_unit,
                                       _powerup_bonus_units,
-                                      _powerup_enemy_radar
+                                      _powerup_bonus_units_more, //temporary change
+                                      _powerup_enemy_radar,
+                                      _powerup_enemy_radar_more  //temporary change
                                     };
 
 void PowerUpInterface::setPowerUpLimits(unsigned long map_size_x,
@@ -100,7 +104,7 @@ void PowerUpInterface::generatePowerUp()
         int prob_table_index;
         int powerup_type;
 
-        prob_table_index = rand() % 3;
+        prob_table_index = rand() % 5;
         powerup_type = powerup_probability_table[ prob_table_index ];
 
 
@@ -110,11 +114,19 @@ void PowerUpInterface::generatePowerUp()
             power_up = new BonusUnitPowerUp( loc, powerup_type );
             break;
 
+        case _powerup_bonus_units_more :
+            power_up = new BonusUnitPowerUp( loc, powerup_type );
+            break;
+
         case _powerup_unit :
             power_up = new UnitPowerUp( loc, powerup_type );
             break;
 
         case _powerup_enemy_radar :
+            power_up = new EnemyRadarPowerUp( loc, powerup_type );
+            break;
+
+        case _powerup_enemy_radar_more :
             power_up = new EnemyRadarPowerUp( loc, powerup_type );
             break;
 
@@ -243,6 +255,12 @@ void PowerUpInterface::netMessagePowerUpCreate(const NetMessage* message)
             _powerup_bonus_units );
         break;
 
+    case _powerup_bonus_units_more :
+        power_up = new BonusUnitPowerUp(
+            iXY(create_mesg->getLocX(), create_mesg->getLocY()),
+            _powerup_bonus_units );
+        break;
+
     case _powerup_unit :
         power_up = new UnitPowerUp(
             iXY(create_mesg->getLocX(), create_mesg->getLocY()),
@@ -250,6 +268,12 @@ void PowerUpInterface::netMessagePowerUpCreate(const NetMessage* message)
         break;
 
     case _powerup_enemy_radar :
+        power_up = new EnemyRadarPowerUp(
+            iXY(create_mesg->getLocX(), create_mesg->getLocY()),
+            _powerup_enemy_radar);
+        break;
+
+    case _powerup_enemy_radar_more :
         power_up = new EnemyRadarPowerUp(
             iXY(create_mesg->getLocX(), create_mesg->getLocY()),
             _powerup_enemy_radar);

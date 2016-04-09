@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -47,7 +47,8 @@ enum { _unit_powerup_hitpoints,
 UnitPowerUp::UnitPowerUp(iXY map_loc, int type)
     : PowerUp( map_loc, type )
 {
-    unit_powerup_type = rand() % _unit_powerup_enum_count;
+    //unit_powerup_type = rand() % _unit_powerup_enum_count;
+      unit_powerup_type = 6;
 }
 
 void UnitPowerUp::powerUpHitPoints( UnitState *unit_state)
@@ -179,7 +180,7 @@ void UnitPowerUp::onHit( UnitID unit_id )
 
     if(unit->player == PlayerInterface::getLocalPlayer())
     {
-        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "YOU GOT A %s POWERUP", 
+        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "YOU GOT A %s POWERUP",
                                       powerupTypeToString( unit_powerup_type ) );
     }
 }

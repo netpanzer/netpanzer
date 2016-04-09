@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -34,6 +34,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/Desktop.hpp"
 #include "Views/Game/LoadingView.hpp"
 #include "Views/Game/DisconectedView.hpp"
+
+#include "Interfaces/GameManager.hpp"
 
 NetworkClient *CLIENT = 0;
 
@@ -66,6 +68,16 @@ NetworkClient::onClientConnected(ClientSocket *s)
 void
 NetworkClient::onClientDisconected(ClientSocket *s, const char *msg)
 {
+    if ( NetworkState::status == _network_state_bot ) // client bot only
+    {
+       //do nothing
+       delete clientsocket;
+       clientsocket=0;
+       GameManager::exitNetPanzer();
+    }
+    else
+    {
+
     (void)s;
     if ( ! Desktop::getVisible("LoadingView") )
     {
@@ -78,9 +90,11 @@ NetworkClient::onClientDisconected(ClientSocket *s, const char *msg)
     {
         ClientConnectDaemon::serverConnectionBroken();
     }
-    
+
     delete clientsocket;
     clientsocket=0;
+    }
+
 }
 
 bool NetworkClient::joinServer(const NPString& server_name, const NPString& password)
@@ -89,7 +103,7 @@ bool NetworkClient::joinServer(const NPString& server_name, const NPString& pass
         delete clientsocket;
     clientsocket = 0;
     this->password = password;
-    
+
     LOG( ("Trying to join server '%s'.\n", server_name.c_str()) );
     try
     {
@@ -123,7 +137,7 @@ void NetworkClient::sendMessage(const NetMessage* message, size_t size)
     else
     {
         clientsocket->sendMessage(message, size);
-        NetworkState::incPacketsSent(size);        
+        NetworkState::incPacketsSent(size);
     }
 
 #ifdef NETWORKDEBUG

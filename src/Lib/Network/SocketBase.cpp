@@ -190,7 +190,12 @@ SocketBase::setReuseAddr() throw(NetworkException)
 void
 SocketBase::setNoDelay() throw(NetworkException)
 {
+#ifdef _WIN32
+    if ( state >= CONFIGURED ) //  && state < LISTENING
+#else
     if ( state >= CONFIGURED )
+#endif
+
     {
         SETSOCKOPT_PARAMTYPE val = 1;
         int res = setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &val, sizeof(val));
@@ -280,7 +285,8 @@ SocketBase::doSend(const void* data, size_t len) throw(NetworkException)
     }
     else
     {
-        LOGGER.warning("Trying to send to unconected socket [%s]", getStateString());
+        //LOGGER.warning("Trying to send to unconected socket [%s]", getStateString());
+        LOGGER.warning("Trying to send to unconnected socket!");
     }
     return 0;
 }

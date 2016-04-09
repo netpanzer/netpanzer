@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -71,14 +71,22 @@ static void bJoin()
         Desktop::setVisibility("JoinView", true);
         Desktop::setVisibility("PlayerNameView", true);
         Desktop::setVisibility("IPAddressView", true);
+        Desktop::setVisibility("TipsView", true);
         Desktop::setVisibility("ServerListView", true);
         serverlistview->refresh();
+
 }
 
 static void bOptions()
 {
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("OptionsView", true);
+}
+
+static void bCredits()
+{
+    Desktop::setVisibilityAllWindows(false);
+    Desktop::setVisibility("CreditsView", true);
 }
 
 static void bHelp()
@@ -143,10 +151,11 @@ MenuTemplateView::MenuTemplateView() : RMouseHackView()
 // initPreGameOptionButtons
 void MenuTemplateView::initPreGameOptionButtons()
 {
-    add( new newButton("MAIN", "Main", mainPos, 0) );
+    add( new newButton( "MAIN", "Main", mainPos, 0) );
     add( new newButton( "JOIN", "Join", joinPos, 0) );
     add( new newButton( "HOST", "Host", hostPos, 0) );
     add( new newButton( "OPTIONS", "Options", optionsPos, 0) );
+    add( new newButton( "CREDITS", "Credits", creditsPos, 0) );
     add( new newButton( "HELP", "Help", helpPos, 0) );
     add( new newButton( "EXITNP", "Exit netPanzer", exitPos, 0) );
 } // end MenuTemplateView::initPreGameOptionButtons
@@ -183,31 +192,116 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
     //setWorldRect();
     if (Desktop::getVisible("GameView")) {
 	// When ingame, tint the game into gray
-        clientArea.BltRoundRect(getClientRect(), 10, Palette::darkGray256.getColorArray());
-        clientArea.RoundRect(MenuRect, 10, Color::gray);
-        clientArea.drawWindowsBorder();
 
-    } else {        
+        //clientArea.BltRoundRect(getClientRect(), 10, Palette::darkGray256.getColorArray());
+        //clientArea.FillRoundRect(getClientRect(), 10, Color::white); // esc in game
+        clientArea.RoundRect(MenuRect, 10, Color::gray);
+        clientArea.FillRoundRect(MenuRect, 10, Color::white);
+        //clientArea.drawWindowsBorder();
+
+    } else {
         screen->fill(0);
+        loadBackgroundSurface();
 		// Set the following to get does exist.
         if (backgroundSurface.getNumFrames() > 0) {
             backgroundSurface.blt(viewArea, 0, 0);
         } else {
             throw Exception("Where is the background surface?");
         }
-        clientArea.BltRoundRect(MenuRect, 10, Palette::darkGray256.getColorArray());
+        clientArea.BltRoundRect(MenuRect, 10, Palette::gray256.getColorArray());
+        clientArea.FillRoundRect(MenuRect, 10, Color::white);
         clientArea.RoundRect(MenuRect, 10, Color::gray);
 
+        static char text[] =
+        "NetPanzer " PACKAGE_VERSION;
+        clientArea.bltString(10, 590, text, Color::gray);
+        // I don't like them so I delete them!
         //titlePackedSurface.blt(clientArea, bodyTextRect.min.x, 390);
-        titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x, bodyTextRect.max.y-50, Palette::colorTable6040);
+        //titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x, bodyTextRect.max.y-50, Palette::colorTable6040);
+    }
+/*
+    static char text[] =
+        "netPanzer " PACKAGE_VERSION;
+        clientArea.bltString(10, 590, text, Color::gray);
+*/
+    View::doDraw(viewArea, clientArea);
+} // end doDraw
+
+
+void MenuTemplateView::doDrawM(Surface &viewArea, Surface &clientArea)  // start page
+{
+    //setWorldRect();
+    if (Desktop::getVisible("GameView")) {
+	// When ingame, tint the game into gray
+
+        clientArea.BltRoundRect(getClientRect(), 10, Palette::gray256.getColorArray());
+        clientArea.FillRoundRect(getClientRect(), 10, Color::white); // esc in game
+        //clientArea.RoundRect(MenuRect, 10, Color::gray);
+        clientArea.drawWindowsBorder();
+
+    } else {
+        screen->fill(0);
+        loadMainBackgroundSurface();
+		// Set the following to get does exist.
+        if (backgroundSurface.getNumFrames() > 0) {
+            backgroundSurface.blt(viewArea, 0, 0);
+        } else {
+            throw Exception("Where is the background surface?");
+        }
+        clientArea.BltRoundRect(MenuRect, 10, Palette::gray256.getColorArray());
+        clientArea.FillRoundRect(MenuRectStart, 3, Color::white);
+        clientArea.RoundRect(MenuRectStart, 3, Color::gray);
+
+        // I don't like them so I delete them!
+        //titlePackedSurface.blt(clientArea, bodyTextRect.min.x, 390);
+        //titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x, bodyTextRect.max.y-50, Palette::colorTable6040);
     }
 
     static char text[] =
         "NetPanzer " PACKAGE_VERSION;
-        clientArea.bltString(10, 590, text, Color::yellow);
+        clientArea.bltString(10, 590, text, Color::gray);
+
+    View::doDraw(viewArea, clientArea);
+} // end doDrawM
+
+
+void MenuTemplateView::doDrawAlt(Surface &viewArea, Surface &clientArea) //help view
+{
+    //setWorldRect();
+    if (Desktop::getVisible("GameView")) {
+	// When ingame, tint the game into gray
+
+        //clientArea.BltRoundRect(getClientRect(), 10, Palette::gray256.getColorArray());
+        //clientArea.FillRoundRect(getClientRect(), 10, Color::white); // esc in game
+             //clientArea.RoundRect(MenuRect, 10, Color::gray);
+        //clientArea.drawWindowsBorder();
+
+    } else {
+        screen->fill(0);
+        loadBackgroundSurface();
+		// Set the following to get does exist.
+        if (backgroundSurface.getNumFrames() > 0) {
+            backgroundSurface.blt(viewArea, 0, 0); // del for a very compact view
+        } else {
+            throw Exception("Where is the background surface?");
+        }
+        clientArea.BltRoundRect(MenuRect, 10, Palette::gray256.getColorArray());
+        clientArea.FillRoundRect(MenuRect, 10, Color::white); // gray
+        clientArea.RoundRect(MenuRect, 10, Color::gray);
+
+        }
+
+    static char text[] =
+        "NetPanzer " PACKAGE_VERSION;
+        clientArea.bltString(10, 590, text, Color::gray);
 
     View::doDraw(viewArea, clientArea);
 } // end doDraw
+
+
+
+
+
 
 // doActivate
 //---------------------------------------------------------------------------
@@ -228,7 +322,10 @@ void MenuTemplateView::loadBackgroundSurface()
 {
     doLoadBackgroundSurface("pics/backgrounds/menus/menu/defaultMB.bmp");
 } // end MenuTemplateView::loadBackgroundSurface
-
+void MenuTemplateView::loadMainBackgroundSurface()
+{
+    doLoadBackgroundSurface("pics/backgrounds/menus/menu/defaultMBstart.bmp");
+} // end MenuTemplateView::loadBackgroundSurface
 // doLoadBackgroundSurface
 //---------------------------------------------------------------------------
 void MenuTemplateView::doLoadBackgroundSurface(const std::string& string)
@@ -291,6 +388,10 @@ void MenuTemplateView::onComponentClicked(Component* c)
     else if ( !cname.compare("Button.OPTIONS") )
     {
         bOptions();
+    }
+    else if ( !cname.compare("Button.CREDITS") )
+    {
+        bCredits();
     }
     else if ( !cname.compare("Button.HELP") )
     {

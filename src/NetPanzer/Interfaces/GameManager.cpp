@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -78,11 +78,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/Multi/MapSelectionView.hpp"
 #include "Views/MainMenu/Multi/PlayerNameView.hpp"
 #include "Views/MainMenu/Multi/IPAddressView.hpp"
+#include "Views/MainMenu/Multi/TipsView.hpp"
+
 #include "Views/Game/RankView.hpp"
 #include "Views/Game/VehicleSelectionView.hpp"
 #include "Views/Game/CodeStatsView.hpp"
 #include "Views/Game/LibView.hpp"
 #include "Views/Game/HelpScrollView.hpp"
+#include "Views/Game/HelpScrollViewAlt.hpp"
 #include "Views/Game/ResignView.hpp"
 #include "Views/Game/AreYouSureResignView.hpp"
 #include "Views/Game/AreYouSureExitView.hpp"
@@ -123,12 +126,12 @@ void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
         Surface text;
         text.renderText(string, color, 0);
         screen->lock();
-    
+
         screen->fill(0);
         int x = (screen->getWidth() / 2) - (text.getWidth() / 2);
         int y = (screen->getHeight() / 2) - (text.getHeight() / 2);
         text.blt(*screen,x,y);
-    
+
         screen->unlock();
         screen->copyToVideoFlip();
 }
@@ -192,7 +195,7 @@ void GameManager::setVideoMode()
         // not black)
         drawTextCenteredOnScreen("Please wait... generating palettes", 255);
     }
-    
+
 }
 
 // ******************************************************************
@@ -279,6 +282,7 @@ void GameManager::finishGameMapLoad()
 
 void GameManager::dedicatedLoadGameMap(const char *map_name )
 {
+
     Console::mapSwitch(map_name);
     *Console::server        << "Server Settings:\n"
         << "Map: "          << *GameConfig::game_map << "\n"
@@ -296,7 +300,7 @@ void GameManager::dedicatedLoadGameMap(const char *map_name )
         << "Powerups: "     << (GameConfig::game_powerups ? "yes" : "no") << "\n"
         << "AllowAllies: "  << (GameConfig::game_allowallies ? "yes" : "no") << "\n"
         << "CloudCoverage: " << GameConfig::game_cloudcoverage << " (Windspeed " << GameConfig::game_windspeed << ")" << std::endl;
-    
+
     map_path = "maps/";
     map_path.append(map_name);
 
@@ -369,7 +373,7 @@ void GameManager::netMessageViewControl(const NetMessage* message)
 // ******************************************************************
 void GameManager::netMessageConnectAlert(const NetMessage* message)
 {
-    const SystemConnectAlert *connect_alert 
+    const SystemConnectAlert *connect_alert
         = (const SystemConnectAlert*) message;
     PlayerState *player_state = 0;
 
@@ -388,7 +392,7 @@ void GameManager::netMessageConnectAlert(const NetMessage* message)
 
             break;
 
-        case _connect_alert_mesg_disconnect: 
+        case _connect_alert_mesg_disconnect:
             ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
                                           "%s has left the game.",
                     player_state->getName().c_str());
@@ -422,7 +426,7 @@ void GameManager::netMessageResetGameLogic(const NetMessage* )
 
 ConnectMesgServerGameSettings* GameManager::getServerGameSetup()
 {
-    ConnectMesgServerGameSettings* game_setup 
+    ConnectMesgServerGameSettings* game_setup
         = new ConnectMesgServerGameSettings();
 
     game_setup->setMaxPlayers(GameConfig::game_maxplayers);
@@ -583,7 +587,7 @@ void GameManager::quitNetPanzerGame()
         SERVER->closeSession();
 
         // hacky...
-        PlayerGameManager* playerGameManager 
+        PlayerGameManager* playerGameManager
             = dynamic_cast<PlayerGameManager*>(gamemanager);
         if(playerGameManager)
             playerGameManager->quitGame();

@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -165,6 +165,77 @@ void GameControlRulesDaemon::mapCycleFsmClient()
     } // ** switch
 }
 
+///////////////////////////////////////////////
+
+void GameControlRulesDaemon::mapCycleFsmBot()
+{
+    switch( map_cycle_fsm_client_state ) {
+        case _map_cycle_client_idle :
+            return;
+
+        case _map_cycle_client_start_map_load : {
+                //LoadingView::show();
+
+                GameManager::shutdownParticleSystems();
+                ObjectiveInterface::resetLogic();
+
+                GameConfig::game_map->assign( map_cycle_fsm_client_map_name );
+
+                char buf[256];
+                snprintf(buf, sizeof(buf), "Next Map '%s'.",
+                        GameConfig::game_map->c_str());
+                //LoadingView::append( buf);
+                //LoadingView::append( "Loading Game Map ..." );
+
+                try {
+                    GameManager::startGameMapLoad(GameConfig::game_map->c_str(), 16);
+                } catch(std::exception& e) {
+                    //LoadingView::append("Error while loading map:");
+                    //LoadingView::append(e.what());
+                    map_cycle_fsm_client_state = _map_cycle_client_idle;
+                    return;
+                }
+
+                GameManager::resetGameLogic();
+                map_cycle_fsm_client_state = _map_cycle_client_load_map;
+                return;
+            }
+            break;
+
+        case _map_cycle_client_load_map : {
+                int percent_complete;
+                char str_buf[128];
+
+                if ( GameManager::gameMapLoad( &percent_complete ) == false ) {
+                    map_cycle_fsm_client_state = _map_cycle_client_wait_for_respawn_ack;
+
+                    sprintf( str_buf, "Loading Game Map ... (%d%%)", percent_complete);
+                    //LoadingView::update( str_buf );
+
+                    //LoadingView::append( "Waiting to respawn ..." );
+                } else {
+                    sprintf( str_buf, "Loading Game Map ... (%d%%)", percent_complete);
+                    //LoadingView::update( str_buf );
+                }
+
+                return;
+            }
+
+        case _map_cycle_client_wait_for_respawn_ack : {
+                if( map_cycle_fsm_client_respawn_ack_flag == true ) {
+                    //LoadingView::loadFinish();
+                    map_cycle_fsm_client_respawn_ack_flag = false;
+                    map_cycle_fsm_client_state = _map_cycle_client_idle;
+                }
+
+                return;
+            }
+            break;
+
+    } // ** switch
+}
+
+////////////////////////////////////////////////////
 
 void GameControlRulesDaemon::mapCycleFsmServer()
 {
@@ -174,7 +245,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
 
         case _map_cycle_server_state_display_endgame_views: {
                 ChatInterface::serversay("Round is over");
-                                                                
+
                 SystemViewControl view_control;
 
                 ServerConnectDaemon::lockConnectProcess();
@@ -207,7 +278,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                     } else {
                         GameConfig::game_map->assign( MapsManager::getNextMap( *GameConfig::game_map ) );
                     }
-                    
+
                     ConsoleInterface::postMessage(Color::white, false, 0, "loading map '%s'.",
                             GameConfig::game_map->c_str());
 
@@ -243,7 +314,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                             map_cycle_fsm_server_state = _map_cycle_server_state_idle;
                             return;
                         }
-                        
+
                         GameManager::resetGameLogic();
                         map_cycle_fsm_server_state = _map_cycle_server_state_load_map;
                         return;
@@ -311,7 +382,14 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                 PlayerInterface::unlockPlayerStats();
                 GameControlRulesDaemon::game_state = _game_state_in_progress;
 
+                if ( GameControlRulesDaemon::execution_mode == _execution_mode_dedicated_server )
+                {
+                LoadingView::loadFinish_d(); // to prevent crash on restart
+                }
+                else
+                {
                 LoadingView::loadFinish();
+                }
 
                 GameControlCycleRespawnAck respawn_ack_mesg;
                 SERVER->broadcastMessage( &respawn_ack_mesg, sizeof(GameControlCycleRespawnAck));
@@ -380,7 +458,7 @@ void GameControlRulesDaemon::checkGameRules()
                     onTimelimitGameCompleted();
                 }
                 break;
-            }   
+            }
             case _gametype_fraglimit:
                 if ( PlayerInterface::testRuleScoreLimit( GameConfig::game_fraglimit, &player_state ) == true )
                 {
@@ -419,13 +497,15 @@ void GameControlRulesDaemon::checkGameRules()
 
 void GameControlRulesDaemon::netMessageCycleMap(const NetMessage* message)
 {
+    if ( NetworkState::status == _network_state_client ) // client only (security fix)
+    {
     GameControlCycleMap *cycle_map_mesg;
 
     cycle_map_mesg = (GameControlCycleMap *) message;
 
     snprintf(map_cycle_fsm_client_map_name, 256, "%s", cycle_map_mesg->map_name);
     map_cycle_fsm_client_state = _map_cycle_client_start_map_load;
-
+    }
 }
 
 void GameControlRulesDaemon::netMessageCycleRespawnAck(const NetMessage* )
@@ -454,10 +534,17 @@ void GameControlRulesDaemon::processNetMessage(const NetMessage* message)
 
 void GameControlRulesDaemon::updateGameControlFlow()
 {
-    if ( NetworkState::status == _network_state_server ) {
-        mapCycleFsmServer();
-    } else {
-        mapCycleFsmClient();
+    if ( NetworkState::status == _network_state_server )
+    {
+     mapCycleFsmServer();
+    }
+    else if ( NetworkState::status == _network_state_client )
+    {
+     mapCycleFsmClient();
+    }
+    else
+    {
+     mapCycleFsmBot();
     }
 
     checkGameRules();

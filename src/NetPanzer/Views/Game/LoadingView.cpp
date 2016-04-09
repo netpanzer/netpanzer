@@ -54,11 +54,12 @@ LoadingView::init()
 
     resize(800, 600);
 
-    addButtonCenterText(iXY(340, 15), 100, "Abort", "Cancel the joining of this game.", bAbort);
+    addButtonCenterText(iXY(340, 260), 100, "Abort", "Cancel the joining of this game.", bAbort);
 
 
-    okButton = Button::createTextButton("OK", "Enter", iXY(340,100), 100);
-    passwordLabel = new Label(340, 68, "Game Password", Color::white);
+    okButton = Button::createTextButton("OK", "Enter", iXY(340,105), 100);
+    okButton->setTextColors(Color::black,Color::red,Color::darkGray);
+    passwordLabel = new Label(340, 60, "Game Password", Color::lightGray);
 
 }
 
@@ -200,6 +201,43 @@ LoadingView::loadFinish()
         Desktop::setActiveView("GFlagSelectionView");
     }
 }
+
+void
+LoadingView::loadFinish_d()
+{
+    //Desktop::setVisibilityAllWindows(false);
+
+    // XXX rebuild the particle stuff here for units...
+    ParticleInterface::rebuildUnitParticleData();
+
+    // XXX this needed because has to create the special buttons for the
+    // defined units, has to be here because it has to be the "netp" palette
+    // and after loading the unit profiles
+    /*
+    View * v = Desktop::getView("VehicleSelectionView");
+    if ( v )
+    {
+        Desktop::remove(v);
+        delete v;
+    }
+
+    Desktop::add(new VehicleSelectionView());
+    */
+    GameManager::setNetPanzerGameOptions();
+    /*
+    Desktop::setVisibility("MiniMapView", true);
+    Desktop::setVisibility("GameView", true);
+    if ( PlayerInterface::getLocalPlayer()->isSelectingFlag() )
+    {
+        Desktop::setVisibility("GFlagSelectionView", true);
+        Desktop::setActiveView("GFlagSelectionView");
+    }
+    */
+}
+
+
+
+
 
 void
 LoadingView::loadError()

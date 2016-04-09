@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -51,7 +51,7 @@ public:
     Surface(unsigned int w, unsigned int h, unsigned int nframes);
 
     virtual ~Surface();
-    
+
     void create(unsigned int w, unsigned int h, unsigned int nframes);
     void free();
 
@@ -65,7 +65,7 @@ public:
     unsigned int getWidth()  const { return twidth; }
     unsigned int getHeight() const { return theight; }
     unsigned int getPitch()  const { return tpitch; }
-    
+
     iXY     getCenter()     const { return iXY(getWidth()>>1, getHeight()>>1); }
     int     getCenterX()    const { return getWidth()>>1; }
     int     getCenterY()    const { return getHeight()>>1; }
@@ -95,7 +95,7 @@ public:
         return iRect(0, 0, getWidth() - 1, getHeight() - 1);
     }
 
-    void putPixel(unsigned int x, unsigned int y, const PIX &color) 
+    void putPixel(unsigned int x, unsigned int y, const PIX &color)
     {
         if ( x >= getWidth() || y >= getHeight())
             return;
@@ -115,7 +115,7 @@ private:
     friend class PackedSurface;
     PIX   *mem;       // Pointer to upperleft most pixel
     PIX   *frame0;    // Pointer to first frame
-    
+
     void alloc(unsigned int w, unsigned int h, int nframes);
     bool grab(const Surface &s, iRect bounds);
 
@@ -143,7 +143,7 @@ protected:
     void        reset();
 
 public:
-    
+
     void resize(int xPix, int yPix);
 
     void setTo(const Surface &s, iRect bounds);
@@ -174,7 +174,7 @@ public:
     }
 
     void drawWindowsBorder();
-    
+
     void fill(const PIX &color);
     void flipVertical();
     void rotate(int angle);
@@ -197,7 +197,7 @@ public:
 
     // Text rendering functions
     void renderText(const char *str, PIX color, PIX bgcolor);
-    
+
     // Blit a single character of text.
     void bltChar8x8(int x, int y, unsigned char character, const PIX &color);
     void bltString(int x, int y, const char * str, const PIX& color);
@@ -208,7 +208,7 @@ public:
 
     // Blits a string of text and centers it horizontally and vertically on the screen.
     void bltStringCenter(const char *string, PIX color);
-
+    void bltStringCenterMin30(const char *string, PIX color);
     void bltStringShadowedCenter(const char *string, PIX foreground, PIX background);
     void bltStringCenteredInRect(const iRect &rect, const char *string, const PIX &color);
 
@@ -239,7 +239,7 @@ public:
     void FillRoundRect(iRect rect, int radius, PIX color);
     void BltRoundRect(iRect rect, int radius, const PIX table[]);
     void bltHLine(int x1, int y, int x2, const PIX table[]);
-        
+
     void frameToBuffer(Uint8* dest, size_t dest_len)
     {
         size_t frame_len = getPitch()*getHeight();

@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -57,10 +57,10 @@ NPString* GameConfig::game_unit_profiles = 0;
 NPString* GameConfig::game_unit_spawnlist = 0;
 NPString* GameConfig::game_adminpass = 0;
 NPString* GameConfig::game_gamepass = 0;
-int       GameConfig::game_changeflagtime = 15; // minutes
+int       GameConfig::game_changeflagtime = 1; // minutes
 int       GameConfig::game_gametype = 0;
 int       GameConfig::game_maxplayers = 8;
-int       GameConfig::game_maxunits = 8*40;
+int       GameConfig::game_maxunits = 8*36;
 int       GameConfig::game_timelimit = 30;
 int       GameConfig::game_fraglimit = 300;
 bool      GameConfig::game_powerups = true;
@@ -69,6 +69,9 @@ bool      GameConfig::game_allowallies = true;
 int       GameConfig::game_cloudcoverage = 0;
 int       GameConfig::game_respawntype = 0;
 int       GameConfig::game_windspeed = 30;
+int       GameConfig::game_lowscorelimit = -25;
+int       GameConfig::game_anticheat = 3;
+//int       GameConfig::game_maxchatlines = 7;
 NPString* GameConfig::game_map = 0;
 NPString* GameConfig::game_mapcycle = 0;
 
@@ -106,6 +109,8 @@ NPString* GameConfig::server_name = 0;
 NPString* GameConfig::player_name = 0;
 
 Uint8 GameConfig::player_flag_data[FLAG_WIDTH*FLAG_HEIGHT] = {0};
+
+Uint8 GameConfig::bot_flag_data[FLAG_WIDTH*FLAG_HEIGHT] = {51};
 
 #define WRITE_BOOL(v) ((v)?"true":"false")
 
@@ -196,6 +201,9 @@ static const ScriptVarBindRecord game_getters[] =
     { "cloudcoverage",      GETSVTYPE_INT,     &GameConfig::game_cloudcoverage },
     { "respawntype",        GETSVTYPE_INT,     &GameConfig::game_respawntype },
     { "windspeed",          GETSVTYPE_INT,     &GameConfig::game_windspeed },
+    { "lowscorelimit",      GETSVTYPE_INT,     &GameConfig::game_lowscorelimit },
+    { "anticheat",          GETSVTYPE_INT,     &GameConfig::game_anticheat },
+    //{ "maxchatlines",       GETSVTYPE_INT,     &GameConfig::game_maxchatlines },
     { "map",                GETSVTYPE_STRING,  &GameConfig::game_map },
     { "mapcycle",           GETSVTYPE_STRING,  &GameConfig::game_mapcycle },
     {0,0}
@@ -224,6 +232,9 @@ static const ScriptVarBindRecord game_setters[] =
     { "cloudcoverage",      SETSVTYPE_INT,     &GameConfig::game_cloudcoverage },
     { "respawntype",        SETSVTYPE_INT,     &GameConfig::game_respawntype },
     { "windspeed",          SETSVTYPE_INT,     &GameConfig::game_windspeed },
+    { "lowscorelimit",      SETSVTYPE_INT,     &GameConfig::game_lowscorelimit },
+    { "anticheat",          SETSVTYPE_INT,     &GameConfig::game_anticheat },
+    //{ "maxchatlines",       SETSVTYPE_INT,     &GameConfig::game_maxchatlines },
     { "map",                SETSVTYPE_STRING,  &GameConfig::game_map },
     { "mapcycle",           SETSVTYPE_STRING,  &GameConfig::game_mapcycle },
     {0,0}
@@ -406,7 +417,7 @@ GameConfig::GameConfig(const std::string& luaconfigfile,bool usePhysFS)
       quickConnect("quickconnect", false),
       needPassword("needpassword", false),
       serverConnect("serverconnect", "")
-    
+
 {
     this->luaconfigfile = luaconfigfile;
     this->usePhysFS = usePhysFS;
@@ -419,7 +430,7 @@ GameConfig::GameConfig(const std::string& luaconfigfile,bool usePhysFS)
     }
 
     player_name->assign(default_player.str());
-    
+
     try
     {
         loadConfig();

@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -51,23 +51,23 @@ Button::render()
     }
     else
     {
-        surface.fill(componentBodyColor);        
+        surface.fill(componentBodyColor);
     }
 
     if ( borders[bstate][0]|extraBorder ) // only 1 | (binary or)
     {
         surface.drawButtonBorder(borders[bstate][0], borders[bstate][1]);
     }
-   
+
     if ( label.length() )
     {
         Surface text;
         text.renderText( label.c_str(), textColors[bstate], 0);
         // blit centered and transparent
         text.bltTrans(surface, (surface.getWidth()/2) - (text.getWidth()/2),
-                      (surface.getHeight()/2) - (text.getHeight()/2));        
+                      (surface.getHeight()/2) - (text.getHeight()/2));
     }
-   
+
     dirty = false;
 }
 
@@ -118,14 +118,14 @@ Button::createSpecialButton( std::string cname,
                              iXY loc)
 {
     Surface bnormal;
-    bnormal.loadBMP("pics/backgrounds/menus/buttons/default/button.bmp");
-    
+    bnormal.loadBMP("pics/backgrounds/menus/buttons/default/page.bmp"); //button
+
     Surface bhover;
-    bhover.loadBMP("pics/backgrounds/menus/buttons/default/button1.bmp");
-    
+    bhover.loadBMP("pics/backgrounds/menus/buttons/default/page.bmp"); //button1
+
     Surface bclick;
-    bclick.loadBMP("pics/backgrounds/menus/buttons/default/button2.bmp");
-    
+    bclick.loadBMP("pics/backgrounds/menus/buttons/default/page.bmp"); //button2
+
     Surface spbutton(bnormal.getWidth(), bnormal.getHeight(), 3);
 
     spbutton.setFrame(0);
@@ -140,7 +140,7 @@ Button::createSpecialButton( std::string cname,
     b->setImage(spbutton);
     b->setLabel(label);
     b->setLocation(loc);
-    b->setTextColors(Color::yellow, Color::white, Color::white);
+    b->setTextColors(Color::lightGray, Color::white, Color::white);
 
     return b;
 }
