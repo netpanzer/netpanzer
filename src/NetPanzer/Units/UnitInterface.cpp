@@ -824,6 +824,8 @@ void UnitInterface::unitSyncIntegrityCheckMessage(const NetMessage* )
 // ******************************************************************
 void UnitInterface::processNetMessage(const NetMessage* net_message, size_t size)
 {
+    if ( NetworkState::status == _network_state_client ) // client only (security fix)
+    {
     switch(net_message->message_id)  {
         case _net_message_id_ini_sync_mesg:
             unitSyncMessage(net_message);
@@ -852,6 +854,7 @@ void UnitInterface::processNetMessage(const NetMessage* net_message, size_t size
             assert(false);
 #endif
             break;
+    }
     }
 }
 
