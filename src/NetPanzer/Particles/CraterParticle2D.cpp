@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "CraterParticle2D.hpp"
 #include "2D/Palette.hpp"
+#include "Interfaces/MapInterface.hpp"
 
 // Set to 1 for divide by zero issues.
 int CraterParticle2D::cacheHitCount  = 1;
@@ -69,7 +70,14 @@ CraterParticle2D::CraterParticle2D(const fXYZ  &pos) : Particle2D(pos)
             curCraterIndex = 0;
         }
 
+
+
+        if ( MapInterface::craters_lifetime == 0 ) {
         lifetime = 60.0f * float((rand() % 4) + 2);
+        } else {
+        lifetime = 40.0f * float((rand() % 4) + 2);
+        }
+        //lifetime = 60.0f * float((rand() % 4) + 2);
     }
 
 } // end CraterParticle2D::CraterParticle2D
@@ -104,6 +112,7 @@ void CraterParticle2D::draw(const Surface&, SpriteSorter &sorter)
 //---------------------------------------------------------------------------
 void CraterParticle2D::sim()
 {
+    /*
     if (age > lifetime) {
         isAlive = false;
 
@@ -123,6 +132,59 @@ void CraterParticle2D::sim()
     } else if (age > lifetime * 0.6f) {
         packedSurface.setDrawModeBlend(&Palette::colorTable2080);
     }
+   */
+    if ( MapInterface::craters_fading == 0 ) {
+
+
+    if (age > lifetime) {
+        isAlive = false;
+
+        // Check to see if the cache index is still in list and remove it if so.
+        if (craterCache[cacheIndex].pos == iXY((int) pos.x, (int) pos.z)) {
+            // Since it is still in the list, but the particle is dead,
+            // remove it from the list.
+            craterCache[cacheIndex].bounds.zero();
+            craterCache[cacheIndex].pos.zero();
+        }
+
+    } else if (age > lifetime * 0.9f) {
+        packedSurface.setDrawModeBlend(&Palette::colorTable8020);
+    } else if (age > lifetime * 0.8f) {
+        packedSurface.setDrawModeBlend(&Palette::colorTable6040);
+    } else if (age > lifetime * 0.7f) {
+        packedSurface.setDrawModeBlend(&Palette::colorTable4060);
+    } else if (age > lifetime * 0.6f) {
+        packedSurface.setDrawModeBlend(&Palette::colorTable2080);
+    }
+
+ // add if map style ! Summer Day
+    } else {
+
+        if (age > lifetime) {
+        isAlive = false;
+
+        // Check to see if the cache index is still in list and remove it if so.
+        if (craterCache[cacheIndex].pos == iXY((int) pos.x, (int) pos.z)) {
+            // Since it is still in the list, but the particle is dead,
+            // remove it from the list.
+            craterCache[cacheIndex].bounds.zero();
+            craterCache[cacheIndex].pos.zero();
+        }
+
+    } else if (age > lifetime * 0.9f) {
+        packedSurface.setDrawModeBlend(&Palette::colorTable8020);
+    } else if (age > lifetime * 0.8f) {
+        packedSurface.setDrawModeBlend(&Palette::colorTable6040);
+    } else if (age > lifetime * 0.7f) {
+        packedSurface.setDrawModeBlend(&Palette::colorTable4060);
+    } else if (age > lifetime * 0.0f) { // was 0.6 - still ok if original tileset
+        packedSurface.setDrawModeBlend(&Palette::colorTable2080);
+    }
+
+
+
+    }
+
 
     Particle2D::sim();
 

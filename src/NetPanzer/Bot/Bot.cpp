@@ -63,7 +63,7 @@ Bot::moveUnit(UnitBase *unit, iXY map_pos)
     CLIENT->sendMessage(&comm_mesg, sizeof(TerminalUnitCmdRequest));
     m_tasks.setUnitTask(unit, BotTaskList::TASK_MOVE);
 
-    LOGGER.debug("bot: moveUnit %d to %dx%d", unit->id, map_pos.x, map_pos.y);
+    //LOGGER.debug("bot: moveUnit %d to %dx%d", unit->id, map_pos.x, map_pos.y);
 }
 //-----------------------------------------------------------------
 void

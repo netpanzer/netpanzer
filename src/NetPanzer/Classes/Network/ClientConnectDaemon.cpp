@@ -153,6 +153,13 @@ unsigned char ClientConnectDaemon::netMessageLinkAck(const NetMessage* message)
         failure_display_timer.reset();
         break;
 
+    case _join_request_result_authentication_failed :
+        LoadingView::append( "Link to Server FAILED!" );
+        LoadingView::append( "Authentication Failed" );
+        rval = _connect_state_connect_failure;
+        failure_display_timer.reset();
+        break;
+
     default:
         LoadingView::append( "Link to Server FAILED!" );
         LoadingView::append( "Unknown result sent from server" );
@@ -433,7 +440,7 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                 {
                     LoadingView::append( "MAP TILE SET NOT FOUND!" );
                     LoadingView::append( "please download the appropriate tileset" );
-                    LoadingView::append( "from www.pyrosoftgames.com" );
+                    //LoadingView::append( "from www.pyrosoftgames.com" );
                     connection_state = _connect_state_connect_failure;
                     failure_display_timer.reset();
                 }

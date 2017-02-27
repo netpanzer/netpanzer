@@ -54,6 +54,8 @@ void CreditsView::doDraw(Surface &viewArea, Surface &clientArea)
         "Current Team\n\n"
         "   Fulvio Testi (fu)\n"
         "   Guido Ueffing (Lohengrin)\n"
+        "\n\n"
+        "   Additional graphics by Peter Lisker (Nessie)"
         "\n\n\n"
         "Authors\n\n"
         "Original Game (Pyrosoft):\n"
@@ -64,7 +66,10 @@ void CreditsView::doDraw(Surface &viewArea, Surface &clientArea)
         "0.8.3 Release:\n"
         "   Aaron Perez (krom), C-D, fu\n\n"
         "0.8.4 Release up to 0.8.5-test-1:\n"
-        "   Aaron Perez (krom), Laurant Jacques (Wile64), C-D, fu\n\n";
+        "   Aaron Perez (krom), Laurant Jacques (Wile64), C-D, fu\n\n"
+        "0.8.7 Release:\n"
+        "   Fulvio Testi (fu), Guido Ueffing (Lohengrin)\n\n"
+        ;
 
     viewArea.bltStringInBox(bodyTextRect, text, windowTextColor, 12);
 }

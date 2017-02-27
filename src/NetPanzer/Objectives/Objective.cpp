@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -33,6 +33,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/UnitNetMessage.hpp"
 #include "Classes/Network/ObjectiveNetMessage.hpp"
 #include "Classes/UnitMessageTypes.hpp"
+
+#include "Interfaces/GameManager.hpp"
 
 
 Objective::Objective(ObjectiveID id, iXY location, BoundBox area)
@@ -77,7 +79,7 @@ Objective::changeOwner( PlayerState * new_owner )
                                       "'%s' has been occupied by '%s'",
                                       name, new_owner->getName().c_str() );
     }
-    
+
     unit_collection_loc = outpost_map_loc + iXY( 13, 13 );
     unit_generation_on_flag = false;
 }
@@ -88,7 +90,17 @@ Objective::changeUnitGeneration(bool is_on, int unit_type)
     unit_generation_on_flag = is_on;
     if ( is_on )
     {
-        UnitProfile *profile = UnitProfileInterface::getUnitProfile( unit_type );
+
+        UnitProfile *profile;
+        if ( NetworkState::status == _network_state_server )  // server only
+        {
+        profile = UnitProfileInterface::getUnitProfile( unit_type*GameConfig::getUnitStylesNum() );
+        } else {
+        profile = UnitProfileInterface::getUnitProfile( unit_type*GameManager::ststylesnum );
+        }
+
+        //LOGGER.info("unit_type = %d", unit_type);
+        //LOGGER.info("unit_type = %d", unit_type*GameConfig::getUnitStylesNum());
         if ( profile )
         {
             unit_generation_type = unit_type;
@@ -187,14 +199,20 @@ Objective::generateUnits()
             iXY gen_loc;
             gen_loc = outpost_map_loc + unit_generation_loc;
 
-            unit = UnitInterface::createUnit(unit_generation_type,
+            //LOGGER.info("unit_generation_type = %d", unit_generation_type);
+    PlayerState *player_state2;
+    player_state2 = PlayerInterface::getPlayer(occupying_player->getID());
+    unsigned char ustyle2 = player_state2->getPlayerStyle();
+
+            //LOGGER.info("unit_generation_type out= %d while ustyle= %d ", unit_generation_type*GameConfig::getUnitStylesNum(), ustyle2);
+            unit = UnitInterface::createUnit(unit_generation_type*GameConfig::getUnitStylesNum()+ustyle2,
                     gen_loc, occupying_player->getID());
 
             if ( unit != 0 )
             {
                 UnitRemoteCreate create_mesg(unit->player->getID(),
                         unit->id, gen_loc.x, gen_loc.y,
-                        unit_generation_type);
+                        unit_generation_type*GameConfig::getUnitStylesNum()+ustyle2);
                 SERVER->broadcastMessage(&create_mesg, sizeof(UnitRemoteCreate));
 
                 UMesgAICommand ai_command;

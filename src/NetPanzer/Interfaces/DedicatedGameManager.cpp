@@ -41,6 +41,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/Network/NetworkServer.hpp"
+#include "Classes/Network/SystemNetMessage.hpp"
 
 #include "Particles/Particle2D.hpp"
 #include "Particles/ParticleInterface.hpp"
@@ -227,7 +228,7 @@ DedicatedGameManager::mainLoop()
     }
 
 
-    static NTimer aktimer30(16000); //every 16 sec only
+    static NTimer aktimer30(28000); //every 30 sec only
     if (aktimer30.isTimeOut())
     {
         aktimer30.reset();
@@ -240,6 +241,11 @@ DedicatedGameManager::mainLoop()
             if ( player->isActive() )
             {
 
+                // enckeychange msg
+
+                SystemEnckeychange ckmsg;
+                SERVER->sendMessage(player->getID(), &ckmsg, sizeof(SystemEnckeychange));
+                //
 
                 if ( player->getTotal()<GameConfig::game_lowscorelimit+6 && player->getTotal()>GameConfig::game_lowscorelimit )
                 {
@@ -313,9 +319,12 @@ bool DedicatedGameManager::launchNetPanzerGame()
 
     GameConfig::game_map->assign(MapsManager::getNextMap(""));
 
-    GameManager::dedicatedLoadGameMap(GameConfig::game_map->c_str());
+    GameManager::dedicatedLoadGameMap(GameConfig::game_map->c_str(), GameConfig::game_mapstyle->c_str());
+
+    *Console::server << "loading unit profiles." << std::endl;
 
     UnitProfileInterface::loadUnitProfiles();
+
     ParticleInterface::rebuildUnitParticleData();
 
     GameManager::reinitializeGameLogic();

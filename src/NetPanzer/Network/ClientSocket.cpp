@@ -94,29 +94,36 @@ ClientSocket::initId()
 {
     static int curid=1;
     id=curid++;
+    // init XOR key
+    encryptKeySendC = 0;
+    encryptKeyRecvC = 0;
+    encryptKeySendS = 0;
+    encryptKeyRecvS = 0;
+    recvf = false;
 
     if ( NetworkState::status == _network_state_server ) // server only
     {
     //AAdevice reset vars
     conn_end = 0; pre_conn_end = 0; packets_count = 0; lastPActTime0 = 0; commandBurst = 0; burstTime = 0; burstTime0 = 0; commandBurstLimit = 13;//slowdown = 0;
 
+
     if (GameConfig::game_anticheat < 1 || GameConfig::game_anticheat > 5)
     {
-    GameConfig::game_lowscorelimit = 3; // default
+    GameConfig::game_anticheat = 3; // default
     }
 
     if (GameConfig::game_anticheat == 1)
     {
-    commandBurstLimit = 7; // strict
+    commandBurstLimit = 10; // very strict
     } else if (GameConfig::game_anticheat == 2)
               {
-               commandBurstLimit = 8; // normal
+               commandBurstLimit = 11; // strict
               } else if (GameConfig::game_anticheat == 3)
                         {
-                         commandBurstLimit = 10; // permissive
+                         commandBurstLimit = 12; // normal
                         } else if (GameConfig::game_anticheat == 4)
                                   {
-                                   commandBurstLimit = 12; // very permissive
+                                   commandBurstLimit = 13; // permissive
                                   } else {
                                           commandBurstLimit = 14; // pretty null
                                          }
@@ -130,6 +137,9 @@ ClientSocket::~ClientSocket()
     if (socket)
         socket->destroy();
 }
+
+
+
 
 void ClientSocket::sendMessage(const void* data, size_t size)
 {
@@ -145,11 +155,70 @@ void ClientSocket::sendMessage(const void* data, size_t size)
 
         Uint16 *buf = (Uint16*)(sendbuffer+sendpos);
         *buf = htol16(size);
+
+        Uint8 *bufb = (Uint8*)(sendbuffer+sendpos);
+
         memcpy(buf+1, data, size);
         sendpos += size+2;
+
+        // Encrypt Sending
+
+        memcpy(&encrypted,buf+1,1);
+        memcpy(&encryptedb,bufb+3,1);
+        encrypted2 = encrypted;
+
+
+
+        if ( NetworkState::status == _network_state_server )  // server only
+        {
+
+        encrypted2 ^= encryptKeySendS;
+        //LOGGER.debug("Byte sent is [%d]; XOR is [%d];", encrypted, encrypted2);
+        memcpy(buf+1,&encrypted2,1);
+
+
+        if (recvf) {
+            encryptKeyRecvS = encryptKeySendS;
+        }
+
+        if (encrypted == 1) {
+        if (encryptedb == 6) {
+
+        memcpy(&key2,buf+2,1);
+        memcpy(&key0,buf,1);
+
+        //LOGGER.debug("Sent KeyMSG [%d] (%d)[%d][%d][%d];", key2, key0, encrypted, encryptedb, key2);
+
+        encryptKeySendS = key2; recvf = false;
+
+        }
+        }
+
+
+        }
+
+
+
+
+        if ( NetworkState::status == _network_state_client || NetworkState::status == _network_state_bot ) // client only
+        {
+
+        encrypted2 ^= encryptKeySendC;
+        //LOGGER.debug("Byte sent is [%d]; XOR is [%d];", encrypted, encrypted2);
+        memcpy(buf+1,&encrypted2,1);
+
+        }
+
+
+
 //        sendRemaining(); // lets send later
     }
 }
+
+
+
+
+
 
 void
 ClientSocket::sendRemaining()
@@ -229,11 +298,12 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
 
 
 
+
         // fu's Anti-Spam/Cheat device
 
         if ( NetworkState::status == _network_state_server ) // server only
         {
-
+        //LOGGER.info("Packet %d", packetsize);
 
         if ( packetsize > 2 )
         {
@@ -244,19 +314,19 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
 
 
         // anti pre-spawn chat string attack (multiple temporary patches)
-        if ( packetsize == 346 && packets_count == 1 && pre_conn_end == 1)
+        if ( packetsize == 303 && packets_count == 1 && pre_conn_end == 1)
         {
          //conn_pause.setTimeOut(10000);
          conn_end = 1;
         }
 
-        if ( packetsize == 38 && packets_count == 0)
+        if ( packetsize == 39 && packets_count == 0)
         {
          //conn_pause.setTimeOut(10000);
          pre_conn_end = 1;
         }
 
-        if (packets_count == 0 && packetsize != 38)
+        if (packets_count == 0 && packetsize != 39)
         {
          LOGGER.debug("Suspect attack detected [IP = %s] (pre-spawning)!", cipstring);
          //ChatInterface::serversay("Server blocked suspect attack (external)!");
@@ -275,7 +345,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
         opc_0 = (int)data[dataptr];
         opc_1 = (int)data[dataptr+1];
         opc_2 = (int)data[dataptr+2];
-
+        //LOGGER.debug("%d %d %d", opc_0,opc_1,opc_2);
 
         if ( (opc_0 == 10 && opc_1 == 0 && opc_2 == 3) || (opc_0 == 10 && opc_1 == 0 && opc_2 == 1) || (opc_0 == 3 && opc_1 == 5) ) // chat, ally chat, ally request
         {
@@ -383,6 +453,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
 
 
 
+
         if ( (tempoffset-2 < packetsize) && remaining )
         {
             unsigned int needsize = packetsize-(tempoffset-2);
@@ -395,11 +466,54 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
 
         if ( tempoffset-2 == packetsize )
         {
+            //LOGGER.info("Packet Last %d", packetsize);
+            // Encrypt Receiving
+            Uint8 *buf2 = (Uint8*)(tempbuffer);
+            popc_t = (Uint8)tempbuffer[2];
+            popc_0b = popc_t;
+
+
+            if ( NetworkState::status == _network_state_client || NetworkState::status == _network_state_bot ) // client only
+            {
+
+            popc_0b ^= encryptKeyRecvC;
+            //LOGGER.debug("Byte recv is [%d]; XOR is [%d];", popc_t, popc_0b);
+            memcpy(buf2+2,&popc_0b,1);
+
+            opcv_0 = (int)tempbuffer[2];
+            opcv_1 = (int)tempbuffer[3];
+            opcv_2 = (Uint8)tempbuffer[4];
+            //LOGGER.debug("%d %d %d", opcv_0,opcv_1,opcv_2);
+            if (opcv_0 == 1 && opcv_1 == 6) {
+            //LOGGER.debug("Got new key [%d]", opcv_2);
+            }
+            if (opcv_0 == 1 && opcv_1 == 6) {
+
+               recvf = true; encryptKeyRecvC = opcv_2;
+            }
+
+            }
+
+
+
+            if ( NetworkState::status == _network_state_server ) // server only
+            {
+
+            if (recvf) {
+                encryptKeyRecvS = encryptKeyRecvC; encryptKeySendC = encryptKeyRecvC;
+            }
+
+            popc_0b ^= encryptKeyRecvS;
+            //LOGGER.debug("Byte recv is [%d]; XOR is [%d];", popc_t, popc_0b);
+            memcpy(buf2+2,&popc_0b,1);
+
+            }
+
+
+
             EnqueueIncomingPacket(tempbuffer+sizeof(Uint16), packetsize, player_id, this);
             tempoffset = 0;
         }
-
-
 
 
 

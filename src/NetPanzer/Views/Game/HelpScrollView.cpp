@@ -73,7 +73,7 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     insert("");
     insert("Outpost Related");
     insert("");
-    insert("  'O'                              Toggle outpost names");
+    insert("  'O'                              Toggles outpost names");
     insert("  LMC on captured outpost          Displays the outpost view");
     insert("  mouse drag on captured outpost   Select unit spawn point");
     insert("");
@@ -88,10 +88,12 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     insert("View Related");
     insert("");
     insert("  F1                               Help View");
-    insert("  'B'                              Toggle flag selection window");
+    insert("  'U'                              Toggles Unit selection window");
+    insert("  'B'                              Toggles Flag selection window");
     insert("  'D'                              Damage View");
     insert("  'F'                              Flag View");
-    insert("  'M'                              Mini Map View");
+    insert("  'M'                              Toggles Map View");
+    insert("  Shift + 'M'                      Toggles a Bigger Map View");
     insert("  'N'                              Name View");
     insert("  TAB                              Rank View");
     insert("  RMH + mouse movement             Moves any view on the screen");
@@ -107,7 +109,7 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     insert(" ");
     insert("System Related");
     insert("");
-    insert("  ALT + Enter                      Toggle Fullscreen/Windowed mode");
+    insert("  ALT + Enter                      Toggles Fullscreen/Windowed mode");
     insert("  F9                               BMP screen shot");
     insert(" ");
     insert(" ");

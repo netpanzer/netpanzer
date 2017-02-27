@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -28,7 +28,9 @@ enum { _net_message_id_player_connect_id,
        _net_message_id_player_score_update,
        _net_message_id_player_alliance_request,
        _net_message_id_player_alliance_update,
-       _net_message_id_player_flagtimer_update
+       _net_message_id_player_flagtimer_update,
+       _net_message_id_player_unit_style_update,
+       _net_message_id_player_unit_style_sync
      };
 
 #ifdef MSVC
@@ -54,13 +56,13 @@ class PlayerStateSync : public NetMessage
 {
 public:
     NetworkPlayerState player_state;
-    
+
     PlayerStateSync()
     {
         message_class = _net_message_class_player;
         message_id = _net_message_id_player_sync_state;
     }
-    
+
     PlayerStateSync(NetworkPlayerState state)
         : player_state(state)
     {
@@ -93,6 +95,33 @@ public:
     {
         message_class = _net_message_class_player;
         message_id = _net_message_id_player_update_flag;
+    }
+}
+__attribute__((packed));
+
+class UpdatePlayerUnitStyle : public NetMessage
+{
+public:
+    Uint8 player_unit_style;
+
+    UpdatePlayerUnitStyle()
+    {
+        message_class = _net_message_class_player;
+        message_id = _net_message_id_player_unit_style_update;
+    }
+}
+__attribute__((packed));
+
+class UnitStyleSync : public NetMessage
+{
+public:
+    PlayerID player_id;
+    Uint8 player_unit_style;
+
+    UnitStyleSync()
+    {
+        message_class = _net_message_class_player;
+        message_id = _net_message_id_player_unit_style_sync;
     }
 }
 __attribute__((packed));
@@ -219,7 +248,7 @@ public:
         message_id = _net_message_id_player_flagtimer_update;
         flag_timer = flagtimer;
     }
-    
+
     Uint16 getflagtimer() const
     {
         return flag_timer;

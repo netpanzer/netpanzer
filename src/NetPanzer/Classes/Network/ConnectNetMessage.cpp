@@ -1,16 +1,16 @@
 /*
 Copyright (C) 2004 Hollis Blanchard
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -36,6 +36,16 @@ Uint32 ClientConnectJoinRequest::getProtocolVersion() const
 void ClientConnectJoinRequest::setProtocolVersion(Uint32 version)
 {
     protocol_version = htol32(version);
+}
+
+Uint8 ClientConnectJoinRequest::getNMode() const
+{
+    return Uint8(n_mode);
+}
+
+void ClientConnectJoinRequest::setNMode(Uint8 nm)
+{
+    n_mode = Uint8(nm);
 }
 
 void ClientConnectJoinRequest::setPassword(const NPString& password)
@@ -96,8 +106,8 @@ ConnectClientSettings::ConnectClientSettings()
 
 void ConnectClientSettings::set(const char *player_name)
 {
-    strncpy(ConnectClientSettings::player_name, player_name, 64);
-    ConnectClientSettings::player_name[63] = '\0';
+    strncpy(ConnectClientSettings::player_name, player_name, 21);
+    ConnectClientSettings::player_name[20] = '\0';
 }
 
 
@@ -106,6 +116,7 @@ ConnectMesgServerGameSettings::ConnectMesgServerGameSettings()
     message_class = _net_message_class_connect;
     message_id = _net_message_id_connect_server_game_setup;
     memset(map_name, 0, sizeof(map_name));
+    memset(map_style, 0, sizeof(map_style));
 }
 
 Uint16 ConnectMesgServerGameSettings::getMaxPlayers() const
@@ -198,3 +209,12 @@ void ConnectMesgServerGameSettings::setFlagTime(Sint32 flagtime)
     flag_time = htol32(flagtime);
 }
 
+Sint32 ConnectMesgServerGameSettings::getLowScoreLimit() const
+{
+    return ltoh32(low_score_limit);
+}
+
+void ConnectMesgServerGameSettings::setLowScoreLimit(Sint32 lowScoreLimit)
+{
+    low_score_limit = htol32(lowScoreLimit);
+}

@@ -127,7 +127,7 @@ BaseGameManager *initialise(int argc, char** argv)
     // Parse commandline
     using namespace optionmm;
     command_line commandline("NetPanzer", PACKAGE_VERSION,
-            "Copyright(c) 1998 Pyrosoft Inc. and nepanzer-devel team", "",
+            "Copyright(c) 1998 Pyrosoft Inc. and netpanzer-dev team", "",
             argc, argv);
 
     option<std::string, true, false> connect_option('c', "connect",

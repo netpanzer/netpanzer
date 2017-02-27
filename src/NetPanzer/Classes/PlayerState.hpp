@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -43,13 +43,13 @@ public:
     PlayerID getPlayerIndex() const;
 
 private:
-    NetworkPlayerState() 
+    NetworkPlayerState()
     {}
-    friend class PlayerState;    
+    friend class PlayerState;
     friend class PlayerStateSync;
-    
+
     PlayerID id;
-    char name[64];
+    char name[21]; // was 64
     Uint8 status;
     Sint16 kills;
     Sint16 kill_points;
@@ -57,6 +57,7 @@ private:
     Sint16 loss_points;
     Sint16 total;
     Sint16 objectives_held;
+    Uint8 units_style;
 }__attribute__((packed));
 
 #ifdef MSVC
@@ -68,6 +69,7 @@ class PlayerState
 private:
     PlayerID id;
     std::string name;
+    std::string nameb;
     unsigned char status;
     short kills;
     short kill_points;
@@ -75,6 +77,7 @@ private:
     short loss_points;
     short total;
     short objectives_held;
+    unsigned char units_style;
     bool stats_locked;
     bool admin_flag;
     NTimer autokick;
@@ -110,6 +113,8 @@ public:
     void setID( PlayerID id );
     FlagID getFlag() const;
     short getTotal() const;
+    void setPlayerStyle(unsigned char nustyle);
+    unsigned char getPlayerStyle();
     NetworkPlayerState getNetworkPlayerState() const;
     void getNetworkPlayerState(NetworkPlayerState& state) const;
     void setFromNetworkPlayerState(const NetworkPlayerState* state);

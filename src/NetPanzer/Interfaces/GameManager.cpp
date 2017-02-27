@@ -91,7 +91,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Game/AreYouSureExitView.hpp"
 #include "Views/Game/GameView.hpp"
 #include "Views/Game/MiniMapView.hpp"
-
+#include "Views/Game/MiniMapViewAlt.hpp"
 #include "Particles/Particle2D.hpp"
 #include "Particles/ParticleSystem2D.hpp"
 #include "Particles/ParticleInterface.hpp"
@@ -116,6 +116,12 @@ bool GameManager::display_frame_rate_flag = false;
 bool GameManager::display_network_info_flag;
 
 std::string GameManager::map_path;
+std::string GameManager::mapstyle_path;
+
+std::string GameManager::stmapstyle;
+//std::string GameManager::ststyles;
+unsigned char GameManager::ststylesnum;
+std::vector<NPString> GameManager::stlist;
 
 static Surface hostLoadSurface;
 
@@ -229,6 +235,19 @@ bool GameManager::resetGameLogic()
 }
 
 // ******************************************************************
+bool GameManager::resetGameLogicAlt()
+{
+    PlayerInterface::reset();
+    UnitInterface::reset();
+    UnitBlackBoard::initializeBlackBoard();
+    PathScheduler::initialize();
+    //PowerUpInterface::resetLogic();
+    ProjectileInterface::resetLogic();
+    startGameTimer();
+    return true;
+}
+
+// ******************************************************************
 void GameManager::shutdownGameLogic()
 {
     PlayerInterface::cleanUp();
@@ -244,13 +263,15 @@ void GameManager::shutdownParticleSystems()
 }
 
 // ******************************************************************
-void GameManager::startGameMapLoad(const char *map_file_path,
+void GameManager::startGameMapLoad(const char *map_file_path, const char *mapstyle_name,
                                    unsigned long partitions)
 {
     map_path = "maps/";
     map_path.append(map_file_path);
+    mapstyle_path = "/";
+    mapstyle_path.append(mapstyle_name);
 
-    if (!MapInterface::startMapLoad( map_path.c_str(), true, partitions))
+    if (!MapInterface::startMapLoad( map_path.c_str(), mapstyle_path.c_str(), true, partitions))
         throw Exception("map format error.");
 }
 
@@ -280,23 +301,25 @@ void GameManager::finishGameMapLoad()
 
 // ******************************************************************
 
-void GameManager::dedicatedLoadGameMap(const char *map_name )
+void GameManager::dedicatedLoadGameMap(const char *map_name, const char *mapstyle_name )
 {
 
     Console::mapSwitch(map_name);
     *Console::server        << "Server Settings:\n"
-        << "Map: "          << *GameConfig::game_map << "\n"
         << "MaxPlayers: "   << GameConfig::game_maxplayers << "\n"
         << "MaxUnits: "     << GameConfig::game_maxunits << "\n"
         << "AutoKick: "     << GameConfig::game_autokicktime << "\n"
         << "FlagTimer: "    << GameConfig::game_changeflagtime << "\n"
-        << "Gametype: "     << gameconfig->getGameTypeString() << "\n"
+        << "GameType: "     << gameconfig->getGameTypeString() << "\n"
         << "ObjectivePercentage: " <<
             GameConfig::game_occupationpercentage << "\n"
         << "TimeLimit: "    << GameConfig::game_timelimit << "\n"
         << "FragLimit: "    << GameConfig::game_fraglimit << "\n"
         << "RespawnType: "  << gameconfig->getRespawnTypeString() << "\n"
-        << "Mapcycle: "     << *GameConfig::game_mapcycle << "\n"
+        << "Map: "          << *GameConfig::game_map << "\n"
+        << "MapCycle: "     << *GameConfig::game_mapcycle << "\n"
+        << "MapStyle: "     << *GameConfig::game_mapstyle << "\n"
+        << "UnitsStyles: "  << *GameConfig::game_units_styles << "\n"
         << "Powerups: "     << (GameConfig::game_powerups ? "yes" : "no") << "\n"
         << "AllowAllies: "  << (GameConfig::game_allowallies ? "yes" : "no") << "\n"
         << "CloudCoverage: " << GameConfig::game_cloudcoverage << " (Windspeed " << GameConfig::game_windspeed << ")" << std::endl;
@@ -304,7 +327,11 @@ void GameManager::dedicatedLoadGameMap(const char *map_name )
     map_path = "maps/";
     map_path.append(map_name);
 
-    MapInterface::startMapLoad( map_path.c_str(), false, 0 );
+
+    mapstyle_path = "/";
+    mapstyle_path.append(mapstyle_name);
+
+    MapInterface::startMapLoad( map_path.c_str(), mapstyle_path.c_str(), false, 0 );
 
     map_path.append(".opt");
     ObjectiveInterface::loadObjectiveList( map_path.c_str() );
@@ -432,6 +459,8 @@ ConnectMesgServerGameSettings* GameManager::getServerGameSetup()
     game_setup->setMaxPlayers(GameConfig::game_maxplayers);
     game_setup->setMaxUnits(GameConfig::game_maxunits);
     snprintf(game_setup->map_name, 32, "%s", GameConfig::game_map->c_str());
+    snprintf(game_setup->map_style, 17, "%s", GameConfig::game_mapstyle->c_str());
+    snprintf(game_setup->tank_styles, 176, "%s", GameConfig::game_units_styles->c_str());
     game_setup->setCloudCoverage(GameConfig::game_cloudcoverage);
     game_setup->setWindSpeed(GameConfig::game_windspeed);
     game_setup->setGameType(GameConfig::game_gametype);
@@ -440,6 +469,14 @@ ConnectMesgServerGameSettings* GameManager::getServerGameSetup()
     game_setup->setTimeLimit(GameConfig::game_timelimit);
     game_setup->setElapsedTime(getGameTime());
     game_setup->setFlagTime(GameConfig::game_changeflagtime);
+    game_setup->occupation_percentage = GameConfig::game_occupationpercentage;
+    game_setup->enable_bases = GameConfig::game_enable_bases;
+    game_setup->base_capture_mode = GameConfig::game_base_capture_mode;
+    game_setup->base_limit = GameConfig::game_base_limit;
+    game_setup->allowmultiip = GameConfig::game_allowmultiip;
+    game_setup->allowallies = GameConfig::game_allowallies;
+    game_setup->respawntype = GameConfig::game_respawntype;
+    game_setup->setLowScoreLimit(GameConfig::game_lowscorelimit);
 
     return game_setup;
 }
@@ -493,11 +530,31 @@ bool GameManager::startClientGameSetup(const NetMessage* message, int *result_co
     GameConfig::game_fraglimit = game_setup->getFragLimit();
     GameConfig::game_timelimit = game_setup->getTimeLimit();
     GameConfig::game_changeflagtime = game_setup->getFlagTime();
+    GameConfig::game_occupationpercentage = game_setup->occupation_percentage;
+
+    // ready to use in client if needed:
+    //GameConfig::game_enable_bases = game_setup->enable_bases;
+    //GameConfig::game_base_capture_mode = game_setup->base_capture_mode;
+    //GameConfig::game_base_limit = game_setup->base_limit;
+    //GameConfig::game_allowmultiip = game_setup->allowmultiip;
+    //GameConfig::game_allowallies = game_setup->allowallies;
+    //GameConfig::game_respawntype = game_setup->respawntype;
+    //GameConfig::game_lowscorelimit = game_setup->getLowScoreLimit();
+
+
+    stmapstyle = game_setup->map_style;
+
+
+    NPString stl = game_setup->tank_styles;
+    string_to_params(stl, stlist);
+    ststylesnum = stlist.size();
+    //LOGGER.info("Unit styles received = %d", ststylesnum);
+
     startGameTimer();
     game_elapsed_time_offset = game_setup->getElapsedTime();
 
     try {
-        startGameMapLoad( game_setup->map_name, 20);
+        startGameMapLoad( game_setup->map_name, game_setup->map_style, 20);
     } catch(std::exception& e) {
         LOGGER.warning("Error while loading map '%s': %s",
                 game_setup->map_name, e.what());
@@ -508,6 +565,7 @@ bool GameManager::startClientGameSetup(const NetMessage* message, int *result_co
     *result_code = _mapload_result_success;
     return true;
 }
+
 
 // ******************************************************************
 
@@ -547,6 +605,9 @@ void GameManager::processSystemMessage(const NetMessage* message)
 
         case _net_message_id_system_connect_alert:
             netMessageConnectAlert( message );
+            break;
+
+        case _net_message_id_system_enckeychange:
             break;
 
         default:

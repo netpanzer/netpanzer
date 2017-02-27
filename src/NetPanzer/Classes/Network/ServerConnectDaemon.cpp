@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -233,7 +233,7 @@ public:
         {
             ClientConnectResult connect_result;
 
-            if ((GameConfig::game_allowmultiip == false) && 
+            if ((GameConfig::game_allowmultiip == false) &&
                (SERVER->isAlreadyConnected(connect_client) == true))
             {
                 connect_result.result_code = _connect_result_server_already_connected;
@@ -294,6 +294,10 @@ public:
             client_setting = (ConnectClientSettings *) msg;
 
             player->setName( client_setting->player_name );
+            //temp style
+            player->setPlayerStyle(0);
+            //
+            //player->setPlayerStyle(rand()%GameConfig::getUnitStylesNum());
 
             ResourceManager::updateFlagData(player->getID(),
                                             client_setting->player_flag,
@@ -602,11 +606,32 @@ private:
 
             unit = i->second;
             MapInterface::pointXYtoMapXY(unit->unit_state.location, unit_map_loc);
+/*
             UnitRemoteCreate urc(unit->player->getID(),
                                  unit->id,
                                  unit_map_loc.x,
                                  unit_map_loc.y,
                                  unit->unit_state.unit_type);
+*/
+
+            UnitRemoteCreateFull urc(unit->player->getID(),
+                                 unit->id,
+                                 unit_map_loc.x,
+                                 unit_map_loc.y,
+                                 unit->unit_state.unit_type,
+                                 unit->unit_state.body_angle,
+                                 unit->unit_state.turret_angle,
+                                 unit->unit_state.orientation,
+                                 unit->unit_state.speed_rate,
+                                 unit->unit_state.speed_factor,
+                                 unit->unit_state.reload_time,
+                                 unit->unit_state.max_hit_points,
+                                 unit->unit_state.hit_points,
+                                 unit->unit_state.damage_factor,
+                                 unit->unit_state.weapon_range,
+                                 unit->unit_state.defend_range);
+
+                                 //LOGGER.info("Sent Msg -> unit_id: %d", unit->id);
 
             if ( ! encoder.encodeMessage(&urc, sizeof(urc)) )
             {
@@ -804,7 +829,7 @@ bool ServerConnectDaemon::inConnectQueue( ClientSocket *client )
     {
         return true;
     }
-    
+
     ConnectQueueIterator i;
     i = std::find(connect_queue.begin(), connect_queue.end(), client);
     return i != connect_queue.end();
@@ -823,6 +848,7 @@ static void netPacketClientJoinRequest(const NetPacket* packet)
 
     join_request_ack.setResultCode(_join_request_result_success);
     bool isbad = false;
+    unsigned char bpass = join_request_mesg->getNMode();
     NPString pass;
     join_request_mesg->getPassword(pass);
 
@@ -832,6 +858,17 @@ static void netPacketClientJoinRequest(const NetPacket* packet)
         isbad = true;
     }
 
+    //temporary
+    if ( !isbad && GameConfig::game_bots_allowed == false)
+    {
+        if ( bpass == 15 )
+        {
+            join_request_ack.setResultCode(_join_request_result_access_denied);
+            isbad = true;
+        }
+    }
+
+
     if ( !isbad && GameConfig::game_gamepass->size() > 0)
     {
         if ( GameConfig::game_gamepass->compare(pass) != 0 )
@@ -840,6 +877,21 @@ static void netPacketClientJoinRequest(const NetPacket* packet)
             isbad = true;
         }
     }
+
+    // Authentication mgmt
+
+    if ( !isbad && GameConfig::game_authentication == true)
+    {
+        /*
+        if ( !isbad )
+        {
+            join_request_ack.setResultCode(_join_request_result_authentication_failed);
+            isbad = true;
+        }
+        */
+    }
+
+    //
 
     if ( !isbad )
     {
@@ -896,11 +948,11 @@ void
 ServerConnectDaemon::removeClientFromQueue(ClientSocket *client)
 {
     connect_queue.remove(client);
-    
+
     if( connect_client == client )
     {
         fsm->enterState(connect_state_idle);
-    }    
+    }
 }
 
 void ServerConnectDaemon::lockConnectProcess()

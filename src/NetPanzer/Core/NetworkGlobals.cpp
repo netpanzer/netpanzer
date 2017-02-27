@@ -56,5 +56,5 @@ const char * getNetpanzerProtocolMessage(const int protocol)
         return "This server is an older development version, cannot use";
     }
 
-    return "This server is a newer netpanzer, please check http://www.netpanzer.org";
+    return "This server is a newer netpanzer, please check http://www.netpanzer.info";
 }

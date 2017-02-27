@@ -50,6 +50,7 @@ public:
     void sendRemaining();
     ProxyServer proxy;
 
+
     int getId() { return id; };
     std::string getFullIPAddress();
     std::string getIPAddress();
@@ -108,6 +109,25 @@ public:    PlayerID player_id;
     int opc_0;
     int opc_1;
     int opc_2;
+
+    Uint8 popc_0;
+    Uint8 popc_0b;
+    Uint8 popc_t;
+    int opcv_0;
+    int opcv_1;
+    Uint8 key2;
+    Uint8 key0;
+    Uint8 opcv_2;
+    Uint8 encrypted;
+    Uint8 encryptedb;
+    Uint8 encrypted2;
+    Uint8 encryptKeySendC;
+    Uint8 encryptKeyRecvC;
+    Uint8 encryptKeySendS;
+    Uint8 encryptKeyRecvS;
+    bool recvf;
+
+
 };
 
 #endif

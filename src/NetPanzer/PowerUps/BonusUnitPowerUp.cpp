@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -36,7 +36,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 BonusUnitPowerUp::BonusUnitPowerUp(iXY map_loc, int type)
         : PowerUp( map_loc, type )
 {
-    bonus_unit_type = rand() % UnitProfileInterface::getNumUnitTypes();
+    bonus_unit_type = rand() % UnitProfileInterface::getRealNumUnitTypes();
 }
 
 
@@ -58,14 +58,18 @@ void BonusUnitPowerUp::onHit( UnitID unit_id )
 
         placement_matrix.getNextEmptyLoc( &spawn_loc );
 
-        new_unit = UnitInterface::createUnit(bonus_unit_type,
+    PlayerState *player_state2;
+    player_state2 = PlayerInterface::getPlayer(own_player);
+    unsigned char ustyle2 = player_state2->getPlayerStyle();
+
+        new_unit = UnitInterface::createUnit(bonus_unit_type*GameConfig::getUnitStylesNum()+ustyle2,
                                              spawn_loc,
                                              own_player );
 
         if ( new_unit != 0 )
         {
             UnitRemoteCreate create_mesg(new_unit->player->getID(),
-                    new_unit->id, spawn_loc.x, spawn_loc.y, bonus_unit_type);
+                    new_unit->id, spawn_loc.x, spawn_loc.y, bonus_unit_type*GameConfig::getUnitStylesNum()+ustyle2);
             SERVER->broadcastMessage( &create_mesg, sizeof( UnitRemoteCreate ));
         }
 

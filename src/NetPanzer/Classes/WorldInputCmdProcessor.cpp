@@ -328,7 +328,8 @@ void
 WorldInputCmdProcessor::evaluateKeyCommands()
 {
     if (KeyboardInterface::getKeyPressed(SDLK_b)
-       && ! Desktop::getVisible("HelpScrollViewAlt") )
+       && ! Desktop::getVisible("HelpScrollViewAlt")
+       && ! Desktop::getVisible("UStyleSelectionView") )
     {
         if ( PlayerInterface::getLocalPlayer()->isSelectingFlag()
             || GameConfig::game_changeflagtime == 0
@@ -339,9 +340,28 @@ WorldInputCmdProcessor::evaluateKeyCommands()
         }
     }
 
-    if ( KeyboardInterface::getKeyPressed(SDLK_m) )
+    if ( ((KeyboardInterface::getKeyState(SDLK_LSHIFT) == false) && (KeyboardInterface::getKeyState(SDLK_RSHIFT) == false)) && KeyboardInterface::getKeyPressed(SDLK_m) )// &&
+          //(KeyboardInterface::getKeyState( SDLK_LALT ) == true || KeyboardInterface::getKeyState( SDLK_RALT ) == true) )
     {
+        //if (KeyboardInterface::getKeyState( SDLK_LALT ) == true || KeyboardInterface::getKeyState( SDLK_RALT ) == true) {
+        Desktop::setVisibility( "MiniMapViewAlt", 0 );
         Desktop::toggleVisibility( "MiniMapView" );
+        //Desktop::setVisibility( "MiniMapView", 0 );
+        //} else {
+        //Desktop::toggleVisibility( "MiniMapView" );
+        //}
+    }
+
+    if ( ((KeyboardInterface::getKeyState(SDLK_LSHIFT)) || (KeyboardInterface::getKeyState(SDLK_RSHIFT))) && KeyboardInterface::getKeyPressed(SDLK_m) )// &&
+          //(KeyboardInterface::getKeyState( SDLK_LALT ) == true || KeyboardInterface::getKeyState( SDLK_RALT ) == true) )
+    {
+        //if (KeyboardInterface::getKeyState( SDLK_LALT ) == true || KeyboardInterface::getKeyState( SDLK_RALT ) == true) {
+        Desktop::setVisibility( "MiniMapView", 0 );
+        Desktop::toggleVisibility( "MiniMapViewAlt" );
+
+        //} else {
+        //Desktop::toggleVisibility( "MiniMapView" );
+        //}
     }
 
     if ( KeyboardInterface::getKeyPressed(SDLK_o) )
@@ -380,7 +400,9 @@ WorldInputCmdProcessor::evaluateKeyCommands()
     }
 
     if ( KeyboardInterface::getKeyPressed(SDLK_F1)
-       && ! Desktop::getVisible("GFlagSelectionView") ) {
+       && ! Desktop::getVisible("GFlagSelectionView")
+       && ! Desktop::getVisible("UStyleSelectionView") )
+    {
         Desktop::toggleVisibility( "HelpScrollViewAlt" );
     }
 
@@ -399,6 +421,15 @@ WorldInputCmdProcessor::evaluateKeyCommands()
     if (KeyboardInterface::getKeyPressed( SDLK_F5 )) {
         //  DEBUG VIEW
         Desktop::toggleVisibility( "LibView" );
+    }
+
+    if (KeyboardInterface::getKeyPressed(SDLK_u)
+        && ! Desktop::getVisible("HelpScrollViewAlt")
+        && ! Desktop::getVisible("GFlagSelectionView") )
+        {
+        if (PlayerInterface::getLocalPlayer()->isSelectingFlag()) {
+        Desktop::toggleVisibility( "UStyleSelectionView" );
+        }
     }
 
     if ( (KeyboardInterface::getKeyPressed( SDLK_RETURN ) == true)

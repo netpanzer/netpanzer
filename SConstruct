@@ -8,7 +8,7 @@ import subprocess
 # Set NetPanzer Version
 ################################################################
 
-NPVERSION = '0.8.7'
+NPVERSION = '0.9.0-RC1'
 SVERSION = ''
 
 try:

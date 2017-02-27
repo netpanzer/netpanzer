@@ -79,6 +79,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Game/RankView.hpp"
 #include "Views/Game/EndRoundView.hpp"
 #include "Views/Game/GFlagSelectionView.hpp"
+
+#include "Views/Game/UStyleSelectionView.hpp"
+
 #include "Views/Game/VehicleSelectionView.hpp"
 #include "Views/Game/CodeStatsView.hpp"
 #include "Views/Game/LibView.hpp"
@@ -89,6 +92,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Game/AreYouSureExitView.hpp"
 #include "Views/Game/GameView.hpp"
 #include "Views/Game/MiniMapView.hpp"
+#include "Views/Game/MiniMapViewAlt.hpp"
 #include "Views/Game/DisconectedView.hpp"
 #include "Views/Game/LoadingView.hpp"
 
@@ -177,8 +181,10 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new RankView());
     Desktop::add(new EndRoundView());
     Desktop::add(new GFlagSelectionView());
+    Desktop::add(new UStyleSelectionView());
     Desktop::add(new VehicleSelectionView());
     Desktop::add(new MiniMapView() );
+    Desktop::add(new MiniMapViewAlt() );
     Desktop::add(new CodeStatsView());
     Desktop::add(new LibView());
     Desktop::add(new HelpScrollView());
@@ -344,9 +350,10 @@ void PlayerGameManager::hostMultiPlayerGame()
 
     GameConfig::game_map->assign( MapsManager::getNextMap("") );
     const char* mapname = GameConfig::game_map->c_str();
+    const char* mapstyle = GameConfig::game_mapstyle->c_str();
 
     try {
-        GameManager::startGameMapLoad(mapname, 20);
+        GameManager::startGameMapLoad(mapname, mapstyle, 20);
     } catch(std::exception& e) {
         LOGGER.warning("Error while loading map '%s': %s", mapname, e.what());
         LoadingView::loadError();
@@ -412,7 +419,9 @@ void PlayerGameManager::hostMultiPlayerGame()
     player_state = PlayerInterface::allocateLoopBackPlayer();
     const char* playername = GameConfig::player_name->c_str();
     player_state->setName(playername);
-
+    //temp fix
+    player_state->setPlayerStyle(0);
+    //
     LoadingView::update( "Spawning Player ... (100%)" );
 
     graphicsLoop();
@@ -541,6 +550,10 @@ void PlayerGameManager::processSystemKeys()
                 else if ( Desktop::getVisible("GFlagSelectionView") )
                 {
                     Desktop::toggleVisibility("GFlagSelectionView");
+                }
+                else if ( Desktop::getVisible("UStyleSelectionView") )
+                {
+                    Desktop::toggleVisibility("UStyleSelectionView");
                 }
                 else
                 {

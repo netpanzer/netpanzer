@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -26,7 +26,8 @@ using namespace std;
 #include "Units/UnitTypes.hpp"
 #include "Units/UnitState.hpp"
 #include "2D/PackedSurface.hpp"
-
+#include "Interfaces/GameConfig.hpp"
+#include "Interfaces/GameManager.hpp"
 #include "Core/CoreTypes.hpp"
 
 class NetMessage;
@@ -36,7 +37,6 @@ class UnitProfile
 public:
     NPString unitname;
     Uint16 unit_type;
-
     Uint16 hit_points;
     Uint16 attack_factor;
     Uint32 attack_range;
@@ -66,18 +66,50 @@ class UnitProfileInterface
 {
 protected:
     static vector<UnitProfile *> profiles;
-
     static void doLoadUnitProfiles();
-    
+
+private:
+    static vector<unsigned short> su_speed_rate;
+    static vector<unsigned short> su_speed_factor;
+    static vector<unsigned short> su_speed;
+    static vector<short> su_hit_points;
+    static vector<short> su_damage_factor;
+    static vector<unsigned short> su_reload_time;
+    static vector<unsigned long> su_weapon_range;
+
 public:
+
+    static unsigned short tsu_speed_rate;
+    static unsigned short tsu_speed_factor;
+    static unsigned short tsu_speed;
+    static short tsu_hit_points;
+    static short tsu_damage_factor;
+    static unsigned short tsu_reload_time;
+    static unsigned long tsu_weapon_range;
+
     static void clearProfiles();
+
     static bool addLocalProfile(const NPString& name);
+
     static void loadUnitProfiles( void );
+
+
     static UnitProfile * getUnitProfile( unsigned short unit_type );
     static UnitProfile * getProfileByName( const NPString& name );
+
     static unsigned int getNumUnitTypes()
     {
         return profiles.size();
+    }
+    static unsigned int getRealNumUnitTypes()
+    {
+        return profiles.size()/GameConfig::getUnitStylesNum();
+        //return profiles.size()/GameManager::getStylesNum();
+    }
+    static unsigned int getRealNumUnitTypesC()
+    {
+        return profiles.size()/GameManager::ststylesnum;
+        //return profiles.size()/GameManager::getStylesNum();
     }
 
     static int fillProfileSyncMessage(NetMessage* message, int profile_id);

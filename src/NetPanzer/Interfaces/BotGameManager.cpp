@@ -15,18 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
+
+
 #include "BotGameManager.hpp"
-
-//#include "Bot/Bot.hpp"
-#include "Bot/BotPlayer.hpp"
-
-//#include "Interfaces/GameManager.hpp"
-//#include "Interfaces/GameConfig.hpp"
-
-//#include "Classes/Network/NetworkState.hpp"
-//#include "Classes/Network/NetworkClient.hpp"
-//#include "Classes/Network/ClientConnectDaemon.hpp"
-
 
 #include "Util/Exception.hpp"
 
@@ -148,7 +140,7 @@ void BotGameManager::initializeInputDevices()
 //-----------------------------------------------------------------
 void BotGameManager::shutdownInputDevices()
 {
-    //Bot::shutdown();
+    Bot::shutdown();
 }
 //-----------------------------------------------------------------
 
@@ -159,15 +151,12 @@ void BotGameManager::shutdownInputDevices()
 //-----------------------------------------------------------------
 
 
-
-
-
-
-
-
-
-
-
+void BotGameManager::inputLoop()
+{
+     Bot::bot()->processEvents();
+     //return true;
+     BaseGameManager::inputLoop();
+}
 
 
 //-----------------------------------------------------------------
@@ -193,27 +182,21 @@ bool BotGameManager::launchNetPanzerGame()
 
 
     //Bot::bot()->processEvents();
-    BotGameManager::botinputLoop();
+    //BotPlayer::processEvents();
+    //BotGameManager::botinputLoop();
 
 
+
+
+    //ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
 
     return true;
-    //ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
 }
 
 
 //-----------------------------------------------------------------
 
-bool BotGameManager::botinputLoop()
-{
 
-
-
-     //Bot::bot()->processEvents();
-
-     return true;
-
-}
 
 
 

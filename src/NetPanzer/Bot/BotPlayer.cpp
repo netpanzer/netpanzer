@@ -63,13 +63,220 @@ BotPlayer::processEvents()
             }
         }
         else {
-            LOGGER.debug("bot: empty unit list");
+            //LOGGER.debug("bot: empty unit list");
         }
 
         outpostProduce();
     }
 }
 //-----------------------------------------------------------------
+
+    void
+BotPlayer::processEvents2()
+{
+    PlayerID playerIndex = isReady();
+    if ( playerIndex != INVALID_PLAYER_ID )
+    {
+        UnitBase *unit = getRandomUnit(playerIndex);
+        UnitInterface::getPlayerUnits(playerIndex);
+            UnitBase *enemyUnit;
+            const std::vector<UnitBase*>& uc = UnitInterface::getPlayerUnits(playerIndex);
+            if (UnitInterface::queryClosestEnemyUnit(&enemyUnit,
+                        unit->unit_state.location, playerIndex))
+            {
+
+            if (unit) {
+
+            for ( Uint8 i = 0; i < uc.size(); ++i)
+            {
+            //int unitTask = m_tasks.queryUnitTask(unit);
+            //if (unitTask != BotTaskList::TASK_ATTACK) {
+            //    BotTaskList::setUnitTask(unit, TASK_ATTACK);
+            //}
+            manualFire(uc[i], enemyUnit->unit_state.location);
+            manualFire(unit, enemyUnit->unit_state.location);
+            // manual fire on closest enemy
+            int unitTask = m_tasks.queryUnitTask(unit); // was uc[i]
+            if (unitTask != BotTaskList::TASK_MOVE) {
+                unitOccupyOupost(unit);
+            }
+                //Bot::attackUnit(UnitInterface::getPlayerUnits(playerIndex)[i], enemyUnit);
+                //Bot::moveUnit(unit, enemyUnit->unit_state.location);
+            manualFire(uc[i], enemyUnit->unit_state.location);
+            manualFire(unit, enemyUnit->unit_state.location);
+            }
+
+            }
+
+            outpostProduce();
+        }
+           // UnitBase *enemyUnit;
+            //if (UnitInterface::queryClosestEnemyUnit(&enemyUnit,
+            //            unit->unit_state.location, playerIndex))
+            //{
+                //Bot::moveUnit(unit, enemyUnit->unit_state.location);
+              //  manualFire(unit, enemyUnit->unit_state.location);
+                //Bot::attackUnit(unit, enemyUnit);
+            //}
+        //}
+        //else {
+        //    LOGGER.debug("bot: empty unit list");
+        //}
+
+        //outpostProduce();
+    }
+}
+
+//-----------------------------------------------------------------
+
+    void
+BotPlayer::processEvents3()  // +frags, +path, -obj
+{
+    PlayerID playerIndex = isReady();
+    if ( playerIndex != INVALID_PLAYER_ID )
+    {
+        UnitBase *unit = getRandomUnit(playerIndex);
+        UnitBase *unitb = getRandomUnit(playerIndex);
+        UnitInterface::getPlayerUnits(playerIndex);
+            UnitBase *enemyUnit;
+            const std::vector<UnitBase*>& uc = UnitInterface::getPlayerUnits(playerIndex);
+            if (UnitInterface::queryClosestEnemyUnit(&enemyUnit,
+                        unit->unit_state.location, playerIndex))
+            {
+
+            //if (UnitInterface::queryClosestEnemyUnit(&enemyUnit,
+            //            unit->unit_state.location, playerIndex))
+            //{
+
+            if (unit) {
+
+
+
+
+
+
+
+
+            for ( Uint8 i = 0; i < uc.size(); ++i)
+            {
+
+            //manualFire(uc[i], enemyUnit->unit_state.location);
+            //int unitTask = m_tasks.queryUnitTask(unitb); // was uc[i]
+            //if (unitTask != BotTaskList::TASK_MOVE) {
+                unitOccupyOupost(unitb);
+            //}
+            manualFire(unit, enemyUnit->unit_state.location);
+
+            //int unitTask = m_tasks.queryUnitTask(unit); // was uc[i]
+            //if (unitTask != BotTaskList::TASK_MOVE) {
+                //unitOccupyOupost(unit);
+            //}
+            // manual fire on closest enemy
+            if (uc[i] != unit) {
+                //Bot::attackUnit(UnitInterface::getPlayerUnits(playerIndex)[i], enemyUnit);
+                //Bot::moveUnit(unit, enemyUnit->unit_state.location);
+            if (UnitInterface::queryClosestEnemyUnit(&enemyUnit,
+            uc[i]->unit_state.location, playerIndex)) {
+            {
+            manualFire(uc[i], enemyUnit->unit_state.location);
+            manualFire(uc[i], enemyUnit->unit_state.location);
+            //manualFire(unit, enemyUnit->unit_state.location);
+            }
+            }
+            }
+
+
+            }
+
+            outpostProduce();
+        //}
+
+
+            }
+            }
+}
+}
+
+//-----------------------------------------------------------------
+
+/*
+   void
+BotPlayer::processEvents4()  // +frags, +path, -obj
+{
+    PlayerID playerIndex = isReady();
+    if ( playerIndex != INVALID_PLAYER_ID )
+    {
+        UnitBase *unit = getRandomUnit(playerIndex);
+        UnitBase *unitb = getRandomUnit(playerIndex);
+        UnitInterface::getPlayerUnits(playerIndex);
+            UnitBase *enemyUnit;
+            const std::vector<UnitBase*>& uc = UnitInterface::getPlayerUnits(playerIndex);
+
+
+            //if (UnitInterface::queryClosestEnemyUnit(&enemyUnit,
+            //            unit->unit_state.location, playerIndex))
+            //{
+
+            if (unit && unitb) {
+
+
+            int unitTask = m_tasks.queryUnitTask(unit);
+            if (unitTask != BotTaskList::TASK_MOVE) {
+                unitOccupyOupost(unit);
+            }
+            int unitTask = m_tasks.queryUnitTask(unitb);
+            if (unitTask != BotTaskList::TASK_MOVE) {
+                unitOccupyOupost(unitb);
+            }
+
+
+
+
+            for ( Uint8 i = 0; i < uc.size(); ++i)
+            {
+
+            //manualFire(uc[i], enemyUnit->unit_state.location);
+            //int unitTask = m_tasks.queryUnitTask(unitb); // was uc[i]
+            //if (unitTask != BotTaskList::TASK_MOVE) {
+              //  unitOccupyOupost(unitb);
+            //}
+            //manualFire(unit, enemyUnit->unit_state.location);
+
+            //int unitTask = m_tasks.queryUnitTask(unit); // was uc[i]
+            //if (unitTask != BotTaskList::TASK_MOVE) {
+                //unitOccupyOupost(unit);
+            //}
+            // manual fire on closest enemy
+            if (uc[i] != unit && ) {
+                //Bot::attackUnit(UnitInterface::getPlayerUnits(playerIndex)[i], enemyUnit);
+                //Bot::moveUnit(unit, enemyUnit->unit_state.location);
+            if (UnitInterface::queryClosestEnemyUnit(&enemyUnit,
+            uc[i]->unit_state.location, playerIndex)) {
+            {
+            manualFire(uc[i], enemyUnit->unit_state.location);
+            manualFire(uc[i], enemyUnit->unit_state.location);
+            //manualFire(unit, enemyUnit->unit_state.location);
+            }
+            }
+            }
+
+
+            }
+
+            outpostProduce();
+        //}
+
+
+            }
+            }
+}
+
+
+
+*/
+
+
+
 /**
  * Whether is time to make action.
  * @return playerIndex or NONE_PLAYER
@@ -98,15 +305,16 @@ BotPlayer::isReady()
 UnitBase *
 BotPlayer::getRandomUnit(PlayerID playerIndex)
 {
-    const std::vector<UnitBase*>& units 
+    const std::vector<UnitBase*>& units
         = UnitInterface::getPlayerUnits(playerIndex);
 
     if(units.size() == 0)
         return 0;
-    
+
     size_t unitIndex = rand() % units.size();
     return units[unitIndex];
 }
+
 
 //-----------------------------------------------------------------
 /**
@@ -201,6 +409,8 @@ static Objective* getRandomEnemyOrFreeOutpost()
 }
 
 //-----------------------------------------------------------------
+
+//-----------------------------------------------------------------
 /**
  * Occupy free or enemy oupost.
  */
@@ -225,6 +435,7 @@ BotPlayer::unitOccupyOupost(UnitBase *unit)
         moveUnit(unit, map_loc);
     }
 }
+
 //-----------------------------------------------------------------
 /**
  * Produce in factories

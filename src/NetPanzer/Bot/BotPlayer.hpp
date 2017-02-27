@@ -29,12 +29,15 @@ class Objective;
 typedef std::vector<PlayerID> playerList_t;
 typedef std::vector<ObjectiveID> outpostList_t;
 
+
 class BotPlayer : public Bot {
     private:
         Timer m_timer;
     public:
         BotPlayer();
         virtual void processEvents();
+        virtual void processEvents2();
+        virtual void processEvents3();
 
         PlayerID isReady();
         UnitBase *getRandomUnit(PlayerID playerIndex);

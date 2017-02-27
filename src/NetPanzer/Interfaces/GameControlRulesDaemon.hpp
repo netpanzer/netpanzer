@@ -47,6 +47,8 @@ protected:
     static void onTimelimitGameCompleted();
     static void onFraglimitGameCompleted();
     static void onObjectiveGameCompleted();
+    static void onObjectiveANDFraglimitGameCompleted();
+    static void onFraglimitORTimelimitGameCompleted();
 
     static void checkGameRules();
 
@@ -64,7 +66,8 @@ public:
 
     static void processNetMessage(const NetMessage* message);
     static void updateGameControlFlow();
-    static unsigned char getGameState() { return game_state; }
+    static unsigned char getGameState() { return game_state; };
+    static int getExecMode() {return execution_mode;}
 };
 
 #endif // ** _GAME_CONTROL_RULES_DAEMON_HPP

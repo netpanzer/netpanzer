@@ -27,8 +27,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/Desktop.hpp"
 #include "Views/MainMenu/MenuTemplateView.hpp"
 
-int HostOptionsView::cloudCoverageCount = 1;
-int HostOptionsView::windSpeed          = 1;
+int HostOptionsView::cloudCoverageCount = 0;
+int HostOptionsView::windSpeed          = 0;
 int HostOptionsView::gameType           = 0;
 
 std::string HostOptionsView::cloudCoverageString;
@@ -132,6 +132,16 @@ void HostOptionsView::updateGameConfigGameType()
         }
         break;
 
+    case 3: {
+            GameConfig::game_gametype = _gametype_objectiveANDfraglimit;
+        }
+        break;
+
+    case 4: {
+            GameConfig::game_gametype = _gametype_fraglimitORtimelimit;
+        }
+        break;
+
     }
 
 }
@@ -151,6 +161,16 @@ static const char * getGameTypeString()
 
     case _gametype_timelimit : {
             return( "Frag Limit" );
+        }
+        break;
+
+    case _gametype_objectiveANDfraglimit : {
+            return( "Obj.+Frags" );
+        }
+        break;
+
+     case _gametype_fraglimitORtimelimit : {
+            return( "Frags+Time" );
         }
         break;
 
@@ -381,6 +401,8 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     choiceGameType.addItem("Objective");
     choiceGameType.addItem("Frag Limit");
     choiceGameType.addItem("Time Limit");
+    choiceGameType.addItem("Obj.+Frags");
+    choiceGameType.addItem("Frags+Time");
     choiceGameType.setMinWidth(minWidth);
     choiceGameType.setLocation(xChoiceOffset, 100);
     choiceGameType.select( getGameTypeString() );

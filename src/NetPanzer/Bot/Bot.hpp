@@ -32,6 +32,8 @@ class Bot {
 
         virtual ~Bot() {}
         virtual void processEvents() = 0;
+        virtual void processEvents2() = 0;
+        virtual void processEvents3() = 0;
 
         void moveUnit(UnitBase *unit, iXY map_pos);
         void attackUnit(UnitBase *unit, UnitBase *enemyUnit);

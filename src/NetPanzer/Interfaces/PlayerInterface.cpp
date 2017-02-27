@@ -461,7 +461,7 @@ bool PlayerInterface::testRulePlayerRespawn( bool *completed, PlayerState **play
 
 void PlayerInterface::netMessageConnectID(const NetMessage* message)
 {
-    if ( NetworkState::status == _network_state_client ) // client only (security fix)
+    if ( NetworkState::status == _network_state_client || NetworkState::status == _network_state_bot) // client only (security fix)
     {
     const PlayerConnectID *connect_mesg
         = (const PlayerConnectID *) message;
@@ -501,6 +501,7 @@ void PlayerInterface::netMessageSyncState(const NetMessage* message)
         }
         if ( player_id == local_player_index && player_lists[player_id].isSelectingFlag() )
         {
+            //Desktop::setVisibility("UStyleSelectionView", true);
             Desktop::setVisibility("GFlagSelectionView", true);
         }
     SDL_mutexV(mutex);
@@ -509,7 +510,7 @@ void PlayerInterface::netMessageSyncState(const NetMessage* message)
 
 void PlayerInterface::netMessageScoreUpdate(const NetMessage *message)
 {
-    if ( NetworkState::status == _network_state_client ) // client only (security fix)
+    if ( NetworkState::status == _network_state_client || NetworkState::status == _network_state_bot ) // client only (security fix)
     {
     const PlayerScoreUpdate* score_update
         = (const PlayerScoreUpdate *) message;
@@ -586,6 +587,41 @@ void PlayerInterface::netMessageAllianceUpdate(const NetMessage* message)
     SDL_mutexV(mutex);
 }
 
+void PlayerInterface::netMessageStyleUpdate(const NetMessage* message, PlayerID playid)
+{
+
+    const UpdatePlayerUnitStyle* upus = (const UpdatePlayerUnitStyle*)message;
+
+    unsigned char nustyle = upus->player_unit_style;
+
+    player_lists[playid].setPlayerStyle((unsigned char)nustyle);
+
+    UnitStyleSync uss;
+
+    uss.player_id = playid;
+
+    uss.player_unit_style = nustyle;
+
+    SERVER->broadcastMessage(&uss, sizeof(uss));
+
+}
+
+void PlayerInterface::netMessageStyleSync(const NetMessage* message)
+{
+    if ( NetworkState::status == _network_state_client || NetworkState::status == _network_state_bot )
+    {
+    const UnitStyleSync* uss = (const UnitStyleSync*)message;
+
+    unsigned char nustyle = uss->player_unit_style;
+
+    if (player_lists[uss->player_id].isSelectingFlag()) {
+    player_lists[uss->player_id].setPlayerStyle((unsigned char)nustyle);
+    } //no tricks!
+    } //no cheat!
+}
+
+
+
 void PlayerInterface::processNetMessage(const NetPacket* packet)
 {
     const NetMessage* message = packet->getNetMessage();
@@ -638,10 +674,19 @@ void PlayerInterface::processNetMessage(const NetPacket* packet)
             netMessageAllianceUpdate(message);
             break;
 
+        case _net_message_id_player_unit_style_update :
+            netMessageStyleUpdate(message, packet->fromPlayer);
+            break;
+
+        case _net_message_id_player_unit_style_sync :
+            netMessageStyleSync(message);
+            break;
+
         case _net_message_id_player_flagtimer_update :
                 const PlayerFlagTimerUpdate* pftu = (const PlayerFlagTimerUpdate*)message;
                 gameconfig->game_changeflagtime = pftu->getflagtimer();
             break;
+
     }
 }
 

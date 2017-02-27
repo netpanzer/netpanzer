@@ -48,26 +48,28 @@ InfoBar::draw(Surface &dest)
     dest.bltLookup(r, Palette::darkGray256.getColorArray());
 
     char buf[512];
-    
+
     snprintf(buf, sizeof(buf),
              format,
 //             "game %s | units %3d/%-3d | frags %4d/%-4d | objs. %3d/%-3d | time %02d:%02d/%02d:%02d | FPS %.2f",
              gameconfig->getGameTypeString(),
-             
+
              int(UnitInterface::getUnitCount(PlayerInterface::getLocalPlayerIndex())),
              GameConfig::game_maxunits / GameConfig::game_maxplayers,
-             
+
              PlayerInterface::getLocalPlayer()->getKills(),
-             (GameConfig::game_gametype == _gametype_fraglimit)?(int)GameConfig::game_fraglimit:0,
-             
+             (GameConfig::game_gametype == _gametype_fraglimit || GameConfig::game_gametype == _gametype_objectiveANDfraglimit || GameConfig::game_gametype == _gametype_fraglimitORtimelimit)?(int)GameConfig::game_fraglimit:0,
+
+
              PlayerInterface::getLocalPlayer()->getObjectivesHeld(),
-             (GameConfig::game_gametype == _gametype_objective)?ObjectiveInterface::getObjectiveLimit():0,
-             
+             (GameConfig::game_gametype == _gametype_objective || GameConfig::game_gametype == _gametype_objectiveANDfraglimit)?(int)ObjectiveInterface::getObjectiveLimit():0,
+
+
              (int)GameManager::getGameTime() / 3600,
              (int)(GameManager::getGameTime() / 60) % 60,
-             (GameConfig::game_gametype == _gametype_timelimit)?GameConfig::game_timelimit / 60:0,
-             (GameConfig::game_gametype == _gametype_timelimit)?GameConfig::game_timelimit % 60:0,
-             
+             (GameConfig::game_gametype == _gametype_timelimit || GameConfig::game_gametype == _gametype_fraglimitORtimelimit)?GameConfig::game_timelimit / 60:0,
+             (GameConfig::game_gametype == _gametype_timelimit || GameConfig::game_gametype == _gametype_fraglimitORtimelimit)?GameConfig::game_timelimit % 60:0,
+
              TimerInterface::getFPSAvg()
              );
     int posx = position.x + 2;
@@ -75,7 +77,7 @@ InfoBar::draw(Surface &dest)
     dest.bltStringShadowed(posx, posy, titles, titles_color, Color::black);
     dest.bltStringShadowed(posx, posy, bars, bars_color, Color::black);
     dest.bltStringShadowed(posx, posy, buf, format_color, Color::black);
-    
+
 //    dest.bltStringShadowed(position.x+2,position.y+2,buf,Color::white, Color::black);
 
 }

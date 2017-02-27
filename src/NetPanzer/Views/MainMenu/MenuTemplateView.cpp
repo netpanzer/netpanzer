@@ -234,8 +234,8 @@ void MenuTemplateView::doDrawM(Surface &viewArea, Surface &clientArea)  // start
     if (Desktop::getVisible("GameView")) {
 	// When ingame, tint the game into gray
 
-        clientArea.BltRoundRect(getClientRect(), 10, Palette::gray256.getColorArray());
-        clientArea.FillRoundRect(getClientRect(), 10, Color::white); // esc in game
+        clientArea.BltRoundRect(getClientRect(), 10, Palette::red256.getColorArray());
+        clientArea.FillRoundRect(getClientRect(), 10, Color::red); // esc in game
         //clientArea.RoundRect(MenuRect, 10, Color::gray);
         clientArea.drawWindowsBorder();
 
@@ -248,8 +248,8 @@ void MenuTemplateView::doDrawM(Surface &viewArea, Surface &clientArea)  // start
         } else {
             throw Exception("Where is the background surface?");
         }
-        clientArea.BltRoundRect(MenuRect, 10, Palette::gray256.getColorArray());
-        clientArea.FillRoundRect(MenuRectStart, 3, Color::white);
+        clientArea.BltRoundRect(MenuRect, 10, Palette::red256.getColorArray());
+        clientArea.FillRoundRect(MenuRectStart, 3, Color::red);
         clientArea.RoundRect(MenuRectStart, 3, Color::gray);
 
         // I don't like them so I delete them!

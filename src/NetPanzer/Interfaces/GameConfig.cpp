@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Core/NetworkGlobals.hpp"
 #include "Views/Game/MiniMapView.hpp"
+#include "Views/Game/MiniMapViewAlt.hpp"
 #include "Views/GameViewGlobals.hpp"
 
 #include "Scripts/ScriptManager.hpp"
@@ -69,11 +70,15 @@ bool      GameConfig::game_allowallies = true;
 int       GameConfig::game_cloudcoverage = 0;
 int       GameConfig::game_respawntype = 0;
 int       GameConfig::game_windspeed = 30;
-int       GameConfig::game_lowscorelimit = -25;
+int       GameConfig::game_lowscorelimit = -45;
 int       GameConfig::game_anticheat = 3;
+bool      GameConfig::game_authentication = false;
+bool      GameConfig::game_bots_allowed = false;
 //int       GameConfig::game_maxchatlines = 7;
 NPString* GameConfig::game_map = 0;
 NPString* GameConfig::game_mapcycle = 0;
+NPString* GameConfig::game_mapstyle = 0;
+NPString* GameConfig::game_units_styles = 0;
 
 bool      GameConfig::sound_enable = true;
 bool      GameConfig::sound_music = true;
@@ -203,9 +208,13 @@ static const ScriptVarBindRecord game_getters[] =
     { "windspeed",          GETSVTYPE_INT,     &GameConfig::game_windspeed },
     { "lowscorelimit",      GETSVTYPE_INT,     &GameConfig::game_lowscorelimit },
     { "anticheat",          GETSVTYPE_INT,     &GameConfig::game_anticheat },
+    { "authentication",     GETSVTYPE_BOOLEAN, &GameConfig::game_authentication },
+    { "bots_allowed",       GETSVTYPE_BOOLEAN, &GameConfig::game_bots_allowed },
     //{ "maxchatlines",       GETSVTYPE_INT,     &GameConfig::game_maxchatlines },
     { "map",                GETSVTYPE_STRING,  &GameConfig::game_map },
     { "mapcycle",           GETSVTYPE_STRING,  &GameConfig::game_mapcycle },
+    { "mapstyle",           GETSVTYPE_STRING,  &GameConfig::game_mapstyle },
+    { "units_styles",       GETSVTYPE_STRING,  &GameConfig::game_units_styles },
     {0,0}
 };
 
@@ -234,9 +243,13 @@ static const ScriptVarBindRecord game_setters[] =
     { "windspeed",          SETSVTYPE_INT,     &GameConfig::game_windspeed },
     { "lowscorelimit",      SETSVTYPE_INT,     &GameConfig::game_lowscorelimit },
     { "anticheat",          SETSVTYPE_INT,     &GameConfig::game_anticheat },
+    { "authentication",     SETSVTYPE_BOOLEAN, &GameConfig::game_authentication },
+    { "bots_allowed",       SETSVTYPE_BOOLEAN, &GameConfig::game_bots_allowed },
     //{ "maxchatlines",       SETSVTYPE_INT,     &GameConfig::game_maxchatlines },
     { "map",                SETSVTYPE_STRING,  &GameConfig::game_map },
     { "mapcycle",           SETSVTYPE_STRING,  &GameConfig::game_mapcycle },
+    { "mapstyle",           SETSVTYPE_STRING,  &GameConfig::game_mapstyle },
+    { "units_styles",       SETSVTYPE_STRING,  &GameConfig::game_units_styles },
     {0,0}
 };
 
@@ -352,6 +365,16 @@ void GameConfig::registerScript(const NPString& table_name)
         game_mapcycle = new NPString("Two clans, Bullet Hole");
     }
 
+    if ( ! game_mapstyle )
+    {
+        game_mapstyle = new NPString("SummerDay");
+    }
+
+    if ( ! game_units_styles )
+    {
+        game_units_styles = new NPString(DEFAULT_UNITS_STYLES);
+    }
+
     if ( ! server_bindaddress )
     {
         server_bindaddress = new NPString("");
@@ -364,7 +387,7 @@ void GameConfig::registerScript(const NPString& table_name)
 
     if ( ! server_masterservers )
     {
-        server_masterservers = new NPString("masterserver.netpanzer.org, masterserver2.netpanzer.org, masterserver.netpanzer.info");
+        server_masterservers = new NPString("masterserver.netpanzer.info, masterserver2.netpanzer.info");
     }
 
     if ( ! server_name )

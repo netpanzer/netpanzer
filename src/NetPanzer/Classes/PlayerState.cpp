@@ -25,6 +25,32 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Resources/ResourceManager.hpp"
 #include <sstream>
 
+// for trim function
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+string trim(const string& str)
+{
+    size_t first = str.find_first_not_of(' ');
+    if (string::npos == first)
+    {
+        return str;
+    }
+    size_t last = str.find_last_not_of(' ');
+    return str.substr(first, (last - first + 1));
+}
+//
+
+
+
+
+
+
+
+
+
 
 PlayerID NetworkPlayerState::getPlayerIndex() const
 {
@@ -115,7 +141,7 @@ PlayerState::PlayerState(const PlayerState& other)
     :  id(other.id), name(other.name),
       status(other.status), kills(other.kills), kill_points(other.kill_points),
       losses(other.losses), loss_points(other.loss_points),
-      total(other.total), objectives_held(other.objectives_held),
+      total(other.total), objectives_held(other.objectives_held), units_style(other.units_style),
       stats_locked(other.stats_locked), unit_config(other.unit_config)
 {
     // nothing
@@ -132,6 +158,7 @@ void PlayerState::operator= (const PlayerState& other)
     loss_points = other.loss_points;
     total = other.total;
     objectives_held = other.objectives_held;
+    units_style = other.units_style;
     stats_locked = other.stats_locked;
     unit_config = other.unit_config;
     admin_flag = other.admin_flag;
@@ -142,18 +169,71 @@ void PlayerState::operator= (const PlayerState& other)
 
 void PlayerState::setName(const std::string& newname)
 {
-    if ( newname.length() > 24 )
+    if ( newname.length() > 20 )
     {
-        name = newname.substr(0,24); //was 63
+        name = newname.substr(0,20); //was 63
     }
     else
     {
         name = newname;
     }
 
+    nameb = name;
+
     //
-    // todo strip & trim
-    //
+    // strip & trim
+
+    // replacing non printable chars
+
+    std::stringstream nodbname;
+
+    for ( int ac=0; ac < (int)name.length(); ac++ ) {
+
+        if ((int)name[ac] == 32) {
+        nodbname << name[ac];
+        }
+
+        if (!( (int)name[ac] == 34 || (int)name[ac] == 35 || (int)name[ac] == 37 || (int)name[ac] == 39
+        || (int)name[ac] == 44 || (int)name[ac] == 94 || (int)name[ac] == 96 || (int)name[ac] == 126
+        || (int)name[ac] == 47 || (int)name[ac] == 92 || (int)name[ac] == 124 || (int)name[ac] < 32
+        || (int)name[ac] > 126 )) {
+        nodbname << name[ac];
+        }
+
+     }
+
+    name = nodbname.str();
+
+    // trimming
+    name = trim(name);
+
+    // stripping multiple spaces
+    std::stringstream nodbname2;
+
+    for ( int ac2=0; ac2 < (int)name.length(); ac2++ ) {
+
+        if (name[ac2] != 32) {
+            nodbname2 << name[ac2];
+        }
+
+        if (ac2 > 0 && name[ac2] == 32 && name[ac2-1] != 32) {
+            nodbname2 << name[ac2];
+        }
+
+    }
+
+    name = nodbname2.str();
+
+    // blank string?
+    if ((int)name.length()==0) {
+        std::stringstream default_player;
+        default_player << "Player" << (rand()%1000);
+        name = default_player.str();
+    }
+
+    nameb = name;
+
+    // end
 
     int namenum=1;
     bool recheck;
@@ -175,13 +255,13 @@ void PlayerState::setName(const std::string& newname)
                 ssnamenum << "(" << namenum++ << ")";
                 std::string strnum=ssnamenum.str();
 
-                std::string::size_type newlen = newname.length();
-                if ( newlen+strnum.length() > 24 )
+                std::string::size_type newlen = nameb.length();
+                if ( newlen+strnum.length() > 20 )
                 {
-                    newlen -= strnum.length() - (24 - newlen);
+                    newlen -= strnum.length() - (20 - newlen);
                 }
 
-                name = newname.substr(0,newlen)+strnum;
+                name = nameb.substr(0,newlen)+strnum;
                 recheck=true;
                 break;
             }
@@ -310,6 +390,17 @@ short PlayerState::getTotal() const
     return kills - (losses/2);
 }
 
+void PlayerState::setPlayerStyle(unsigned char nustyle)
+{
+    units_style = nustyle;
+}
+
+unsigned char PlayerState::getPlayerStyle()
+{
+    return units_style;
+}
+
+
 NetworkPlayerState PlayerState::getNetworkPlayerState() const
 {
     NetworkPlayerState state;
@@ -324,6 +415,8 @@ NetworkPlayerState PlayerState::getNetworkPlayerState() const
     state.loss_points = htol16(loss_points);
     state.total = htol16(total);
     state.objectives_held = htol16(objectives_held);
+    state.units_style = units_style;
+
 
     return state;
 }
@@ -340,13 +433,15 @@ void PlayerState::getNetworkPlayerState(NetworkPlayerState& state) const
     state.loss_points = htol16(loss_points);
     state.total = htol16(total);
     state.objectives_held = htol16(objectives_held);
+    state.units_style = units_style;
+
 }
 
 void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
 {
-    char tmp[64];
-    memcpy(tmp, state->name, 64);
-    tmp[63] = 0;
+    char tmp[21];
+    memcpy(tmp, state->name, 21);
+    tmp[20] = 0;
     name = tmp;
     id = state->id;
     status = state->status;
@@ -356,4 +451,5 @@ void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
     loss_points = ltoh16(state->loss_points);
     total = ltoh16(state->total);
     objectives_held = ltoh16(state->objectives_held);
+    units_style = state->units_style;
 }

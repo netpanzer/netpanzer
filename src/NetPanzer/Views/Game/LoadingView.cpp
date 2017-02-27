@@ -73,7 +73,7 @@ LoadingView::doDraw(Surface &viewArea, Surface &clientArea)
     screen->fill(Color::black);
     backgroundSurface.blt(clientArea, 0, 0);
     clientArea.FillRoundRect(iRect(165, 40, 635, 225), 10, Color::black);
-    clientArea.RoundRect(iRect(165, 40, 635, 225), 10, Color::yellow);
+    clientArea.RoundRect(iRect(165, 40, 635, 225), 10, Color::lightGray);
     surface.blt(clientArea, 172, 45);
 
     View::doDraw(viewArea, clientArea);
@@ -194,11 +194,15 @@ LoadingView::loadFinish()
 
     GameManager::setNetPanzerGameOptions();
     Desktop::setVisibility("MiniMapView", true);
+    Desktop::setVisibility("MiniMapViewAlt", false);
     Desktop::setVisibility("GameView", true);
     if ( PlayerInterface::getLocalPlayer()->isSelectingFlag() )
     {
-        Desktop::setVisibility("GFlagSelectionView", true);
-        Desktop::setActiveView("GFlagSelectionView");
+        Desktop::setVisibility("UStyleSelectionView", true);
+        Desktop::setActiveView("UStyleSelectionView");
+
+        //Desktop::setVisibility("GFlagSelectionView", true);
+        //Desktop::setActiveView("GFlagSelectionView");
     }
 }
 

@@ -47,8 +47,8 @@ protected:
     virtual void initializeInputDevices();
     virtual void shutdownInputDevices();
 
-    virtual bool botinputLoop();
-    //virtual void inputLoop();
+    //virtual bool botinputLoop();
+    virtual void inputLoop();
     //
     //virtual void inputLoop();
 

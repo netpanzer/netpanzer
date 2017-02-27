@@ -44,6 +44,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/ViewGlobals.hpp"
 #include "Views/Components/Label.hpp"
 
+
+
 int vsvSelectedUnit   = 0;
 int vsvUnitGenOn      = true;
 bool changeMade       = false;
@@ -231,11 +233,49 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
 
     UnitSelectionButton *usb;
     UnitProfile *uprofile;
-    unitImages.create(48, 48, UnitProfileInterface::getNumUnitTypes());
-    // XXX order by something?
-    for ( unsigned int ut=0; ut < UnitProfileInterface::getNumUnitTypes(); ut++)
+    if ( NetworkState::status == _network_state_server )  // server only
     {
-        uprofile = UnitProfileInterface::getUnitProfile(ut);
+    //LOGGER.info("TypesC S= %d", UnitProfileInterface::getRealNumUnitTypes());
+    unitImages.create(48, 48, UnitProfileInterface::getRealNumUnitTypes());
+    // XXX order by something?
+    } else {
+    //LOGGER.info("TypesC C= %d", UnitProfileInterface::getRealNumUnitTypesC());
+    unitImages.create(48, 48, UnitProfileInterface::getRealNumUnitTypesC());
+    // XXX order by something
+    }
+
+    PlayerState *player_state;
+    player_state = PlayerInterface::getLocalPlayer();
+    unsigned char ustyle = player_state->getPlayerStyle();
+
+    if ( NetworkState::status == _network_state_server )  // server only
+    {
+    if (ustyle >= GameConfig::getUnitStylesNum()) {
+        ustyle = 0;
+    }
+    } else {
+        if (ustyle >= GameManager::ststylesnum) {
+        ustyle = 0;
+    }
+    }
+
+    unsigned int typeslimit;
+    if ( NetworkState::status == _network_state_server )  // server only
+    {
+    typeslimit = UnitProfileInterface::getRealNumUnitTypes();
+    } else {
+    typeslimit = UnitProfileInterface::getRealNumUnitTypesC();
+    }
+
+
+    for ( unsigned int ut=0; ut < typeslimit; ut++)
+    {
+        if ( NetworkState::status == _network_state_server )  // server only
+        {
+        uprofile = UnitProfileInterface::getUnitProfile(ut*GameConfig::getUnitStylesNum() + ustyle);
+        } else {
+        uprofile = UnitProfileInterface::getUnitProfile(ut*GameManager::ststylesnum + ustyle);
+        }
 
         tempSurface.loadBMP(uprofile->imagefile.c_str());
         unitImages.setFrame(ut);
@@ -440,7 +480,31 @@ void VehicleSelectionView::drawUnitImage(Surface &dest, const iXY &pos, int unit
 //---------------------------------------------------------------------------
 const char *VehicleSelectionView::getUnitName(int unitType)
 {
-    UnitProfile *p = UnitProfileInterface::getUnitProfile(unitType);
+    PlayerState *player_state2;
+    player_state2 = PlayerInterface::getLocalPlayer();
+    unsigned char ustyle2 = player_state2->getPlayerStyle();
+
+    if ( NetworkState::status == _network_state_server )  // server only
+    {
+    if (ustyle2 >= GameConfig::getUnitStylesNum()) {
+        ustyle2 = 0;
+    }
+    } else {
+        if (ustyle2 >= GameManager::ststylesnum) {
+        ustyle2 = 0;
+    }
+    }
+
+
+    UnitProfile *p;
+    if ( NetworkState::status == _network_state_server )  // server only
+    {
+    p = UnitProfileInterface::getUnitProfile(unitType*GameConfig::getUnitStylesNum()+ustyle2);
+    } else {
+    p = UnitProfileInterface::getUnitProfile(unitType*GameManager::ststylesnum+ustyle2);
+    }
+
+
     if ( p )
     {
         return p->unitname.c_str();
@@ -482,11 +546,20 @@ const char *VehicleSelectionView::getUnitName(int unitType)
 //---------------------------------------------------------------------------
 int VehicleSelectionView::getUnitRegenTime(unsigned short unitType)
 {
-    UnitProfile *profile = UnitProfileInterface::getUnitProfile(unitType);
+    UnitProfile *profile;
+
+    if ( NetworkState::status == _network_state_server )  // server only
+    {
+    profile = UnitProfileInterface::getUnitProfile(unitType*GameConfig::getUnitStylesNum());
     if ( profile )
         return (int) profile->regen_time;
-
     return 0;
+    } else {
+    profile = UnitProfileInterface::getUnitProfile(unitType*GameManager::ststylesnum); //LOGGER.info("ststylesnum = %d", GameManager::ststylesnum);
+    if ( profile )
+        return (int) profile->regen_time;
+    return 0;
+    }
 } // end VehicleSelectionView::getUnitRegenTime
 
 // mouseMove
@@ -706,7 +779,32 @@ void VehicleSelectionView::drawUnitProfileInfo(Surface &dest, const iXY &pos, sh
         return;
     }
 
-    const UnitProfile *profile = UnitProfileInterface::getUnitProfile(unitType);
+    PlayerState *player_state3;
+    player_state3 = PlayerInterface::getLocalPlayer();
+    unsigned char ustyle3 = player_state3->getPlayerStyle();
+
+    if ( NetworkState::status == _network_state_server )  // server only
+    {
+    if (ustyle3 >= GameConfig::getUnitStylesNum()) {
+        ustyle3 = 0;
+    }
+    } else {
+        if (ustyle3 >= GameManager::ststylesnum) {
+        ustyle3 = 0;
+    }
+    }
+
+
+    const UnitProfile *profile;
+    if ( NetworkState::status == _network_state_server )  // server only
+    {
+    profile = UnitProfileInterface::getUnitProfile(unitType*GameConfig::getUnitStylesNum()+ustyle3);
+    } else {
+    profile = UnitProfileInterface::getUnitProfile(unitType*GameManager::ststylesnum+ustyle3);
+    }
+
+
+
 
     iXY       loc       = pos;
     const int gapSpace  = 10;
