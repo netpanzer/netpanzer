@@ -74,6 +74,7 @@ int       GameConfig::game_lowscorelimit = -45;
 int       GameConfig::game_anticheat = 3;
 bool      GameConfig::game_authentication = false;
 bool      GameConfig::game_bots_allowed = false;
+bool      GameConfig::game_scrambler = true;
 //int       GameConfig::game_maxchatlines = 7;
 NPString* GameConfig::game_map = 0;
 NPString* GameConfig::game_mapcycle = 0;
@@ -210,6 +211,7 @@ static const ScriptVarBindRecord game_getters[] =
     { "anticheat",          GETSVTYPE_INT,     &GameConfig::game_anticheat },
     { "authentication",     GETSVTYPE_BOOLEAN, &GameConfig::game_authentication },
     { "bots_allowed",       GETSVTYPE_BOOLEAN, &GameConfig::game_bots_allowed },
+    { "scrambler",          GETSVTYPE_BOOLEAN, &GameConfig::game_scrambler },
     //{ "maxchatlines",       GETSVTYPE_INT,     &GameConfig::game_maxchatlines },
     { "map",                GETSVTYPE_STRING,  &GameConfig::game_map },
     { "mapcycle",           GETSVTYPE_STRING,  &GameConfig::game_mapcycle },
@@ -245,6 +247,7 @@ static const ScriptVarBindRecord game_setters[] =
     { "anticheat",          SETSVTYPE_INT,     &GameConfig::game_anticheat },
     { "authentication",     SETSVTYPE_BOOLEAN, &GameConfig::game_authentication },
     { "bots_allowed",       SETSVTYPE_BOOLEAN, &GameConfig::game_bots_allowed },
+    { "scrambler",          SETSVTYPE_BOOLEAN, &GameConfig::game_scrambler },
     //{ "maxchatlines",       SETSVTYPE_INT,     &GameConfig::game_maxchatlines },
     { "map",                SETSVTYPE_STRING,  &GameConfig::game_map },
     { "mapcycle",           SETSVTYPE_STRING,  &GameConfig::game_mapcycle },

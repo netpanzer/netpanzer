@@ -34,11 +34,14 @@ enum { _net_message_id_opcode_mesg,
        _net_message_id_mod_speed,
        _net_message_id_mod_reload,
        _net_message_id_mod_fire,
+       _net_message_id_mod_global_fire,
        _net_message_id_mod_w_range,
        _net_message_id_mod_hit_points,
        _net_message_id_mod_max_hit_points,
        _net_message_id_mod_global_repair,
        _net_message_id_mod_superunit,
+       _net_message_id_mod_global_speed,
+       _net_message_id_mod_global_reload,
        _net_message_id_create_unit_full
      };
 
@@ -357,8 +360,6 @@ public:
 
 } __attribute__((packed));
 
-
-
 class UnitModGR : public NetMessage
 {
 private:
@@ -438,6 +439,92 @@ public:
         return ltoh32(weapon_range);
     }
 } __attribute__((packed));
+
+class UnitModGS : public NetMessage
+{
+private:
+    UnitID unit_id;
+    unsigned short top_speed_rate;
+
+public:
+    UnitModGS(UnitID id, unsigned short tsr)
+    {
+        message_class = _net_message_class_unit;
+        message_id = _net_message_id_mod_global_speed;
+        unit_id = htol16(id);
+        top_speed_rate = htol16(tsr);
+    }
+
+    Uint16 getUnitID() const
+    {
+        return ltoh16(unit_id);
+    }
+
+    Uint16 getTopSpeed() const
+    {
+        return ltoh16(top_speed_rate);
+    }
+
+} __attribute__((packed));
+
+class UnitModGRT : public NetMessage
+{
+private:
+    UnitID unit_id;
+    unsigned short top_reload_time;
+
+public:
+    UnitModGRT(UnitID id, unsigned short trt)
+    {
+        message_class = _net_message_class_unit;
+        message_id = _net_message_id_mod_global_reload;
+        unit_id = htol16(id);
+        top_reload_time = htol16(trt);
+    }
+
+    Uint16 getUnitID() const
+    {
+        return ltoh16(unit_id);
+    }
+
+    Uint16 getTopReload() const
+    {
+        return ltoh16(top_reload_time);
+    }
+
+} __attribute__((packed));
+
+class UnitModGDM : public NetMessage
+{
+private:
+    UnitID unit_id;
+    unsigned short top_damage_factor;
+
+public:
+    UnitModGDM(UnitID id, unsigned short tdf)
+    {
+        message_class = _net_message_class_unit;
+        message_id = _net_message_id_mod_global_fire;
+        unit_id = htol16(id);
+        top_damage_factor = htol16(tdf);
+
+    }
+
+    Uint16 getUnitID() const
+    {
+        return ltoh16(unit_id);
+    }
+
+    Uint16 getTopDamage() const
+    {
+        return ltoh16(top_damage_factor);
+    }
+
+} __attribute__((packed));
+
+
+
+
 
 class UnitRemoteCreateFull : public NetMessage
 {

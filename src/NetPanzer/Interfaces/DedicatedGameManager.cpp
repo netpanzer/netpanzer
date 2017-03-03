@@ -201,7 +201,24 @@ DedicatedGameManager::mainLoop()
         {
             player = PlayerInterface::getPlayer((unsigned short) i);
             if ( player->isActive() )
-            {   /*
+            {
+
+                if (GameConfig::game_scrambler == true)
+                {
+                // enckeychange msg
+                unsigned short x_key = (rand() %254)+1;
+                SystemEnckeychange ckmsg(x_key);
+                SERVER->sendMessage(player->getID(), &ckmsg, sizeof(SystemEnckeychange));
+                } else {
+                unsigned short x_key_no = 0;
+                SystemEnckeychange ckmsg(x_key_no);
+                SERVER->sendMessage(player->getID(), &ckmsg, sizeof(SystemEnckeychange));
+                }
+                //LOGGER.info("Sending key %d to client.", x_key);
+                //
+
+
+                /*
                 if ( player->checkAutokick() )
                 {
                     char chat_string[140]; // was 256
@@ -241,11 +258,7 @@ DedicatedGameManager::mainLoop()
             if ( player->isActive() )
             {
 
-                // enckeychange msg
 
-                SystemEnckeychange ckmsg;
-                SERVER->sendMessage(player->getID(), &ckmsg, sizeof(SystemEnckeychange));
-                //
 
                 if ( player->getTotal()<GameConfig::game_lowscorelimit+6 && player->getTotal()>GameConfig::game_lowscorelimit )
                 {

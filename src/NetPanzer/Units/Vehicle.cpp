@@ -157,6 +157,7 @@ Vehicle::Vehicle(bool liveornot, PlayerState* player, unsigned char utype, UnitI
     unit_state.weapon_range = profile->attack_range;
     unit_state.unit_type = utype;
 */
+    // perfect sync of existing units for a newly connected player
     unit_state.hit_points = hit_points;
     unit_state.max_hit_points = hit_points;
     unit_state.damage_factor = damage_factor;

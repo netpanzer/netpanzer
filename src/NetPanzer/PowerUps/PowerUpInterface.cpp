@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "PowerUps/BonusUnitPowerUp.hpp"
 #include "PowerUps/UnitPowerUp.hpp"
+#include "PowerUps/UnitGlobalPowerUp.hpp"
 #include "PowerUps/EnemyRadarPowerUp.hpp"
 
 #include "Util/Log.hpp"
@@ -44,11 +45,13 @@ int PowerUpInterface::power_up_regen_time_lower_bound = 60;
 Timer PowerUpInterface::regen_timer;
 
 enum { _powerup_unit,
-       _powerup_bonus_units
+       _powerup_bonus_units,
+       _powerup_global_unit
      };
 
-int  powerup_probability_table[2] = { _powerup_unit,
-                                      _powerup_bonus_units
+int  powerup_probability_table[3] = { _powerup_unit,
+                                      _powerup_bonus_units,
+                                      _powerup_global_unit
                                     };
 
 void PowerUpInterface::setPowerUpLimits(unsigned long map_size_x,
@@ -100,13 +103,16 @@ void PowerUpInterface::generatePowerUp()
         //int prob_table_index;
         int powerup_type;
 
-        int prob_table_index = rand() % 10;
-        if (prob_table_index + 1 < 4) {
+        int prob_table_index = rand() % 100;
+        if (prob_table_index < 30) {
             prob_table_index = 1;
-        } else {
+        } else if (prob_table_index >= 30 && prob_table_index < 80) {
             prob_table_index = 0;
+        } else {
+            prob_table_index = 2;
         }
-        //int prob_table_index = 0; //only unit
+
+        //prob_table_index = 2; //only global
         powerup_type = powerup_probability_table[ prob_table_index ];
 
 
@@ -123,6 +129,11 @@ void PowerUpInterface::generatePowerUp()
         case _powerup_unit :
             power_up = new UnitPowerUp( loc, powerup_type );
             break;
+
+        case _powerup_global_unit :
+            power_up = new UnitGlobalPowerUp( loc, powerup_type );
+            break;
+
 /*
         case _powerup_enemy_radar :
             power_up = new EnemyRadarPowerUp( loc, powerup_type );
@@ -162,6 +173,10 @@ void PowerUpInterface::initialize( void )
     PowerUp::POWERUP_ANIM.load( "powerups/Bolt.pak" );
     PowerUp::POWERUP_ANIM.setFPS( 15 );
     PowerUp::POWERUP_ANIM_SHADOW.load( "powerups/BoltS.pak" );
+
+    PowerUp::POWERUP_ANIM_R.load( "powerups/Bolt_R.pak" );
+    PowerUp::POWERUP_ANIM_R.setFPS( 15 );
+    PowerUp::POWERUP_ANIM_SHADOW_R.load( "powerups/BoltS_R.pak" );
 }
 
 void PowerUpInterface::resetLogic( void )
@@ -277,6 +292,12 @@ void PowerUpInterface::netMessagePowerUpCreate(const NetMessage* message)
         power_up = new UnitPowerUp(
             iXY(create_mesg->getLocX(), create_mesg->getLocY()),
             _powerup_unit );
+        break;
+
+    case _powerup_global_unit :
+        power_up = new UnitGlobalPowerUp(
+            iXY(create_mesg->getLocX(), create_mesg->getLocY()),
+            _powerup_global_unit );
         break;
 /*
     case _powerup_enemy_radar :

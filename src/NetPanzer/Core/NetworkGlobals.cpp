@@ -31,6 +31,7 @@ struct version_data older_versions[] =
     (struct version_data){ 1030, "This server requires older netpanzer 0.8.3" },
     (struct version_data){ 1105, "This server requires older netpanzer 0.8.4" },
     (struct version_data){ 1122, "This server requires older netpanzer 0.8.7" }
+
      // this is valid for future
 };
 
@@ -56,5 +57,5 @@ const char * getNetpanzerProtocolMessage(const int protocol)
         return "This server is an older development version, cannot use";
     }
 
-    return "This server is a newer netpanzer, please check http://www.netpanzer.info";
+    return "This server is a newer netpanzer, check www.netpanzer.info";
 }

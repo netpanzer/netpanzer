@@ -34,7 +34,8 @@ enum { _net_message_id_system_set_view,
        _net_message_id_system_ping_request,
        _net_message_id_system_ping_ack,
        _net_message_id_system_connect_alert,
-       _net_message_id_system_enckeychange
+       _net_message_id_system_enckeychange,
+       _net_message_id_system_enckeychange_ack
      };
 
 
@@ -170,14 +171,35 @@ class SystemEnckeychange : public NetMessage
 private: Uint8 xorkey;
 
 public:
-    SystemEnckeychange()
+    SystemEnckeychange(unsigned short x_key)
     {
         message_class = _net_message_class_system;
         message_id = _net_message_id_system_enckeychange; //_6
-        xorkey = rand() % 255;
+        //xorkey = rand() % 255;
+        xorkey = x_key;
     }
+
+    unsigned short getEncKey() const
+    {
+    return (unsigned short)xorkey;
+    }
+
 } __attribute__((packed));
 
+class SystemEnckeychangeAck : public NetMessage
+{
+
+private: Uint8 recvkey;
+
+public:
+    SystemEnckeychangeAck(unsigned short r_key)
+    {
+        message_class = _net_message_class_system;
+        message_id = _net_message_id_system_enckeychange_ack; //_7
+        recvkey = r_key;
+    }
+
+} __attribute__((packed));
 
 
 #ifdef MSVC

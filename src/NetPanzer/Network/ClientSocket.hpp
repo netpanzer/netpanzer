@@ -110,6 +110,23 @@ public:    PlayerID player_id;
     int opc_1;
     int opc_2;
 
+    Uint8 encryptKeySend;
+    Uint8 encryptKeyRecv;
+    Uint8 popc_0;
+    Uint8 popc_0b;
+    Uint8 popc_t;
+    Uint8 popc_1b;
+    Uint8 popc_t1;
+    int opcv_0;
+    int opcv_1;
+    Uint8 key2;
+    Uint8 key0;
+    Uint8 opcv_2;
+    Uint8 encrypted;
+    Uint8 encryptedb;
+    Uint8 encrypted2;
+    Uint8 encryptedb2;
+/*
     Uint8 popc_0;
     Uint8 popc_0b;
     Uint8 popc_t;
@@ -121,12 +138,12 @@ public:    PlayerID player_id;
     Uint8 encrypted;
     Uint8 encryptedb;
     Uint8 encrypted2;
-    Uint8 encryptKeySendC;
-    Uint8 encryptKeyRecvC;
+    Uint8 encryptKeySend;
+    Uint8 encryptKeyRecv;
     Uint8 encryptKeySendS;
     Uint8 encryptKeyRecvS;
     bool recvf;
-
+*/
 
 };
 

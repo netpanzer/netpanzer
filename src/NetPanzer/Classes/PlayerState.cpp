@@ -163,6 +163,7 @@ void PlayerState::operator= (const PlayerState& other)
     unit_config = other.unit_config;
     admin_flag = other.admin_flag;
     autokick.reset();
+    muted = other.muted;
 }
 
 
@@ -279,6 +280,7 @@ void PlayerState::resetStats(bool keepAdmin)
     objectives_held = 0;
     stats_locked = false;
     if ( ! keepAdmin ) admin_flag = false;
+    muted = false;
 }
 
 void PlayerState::resetAutokick()
@@ -400,6 +402,15 @@ unsigned char PlayerState::getPlayerStyle()
     return units_style;
 }
 
+void PlayerState::setMute(bool mute)
+{
+    muted = mute;
+}
+
+bool PlayerState::getMute() const
+{
+    return muted;
+}
 
 NetworkPlayerState PlayerState::getNetworkPlayerState() const
 {

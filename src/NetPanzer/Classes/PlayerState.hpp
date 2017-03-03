@@ -81,6 +81,7 @@ private:
     bool stats_locked;
     bool admin_flag;
     NTimer autokick;
+    bool muted;
 
 public:
     PlayerUnitConfig unit_config;
@@ -115,6 +116,8 @@ public:
     short getTotal() const;
     void setPlayerStyle(unsigned char nustyle);
     unsigned char getPlayerStyle();
+    void setMute(bool mute);
+    bool getMute() const;
     NetworkPlayerState getNetworkPlayerState() const;
     void getNetworkPlayerState(NetworkPlayerState& state) const;
     void setFromNetworkPlayerState(const NetworkPlayerState* state);
@@ -122,6 +125,7 @@ public:
 
     void setAdmin(bool flag) { admin_flag = flag; }
     bool isAdmin()     const { return admin_flag; }
+
 
     void setStateFree()       { status = _player_state_free; }
     void setStateAllocated()  { status = _player_state_allocated; }

@@ -60,6 +60,8 @@ protected:
     static void netMessageConnectAlert(const NetMessage* message);
     static void netMessageResetGameLogic(const NetMessage* message);
 
+    static void sendAckEnckeychange(const NetMessage* message);
+
 public:
     static std::string stmapstyle;
     static unsigned char ststylesnum;

@@ -509,6 +509,22 @@ void GameManager::netMessagePingRequest(const NetMessage* message)
 
 // ******************************************************************
 
+void GameManager::sendAckEnckeychange(const NetMessage* message)
+{
+        if ( NetworkState::status != _network_state_server ) // clients only
+        {
+        const SystemEnckeychange *enc_key = (const SystemEnckeychange*) message;
+        unsigned short r_key = enc_key->getEncKey();
+
+        SystemEnckeychangeAck sea(r_key);
+        //LOGGER.info("Got key %d and sending it back!", r_key);
+
+        CLIENT->sendMessage( &sea, sizeof(SystemEnckeychangeAck));
+        }
+}
+
+// ******************************************************************
+
 void GameManager::netMessagePingAcknowledge(const NetMessage*)
 {
     //NetworkState::ping_time = (now() - NetworkState::ping_time_stamp) * 1000;
@@ -608,6 +624,10 @@ void GameManager::processSystemMessage(const NetMessage* message)
             break;
 
         case _net_message_id_system_enckeychange:
+            sendAckEnckeychange( message );
+            break;
+
+        case _net_message_id_system_enckeychange_ack:
             break;
 
         default:

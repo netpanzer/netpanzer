@@ -161,6 +161,7 @@ public:
     static int       game_anticheat;
     static bool      game_authentication;
     static bool      game_bots_allowed;
+    static bool      game_scrambler;
     //static int       game_maxchatlines;
     static NPString* game_map;
     static NPString* game_mapcycle;

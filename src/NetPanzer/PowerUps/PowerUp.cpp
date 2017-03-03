@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 SpritePacked PowerUp::POWERUP_ANIM;
 SpritePacked PowerUp::POWERUP_ANIM_SHADOW;
+SpritePacked PowerUp::POWERUP_ANIM_R;
+SpritePacked PowerUp::POWERUP_ANIM_SHADOW_R;
 
 PowerUp::PowerUp()
 {
@@ -41,10 +43,20 @@ PowerUp::PowerUp(iXY map_loc, PowerUpID ID, int type)
 
     this->life_cycle_state = _power_up_lifecycle_state_active;
 
+    if (type != 2) {
     sprite.setData( POWERUP_ANIM );
+    } else {
+    sprite.setData( POWERUP_ANIM_R );
+    }
+
     sprite.setAttrib( world_loc, iXY(0,0), 5 );
 
+    if (type != 2) {
     sprite_shadow.setData( POWERUP_ANIM_SHADOW );
+    } else {
+    sprite_shadow.setData( POWERUP_ANIM_SHADOW_R );
+    }
+
     sprite_shadow.setAttrib( world_loc, iXY(0,0), 4 );
     sprite_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
 }
@@ -59,10 +71,20 @@ PowerUp::PowerUp(iXY map_loc, int type)
 
     this->life_cycle_state = _power_up_lifecycle_state_active;
 
+    if (type != 2) {
     sprite.setData( POWERUP_ANIM );
+    } else {
+    sprite.setData( POWERUP_ANIM_R );
+    }
+
     sprite.setAttrib( world_loc, iXY(0,0), 5 );
 
+    if (type != 2) {
     sprite_shadow.setData( POWERUP_ANIM_SHADOW );
+    } else {
+    sprite_shadow.setData( POWERUP_ANIM_SHADOW_R );
+    }
+
     sprite_shadow.setAttrib( world_loc, iXY(0,0), 4 );
     sprite_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
 }

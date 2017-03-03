@@ -122,9 +122,11 @@ static void handleAllianceMessage(const int type,
             }
             else
             {
+                if (player_state->getMute() == false) {
                 ConsoleInterface::postMessage(Color::yellow, false, 0,
                                               "%s request to ally with you.",
                                               player_state->getName().c_str());
+                }
             }
         }
     }
@@ -159,9 +161,11 @@ static void handleAllianceMessage(const int type,
             }
             else
             {
+                if (player_state->getMute() == false) {
                 ConsoleInterface::postMessage(Color::yellow, false, 0,
                                               "%s cancelled the alliance request with you.",
                                               player_state->getName().c_str());
+                }
             }
         }
 

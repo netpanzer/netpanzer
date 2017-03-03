@@ -66,7 +66,7 @@ void ServerConsole::executeCommand(const std::string& commandline)
     ++i;
     for( ; i < commandline.size(); ++i)
         argument += commandline[i];
-            
+
     if(command == "help") {
         std::cout << "Commands:\n";
         for(size_t i = 0; commands[i].name != 0; ++i) {
@@ -125,13 +125,15 @@ void ServerConsole::run()
     running = true;
     while(running) {
         char buf[256];
-       
+
         std::cout << "netpanzer-server: ";
-        fgets(buf, sizeof(buf), stdin);
+
+        if (fgets(buf, sizeof(buf), stdin) != NULL) {
         // eleminated \n at the end
         buf[strlen(buf)-1] = '\0';
 
         executeCommand(buf);
+        }
     }
 }
 

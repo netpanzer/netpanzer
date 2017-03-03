@@ -970,12 +970,152 @@ void UnitInterface::unitModGRMessage(const NetMessage* net_message)
             i != unitlist.end(); ++i) {
         UnitBase* unitx = *i;
         UnitState& unit_state = unitx->unit_state;
-
         unit_state.hit_points = unit_state.max_hit_points;
+
+
+
+    //UpdateStateUnitOpcode update_state_opcode;
+
+    //update_state_opcode.setUnitID(unitx->id);
+    //update_state_opcode.setHitPoints((unitx->unit_state).max_hit_points);
+    //UnitInterface::sendOpcode( &update_state_opcode );
+
+
+
+        //UnitState& unit_state = unitx->unit_state;
+
+        //unit_state.hit_points = unit_state.max_hit_points;
 
         }
 
+
+
  }
+
+
+ void UnitInterface::unitModGSpeedMessage(const NetMessage* net_message)
+{
+    const UnitModGS* mod_gs_mesg
+        = (const UnitModGS *) net_message;
+
+    UnitID unit_idee = mod_gs_mesg->getUnitID();
+
+        UnitBase* unit = UnitInterface::getUnit(unit_idee);
+
+        PlayerUnitList& unitlist = playerUnitLists[unit->player->getID()];
+
+        unsigned short top_speed_rate = mod_gs_mesg->getTopSpeed();
+
+
+        //UnitState& unit_state;
+
+        //loop here
+        for(PlayerUnitList::iterator i = unitlist.begin();
+            i != unitlist.end(); ++i) {
+        UnitBase* unitx = *i;
+        UnitState& unit_state = unitx->unit_state;
+
+        int percent = 20;
+        unsigned short new_speed_rate = unit_state.speed_rate+
+                           (unsigned short)((double)unit_state.speed_rate * ((double)percent/(double)100));
+
+
+        if (new_speed_rate > top_speed_rate) {
+            new_speed_rate = top_speed_rate;
+        }
+
+
+
+        unit_state.speed_rate = new_speed_rate;
+
+
+        }
+
+
+
+ }
+
+
+ void UnitInterface::unitModGReloadMessage(const NetMessage* net_message)
+{
+    const UnitModGRT* mod_grt_mesg
+        = (const UnitModGRT *) net_message;
+
+    UnitID unit_idee = mod_grt_mesg->getUnitID();
+
+        UnitBase* unit = UnitInterface::getUnit(unit_idee);
+
+        PlayerUnitList& unitlist = playerUnitLists[unit->player->getID()];
+
+        unsigned short top_reload_time = mod_grt_mesg->getTopReload();
+
+
+        //UnitState& unit_state;
+
+        //loop here
+        for(PlayerUnitList::iterator i = unitlist.begin();
+            i != unitlist.end(); ++i) {
+        UnitBase* unitx = *i;
+        UnitState& unit_state = unitx->unit_state;
+
+        int percent = 20;
+        unsigned short new_reload_time = unit_state.reload_time-
+                           (unsigned short)((double)unit_state.reload_time * ((double)percent/(double)100));
+
+        if (new_reload_time < top_reload_time) {
+            new_reload_time = top_reload_time;
+        }
+
+        unit_state.reload_time = new_reload_time;
+
+
+        }
+
+
+
+ }
+
+
+ void UnitInterface::unitModGFireMessage(const NetMessage* net_message)
+{
+    const UnitModGDM* mod_gdm_mesg
+        = (const UnitModGDM *) net_message;
+
+    UnitID unit_idee = mod_gdm_mesg->getUnitID();
+
+        UnitBase* unit = UnitInterface::getUnit(unit_idee);
+
+        PlayerUnitList& unitlist = playerUnitLists[unit->player->getID()];
+
+
+        unsigned short top_damage_factor = mod_gdm_mesg->getTopDamage();
+
+        //UnitState& unit_state;
+
+        //loop here
+        for(PlayerUnitList::iterator i = unitlist.begin();
+            i != unitlist.end(); ++i) {
+        UnitBase* unitx = *i;
+        UnitState& unit_state = unitx->unit_state;
+
+        int percent = 20;
+        unsigned short new_damage_factor = unit_state.damage_factor+
+                           (unsigned short)((double)unit_state.damage_factor * ((double)percent/(double)100));
+
+
+        if (new_damage_factor > top_damage_factor) {
+            new_damage_factor = top_damage_factor;
+        }
+
+        unit_state.damage_factor = new_damage_factor;
+
+
+        }
+
+
+
+ }
+
 
  // ******************************************************************
 
@@ -987,7 +1127,7 @@ void UnitInterface::unitModSuperunitMessage(const NetMessage* net_message)
     UnitID unit_idee = mod_superunit_mesg->getUnitID();
 
     unsigned short speed_rate = mod_superunit_mesg->getSpeedRate();
-    unsigned short speed_factor = mod_superunit_mesg->getSpeedFactor();
+    //unsigned short speed_factor = mod_superunit_mesg->getSpeedFactor();
     unsigned short reload_time = mod_superunit_mesg->getReloadTime();
     unsigned short damage_factor = mod_superunit_mesg->getDamageFactor();
     //unsigned long weapon_range = mod_superunit_mesg->getWeaponRange();
@@ -997,10 +1137,11 @@ void UnitInterface::unitModSuperunitMessage(const NetMessage* net_message)
         UnitState& unit_state = unit->unit_state;
 
         unit_state.speed_rate = speed_rate;
-        unit_state.speed_factor = speed_factor;
+        //unit_state.speed_factor = speed_factor;
         unit_state.reload_time = reload_time;
         unit_state.damage_factor = damage_factor;
         //unit_state.weapon_range = weapon_range;
+        //unit_state.max_hit_points = max_hit_points;
         unit_state.hit_points = unit_state.max_hit_points;
 
 }
@@ -1106,12 +1247,24 @@ void UnitInterface::processNetMessage(const NetMessage* net_message, size_t size
             unitModSpeedMessage(net_message);
             break;
 
+        case _net_message_id_mod_global_speed:
+            unitModGSpeedMessage(net_message);
+            break;
+
         case _net_message_id_mod_reload:
             unitModReloadMessage(net_message);
             break;
 
+        case _net_message_id_mod_global_reload:
+            unitModGReloadMessage(net_message);
+            break;
+
         case _net_message_id_mod_fire:
             unitModFireMessage(net_message);
+            break;
+
+        case _net_message_id_mod_global_fire:
+            unitModGFireMessage(net_message);
             break;
 
         case _net_message_id_mod_w_range:

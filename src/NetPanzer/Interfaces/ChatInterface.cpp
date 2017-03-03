@@ -274,8 +274,10 @@ void ChatInterface::clientHandleChatMessage(const NetMessage* message, size_t si
 
     } // ** switch
 
+    if (player_state->getMute() == false) {
     ConsoleInterface::postMessage(color, true, player_state->getFlag(), "%s: %s",
                                   player_state->getName().c_str(), text.c_str());
+    }
 }
 
 void ChatInterface::processChatMessages(const NetPacket* packet)

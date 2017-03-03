@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -31,7 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"
-
+#include "Interfaces/ConsoleInterface.hpp"
 #include "Views/Components/Label.hpp"
 
 #define HEADER_HEIGHT 24
@@ -48,12 +48,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #define TABLE_HEADER_PIX_LEN (52*8)
 
-#define WINDOW_WIDTH (TABLE_HEADER_PIX_LEN + ((DEFAULT_BORDER_SIZE+TABLE_BORDER) * 2 ) + 14+2)
+#define WINDOW_WIDTH (TABLE_HEADER_PIX_LEN + ((DEFAULT_BORDER_SIZE+TABLE_BORDER) * 2 ) + 14+2+28)
 
 static const char * table_header =
         "      Name                 Frags Deaths Points Objs.";
 
 static const char * stats_format = "%-20s%6i%7i%7i%6i";
+
 
 // RankView
 //---------------------------------------------------------------------------
@@ -79,6 +80,8 @@ RankView::RankView() : GameTemplateView()
     allyOtherImage.loadBMP("pics/default/allyOther.bmp");
     noAllyImage.loadBMP("pics/default/noAlly.bmp");
     colorImage.loadBMP("pics/default/playerColor.bmp");
+    muteImageW.loadBMP("pics/default/mute_W.bmp");
+    muteImageR.loadBMP("pics/default/mute_r.bmp");
 
     selected_line = -1;
 
@@ -100,7 +103,7 @@ void RankView::doDraw(Surface &viewArea, Surface &clientArea)
         resize(WINDOW_WIDTH, newheight);
         return; // this frame draws nothing
     }
-    
+
     bltViewBackground(viewArea);
 
     clientArea.drawButtonBorder(
@@ -156,10 +159,12 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
     switch(GameConfig::game_gametype)
     {
         case _gametype_objective:
+        case _gametype_objectiveANDfraglimit:
             std::sort(states.begin(), states.end(), StatesSortByObjectives());
             break;
         case _gametype_timelimit:
         case _gametype_fraglimit:
+        case _gametype_fraglimitORtimelimit:
             std::sort(states.begin(), states.end(), StatesSortByPoints());
             break;
     }
@@ -179,14 +184,14 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
         dest.bltStringShadowed(NAME_START, cur_line_pos, statBuf,
                                (cur_state == selected_line)?Color::yellow:Color::gray224,
                                Color::gray64);
-        
+
         flag = ResourceManager::getFlag(state->getFlag());
         flag->blt( dest, FLAG_START, flag_pos );
         if ( state->getID() != PlayerInterface::getLocalPlayerIndex() )
         {
             // XXX ALLY
             bool meWithHim = PlayerInterface::isSingleAllied(PlayerInterface::getLocalPlayerIndex(), state->getID());
-            bool himWithMe = PlayerInterface::isSingleAllied(state->getID(), PlayerInterface::getLocalPlayerIndex());            
+            bool himWithMe = PlayerInterface::isSingleAllied(state->getID(), PlayerInterface::getLocalPlayerIndex());
             if ( meWithHim && himWithMe )
             {
                 allyImage.bltTrans(dest, ALLY_START, flag_pos );
@@ -205,7 +210,19 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
             }
         }
 
-        colorImage.bltTransColor(dest, TABLE_HEADER_PIX_LEN+2, flag_pos, state->getColor());
+        colorImage.bltTransColor(dest, TABLE_HEADER_PIX_LEN+2+8, flag_pos, state->getColor());
+
+        if ( state->getID() != PlayerInterface::getLocalPlayerIndex() )
+        {
+        mstate = PlayerInterface::getPlayer( state->getID() );
+        if (mstate->getMute() == true) {
+        muteImageR.bltTrans(dest, TABLE_HEADER_PIX_LEN+2+14+14, flag_pos );
+        } else {
+        muteImageW.bltTrans(dest, TABLE_HEADER_PIX_LEN+2+14+14, flag_pos );
+        }
+
+        }
+
 
         cur_line_pos += ENTRY_HEIGHT;
         flag_pos += ENTRY_HEIGHT;
@@ -223,6 +240,46 @@ void RankView::notifyMoveTo()
 void RankView::lMouseDown(const iXY& pos)
 {
     GameTemplateView::lMouseDown(pos);
+
+
+    if ( pos.x >= TABLE_HEADER_PIX_LEN+2+14+12 && pos.x <= TABLE_HEADER_PIX_LEN+2+14+12+10 && pos.y >= TABLE_START )
+    {
+        unsigned int yposm = pos.y - TABLE_START;
+        unsigned int lineposm = yposm / ENTRY_HEIGHT;
+        if ( lineposm < states.size() )
+        {
+
+            unsigned int destplayerm = states[lineposm]->getID();
+            //bool mutedp = states[lineposm]->getMute();
+            unsigned int localplayerm = PlayerInterface::getLocalPlayerIndex();
+            if ( destplayerm != localplayerm )
+            {
+
+                mstate = PlayerInterface::getPlayer( destplayerm );
+                bool mutedp = mstate->getMute();
+
+                if ( mutedp == true )
+                {
+                    mstate->setMute(false);
+                    ConsoleInterface::postMessage(Color::orange, false, 0,
+                                              "You've just unmuted %s.",
+                                              mstate->getName().c_str());
+                }
+                else
+                {
+                    mstate->setMute(true);
+                    ConsoleInterface::postMessage(Color::orange, false, 0,
+                                              "You've just muted %s.",
+                                              mstate->getName().c_str());
+                }
+
+
+
+
+            }
+        }
+    }
+
     // XXX ALLY
     if ( pos.x >= 4 && pos.x <= 24 && pos.y >= TABLE_START )
     {
@@ -249,6 +306,8 @@ void RankView::lMouseDown(const iXY& pos)
             }
         }
     }
+
+
 }
 
 void RankView::mouseMove(const iXY & prevPos, const iXY &newPos)

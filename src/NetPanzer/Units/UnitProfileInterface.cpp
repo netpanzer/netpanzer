@@ -332,7 +332,7 @@ void UnitProfileInterface::loadUnitProfiles( void )
 
     UnitProfileInterface::tsu_speed_rate = su_speed_rate[su_speed_rate.size()-1];
     UnitProfileInterface::tsu_speed_factor = su_speed_factor[su_speed_factor.size()-1];
-    UnitProfileInterface::tsu_speed = su_speed_factor[su_speed.size()-1];
+    UnitProfileInterface::tsu_speed = su_speed[su_speed.size()-1];
     UnitProfileInterface::tsu_hit_points = su_hit_points[su_hit_points.size()-1];
     UnitProfileInterface::tsu_damage_factor = su_damage_factor[su_damage_factor.size()-1];
     UnitProfileInterface::tsu_reload_time = su_reload_time[0];

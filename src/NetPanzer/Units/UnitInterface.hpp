@@ -179,6 +179,10 @@ protected:
     static void unitModSuperunitMessage(const NetMessage* net_message);
     static void unitCreateMessageFull(const NetMessage *net_message );
 
+    static void unitModGSpeedMessage(const NetMessage* net_message);
+    static void unitModGReloadMessage(const NetMessage* net_message);
+    static void unitModGFireMessage(const NetMessage* net_message);
+
 protected:
     static unsigned long  sync_units_iterator;
     static bool	      sync_units_complete_flag;
@@ -189,6 +193,10 @@ protected:
     static unsigned long  sync_units_total_units;
 
 public:
+    static void sendOpcodeP(const UnitOpcode* opcode)
+    {
+        opcode_encoder.encode(opcode);
+    }
     static void processNetMessage(const NetMessage *net_message, size_t size);
     static void destroyPlayerUnits(PlayerID player_id);
 };

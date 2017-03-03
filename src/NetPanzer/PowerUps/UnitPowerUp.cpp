@@ -39,13 +39,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 
 enum { //_unit_powerup_hitpoints,
-       _unit_powerup_range,
+       //_unit_powerup_range,
        _unit_powerup_firepower,
        _unit_powerup_speed,
        //_unit_powerup_repair,
        _unit_powerup_reload,
        _unit_powerup_destruct,
-       _unit_powerup_global_repair,
+       //_unit_powerup_global_repair,
        _unit_powerup_superunit,
        _unit_powerup_enum_count
      };
@@ -54,7 +54,7 @@ UnitPowerUp::UnitPowerUp(iXY map_loc, int type)
     : PowerUp( map_loc, type )
 {
     unit_powerup_type = rand() % _unit_powerup_enum_count;
-      //unit_powerup_type = 5; //superunit
+      //unit_powerup_type = 1; //superunit
       //unit_powerup_type = 3; // speed
 }
 
@@ -75,7 +75,7 @@ void UnitPowerUp::powerUpHitPoints( UnitState *unit_state, UnitID unit_id )
     SERVER->broadcastMessage(&umhp, sizeof(umhp));
     */
 }
-
+/*
 void UnitPowerUp::powerUpWRange( UnitState *unit_state, UnitID unit_id )
 {
     int percent = 50;
@@ -89,7 +89,7 @@ void UnitPowerUp::powerUpWRange( UnitState *unit_state, UnitID unit_id )
 
     SERVER->broadcastMessage(&umwr, sizeof(umwr));
 }
-
+*/
 void UnitPowerUp::powerUpFirePower( UnitState *unit_state, UnitID unit_id )
 {
     int percent = 50;
@@ -99,24 +99,30 @@ void UnitPowerUp::powerUpFirePower( UnitState *unit_state, UnitID unit_id )
         new_damage_factor = UnitProfileInterface::tsu_damage_factor;
     }
     UnitModFire umf(unit_id, new_damage_factor);
+    if ( NetworkState::status == _network_state_server ) // server only
+    {
     unit_state->damage_factor = new_damage_factor;
-
+    }
     SERVER->broadcastMessage(&umf, sizeof(umf));
  }
 
 void UnitPowerUp::powerUpSpeed( UnitState *unit_state, UnitID unit_id )
-{
+{   /*
     int percent = 50;
     unsigned short new_speed_rate = unit_state->speed_rate+
                            (unsigned short)((double)unit_state->speed_rate * ((double)percent/(double)100));
     int new_speed_factor = unit_state->speed_factor;
     if (new_speed_rate*new_speed_factor > UnitProfileInterface::tsu_speed) {
-        new_speed_rate = UnitProfileInterface::tsu_speed_rate;
-        new_speed_factor = UnitProfileInterface::tsu_speed_factor;
-    }
+    */
+        unsigned short new_speed_rate = UnitProfileInterface::tsu_speed_rate;
+        unsigned short new_speed_factor = UnitProfileInterface::tsu_speed_factor;
+    //}
     UnitModSpeed ums(unit_id, new_speed_rate, new_speed_factor);
+    if ( NetworkState::status == _network_state_server ) // server only
+    {
     unit_state->speed_rate = new_speed_rate;
     unit_state->speed_factor = new_speed_factor;
+    }
     SERVER->broadcastMessage(&ums, sizeof(ums));
 }
 
@@ -147,7 +153,10 @@ void UnitPowerUp::powerUpReload( UnitState *unit_state, UnitID unit_id)
 
 
     UnitModReload umr(unit_id, new_reload_time);
+    if ( NetworkState::status == _network_state_server ) // server only
+    {
     unit_state->reload_time = new_reload_time;
+    }
     SERVER->broadcastMessage(&umr, sizeof(umr));
 }
 
@@ -157,7 +166,7 @@ void UnitPowerUp::powerUpDestruct( UnitID unit_id )
     self_destruct.setHeader( unit_id, _umesg_flag_unique );
     UnitInterface::sendMessage( &self_destruct );
 }
-
+/*
 void UnitPowerUp::powerUpGRepair( UnitState *unit_state, UnitID unit_id)
 {
 
@@ -179,7 +188,7 @@ void UnitPowerUp::powerUpGRepair( UnitState *unit_state, UnitID unit_id)
     //unit_state->hit_points = unit_state->max_hit_points;
     SERVER->broadcastMessage(&umgr, sizeof(umgr));
 }
-
+*/
 void UnitPowerUp::powerUpSuperunit( UnitState *unit_state, UnitID unit_id )
 {
     // best speed
@@ -195,15 +204,19 @@ void UnitPowerUp::powerUpSuperunit( UnitState *unit_state, UnitID unit_id )
                            (unsigned long)((double)unit_state->weapon_range * ((double)percent/(double)100));
     // and fully repaired of course
         short max_hit_points = unit_state->max_hit_points;
-
+        //short max_hit_points = UnitProfileInterface::tsu_hit_points;
 
     UnitModSuperunit umsup(unit_id, new_speed_rate, new_speed_factor, new_reload_time, new_damage_factor, new_weapon_range, max_hit_points);
+    if ( NetworkState::status == _network_state_server ) // server only
+    {
     unit_state->speed_rate = new_speed_rate;
-    unit_state->speed_factor = new_speed_factor;
+    //unit_state->speed_factor = new_speed_factor;
     unit_state->reload_time = new_reload_time;
     unit_state->damage_factor = new_damage_factor;
     unit_state->weapon_range = new_weapon_range;
+    //unit_state->max_hit_points = max_hit_points;
     unit_state->hit_points = unit_state->max_hit_points;
+    }
     SERVER->broadcastMessage(&umsup, sizeof(umsup));
 }
 
@@ -215,13 +228,13 @@ static const char * powerupTypeToString( int type )
 {
     switch( type )
     {
-        /*
+/*
     case _unit_powerup_hitpoints:
         return( "UNIT HITPOINTS" );
-        */
+
     case _unit_powerup_range:
         return( "UNIT WEAPON RANGE" );
-
+*/
     case _unit_powerup_firepower:
         return( "UNIT FIREPOWER" );
 
@@ -236,10 +249,10 @@ static const char * powerupTypeToString( int type )
 
     case _unit_powerup_destruct:
         return( "UNIT DESTRUCT" );
-
+/*
     case _unit_powerup_global_repair:
         return( "GLOBAL UNIT REPAIR" );
-
+*/
     case _unit_powerup_superunit:
         return( "SUPERUNIT" );
     }
@@ -259,11 +272,11 @@ void UnitPowerUp::onHit( UnitID unit_id )
     case _unit_powerup_hitpoints:
         powerUpHitPoints( &(unit->unit_state), unit_id );
         break;
-        */
+
     case _unit_powerup_range:
         powerUpWRange( &(unit->unit_state), unit_id );
         break;
-
+        */
     case _unit_powerup_firepower:
         powerUpFirePower( &(unit->unit_state), unit_id );
         break;
@@ -283,11 +296,11 @@ void UnitPowerUp::onHit( UnitID unit_id )
     case _unit_powerup_destruct:
         powerUpDestruct( unit_id );
         break;
-
+        /*
     case _unit_powerup_global_repair:
         powerUpGRepair( &(unit->unit_state), unit_id );
         break;
-
+        */
     case _unit_powerup_superunit:
         powerUpSuperunit( &(unit->unit_state), unit_id );
         break;

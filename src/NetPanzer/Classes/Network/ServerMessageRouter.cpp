@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -83,7 +83,7 @@ void ServerMessageRouter::routePacket(const NetPacket* packet)
             }
             GameManager::processSystemMessage(message);
             break;
-            
+
         case _net_message_class_chat:
             if ( player )
             {
@@ -107,6 +107,14 @@ void ServerMessageRouter::routePacket(const NetPacket* packet)
         default:
             LOGGER.warning("Packet contained unknown message class: %d",
                     message->message_class);
+
+                    char string_warning_k[140];
+                    sprintf(string_warning_k, "Player '%s' is cheating (trying to use packet sniffer/editor tools)!",player->getName().c_str());
+                    LOGGER.info("CHEAT: %s", string_warning_k);
+                    ChatInterface::serversay(string_warning_k);
+                    SERVER->kickClient(SERVER->getClientSocketByPlayerIndex((unsigned short) player->getID()));
+
+
     }
 }
 
@@ -126,7 +134,7 @@ void ServerMessageRouter::routeMessages()
             NetPacket packet;
             packet.fromPlayer = temp_packet.fromPlayer;
             packet.fromClient = temp_packet.fromClient;
-            
+
             while ( (msg_len = message_decoder.decodeMessage(&mmessage)) )
             {
                 memcpy(packet.data, mmessage, msg_len);
