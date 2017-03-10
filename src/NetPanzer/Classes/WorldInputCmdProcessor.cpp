@@ -93,7 +93,8 @@ WorldInputCmdProcessor::WorldInputCmdProcessor()
     right_mouse_scroll_moved = false;
 
     lastSelectTimer.setTimeOut(400);
-    actionTimer.setTimeOut(100);
+    //actionTimer.setTimeOut(100);
+    //moveBetterTimer.setTimeOut(100);
     Flagtimer.reset();
 
     last_selected_group = -1;
@@ -878,12 +879,17 @@ void WorldInputCmdProcessor::evalRightMButtonEvents(const MouseEvent& event)
 void
 WorldInputCmdProcessor::sendMoveCommand(const iXY& world_pos)
 {
+    /*
     if ( !actionTimer.isTimeOut() )
     {
         return;
     }
 
     actionTimer.reset();
+    */
+
+    //moveBetterTimer.reset();
+
 
     iXY map_pos;
     PlacementMatrix matrix;
@@ -1049,12 +1055,20 @@ WorldInputCmdProcessor::sendManualMoveCommand(unsigned char orientation,
 void
 WorldInputCmdProcessor::sendManualFireCommand(const iXY &world_pos)
 {
-    if ( !actionTimer.isTimeOut() )
-    {
-       return;
-    }
+    //if ( !actionTimer.isTimeOut() )
+    //{
+    //   return;
+    //}
 
-    actionTimer.reset();
+    //actionTimer.reset();
+
+    //if ( !moveBetterTimer.isTimeOut() )
+    //{
+    //   return;
+    //}
+
+    //actionTimer.reset();
+
 
     TerminalUnitCmdRequest msg;
 

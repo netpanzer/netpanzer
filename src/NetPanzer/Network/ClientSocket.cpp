@@ -116,18 +116,18 @@ ClientSocket::initId()
 
     if (GameConfig::game_anticheat == 1)
     {
-    commandBurstLimit = 10; // very strict
+    commandBurstLimit = 11; // very strict
     } else if (GameConfig::game_anticheat == 2)
               {
-               commandBurstLimit = 11; // strict
+               commandBurstLimit = 12; // strict
               } else if (GameConfig::game_anticheat == 3)
                         {
-                         commandBurstLimit = 12; // normal
+                         commandBurstLimit = 13; // normal
                         } else if (GameConfig::game_anticheat == 4)
                                   {
-                                   commandBurstLimit = 13; // permissive
+                                   commandBurstLimit = 14; // permissive
                                   } else {
-                                          commandBurstLimit = 14; // pretty null
+                                          commandBurstLimit = 15; // pretty null
                                          }
 
 
@@ -282,152 +282,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
 
 
 
-        // fu's Anti-Spam/Cheat device
 
-        if ( NetworkState::status == _network_state_server ) // server only
-        {
-        //LOGGER.info("Packet %d", packetsize);
-
-        if ( packetsize > 2 )
-        {
-
-        currentPActTime = SDL_GetTicks(); // current time
-
-        packetDelta = currentPActTime-lastPActTime0;
-
-
-        // anti pre-spawn chat string attack (multiple temporary patches)
-        if ( packetsize == 303 && packets_count == 1 && pre_conn_end == 1)
-        {
-         //conn_pause.setTimeOut(10000);
-         conn_end = 1;
-        }
-
-        if ( packetsize == 39 && packets_count == 0)
-        {
-         //conn_pause.setTimeOut(10000);
-         pre_conn_end = 1;
-        }
-
-        if (packets_count == 0 && packetsize != 39)
-        {
-         LOGGER.debug("Suspect attack detected [IP = %s] (pre-spawning)!", cipstring);
-         //ChatInterface::serversay("Server blocked suspect attack (external)!");
-         observer->onClientDisconected(this, "Network Manager striked!");
-         hardClose();
-         break;
-        }
-
-        if ( packets_count < 3 )
-        {
-         //conn_pause.setTimeOut(10000);
-         packets_count++;
-        }
-
-        //packet opc identifier
-        opc_0 = (int)data[dataptr];
-        opc_1 = (int)data[dataptr+1];
-        opc_2 = (int)data[dataptr+2];
-        //LOGGER.debug("%d %d %d", opc_0,opc_1,opc_2);
-
-        if ( (opc_0 == 10 && opc_1 == 0 && opc_2 == 3) || (opc_0 == 10 && opc_1 == 0 && opc_2 == 1) ||
-             (opc_0 == 3 && opc_1 == 5) || (opc_0 == 3 && opc_1 == 2) ) // chat, ally chat, ally request, flag update
-        {
-
-
-        if (conn_end == 0)
-        {
-         LOGGER.debug("Suspect attack detected [IP = %s] (pre-spawning)!", cipstring);
-         //ChatInterface::serversay("Server blocked suspect attack (external)!");
-         observer->onClientDisconected(this, "Network Manager striked!");
-
-         hardClose();
-         break;
-        }
-
-        if (conn_end == 1 && packets_count == 2)
-        {
-         LOGGER.debug("Suspect attack detected [IP = %s] (pre-spawning)!", cipstring);
-         //ChatInterface::serversay("Server blocked suspect attack (external)!");
-         observer->onClientDisconected(this, "Network Manager striked!");
-
-         hardClose();
-         break;
-        }
-
-
-
-        mydatastrc++;
-        mydatastrtime0 = mydatastrtime;
-        mydatastrtime = currentPActTime;
-        if (mydatastrtime - mydatastrtime0 < 700)
-        {
-         if (mydatastrc>6) // max 7 lines
-         {
-         LOGGER.debug("Anti-Spam terminated a connection [IP = %s] (chat abuse)", cipstring);
-         ChatInterface::serversay("Anti-Spam terminated a connection (chat abuse)!");
-         observer->onClientDisconected(this, "Network Manager striked!");
-
-         hardClose();
-         break;
-         }
-        }
-        else
-        {
-         mydatastrc = 0;
-        }
-        //LOGGER.debug("Match!");
-        }
-
-
-
-        if (packetDelta<125 && packetDelta>115 && packetsize>27)
-        {
-
-         commandBurst++;
-
-         burstTime0 = burstTime;
-         burstTime = currentPActTime;
-         burstDelta = burstTime - burstTime0;
-
-         //LOGGER.debug("Burst from [%s] - pDelta = %u - bCount = %u - bDelta = %u", cipstring, packetDelta, commandBurst, burstDelta);
-         LOGGER.debug("Burst from [%s] - bCount = %u - bDelta = %u", cipstring, commandBurst, burstDelta);
-
-
-         if (burstDelta<800) // Does it depend on tanks number? It seems not.
-         {
-
-         if ( commandBurst>commandBurstLimit ) // (7-8-10-12-14) too many consecutive bursts - player is cheating!
-         {
-         commandBurst = 0;
-         LOGGER.debug("Suspect cheater terminated! [IP = %s]", cipstring);
-         ChatInterface::serversay("Suspect cheater terminated (too fast clicking)!");
-         observer->onClientDisconected(this, "Anti-cheating striked!");
-
-         //hardClose();
-         break;
-         }
-
-         }
-         else
-         {
-         commandBurst = 0;
-         }
-
-
-        }
-
-
-
-        //lastPActTime2 = lastPActTime1;
-        lastPActTime1 = lastPActTime0;
-        lastPActTime0 = currentPActTime;
-
-        }
-
-        }
-
-        // end of Anti-Spam/Cheat device
 
 
 
@@ -478,9 +333,157 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
 
             } else {
 
+
             if (opcv_0 == 1 && opcv_1 == 7) {
             encryptKeyRecv = opcv_2;
             }
+
+
+        //XXX// start of anti-spam device
+
+        //LOGGER.info("Packet %d", packetsize);
+
+        if ( packetsize > 2 )
+        {
+
+        currentPActTime = SDL_GetTicks(); // current time
+
+        packetDelta = currentPActTime-lastPActTime0;
+
+
+        // anti pre-spawn chat string attack (multiple temporary patches)
+        if ( packetsize == 303 && packets_count == 1 && pre_conn_end == 1)
+        {
+         //conn_pause.setTimeOut(10000);
+         conn_end = 1;
+        }
+
+        if ( packetsize == 39 && packets_count == 0)
+        {
+         //conn_pause.setTimeOut(10000);
+         pre_conn_end = 1;
+        }
+
+        if (packets_count == 0 && packetsize != 39)
+        {
+         LOGGER.debug("Suspect attack detected [IP = %s] (pre-spawning)!", cipstring);
+         //ChatInterface::serversay("Server blocked suspect attack (external)!");
+         observer->onClientDisconected(this, "Network Manager striked!");
+         hardClose();
+         break;
+        }
+
+        if ( packets_count < 3 )
+        {
+         //conn_pause.setTimeOut(10000);
+         packets_count++;
+        }
+
+        //packet opc identifier
+        //opc_0 = (int)data[dataptr];
+        //opc_1 = (int)data[dataptr+1];
+        //opc_2 = (int)data[dataptr+2];
+        //LOGGER.debug("%d %d %d", opc_0,opc_1,opc_2);
+
+        if ( (opcv_0 == 10 && opcv_1 == 0 && opcv_2 == 3) || (opcv_0 == 10 && opcv_1 == 0 && opcv_2 == 1) ||
+             (opcv_0 == 3 && opcv_1 == 5) || (opcv_0 == 3 && opcv_1 == 2) ) // chat, ally chat, ally request, flag update
+        {
+
+
+        if (conn_end == 0)
+        {
+         LOGGER.debug("Suspect attack detected [IP = %s] (pre-spawning)!", cipstring);
+         //ChatInterface::serversay("Server blocked suspect attack (external)!");
+         observer->onClientDisconected(this, "Network Manager striked!");
+
+         hardClose();
+         break;
+        }
+
+        if (conn_end == 1 && packets_count == 2)
+        {
+         LOGGER.debug("Suspect attack detected [IP = %s] (pre-spawning)!", cipstring);
+         //ChatInterface::serversay("Server blocked suspect attack (external)!");
+         observer->onClientDisconected(this, "Network Manager striked!");
+
+         hardClose();
+         break;
+        }
+
+
+
+        mydatastrc++;
+        mydatastrtime0 = mydatastrtime;
+        mydatastrtime = currentPActTime;
+        if (mydatastrtime - mydatastrtime0 < 600)
+        {
+         if (mydatastrc>6) // max 7 lines
+         {
+         LOGGER.debug("Anti-Spam terminated a connection [IP = %s] (chat abuse)", cipstring);
+         ChatInterface::serversay("Anti-Spam terminated a connection (chat abuse)!");
+         observer->onClientDisconected(this, "Network Manager striked!");
+
+         hardClose();
+         break;
+         }
+        }
+        else
+        {
+         mydatastrc = 0;
+        }
+        //LOGGER.debug("Match!");
+        }
+
+
+
+        if (packetDelta<125 && packetDelta>115 && packetsize>27)
+        {
+
+         commandBurst++;
+
+         burstTime0 = burstTime;
+         burstTime = currentPActTime;
+         burstDelta = burstTime - burstTime0;
+
+         //LOGGER.debug("Burst from [%s] - pDelta = %u - bCount = %u - bDelta = %u", cipstring, packetDelta, commandBurst, burstDelta);
+         LOGGER.debug("Burst from [%s] - bCount = %u - bDelta = %u", cipstring, commandBurst, burstDelta);
+
+
+         if (burstDelta<800) // Does it depend on tanks number? It seems not.
+         {
+
+         if ( commandBurst>commandBurstLimit ) // too many consecutive bursts - player is cheating!
+         {
+         commandBurst = 0;
+         LOGGER.debug("Suspect cheater terminated! [IP = %s]", cipstring);
+         ChatInterface::serversay("Suspect cheater terminated (too fast clicking)!");
+         observer->onClientDisconected(this, "Anti-cheating striked!");
+
+         //hardClose();
+         break;
+         }
+
+         }
+         else
+         {
+         commandBurst = 0;
+         }
+
+
+        }
+
+
+        //lastPActTime2 = lastPActTime1;
+        lastPActTime1 = lastPActTime0;
+        lastPActTime0 = currentPActTime;
+
+        }
+
+        // end of anti-spam device
+
+
+
+
 
             }
 

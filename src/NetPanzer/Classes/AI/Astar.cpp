@@ -299,7 +299,7 @@ bool Astar::process_succ( PathList *path, int *result_code )
 
                             if ( node == 0 ) {
                                 done = true;
-                                goal_reachable = false;
+                                goal_reachable = true; // it was false - PATCH (to limit unreachable nodes issue) !!!
                                 break; // early exit
                             } else {
                                 *node = temp_node;
@@ -347,9 +347,11 @@ bool Astar::process_succ( PathList *path, int *result_code )
         ini_flag = true;
         cleanUp();
 
+
         PathingState::astar_gen_time = total_pathing_time;
         PathingState::astar_gen_time_total += total_pathing_time;
         *result_code = _path_result_goal_unreachable;
+        //return false; // PATCH
         return true;
     }
 

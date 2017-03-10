@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -204,7 +204,7 @@ void ChunkTrajectoryParticle2D::createUnitBodyGrayChunks()
 {
     // Blt the green titan body onto a surface to pull colors from.
     Surface tempUnitBodyGray;
-    UnitProfile * uprofile = UnitProfileInterface::getUnitProfile(0);
+    UnitProfileSprites * uprofile = UnitProfileSprites::getUnitProfileSprites(2);
 
     tempUnitBodyGray.create(uprofile->bodySprite.getWidth(), uprofile->bodySprite.getHeight(), 1);
     tempUnitBodyGray.fill(0);
@@ -250,8 +250,8 @@ void ChunkTrajectoryParticle2D::createUnitBodyGreenChunks()
 
     // Blt the green titan body onto a surface to pull colors from.
     Surface tempUnitBodyGray;
-    UnitProfile * uprofile = UnitProfileInterface::getUnitProfile(0);
-    
+    UnitProfileSprites * uprofile = UnitProfileSprites::getUnitProfileSprites(0);
+
     tempUnitBodyGray.create(uprofile->bodySprite.getWidth(), uprofile->bodySprite.getHeight(), 1);
     tempUnitBodyGray.fill(0);
     uprofile->bodySprite.blt(tempUnitBodyGray, 0, 0);

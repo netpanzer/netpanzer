@@ -144,3 +144,47 @@ Button::createSpecialButton( std::string cname,
 
     return b;
 }
+/* for when I will have some good unit selection buttons
+
+Button *
+Button::createSpecialUSButton( std::string cname,
+                             std::string label,
+                             iXY loc)
+{
+    Surface bnormal;
+    //std::string bnormal_str =  "pics/backgrounds/menus/buttons/default/US/"+label+".bmp";
+    std::string bnormal_str =  "pics/backgrounds/menus/buttons/default/USB/"+label+".bmp";
+    const char * cc_bnormal_str = bnormal_str.c_str();
+    bnormal.loadBMP(cc_bnormal_str); //button
+
+    Surface bhover;
+    //std::string bhover_str =  "pics/backgrounds/menus/buttons/default/US-Hover/"+label+".bmp";
+    std::string bhover_str =  "pics/backgrounds/menus/buttons/default/USB-Hover/"+label+".bmp";
+    const char * cc_bhover_str = bhover_str.c_str();
+    bhover.loadBMP(cc_bhover_str); //button1
+
+    Surface bclick;
+    //std::string bclick_str =  "pics/backgrounds/menus/buttons/default/US-Hover/"+label+".bmp";
+    std::string bclick_str =  "pics/backgrounds/menus/buttons/default/USB-Hover/"+label+".bmp";
+    const char * cc_bclick_str = bclick_str.c_str();
+    bclick.loadBMP(cc_bclick_str); //button2
+
+    Surface spbutton(bnormal.getWidth(), bnormal.getHeight(), 3);
+
+    spbutton.setFrame(0);
+    bnormal.blt(spbutton,0,0);
+    spbutton.setFrame(1);
+    bhover.blt(spbutton,0,0);
+    spbutton.setFrame(2);
+    bclick.blt(spbutton,0,0);
+    spbutton.setFrame(0);
+
+    Button *b = new Button(cname);
+    b->setImage(spbutton);
+    b->setLabel(label);
+    b->setLocation(loc);
+    b->setTextColors(Color::lightYellow, Color::white, Color::lightGray);
+
+    return b;
+}
+*/

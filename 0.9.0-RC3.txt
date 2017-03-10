@@ -1,10 +1,10 @@
 RELEASE Notes
 
 
-NETPANZER 0.9.0 - Release Candidate 2
+NETPANZER 0.9.0 - Release Candidate 3
 
 
-Second candidate release (there will be others before official release) of forthcoming netPanzer 0.9.0 (War Of The Worlds).
+Third candidate release (there will be others before official release) of forthcoming netPanzer 0.9.0 (War Of The Worlds).
 
 Some corrections and small changes with suggestions from players.
 
@@ -21,7 +21,7 @@ Source at:  https://sourceforge.net/projects/netpanzer/
 Please report bugs in netpanzer.info forum. I need your feedback. Thank You!
 
 
-March, 3, 2017
+March, 10, 2017
 
 Fulvio Testi aka 'fu'
 
@@ -36,7 +36,38 @@ Fulvio Testi aka 'fu'
 The following is a list of the main FIXES/NEW FEATURES in this Development Release:
 
 
------- XXX UPDATE RC2 XXX
+
+---XXX--- UPDATE RC3 ---XXX-- 
+
+
+
+- While re-writing the encryption part in RC2 (btw now it actually works), I ended up disabling the anti-spam system... now it's back to its place.
+
+- I totally re-factored the unit style selection system. It worked fine, but it was highy inefficient both in terms of network and memory.
+  Now it is optimized. You will probably notice that the connection time is shorter...
+
+- Added 'Abandon' button in base unit selection window - now you can disown outposts. Note: 'This' means just that outpost,
+  while 'All' means all of your outposts.
+
+- In the global destruct powerup (a red one), the unlucky player now loses all of his outposts too.
+
+
+- fixed visualization of names in outposts (owners, outpost names, units in production etc). Now they are responsive based on string length. 
+ 
+
+- I deleted a timer in the input management - it could have been an advantage for those unfair player who use tools to bypass it...
+  You might notice a slightly better reaction time for movements and shooting.
+
+- I applied a (actually stupid) patch in the pathfinding code and it seems that the negative effect of pathfinding panic (the infamous 'node unreachable' messages in server)
+  with tanks slowing down and blocking are now HIGHLY REDUCED! Not tested much, but if it's gonna be true you guys will have to pay me a beer to say the least ;-)  
+
+
+
+-----------------------------
+
+
+
+  FROM RC2:
 
 - Ok admittedly the scrambler didn't work as expected in RC1. This time should work correctly.
   If it is so, this might be THE END OF CHEATING (no more Cheat Engine, packet editors etc.) as we know it in netpanzer. Let's wait and see...
@@ -52,6 +83,8 @@ The following is a list of the main FIXES/NEW FEATURES in this Development Relea
   The global unit powerups are: global repair, global speed +20%, global firepower +20%, global reload -20%, global destruct
 
 - Added mapstyle 'Desert' - a beautiful artwork by Silvestre.
+
+
 
 -------------------------
 
@@ -140,7 +173,7 @@ game.gametype can now be also 3 (objective AND frag limit) or 4 (fraglimit OR ti
 
 game.respawntype can now be also 2 (random alt) 
 
-IMPORTANT!!! Note that new anticheat mode 3 (default) is the old 4 in 0.8.7 - so now leave it at 3!
+
 
 
 -------------------------------------------------------------
@@ -151,21 +184,13 @@ IMPORTANT!!! Note that new anticheat mode 3 (default) is the old 4 in 0.8.7 - so
 My short list at the moment:
 
 
-- authentication
+  - authentication  (to do at all costs)
 
-- disown base button
+  - server info window
 
-- limit move range - we have a shooting range, why not a moving range?
+  - adding mapstyle in console and scripting (maybe in config map rotation too)
 
-- fix pathfinding issues when trying to reach 'unreachable' spots (I will make some tests...)
-
-- server info window
-
-- adding mapstyle in console and scripting (maybe in config map rotation too)  
-
-- server config rotation (to make the game 'multi-level' - with the option of not resetting the score)
-
-
+  - scores saved on gameserver (accessible by players, like in old arcades)
 
 
 

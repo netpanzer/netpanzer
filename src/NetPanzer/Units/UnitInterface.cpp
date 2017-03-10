@@ -305,10 +305,12 @@ UnitBase * UnitInterface::newUnit( unsigned short unit_type,
         unsigned long defend_range_nl = 0;
         AngleInt body_angle_nl = 0;
         AngleInt turret_angle_nl = 0;
+        unsigned char unit_style = 0;
 
 
         bool not_live = false;
-        unit = new Vehicle(not_live, player, unit_type, id, location,
+        unit = new Vehicle(not_live, player, unit_type, id,
+                           unit_style, location,
                            body_angle_nl, turret_angle_nl,
                            orientation_nl, speed_rate_nl, speed_factor_nl,
                            reload_time_nl, max_hit_points_nl, hit_points_nl,
@@ -415,9 +417,9 @@ void UnitInterface::spawnPlayerUnits(const iXY &location,
         unit_style_index = 0; // change to warning or error
     }
 
-    for ( unit_type_index = 0; unit_type_index < UnitProfileInterface::getRealNumUnitTypes(); unit_type_index++ )
+    for ( unit_type_index = 0; unit_type_index < UnitProfileInterface::getNumUnitTypes(); unit_type_index++ )
     {
-        unsigned char real_uti = unit_type_index * GameConfig::getUnitStylesNum() + unit_style_index;
+        unsigned char real_uti = unit_type_index;
         unit_spawn_count = unit_config.getSpawnUnitCount( unit_type_index );
         for ( unit_spawn_index = 0; unit_spawn_index < unit_spawn_count; unit_spawn_index++ )
         {
@@ -1184,6 +1186,8 @@ void UnitInterface::unitCreateMessageFull(const NetMessage* net_message)
         unsigned long weapon_range = create_mesg_full->getWeaponRange();
         unsigned long defend_range = create_mesg_full->getDefendRange();
 
+        unsigned char unit_style = create_mesg_full->unit_style;
+
         unsigned short unit_type = create_mesg_full->unit_type;
         UnitID id = create_mesg_full->getUnitID();
 
@@ -1195,7 +1199,8 @@ void UnitInterface::unitCreateMessageFull(const NetMessage* net_message)
         {
 
         bool live = true;
-        unit = new Vehicle(live, player, unit_type, id, unitpos,
+        unit = new Vehicle(live, player, unit_type, id,
+                           unit_style, unitpos,
                            body_angle, turret_angle,
                            orientation, speed_rate, speed_factor,
                            reload_time, max_hit_points, hit_points,

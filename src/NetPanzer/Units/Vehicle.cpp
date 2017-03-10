@@ -72,7 +72,9 @@ UnitState timer ticks 10 times per second, so reload times are:
 
 enum{ _rotate_and_move, _rotate_stop_move };
 
-Vehicle::Vehicle(bool liveornot, PlayerState* player, unsigned char utype, UnitID id, iXY initial_loc,
+Vehicle::Vehicle(bool liveornot,
+                 PlayerState* player, unsigned char utype,
+                 UnitID id, unsigned char unit_style, iXY initial_loc,
                  AngleInt body_angle, AngleInt turret_angle,
                  unsigned short orientation, unsigned short speed_rate,
                  unsigned short speed_factor, unsigned short reload_time,
@@ -171,11 +173,57 @@ Vehicle::Vehicle(bool liveornot, PlayerState* player, unsigned char utype, UnitI
     unit_state.body_angle = body_angle;
     unit_state.turret_angle = turret_angle;
 
+    unit_state.unit_style = unit_style;
+
+
+
+
+
+
+    NPString unitName = profile->unitname;
+    NPString file_path = "units/profiles/";
+    file_path += unitName;
+    file_path += ".upf";
+
+
+    NPString spath;
+    unsigned char stylesnum;
+    if ( NetworkState::status == _network_state_server )
+    {
+    spath = GameConfig::getUnitStyle(unit_state.unit_style);
+    stylesnum = GameConfig::getUnitStylesNum();
+    } else {
+    spath = GameManager::stlist[unit_state.unit_style];
+    stylesnum = GameManager::ststylesnum;
+    }
+
+    NPString ustylepath = "units/pics/pak/" + spath + "/";
+
+
+    //LOGGER.info("live path: %s", (ustylepath+profile->bodySprite_name).c_str());
+
+/*
+    profile->bodySprite.load(ustylepath+profile->bodySprite_name);
+    profile->bodyShadow.load(ustylepath+profile->bodyShadow_name);
+    profile->turretSprite.load(ustylepath+profile->turretSprite_name);
+    profile->turretShadow.load(ustylepath+profile->turretShadow_name);
+*/
+
+
+
+
     select_info_box.setHitBarAttributes( profile->hit_points, Color::yellow );
-    body_anim.setData( profile->bodySprite );
-    body_anim_shadow.setData( profile->bodyShadow );
-    turret_anim.setData( profile->turretSprite );
-    turret_anim_shadow.setData( profile->turretShadow );
+
+
+
+    body_anim.setData( UnitProfileSprites::profiles_sprites[utype*stylesnum+unit_style]->bodySprite );
+    body_anim_shadow.setData( UnitProfileSprites::profiles_sprites[utype*stylesnum+unit_style]->bodyShadow );
+    turret_anim.setData( UnitProfileSprites::profiles_sprites[utype*stylesnum+unit_style]->turretSprite );
+    turret_anim_shadow.setData( UnitProfileSprites::profiles_sprites[utype*stylesnum+unit_style]->turretShadow );
+
+
+
+
     soundSelect = profile->soundSelected;
     fireSound = profile->fireSound;
     if ( profile->weaponType == "QUADMISSILE" )
@@ -280,11 +328,58 @@ void Vehicle::setUnitProperties( unsigned char utype )
     unit_state.reload_time = profile->reload_time;
     unit_state.weapon_range = profile->attack_range;
     unit_state.unit_type = utype;
+
+    unit_state.unit_style = player->getPlayerStyle();
+
+
+    // full path of sprites here
+
+    NPString unitName = profile->unitname;
+    NPString file_path = "units/profiles/";
+    file_path += unitName;
+    file_path += ".upf";
+
+    NPString spath;
+    unsigned char stylesnum;
+    if ( NetworkState::status == _network_state_server )
+    {
+    spath = GameConfig::getUnitStyle(unit_state.unit_style);
+    stylesnum = GameConfig::getUnitStylesNum();
+    } else {
+    spath = GameManager::stlist[unit_state.unit_style];
+    stylesnum = GameManager::ststylesnum;
+    }
+
+
+    NPString ustylepath = "units/pics/pak/" + spath + "/";
+
+    //LOGGER.info("create path: %s", (ustylepath+profile->bodySprite_name).c_str());
+
+/*
+    profile->bodySprite.load(ustylepath+profile->bodySprite_name);
+    profile->bodyShadow.load(ustylepath+profile->bodyShadow_name);
+    profile->turretSprite.load(ustylepath+profile->turretSprite_name);
+    profile->turretShadow.load(ustylepath+profile->turretShadow_name);
+*/
+
+
+
     select_info_box.setHitBarAttributes( profile->hit_points, Color::yellow );
+
+
+
+    body_anim.setData( UnitProfileSprites::profiles_sprites[utype*stylesnum+unit_state.unit_style]->bodySprite );
+    body_anim_shadow.setData( UnitProfileSprites::profiles_sprites[utype*stylesnum+unit_state.unit_style]->bodyShadow );
+    turret_anim.setData( UnitProfileSprites::profiles_sprites[utype*stylesnum+unit_state.unit_style]->turretSprite );
+    turret_anim_shadow.setData( UnitProfileSprites::profiles_sprites[utype*stylesnum+unit_state.unit_style]->turretShadow );
+
+    /*
     body_anim.setData( profile->bodySprite );
     body_anim_shadow.setData( profile->bodyShadow );
     turret_anim.setData( profile->turretSprite );
     turret_anim_shadow.setData( profile->turretShadow );
+    */
+
     soundSelect = profile->soundSelected;
     fireSound = profile->fireSound;
     if ( profile->weaponType == "QUADMISSILE" )
@@ -309,7 +404,8 @@ void Vehicle::setUnitProperties( unsigned char utype )
     }
     int bsize = profile->boundBox / 2;
     select_info_box.setBoxAttributes( BoundBox( -bsize, -bsize, bsize, bsize), Color::blue);
-}
+
+ }
 
 
 void Vehicle::updateUnitStateProperties()
@@ -1032,6 +1128,8 @@ void Vehicle::aiFsmMoveToLoc()
                 }
                 else
                 {
+                    //LOGGER.info("Vehicle. Stop querying for path!");
+
                     end_cycle = true;
                     return;
                 }

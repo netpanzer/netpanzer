@@ -58,11 +58,13 @@ private:
     Uint16    speed_factor;
 
     Uint16    reload_time;
-    Sint16     max_hit_points;
-    Sint16     hit_points;
+    Sint16    max_hit_points;
+    Sint16    hit_points;
     Uint16    damage_factor;
     Uint32    weapon_range;
     Uint32    defend_range;
+
+    Uint8     unit_style;
 
     Uint8 threat_level;
     Uint8 lifecycle_state;
@@ -98,6 +100,8 @@ public:
     unsigned short damage_factor;
     unsigned long  weapon_range;
     unsigned long  defend_range;
+
+    unsigned char  unit_style;
 
     unsigned char  threat_level;
     unsigned char  lifecycle_state;

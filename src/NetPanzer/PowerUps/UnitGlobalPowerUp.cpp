@@ -32,6 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/PowerUpNetMessage.hpp"
 
 #include "Units/UnitProfileInterface.hpp"
+#include "Objectives/ObjectiveInterface.hpp"
 
 #include "System/Sound.hpp"
 #include "Classes/Network/NetworkServer.hpp"
@@ -107,6 +108,7 @@ void UnitGlobalPowerUp::powerUpGlobalSpeed( UnitState *unit_state, UnitID unit_i
         unsigned short new_speed_rate = unit_state.speed_rate+
                            (unsigned short)((double)unit_state.speed_rate * ((double)percent/(double)100));
 
+
         if (new_speed_rate > top_speed_rate) {
             new_speed_rate = top_speed_rate;
         }
@@ -163,6 +165,7 @@ void UnitGlobalPowerUp::powerUpGlobalDestruct( UnitID unit_id )
     //UnitInterface::sendMessage( &self_destruct );
     UnitBase* unit = UnitInterface::getUnit(unit_id);
     UnitInterface::destroyPlayerUnits(unit->player->getID());
+    ObjectiveInterface::disownPlayerObjectives(unit->player->getID());
 }
 
 void UnitGlobalPowerUp::powerUpGlobalRepair( UnitState *unit_state, UnitID unit_id)

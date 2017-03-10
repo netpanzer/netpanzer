@@ -552,10 +552,12 @@ private:
     Uint32 weapon_range;
     Uint32 defend_range;
 
+
 public:
     Uint8 unit_type;
+    Uint8 unit_style;
 
-    UnitRemoteCreateFull(PlayerID player_id, UnitID id,
+    UnitRemoteCreateFull(PlayerID player_id, UnitID id, Uint8 style,
             Uint32 x, Uint32 y, Uint8 type,
             AngleInt b_angle, AngleInt t_angle,
             Uint16 orient, Uint16 s_rate, Uint16 s_factor,
@@ -569,6 +571,7 @@ public:
         location_x = htol32(x);
         location_y = htol32(y);
         unit_type = type;
+        unit_style = style;
 
         body_angle_angle_int = htol32(b_angle.angle_int);
         body_angle_grain = htol32(b_angle.grain);

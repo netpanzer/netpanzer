@@ -200,7 +200,7 @@ void UStyleSelectionView::onComponentClicked(Component* c)
         rstyle = i;
     }
     }
-    LOGGER.info("Sending style: %d aka %s out of %d", rstyle, scustyle.c_str(), GameConfig::getUnitStylesNum());
+    //LOGGER.info("Sending style: %d aka %s out of %d", rstyle, scustyle.c_str(), GameConfig::getUnitStylesNum());
 
     } else {
 

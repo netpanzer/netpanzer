@@ -200,18 +200,20 @@ public:
     }
 };
 
-bool read_vehicle_profile(const NPString& unitName, UnitProfile *profile, unsigned short style_offset)
+bool read_vehicle_profile(const NPString& unitName, UnitProfile *profile)
 {
     int temp_int;
 
     NPString file_path = "units/profiles/";
     file_path += unitName;
     file_path += ".upf";
+
+    /*
     NPString spath = GameConfig::getUnitStyle(style_offset);
 
     NPString ustylepath = "units/pics/pak/" + spath + "/";
     //LOGGER.info("ustylepath = %s", ustylepath.c_str());
-
+*/
     profile->unitname = unitName;
 
 
@@ -230,10 +232,10 @@ bool read_vehicle_profile(const NPString& unitName, UnitProfile *profile, unsign
         profile->boundBox         = ScriptManager::getIntField("boundbox",      40);
 
         profile->imagefile         = ScriptManager::getStringField("image",        "");
-        profile->bodySprite_name   = ustylepath+ScriptManager::getStringField("bodysprite",   "");
-        profile->bodyShadow_name   = ustylepath+ScriptManager::getStringField("bodyshadow",   "");
-        profile->turretSprite_name = ustylepath+ScriptManager::getStringField("turretsprite", "");
-        profile->turretShadow_name = ustylepath+ScriptManager::getStringField("turretshadow", "");
+        profile->bodySprite_name   = ScriptManager::getStringField("bodysprite",   "");
+        profile->bodyShadow_name   = ScriptManager::getStringField("bodyshadow",   "");
+        profile->turretSprite_name = ScriptManager::getStringField("turretsprite", "");
+        profile->turretShadow_name = ScriptManager::getStringField("turretshadow", "");
         profile->soundSelected     = ScriptManager::getStringField("soundselected","");
         profile->fireSound         = ScriptManager::getStringField("soundfire",    "");
         profile->weaponType        = ScriptManager::getStringField("weapon",       "");
@@ -246,12 +248,21 @@ bool read_vehicle_profile(const NPString& unitName, UnitProfile *profile, unsign
         temp_int = profile->cfg_defend_range << 5;
         profile->defend_range = temp_int * temp_int;
 
+        // just a check here, but it's  just the server
+
+        int style_index = 0;
+        while ( style_index < GameConfig::getUnitStylesNum() )
+        {
+        UnitProfileSprites * ups = new UnitProfileSprites();
+        NPString spath = GameConfig::getUnitStyle(style_index);
+        NPString ustylepath = "units/pics/pak/" + spath + "/";
+
         try
         {
-            profile->bodySprite.load(profile->bodySprite_name);
-            profile->bodyShadow.load(profile->bodyShadow_name);
-            profile->turretSprite.load(profile->turretSprite_name);
-            profile->turretShadow.load(profile->turretShadow_name);
+            ups->bodySprite.load(ustylepath+profile->bodySprite_name);
+            ups->bodyShadow.load(ustylepath+profile->bodyShadow_name);
+            ups->turretSprite.load(ustylepath+profile->turretSprite_name);
+            ups->turretShadow.load(ustylepath+profile->turretShadow_name);
 
         }
         catch (std::exception& e)
@@ -260,6 +271,9 @@ bool read_vehicle_profile(const NPString& unitName, UnitProfile *profile, unsign
                            file_path.c_str(), e.what() );
 
             isok = false;
+        }
+        UnitProfileSprites::profiles_sprites.push_back(ups);
+        style_index++;
         }
 
     }
@@ -277,6 +291,8 @@ bool read_vehicle_profile(const NPString& unitName, UnitProfile *profile, unsign
 // Units Profiles Mgmt
 
 vector<UnitProfile *> UnitProfileInterface::profiles;
+
+vector<UnitProfileSprites *> UnitProfileSprites::profiles_sprites;
 
 vector<unsigned short> UnitProfileInterface::su_speed_rate;
 vector<unsigned short> UnitProfileInterface::su_speed_factor;
@@ -371,21 +387,21 @@ void UnitProfileInterface::loadUnitProfiles( void )
 
 bool UnitProfileInterface::addLocalProfile(const NPString& name)
 {
-    unsigned short unitstyle = 0;
 
-    while (unitstyle < GameConfig::getUnitStylesNum()) {
+
+    //while (unitstyle < GameConfig::getUnitStylesNum()) {
     UnitProfile * p = new UnitProfile();
 
 
-    bool isok = read_vehicle_profile(name, p, unitstyle);
+    bool isok = read_vehicle_profile(name, p);
     if ( isok )
     {
-        unitstyle++;
+
         p->unit_type = profiles.size();
         profiles.push_back(p);
 
         //collecting superunit data
-        if (unitstyle == 1) {
+        //if (unitstyle == 1) {
 
             su_speed_rate.push_back(p->speed_rate);
             su_speed_factor.push_back(p->speed_factor);
@@ -395,18 +411,31 @@ bool UnitProfileInterface::addLocalProfile(const NPString& name)
             su_reload_time.push_back(p->reload_time);
             su_weapon_range.push_back(p->attack_range);
 
-        }
+        //}
 
 
 
     }
 
-    //return isok;
-    if (isok == false) {return false;}
 
-    }
+    //if (isok == false) {return false;}
+
+    //}
+
     return true;
 }
+
+
+UnitProfileSprites * UnitProfileSprites::getUnitProfileSprites( unsigned short vector_index )
+{
+    if ( vector_index < profiles_sprites.size() )
+        return profiles_sprites[vector_index];
+    return 0;
+}
+
+
+
+
 
 UnitProfile * UnitProfileInterface::getUnitProfile( unsigned short unit_type )
 {
@@ -516,10 +545,23 @@ UnitProfileInterface::loadProfileFromMessage(const NetMessage *message, size_t s
     br.readString (p->weaponType);
     br.readInt16( &p->boundBox );
 
-    p->bodySprite.load(p->bodySprite_name);
-    p->bodyShadow.load(p->bodyShadow_name);
-    p->turretSprite.load(p->turretSprite_name);
-    p->turretShadow.load(p->turretShadow_name);
+
+    int style_index = 0;
+    while ( style_index < GameManager::ststylesnum )
+    {
+        UnitProfileSprites * ups = new UnitProfileSprites();
+        NPString spath = GameManager::stlist[style_index];
+        NPString ustylepath = "units/pics/pak/" + spath + "/";
+
+            ups->bodySprite.load(ustylepath+p->bodySprite_name);
+            ups->bodyShadow.load(ustylepath+p->bodyShadow_name);
+            ups->turretSprite.load(ustylepath+p->turretSprite_name);
+            ups->turretShadow.load(ustylepath+p->turretShadow_name);
+
+        UnitProfileSprites::profiles_sprites.push_back(ups);
+        style_index++;
+    }
+
 
     Uint32 i = p->cfg_attack_range * 32;
     p->attack_range = i*i;

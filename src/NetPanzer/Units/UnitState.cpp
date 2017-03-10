@@ -39,6 +39,8 @@ UnitState::UnitState()
     defend_range = 100;
     reload_time = 45;
 
+    unit_style = 0;
+
     threat_level = _threat_level_all_clear;
 }
 
@@ -85,6 +87,8 @@ NetworkUnitState UnitState::getNetworkUnitState() const
     state.weapon_range = htol32(weapon_range);
     state.defend_range = htol32(defend_range);
 
+    state.unit_style = unit_style;
+
     state.threat_level = threat_level;
     state.lifecycle_state = lifecycle_state;
 
@@ -116,6 +120,8 @@ void UnitState::setFromNetworkUnitState(const NetworkUnitState& state)
     damage_factor = ltoh16(state.damage_factor);
     weapon_range = ltoh32(state.weapon_range);
     defend_range = ltoh32(state.defend_range);
+
+    unit_style = state.unit_style;
 
     threat_level = state.threat_level;
     lifecycle_state = state.lifecycle_state;

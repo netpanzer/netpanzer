@@ -65,7 +65,8 @@ private:
     friend class UnitSelectionButton;
     int highlightedUnitType;
 
-    static Button * buttonStaticDisplay;
+    static Button * buttonAbandonS;
+    static Button * buttonAbandonM;
     static Button * buttonPower;
     static Button * buttonOk;
 
@@ -94,6 +95,10 @@ private:
     static Surface unitImages;
 
     static void checkMiniProductionRect(const std::string& string);
+    static void checkMiniProductionRect2(const std::string& string1, const std::string& string2);
+    static void checkMiniProductionRect3(const std::string& string1, const std::string& string2, const std::string& string3);
+
+
 
 public:
     VehicleSelectionView();

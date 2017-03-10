@@ -54,7 +54,7 @@ LoadingView::init()
 
     resize(800, 600);
 
-    addButtonCenterText(iXY(340, 260), 100, "Abort", "Cancel the joining of this game.", bAbort);
+    addButtonCenterText(iXY(349, 260), 100, "Abort", "Cancel the joining of this game.", bAbort);
 
 
     okButton = Button::createTextButton("OK", "Enter", iXY(340,105), 100);

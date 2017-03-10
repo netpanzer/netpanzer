@@ -36,7 +36,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 BonusUnitPowerUp::BonusUnitPowerUp(iXY map_loc, int type)
         : PowerUp( map_loc, type )
 {
-    bonus_unit_type = rand() % UnitProfileInterface::getRealNumUnitTypes();
+    bonus_unit_type = rand() % UnitProfileInterface::getNumUnitTypes();
 }
 
 
@@ -57,19 +57,19 @@ void BonusUnitPowerUp::onHit( UnitID unit_id )
         iXY spawn_loc;
 
         placement_matrix.getNextEmptyLoc( &spawn_loc );
-
+/*
     PlayerState *player_state2;
     player_state2 = PlayerInterface::getPlayer(own_player);
     unsigned char ustyle2 = player_state2->getPlayerStyle();
-
-        new_unit = UnitInterface::createUnit(bonus_unit_type*GameConfig::getUnitStylesNum()+ustyle2,
+*/
+        new_unit = UnitInterface::createUnit(bonus_unit_type,
                                              spawn_loc,
                                              own_player );
 
         if ( new_unit != 0 )
         {
             UnitRemoteCreate create_mesg(new_unit->player->getID(),
-                    new_unit->id, spawn_loc.x, spawn_loc.y, bonus_unit_type*GameConfig::getUnitStylesNum()+ustyle2);
+                    new_unit->id, spawn_loc.x, spawn_loc.y, bonus_unit_type);
             SERVER->broadcastMessage( &create_mesg, sizeof( UnitRemoteCreate ));
         }
 

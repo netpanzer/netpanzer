@@ -121,7 +121,8 @@ public:
     }
 };
 
-Button * VehicleSelectionView::buttonStaticDisplay = 0;
+Button * VehicleSelectionView::buttonAbandonS = 0;
+Button * VehicleSelectionView::buttonAbandonM = 0;
 Button * VehicleSelectionView::buttonPower = 0;
 Button * VehicleSelectionView::buttonOk = 0;
 
@@ -179,17 +180,30 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     iXY pos(0 ,2);
 
     pos.x = 0;
-    add( new Label( pos.x+2, pos.y+2, "Static Display:", Color::white) );
+    add( new Label( pos.x+2, pos.y+2, "Abandon Obj.:", Color::white) );
 
     pos.x = getClientRect().getSizeX() - 102;
-    if ( !buttonStaticDisplay )
-        buttonStaticDisplay = new Button( "ButtonStaticDisplay");
-    buttonStaticDisplay->setTextColors(Color::black,Color::red,Color::darkGray);
-    buttonStaticDisplay->setLabel("On");
-    buttonStaticDisplay->setLocation(pos.x, pos.y);
-    buttonStaticDisplay->setSize( 100, 14);
-    buttonStaticDisplay->setNormalBorder();
-    add(buttonStaticDisplay);
+    if ( !buttonAbandonS )
+        buttonAbandonS = new Button( "ButtonAbandonS");
+    buttonAbandonS->setTextColors(Color::red,Color::darkRed,Color::lightGray);
+    buttonAbandonS->setLabel("This");
+    buttonAbandonS->setLocation(pos.x, pos.y);
+    buttonAbandonS->setSize( 58, 14);
+    buttonAbandonS->setNormalBorder();
+    add(buttonAbandonS);
+
+        pos.x = getClientRect().getSizeX() - 40;
+    if ( !buttonAbandonM )
+        buttonAbandonM = new Button( "ButtonAbandonM");
+    buttonAbandonM->setTextColors(Color::red,Color::darkRed,Color::lightGray);
+    buttonAbandonM->setLabel("All");
+    buttonAbandonM->setLocation(pos.x, pos.y);
+    buttonAbandonM->setSize( 38, 14);
+    buttonAbandonM->setNormalBorder();
+    add(buttonAbandonM);
+
+
+
     pos.y += yOffset+2;
 
     pos.x = 0;
@@ -233,49 +247,24 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
 
     UnitSelectionButton *usb;
     UnitProfile *uprofile;
-    if ( NetworkState::status == _network_state_server )  // server only
-    {
-    //LOGGER.info("TypesC S= %d", UnitProfileInterface::getRealNumUnitTypes());
-    unitImages.create(48, 48, UnitProfileInterface::getRealNumUnitTypes());
+
+
+    unitImages.create(48, 48, UnitProfileInterface::getNumUnitTypes());
     // XXX order by something?
-    } else {
-    //LOGGER.info("TypesC C= %d", UnitProfileInterface::getRealNumUnitTypesC());
-    unitImages.create(48, 48, UnitProfileInterface::getRealNumUnitTypesC());
-    // XXX order by something
-    }
 
-    PlayerState *player_state;
-    player_state = PlayerInterface::getLocalPlayer();
-    unsigned char ustyle = player_state->getPlayerStyle();
 
-    if ( NetworkState::status == _network_state_server )  // server only
-    {
-    if (ustyle >= GameConfig::getUnitStylesNum()) {
-        ustyle = 0;
-    }
-    } else {
-        if (ustyle >= GameManager::ststylesnum) {
-        ustyle = 0;
-    }
-    }
 
     unsigned int typeslimit;
-    if ( NetworkState::status == _network_state_server )  // server only
-    {
-    typeslimit = UnitProfileInterface::getRealNumUnitTypes();
-    } else {
-    typeslimit = UnitProfileInterface::getRealNumUnitTypesC();
-    }
+
+    typeslimit = UnitProfileInterface::getNumUnitTypes();
+
 
 
     for ( unsigned int ut=0; ut < typeslimit; ut++)
     {
-        if ( NetworkState::status == _network_state_server )  // server only
-        {
-        uprofile = UnitProfileInterface::getUnitProfile(ut*GameConfig::getUnitStylesNum() + ustyle);
-        } else {
-        uprofile = UnitProfileInterface::getUnitProfile(ut*GameManager::ststylesnum + ustyle);
-        }
+
+        uprofile = UnitProfileInterface::getUnitProfile(ut);
+
 
         tempSurface.loadBMP(uprofile->imagefile.c_str());
         unitImages.setFrame(ut);
@@ -460,8 +449,7 @@ void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
 
     drawUnitProfileInfo(clientArea, iXY(0, unitProfileDataY), highlightedUnitType);
 
-    //sprintf(strBuf, "%01d:%02d", ( (int) outpost_status.unit_generation_time_remaining ) / 60, ( (int) outpost_status.unit_generation_time_remaining) % 60 );
-    //clientArea.bltString(timeRemainingPos, strBuf, color);
+
 
     View::doDraw(viewArea, clientArea);
 
@@ -480,29 +468,13 @@ void VehicleSelectionView::drawUnitImage(Surface &dest, const iXY &pos, int unit
 //---------------------------------------------------------------------------
 const char *VehicleSelectionView::getUnitName(int unitType)
 {
-    PlayerState *player_state2;
-    player_state2 = PlayerInterface::getLocalPlayer();
-    unsigned char ustyle2 = player_state2->getPlayerStyle();
-
-    if ( NetworkState::status == _network_state_server )  // server only
-    {
-    if (ustyle2 >= GameConfig::getUnitStylesNum()) {
-        ustyle2 = 0;
-    }
-    } else {
-        if (ustyle2 >= GameManager::ststylesnum) {
-        ustyle2 = 0;
-    }
-    }
 
 
     UnitProfile *p;
-    if ( NetworkState::status == _network_state_server )  // server only
-    {
-    p = UnitProfileInterface::getUnitProfile(unitType*GameConfig::getUnitStylesNum()+ustyle2);
-    } else {
-    p = UnitProfileInterface::getUnitProfile(unitType*GameManager::ststylesnum+ustyle2);
-    }
+
+
+    p = UnitProfileInterface::getUnitProfile(unitType);
+
 
 
     if ( p )
@@ -548,19 +520,12 @@ int VehicleSelectionView::getUnitRegenTime(unsigned short unitType)
 {
     UnitProfile *profile;
 
-    if ( NetworkState::status == _network_state_server )  // server only
-    {
-    profile = UnitProfileInterface::getUnitProfile(unitType*GameConfig::getUnitStylesNum());
+
+    profile = UnitProfileInterface::getUnitProfile(unitType); //LOGGER.info("ststylesnum = %d", GameManager::ststylesnum);
     if ( profile )
         return (int) profile->regen_time;
     return 0;
-    } else {
-    profile = UnitProfileInterface::getUnitProfile(unitType*GameManager::ststylesnum); //LOGGER.info("ststylesnum = %d", GameManager::ststylesnum);
-    if ( profile )
-        return (int) profile->regen_time;
-    return 0;
-    }
-} // end VehicleSelectionView::getUnitRegenTime
+ } // end VehicleSelectionView::getUnitRegenTime
 
 // mouseMove
 //---------------------------------------------------------------------------
@@ -614,21 +579,23 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
         }
 
         miniProductionRect.min = obj->area.getAbsRect(obj->location).min - gameViewRect.min;
-        miniProductionRect.max.x = miniProductionRect.min.x + 140;
+
+        miniProductionRect.max.x = miniProductionRect.min.x + 158;  // 140
         miniProductionRect.max.y = miniProductionRect.min.y + (owned ? 50 : 20);
         if ( obj->occupying_player )
         {
             miniProductionRect.min.y-=16;
             int length = strlen( obj->occupying_player->getName().c_str() );
-            if (length > 13)
+            if (length > 20)
             {
-                strncpy(strBuf, obj->occupying_player->getName().c_str() , 10);
-                strBuf[10] = 0; // fix runners
-                sprintf(outpostUserNameBuf, "Owner:  %s...", strBuf);
+                strncpy(strBuf, obj->occupying_player->getName().c_str() , 17);
+                strBuf[17] = 0; // fix runners
+                sprintf(outpostUserNameBuf, "Owner: %s...", strBuf);
             }
             else
             {
-                sprintf(outpostUserNameBuf, "Owner:  %s", obj->occupying_player->getName().c_str() );
+                sprintf(outpostUserNameBuf, "Owner: %s", obj->occupying_player->getName().c_str() );
+                //outpostUserNameBuf[26] = 0;
             }
         }
         iXY pos(miniProductionRect.min);
@@ -637,15 +604,15 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
 
         // Make sure the name will fit reasonably in the area.
         int length = strlen( obj->name );
-        if (length > 10)
+        if (length > 18) // was 10
         {
-            strncpy(strBuf, (const char *) obj->name , 7);
-            strBuf[7] = 0; // fix runners
-            sprintf(outpostNameBuf, "Outpost:  %s...",  strBuf);
+            strncpy(strBuf, (const char *) obj->name , 15);
+            strBuf[15] = 0; // fix runners (was 7)
+            sprintf(outpostNameBuf, "%s...",  strBuf);
         }
         else
         {
-            sprintf(outpostNameBuf, "Outpost:  %s", (const char *) obj->name );
+            sprintf(outpostNameBuf, "%s", (const char *) obj->name );
         }
         checkMiniProductionRect(outpostNameBuf);
 
@@ -654,6 +621,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
             if ( ! obj->unit_generation_on_flag )
             {
                 // Objective is off.
+                checkMiniProductionRect2(outpostUserNameBuf, outpostNameBuf);
                 dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
                 dest.bltString(pos.x, pos.y, outpostUserNameBuf, Color::cyan);
                 pos.y += 16;
@@ -666,13 +634,13 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                 // Objective is on.
 
                 sprintf(productionUnitBuf, "Production: %s", getUnitName(obj->unit_generation_type));
-                checkMiniProductionRect(productionUnitBuf);
+                //checkMiniProductionRect(productionUnitBuf);
 
                 float tleft = obj->unit_generation_timer.getTimeLeft();
-                sprintf(timeLeftBuf, "Time Left:  %01d:%02d",
+                sprintf(timeLeftBuf, "Time Left: %01d:%02d",
                         ((int)tleft) / 60,
                         ((int)tleft) % 60);
-                checkMiniProductionRect(timeLeftBuf);
+                checkMiniProductionRect3(outpostUserNameBuf, outpostNameBuf, productionUnitBuf);
                 dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
 
                 dest.bltString(pos.x, pos.y, outpostUserNameBuf, Color::cyan);
@@ -707,14 +675,74 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
 //---------------------------------------------------------------------------
 // Purpose: Makes sure the rect is the size of the text inside.
 //---------------------------------------------------------------------------
-void VehicleSelectionView::checkMiniProductionRect(const std::string& string)
+void VehicleSelectionView::checkMiniProductionRect(const std::string& string) // make 1 for 2 strings, 1 for 3 etc
 {
-    int length = Surface::getTextLength(string) + 54;
+    int length = Surface::getTextLength(string) + 16; //(was 54)
 
     if (length > miniProductionRect.getSizeX()) {
         miniProductionRect.max.x = miniProductionRect.min.x + length;
     }
 } // end VehicleSelectionView::checkMiniProductionRect
+
+void VehicleSelectionView::checkMiniProductionRect2(const std::string& string1, const std::string& string2)
+{
+    int length1 = Surface::getTextLength(string1) + 16; //(was 54)
+    int length2 = Surface::getTextLength(string2) + 16;
+    if (length1 >= length2) {
+        if (length1 > miniProductionRect.getSizeX()) {
+        miniProductionRect.max.x = miniProductionRect.min.x + length1;
+        }
+    } else {
+        if (length2 > miniProductionRect.getSizeX()) {
+        miniProductionRect.max.x = miniProductionRect.min.x + length2;
+        }
+    }
+} // end VehicleSelectionView::checkMiniProductionRect
+
+void VehicleSelectionView::checkMiniProductionRect3(const std::string& string1, const std::string& string2, const std::string& string3)
+{
+    int length1 = Surface::getTextLength(string1) + 16; //(was 54)
+    int length2 = Surface::getTextLength(string2) + 52;
+    int length3 = Surface::getTextLength(string3) + 52;
+
+    if (length1 >= length2) {
+
+        if (length1 >= length3) {
+
+        if (length1 > miniProductionRect.getSizeX()) {
+        miniProductionRect.max.x = miniProductionRect.min.x + length1;
+        }
+
+        } else {
+
+        if (length3 > miniProductionRect.getSizeX()) {
+        miniProductionRect.max.x = miniProductionRect.min.x + length3;
+        }
+
+        }
+
+
+    } else {
+
+        if (length2 >= length3) {
+
+        if (length2 > miniProductionRect.getSizeX()) {
+        miniProductionRect.max.x = miniProductionRect.min.x + length2;
+        }
+
+        } else {
+
+        if (length3 > miniProductionRect.getSizeX()) {
+        miniProductionRect.max.x = miniProductionRect.min.x + length3;
+        }
+
+        }
+
+
+    }
+
+} // end VehicleSelectionView::checkMiniProductionRect
+
 
 // doActivate
 //---------------------------------------------------------------------------
@@ -779,29 +807,11 @@ void VehicleSelectionView::drawUnitProfileInfo(Surface &dest, const iXY &pos, sh
         return;
     }
 
-    PlayerState *player_state3;
-    player_state3 = PlayerInterface::getLocalPlayer();
-    unsigned char ustyle3 = player_state3->getPlayerStyle();
-
-    if ( NetworkState::status == _network_state_server )  // server only
-    {
-    if (ustyle3 >= GameConfig::getUnitStylesNum()) {
-        ustyle3 = 0;
-    }
-    } else {
-        if (ustyle3 >= GameManager::ststylesnum) {
-        ustyle3 = 0;
-    }
-    }
-
 
     const UnitProfile *profile;
-    if ( NetworkState::status == _network_state_server )  // server only
-    {
-    profile = UnitProfileInterface::getUnitProfile(unitType*GameConfig::getUnitStylesNum()+ustyle3);
-    } else {
-    profile = UnitProfileInterface::getUnitProfile(unitType*GameManager::ststylesnum+ustyle3);
-    }
+
+    profile = UnitProfileInterface::getUnitProfile(unitType);
+
 
 
 
@@ -848,17 +858,33 @@ void VehicleSelectionView::drawBar(Surface &dest, const iXY &pos, int length, fl
 void VehicleSelectionView::actionPerformed(mMouseEvent me)
 {
     if (me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED) {
-        if (me.getSource()==buttonStaticDisplay) {
-            if (buttonStaticDisplay->getLabel() == "On") {
-                buttonStaticDisplay->setLabel("Off");
+
+
+        if (me.getSource()==buttonAbandonS) {
+            if (buttonAbandonS->getLabel() == "This") {
+                buttonAbandonS->setLabel("This");
             } else {
-                buttonStaticDisplay->setLabel("On");
+                buttonAbandonS->setLabel("This");
             }
+        Objective* obj = ObjectiveInterface::getObjective(CURRENT_SELECTED_OUTPOST_ID);
+        if ( obj && obj->occupying_player == PlayerInterface::getLocalPlayer() ) {
+        ObjectiveInterface::sendDisownObj(obj->id, 0, obj->occupying_player->getID());
+        }
+        }
 
-           VehicleSelectionView::displayMiniProductionStatus = !VehicleSelectionView::displayMiniProductionStatus;
-
+        if (me.getSource()==buttonAbandonM) {
+            if (buttonAbandonM->getLabel() == "All") {
+                buttonAbandonM->setLabel("All");
+            } else {
+                buttonAbandonM->setLabel("All");
+            }
+        Objective* obj = ObjectiveInterface::getObjective(CURRENT_SELECTED_OUTPOST_ID);
+        if ( obj && obj->occupying_player == PlayerInterface::getLocalPlayer() ) {
+        ObjectiveInterface::sendDisownObj(obj->id, 1, obj->occupying_player->getID());
+        }
 
         }
+
 
         if (me.getSource()==buttonPower) {
             if (buttonPower->getLabel() == "On") {

@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -82,7 +82,7 @@ static inline std::string readToken(std::istream& in, std::string tokenname)
 {
     if(in.eof())
         throw std::runtime_error("file too short.");
-    
+
     // skip whitespace characters and comments
     char c;
     do {
@@ -155,18 +155,18 @@ ObjectiveInterface::loadObjectiveList(const char *file_path)
         for (ObjectiveID objective_index = 0; objective_index < objective_count; objective_index++ )
         {
             Objective *objective_obj;
-       
+
             name = readToken(in, "Name:");
             std::string location = readToken(in, "Location:");
             std::stringstream ss(location);
             ss >> loc.x >> loc.y;
-            
+
             MapInterface::mapXYtoPointXY( loc, world );
 
             objective_obj = new Objective(objective_index, world,
                     BoundBox( -48, -32, 48, 32 )
                     );
-            
+
             strcpy(objective_obj->name, name.c_str());
             objective_list[objective_index] = objective_obj;
             ++num_objectives;
@@ -276,6 +276,32 @@ ObjectiveInterface::serverHandleNetPacket(const NetPacket* packet)
             break;
         }
 
+        case _net_message_id_objective_disown:
+        {
+            const DisownObjective* msg =
+                (const DisownObjective*) message;
+            ObjectiveID obj_id = msg->getObjectiveId();
+            if (msg->disown_scope == 0) {  // single disown
+
+                if (objective_list[obj_id]->occupying_player == player && msg->getPlayerId() == player->getID()) {
+                disownPlayerObjective(obj_id, msg->getPlayerId());
+                }
+
+            } else {  // multiple disown
+
+                if (msg->getPlayerId() == player->getID()) {
+                disownPlayerObjectives(msg->getPlayerId());
+                }
+
+            }
+
+            break;
+        }
+
+
+
+
+
         default:
             LOGGER.warning("OISH CHEAT Player %u sent unknown message type %u",
                            player->getID(),
@@ -308,7 +334,7 @@ ObjectiveInterface::clientHandleNetMessage(const NetMessage* message)
                                player_id, PlayerInterface::getMaxPlayers());
                 break;
             }
-            
+
             PlayerState* player = 0;
 
             if ( player_id != INVALID_PLAYER_ID )
@@ -402,7 +428,7 @@ ObjectiveInterface::clientHandleNetMessage(const NetMessage* message)
 
             break;
         }
-        
+
         default:
             LOGGER.warning("OICH CHEAT SERVER sent unknown message type %u",
                            message->message_id);
@@ -419,6 +445,18 @@ ObjectiveInterface::sendChangeGeneratingUnit(ObjectiveID objective_id, Uint8 uni
         CLIENT->sendMessage(&msg, sizeof(msg));
     }
 }
+
+void
+ObjectiveInterface::sendDisownObj(ObjectiveID objective_id, Uint8 disown_scope, PlayerID player_id)
+{
+    if ( objective_id < num_objectives )
+    {
+        DisownObjective msg;
+        msg.set( objective_id, disown_scope, player_id );
+        CLIENT->sendMessage(&msg, sizeof(msg));
+    }
+}
+
 
 void
 ObjectiveInterface::sendChangeOutputLocation(ObjectiveID objective_id, Uint32 map_x, Uint32 map_y)
@@ -457,6 +495,22 @@ ObjectiveInterface::disownPlayerObjectives(PlayerID player_id)
             SERVER->broadcastMessage(&update_mesg, sizeof(update_mesg));
         }
     }
+}
+
+void
+ObjectiveInterface::disownPlayerObjective(ObjectiveID objective_id, PlayerID player_id)
+{
+
+        if ( objective_list[objective_id]->occupying_player
+             && objective_list[objective_id]->occupying_player->getID() == player_id )
+        {
+            objective_list[objective_id]->changeOwner(0);
+
+            ObjectiveOccupationUpdate update_mesg;
+            update_mesg.set( objective_id, INVALID_PLAYER_ID);
+            SERVER->broadcastMessage(&update_mesg, sizeof(update_mesg));
+        }
+
 }
 
 Objective*

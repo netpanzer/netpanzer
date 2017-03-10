@@ -52,14 +52,30 @@ public:
     NPString bodyShadow_name;
     NPString turretSprite_name;
     NPString turretShadow_name;
-    PackedSurface bodySprite;
-    PackedSurface bodyShadow;
-    PackedSurface turretSprite;
-    PackedSurface turretShadow;
+    //PackedSurface bodySprite;
+    //PackedSurface bodyShadow;
+    //PackedSurface turretSprite;
+    //PackedSurface turretShadow;
     NPString soundSelected;
     NPString fireSound;
     NPString weaponType;
     Uint16 boundBox;
+};
+
+class UnitProfileSprites
+{
+public:
+    PackedSurface bodySprite;
+    PackedSurface bodyShadow;
+    PackedSurface turretSprite;
+    PackedSurface turretShadow;
+
+protected:
+
+public:
+    static vector<UnitProfileSprites *> profiles_sprites;
+    static UnitProfileSprites * getUnitProfileSprites( unsigned short vector_index );
+
 };
 
 class UnitProfileInterface
@@ -67,6 +83,7 @@ class UnitProfileInterface
 protected:
     static vector<UnitProfile *> profiles;
     static void doLoadUnitProfiles();
+
 
 private:
     static vector<unsigned short> su_speed_rate;
@@ -101,16 +118,7 @@ public:
     {
         return profiles.size();
     }
-    static unsigned int getRealNumUnitTypes()
-    {
-        return profiles.size()/GameConfig::getUnitStylesNum();
-        //return profiles.size()/GameManager::getStylesNum();
-    }
-    static unsigned int getRealNumUnitTypesC()
-    {
-        return profiles.size()/GameManager::ststylesnum;
-        //return profiles.size()/GameManager::getStylesNum();
-    }
+
 
     static int fillProfileSyncMessage(NetMessage* message, int profile_id);
     static int fillProfileResetMessage(NetMessage* message);

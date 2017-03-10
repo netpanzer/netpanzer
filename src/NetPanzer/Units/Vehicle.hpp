@@ -241,7 +241,9 @@ protected:
     void setUnitProperties( unsigned char utype );
 
 public:
-    Vehicle(bool liveornot, PlayerState* player, unsigned char utype, UnitID id, iXY initial_loc,
+    Vehicle(bool liveornot, PlayerState* player,
+            unsigned char utype, UnitID id,
+            unsigned char unit_style, iXY initial_loc,
             AngleInt body_angle, AngleInt turret_angle,
             unsigned short orientation, unsigned short speed_rate,
             unsigned short speed_factor, unsigned short reload_time,

@@ -94,9 +94,9 @@ Objective::changeUnitGeneration(bool is_on, int unit_type)
         UnitProfile *profile;
         if ( NetworkState::status == _network_state_server )  // server only
         {
-        profile = UnitProfileInterface::getUnitProfile( unit_type*GameConfig::getUnitStylesNum() );
+        profile = UnitProfileInterface::getUnitProfile( unit_type );
         } else {
-        profile = UnitProfileInterface::getUnitProfile( unit_type*GameManager::ststylesnum );
+        profile = UnitProfileInterface::getUnitProfile( unit_type );
         }
 
         //LOGGER.info("unit_type = %d", unit_type);
@@ -199,20 +199,14 @@ Objective::generateUnits()
             iXY gen_loc;
             gen_loc = outpost_map_loc + unit_generation_loc;
 
-            //LOGGER.info("unit_generation_type = %d", unit_generation_type);
-    PlayerState *player_state2;
-    player_state2 = PlayerInterface::getPlayer(occupying_player->getID());
-    unsigned char ustyle2 = player_state2->getPlayerStyle();
-
-            //LOGGER.info("unit_generation_type out= %d while ustyle= %d ", unit_generation_type*GameConfig::getUnitStylesNum(), ustyle2);
-            unit = UnitInterface::createUnit(unit_generation_type*GameConfig::getUnitStylesNum()+ustyle2,
+            unit = UnitInterface::createUnit(unit_generation_type,
                     gen_loc, occupying_player->getID());
 
             if ( unit != 0 )
             {
                 UnitRemoteCreate create_mesg(unit->player->getID(),
                         unit->id, gen_loc.x, gen_loc.y,
-                        unit_generation_type*GameConfig::getUnitStylesNum()+ustyle2);
+                        unit_generation_type);
                 SERVER->broadcastMessage(&create_mesg, sizeof(UnitRemoteCreate));
 
                 UMesgAICommand ai_command;

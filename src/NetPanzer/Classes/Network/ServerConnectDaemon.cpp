@@ -616,6 +616,7 @@ private:
 
             UnitRemoteCreateFull urc(unit->player->getID(),
                                  unit->id,
+                                 unit->unit_state.unit_style,
                                  unit_map_loc.x,
                                  unit_map_loc.y,
                                  unit->unit_state.unit_type,
