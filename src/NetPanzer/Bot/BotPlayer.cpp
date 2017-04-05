@@ -140,7 +140,7 @@ BotPlayer::processEvents()  // aka the 'Zombie' bot
                 UnitBase *unit = uc[i];
 
 
-            if (GameConfig::game_base_limit == 0 || (GameConfig::game_base_limit > 0 && unit->player->getObjectivesHeld() < GameConfig::game_base_limit)) {
+            if (GameConfig::game_base_limit == 0 || (GameConfig::game_base_limit > 0 && unit->player->getObjectivesHeld() <= GameConfig::game_base_limit)) {
 
             int unitTask = m_tasks.queryUnitTask(unitsl);
             if (unitTask != BotTaskList::TASK_MOVE) {
