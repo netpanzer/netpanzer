@@ -27,6 +27,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class ClientSocket;
 #define SEND_BUFFER_LEN 32768
 
+#define ANTI_SPAM_LIMIT 600
+
+
 class ClientSocketObserver
 {
 public:

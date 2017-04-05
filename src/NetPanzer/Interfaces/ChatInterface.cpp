@@ -27,6 +27,7 @@
 #include "Util/Log.hpp"
 
 #include "Scripts/ScriptManager.hpp"
+#include "Interfaces/MapInterface.hpp"
 
 enum { _net_message_id_chat_mesg_req,
        _net_message_id_chat_mesg
@@ -175,8 +176,13 @@ static void chatMessageRequest(const NetPacket* packet)
     }
     else if ( chat_request->message_scope == _chat_mesg_scope_server )
     {
+        if (MapInterface::chat_color_scheme == 0) {
         SERVER->broadcastMessage(&chat_mesg, CHATMESG_HEADER_LEN + text_len);
         ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s", text.c_str());
+        } else {
+        SERVER->broadcastMessage(&chat_mesg, CHATMESG_HEADER_LEN + text_len);
+        ConsoleInterface::postMessage(Color::darkBlue, false, 0, "Server: %s", text.c_str());
+        }
         return;
     }
 
@@ -194,15 +200,24 @@ static void chatMessageRequest(const NetPacket* packet)
         switch (chat_request->message_scope)
         {
         case _chat_mesg_scope_all:
-                color = Color::white;
+                if (MapInterface::chat_color_scheme == 0) {
+                color = Color::white; } else {
+                color = Color::black;
+                }
                 break;
 
         case _chat_mesg_scope_alliance:
+                if (MapInterface::chat_color_scheme == 0) {
+                color = Color::yellow; } else {
                 color = Color::yellow;
+                }
                 break;
 
         case _chat_mesg_scope_server:
-                color = Color::unitAqua;
+                if (MapInterface::chat_color_scheme == 0) {
+                color = Color::unitAqua; } else {
+                color = Color::darkBlue;
+                }
                 break;
 
         } // ** switch
@@ -246,6 +261,15 @@ void ChatInterface::clientHandleChatMessage(const NetMessage* message, size_t si
     int text_len = chat_mesg->getTextLen(size);
     const NPString text(chat_mesg->message_text, text_len);
 
+
+    PlayerState *player_state;
+    player_state = PlayerInterface::getPlayer(chat_mesg->getSourcePlayerIndex());
+
+    PIX color = Color::white;
+
+
+    if (MapInterface::chat_color_scheme == 0) {
+
     if ( chat_mesg->message_scope == _chat_mesg_scope_server )
     {
         ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s",
@@ -253,10 +277,10 @@ void ChatInterface::clientHandleChatMessage(const NetMessage* message, size_t si
         return;
     }
 
-    PlayerState *player_state;
-    player_state = PlayerInterface::getPlayer(chat_mesg->getSourcePlayerIndex());
+    //PlayerState *player_state;
+    //player_state = PlayerInterface::getPlayer(chat_mesg->getSourcePlayerIndex());
 
-    PIX color = Color::white;
+    //PIX color = Color::white;
 
     switch (chat_mesg->message_scope)
     {
@@ -273,6 +297,37 @@ void ChatInterface::clientHandleChatMessage(const NetMessage* message, size_t si
             break;
 
     } // ** switch
+
+    } else {
+
+    if ( chat_mesg->message_scope == _chat_mesg_scope_server )
+    {
+        ConsoleInterface::postMessage(Color::darkBlue, false, 0, "Server: %s",
+                                      text.c_str());
+        return;
+    }
+
+
+
+    switch (chat_mesg->message_scope)
+    {
+    case _chat_mesg_scope_all:
+            color = Color::black;
+            break;
+
+    case _chat_mesg_scope_alliance:
+            color = Color::yellow;
+            break;
+
+    case _chat_mesg_scope_server:
+            color = Color::darkBlue;
+            break;
+
+    } // ** switch
+
+
+    }
+
 
     if (player_state->getMute() == false) {
     ConsoleInterface::postMessage(color, true, player_state->getFlag(), "%s: %s",
@@ -345,8 +400,12 @@ void ChatInterface::serversayTo(const PlayerID player, const NPString& message)
 
     if ( PlayerInterface::isLocalPlayer(player) )
     {
+        if (MapInterface::chat_color_scheme == 0) {
         ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s",
+                                      message.c_str()); } else {
+                                      ConsoleInterface::postMessage(Color::darkBlue, false, 0, "Server: %s",
                                       message.c_str());
+                                      }
     }
     else
     {

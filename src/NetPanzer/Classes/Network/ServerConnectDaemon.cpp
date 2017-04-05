@@ -67,6 +67,8 @@ int                 sync_end = 0;
 int                 sync_total = 0;
 int                 sync_done = 0;
 
+unsigned char nss = 3; //unknown client type
+
 typedef std::list<ClientSocket *> ConnectQueue;
 typedef ConnectQueue::iterator ConnectQueueIterator;
 static ConnectQueue connect_queue;
@@ -86,10 +88,17 @@ static void sendConnectionAlert(ClientSocket * client)
 
     connect_alert.set( client->getPlayerIndex(), _connect_alert_mesg_connect );
 
+    if (MapInterface::chat_color_scheme == 0) {
     ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
                                   "'%s' [%s] has joined the game.",
                                   player_state->getName().c_str(),
                                   client->getFullIPAddress().c_str() );
+    } else {
+    ConsoleInterface::postMessage(Color::darkBlue, true, player_state->getFlag(),
+                                  "'%s' [%s] has joined the game.",
+                                  player_state->getName().c_str(),
+                                  client->getFullIPAddress().c_str() );
+    }
 
     player_state->resetAutokick();
 
@@ -294,10 +303,13 @@ public:
             client_setting = (ConnectClientSettings *) msg;
 
             player->setName( client_setting->player_name );
+
+            if (client_setting->getNStatus() != nss) {
+            LOGGER.warning("Client contradicts itself!!!!");
+            }
+            player->setClientType(nss);
             //temp style
-            player->setPlayerStyle(0);
-            //
-            //player->setPlayerStyle(rand()%GameConfig::getUnitStylesNum());
+            //player->setPlayerStyle(0);
 
             ResourceManager::updateFlagData(player->getID(),
                                             client_setting->player_flag,
@@ -617,6 +629,7 @@ private:
             UnitRemoteCreateFull urc(unit->player->getID(),
                                  unit->id,
                                  unit->unit_state.unit_style,
+                                 unit->unit_state.moving,
                                  unit_map_loc.x,
                                  unit_map_loc.y,
                                  unit->unit_state.unit_type,
@@ -850,6 +863,7 @@ static void netPacketClientJoinRequest(const NetPacket* packet)
     join_request_ack.setResultCode(_join_request_result_success);
     bool isbad = false;
     unsigned char bpass = join_request_mesg->getNMode();
+    nss = bpass;
     NPString pass;
     join_request_mesg->getPassword(pass);
 
@@ -860,6 +874,7 @@ static void netPacketClientJoinRequest(const NetPacket* packet)
     }
 
     //temporary
+    /*
     if ( !isbad && GameConfig::game_bots_allowed == false)
     {
         if ( bpass == 15 )
@@ -868,9 +883,20 @@ static void netPacketClientJoinRequest(const NetPacket* packet)
             isbad = true;
         }
     }
+    */
 
+    if ( !isbad)
+    {
+        if ( bpass == 2 )
+        {
+            if (packet->fromClient->getIPAddress() != "127.0.0.1") {
+            join_request_ack.setResultCode(_join_request_result_access_denied);
+            isbad = true;
+            }
+        }
+    }
 
-    if ( !isbad && GameConfig::game_gamepass->size() > 0)
+    if ( !isbad && GameConfig::game_gamepass->size() > 0 && GameConfig::server_authentication == false)
     {
         if ( GameConfig::game_gamepass->compare(pass) != 0 )
         {
@@ -881,7 +907,7 @@ static void netPacketClientJoinRequest(const NetPacket* packet)
 
     // Authentication mgmt
 
-    if ( !isbad && GameConfig::game_authentication == true)
+    if ( !isbad && GameConfig::server_authentication == true)
     {
         /*
         if ( !isbad )

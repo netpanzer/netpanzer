@@ -65,6 +65,7 @@ private:
     Uint32    defend_range;
 
     Uint8     unit_style;
+    Uint8     moving;
 
     Uint8 threat_level;
     Uint8 lifecycle_state;
@@ -102,6 +103,7 @@ public:
     unsigned long  defend_range;
 
     unsigned char  unit_style;
+    bool           moving;
 
     unsigned char  threat_level;
     unsigned char  lifecycle_state;

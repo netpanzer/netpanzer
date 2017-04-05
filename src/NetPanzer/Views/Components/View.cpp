@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -83,7 +83,7 @@ View::~View()
     for(f = inputFields.begin(); f != inputFields.end(); f++) {
         delete *f;
     }
-    
+
     free(title);
     free(subTitle);
     free(searchName);
@@ -138,7 +138,7 @@ void View::reset()
 void View::drawBorder(Surface &viewArea)
 {
     assert(this != 0);
-    
+
     viewArea.drawWindowsBorder();
 } // end drawBorder
 
@@ -352,6 +352,7 @@ void View::draw(Surface& surface)
     currentscreen = &surface; // hack
     Surface* viewarea = getViewArea(surface);
     Surface* clientarea = getClientArea(surface);
+    //LOGGER.info("Name: %s, active=%d, visible=%d, status=%d, resize=%d", getSearchName(), getActive(), getVisible(), getShowStatus(), getResize());
     doDraw(*viewarea, *clientarea);
     delete viewarea;
     delete clientarea;
@@ -440,7 +441,7 @@ void View::doActivate()
     {
         if ((*i)->contains(MouseInterface::getMousePosition())) {
             mMouseEvent me((*i),
-                mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, 
+                mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0,
                 MouseInterface::getMouseX(), MouseInterface::getMouseY(), 0, false);
 
             (*i)->actionPerformed(me);
@@ -460,7 +461,7 @@ void View::doDeactivate()
     for ( i=components.begin(); i != components.end(); i++)
     {
         mMouseEvent me((*i),
-            mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, 
+            mMouseEvent::MOUSE_EVENT_EXITED, now(), 0,
             MouseInterface::getMouseX(), MouseInterface::getMouseY(), 0, false);
 
         (*i)->actionPerformed(me);
@@ -631,7 +632,7 @@ void View::mouseMove(const iXY & prevPos, const iXY &newPos)
     // Check all components for a clicked event.
     ComponentsIterator i;
     for ( i=components.begin(); i != components.end(); i++)
-    {        
+    {
         bool containsPrev=(*i)->contains(prevPos);
         bool containsNew=(*i)->contains(newPos);
         if (containsPrev && !containsNew) {
@@ -658,7 +659,7 @@ void View::mouseMove(const iXY & prevPos, const iXY &newPos)
     /*  // THIS DOES NOT WORK!!!!!!!!!!
     	bool flagNewPos  = contains(newPos);
     	bool flagPrevPos = contains(prevPos);
-     
+
     	// Check for status of mouseEnter and mouseExit.
     	if (flagNewPos && !flagPrevPos)
     	{
@@ -689,7 +690,7 @@ void View::lMouseDown(const iXY &pos)
     // Check all components for a pressed event.
     ComponentsIterator i;
     for ( i=components.begin(); i != components.end(); i++)
-    {        
+    {
         if ((*i)->contains(pos)) {
             mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_PRESSED, now(), InputEvent::BUTTON1_MASK, pos.x, pos.y, 0, false);
 
@@ -724,10 +725,10 @@ int View::lMouseUp(const iXY &downPos, const iXY &upPos)
     pressedButton     = -1;
 
     // Check all components for a clicked event.
-    {    
+    {
         ComponentsIterator i;
         for ( i=components.begin(); ! components.empty() && i != components.end(); i++ )
-        {        
+        {
             if ((*i)->contains(downPos) && (*i)->contains(upPos)) {
                 mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_CLICKED, now(), InputEvent::BUTTON1_MASK, upPos.x, upPos.y, 0, false);
 
@@ -739,10 +740,10 @@ int View::lMouseUp(const iXY &downPos, const iXY &upPos)
     }
 
     // Report a mouse release to all components except for a clicked one.
-    {    
+    {
         ComponentsIterator i;
         for ( i=components.begin(); ! components.empty() && i != components.end(); i++)
-        {        
+        {
             if ((*i)->contains(upPos)) {
                 mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_RELEASED, now(), InputEvent::BUTTON1_MASK, upPos.x, upPos.y, 0, false);
 
@@ -768,7 +769,7 @@ void View::lMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
     // Check all components for a dragged event.
     ComponentsIterator i;
     for ( i=components.begin(); ! components.empty() && i != components.end(); i++)
-    {        
+    {
         if ((*i)->contains(newPos) && (*i)->contains(downPos) && newPos!=prevPos) {
             mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_DRAGGED, now(), InputEvent::BUTTON1_MASK, newPos.x, newPos.y, 0, false);
 
@@ -799,7 +800,7 @@ void View::rMouseDown(const iXY &pos)
     // Check all components for a pressed event.
     ComponentsIterator i;
     for ( i=components.begin(); ! components.empty() && i != components.end(); i++)
-    {        
+    {
         if ((*i)->contains(pos)) {
             mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_PRESSED, now(), InputEvent::BUTTON2_MASK, pos.x, pos.y, 0, false);
 
@@ -822,7 +823,7 @@ void View::rMouseUp(const iXY &downPos, const iXY &upPos)
     // Check all components for a clicked event.
     ComponentsIterator i;
     for ( i=components.begin(); ! components.empty() && i != components.end(); i++)
-    {        
+    {
         if ((*i)->contains(downPos) && (*i)->contains(upPos)) {
             mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_CLICKED, now(), InputEvent::BUTTON2_MASK, upPos.x, upPos.y, 0, false);
 
@@ -840,7 +841,7 @@ void View::rMouseUp(const iXY &downPos, const iXY &upPos)
         // Check all components for a release event.
         ComponentsIterator i;
         for ( i=components.begin(); ! components.empty() && i != components.end(); i++)
-        {        
+        {
             if ((*i)->contains(upPos)) {
                 mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_RELEASED, now(), InputEvent::BUTTON2_MASK, upPos.x, upPos.y, 0, false);
 
@@ -871,7 +872,7 @@ void View::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
     // Check all components for a moved event.
     ComponentsIterator i;
     for ( i=components.begin(); i != components.end(); i++)
-    {        
+    {
         if ((*i)->contains(newPos)  && (*i)->contains(downPos) && newPos!=prevPos) {
             mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_DRAGGED, now(), InputEvent::BUTTON2_MASK, newPos.x, newPos.y, 0, false);
 
@@ -902,7 +903,7 @@ void View::mouseEnter(const iXY &pos)
     // Check all components for a entered event.
     ComponentsIterator i;
     for ( i=components.begin(); i != components.end(); i++)
-    {        
+    {
         if ((*i)->contains(pos)) {
             mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, pos.x, pos.y, 0, false);
 
@@ -925,7 +926,7 @@ void View::mouseExit(const iXY &pos)
     // Check all components for a exited event.
     ComponentsIterator i;
     for ( i=components.begin(); i != components.end(); i++)
-    {        
+    {
         if ((*i)->contains(pos)) {
             mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, pos.x, pos.y, 0, false);
 
@@ -1205,7 +1206,7 @@ void View::checkArea(iXY viewarea)
         moveTo(0, min.y);
     if(min.y < 0)
         moveTo(min.x, 0);
-                                                               
+
     if(max.x > viewarea.x)
         moveTo(viewarea.x - getSize().x, min.y);
     if(max.y > viewarea.y)

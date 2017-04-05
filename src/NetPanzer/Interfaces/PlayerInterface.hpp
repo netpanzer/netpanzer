@@ -145,6 +145,8 @@ protected:
 public:
     static void processNetMessage(const NetPacket *packet );
     static void disconnectPlayerCleanup( PlayerID player_id );
+
+    //static void setBotsAlliance(PlayerID by_player, PlayerID with_player);
 };
 
 #endif // ** _PLAYERINTERFACE_HP

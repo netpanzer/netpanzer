@@ -62,6 +62,7 @@ public:
     static unsigned char craters_lifetime;
     static unsigned char craters_fading;
     static unsigned char units_shadow_blending;
+    static unsigned char chat_color_scheme;
 
     static void addMapEventListener(MapEventListener *lis)
     {

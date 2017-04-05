@@ -179,10 +179,17 @@ void PowerUpInterface::initialize( void )
     PowerUp::POWERUP_ANIM_SHADOW_R.load( "powerups/BoltS_R.pak" );
 }
 
+void PowerUpInterface::uninitialize( void )
+{
+    PowerUp::POWERUP_ANIM.unload( "powerups/Bolt.pak" );
+    PowerUp::POWERUP_ANIM_SHADOW.unload( "powerups/BoltS.pak" );
+    PowerUp::POWERUP_ANIM_R.unload( "powerups/Bolt_R.pak" );
+    PowerUp::POWERUP_ANIM_SHADOW_R.unload( "powerups/BoltS_R.pak" );
+}
+
+
 void PowerUpInterface::resetLogic( void )
 {
-
-
 
     unsigned long map_size_x, map_size_y;
 

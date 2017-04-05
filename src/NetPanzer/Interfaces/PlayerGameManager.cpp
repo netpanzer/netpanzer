@@ -63,6 +63,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/OrderingView.hpp"
 #include "Views/MainMenu/SkirmishView.hpp"
 #include "Views/MainMenu/HelpView.hpp"
+#include "Views/MainMenu/CreditsScrollView.hpp"
 #include "Views/MainMenu/CreditsView.hpp"
 #include "Views/MainMenu/Multi/JoinView.hpp"
 #include "Views/MainMenu/Multi/HostView.hpp"
@@ -142,6 +143,7 @@ void PlayerGameManager::shutdownVideoSubSystem()
     delete sdlVideo;
     sdlVideo = 0;
     Screen = 0;
+
 }
 //-----------------------------------------------------------------
 void PlayerGameManager::initializeSoundSubSystem()
@@ -195,13 +197,16 @@ void PlayerGameManager::initializeWindowSubSystem()
 
     Desktop::add(new MapSelectionView());
     Desktop::add(new MainMenuView());
+    Desktop::add(new HelpView());
+    Desktop::add(new CreditsScrollView());
+    Desktop::add(new CreditsView());
     Desktop::add(new JoinView());
     Desktop::add(new HostView());
     Desktop::add(new GetSessionView());
     Desktop::add(new OptionsTemplateView());
     Desktop::add(new OrderingView());
-    Desktop::add(new HelpView());
-    Desktop::add(new CreditsView());
+
+
     Desktop::add(new HostOptionsView());
     Desktop::add(new PlayerNameView());
     Desktop::add(new ResignView());

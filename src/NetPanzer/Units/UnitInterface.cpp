@@ -306,11 +306,12 @@ UnitBase * UnitInterface::newUnit( unsigned short unit_type,
         AngleInt body_angle_nl = 0;
         AngleInt turret_angle_nl = 0;
         unsigned char unit_style = 0;
+        bool moving = false;
 
 
         bool not_live = false;
         unit = new Vehicle(not_live, player, unit_type, id,
-                           unit_style, location,
+                           unit_style, moving, location,
                            body_angle_nl, turret_angle_nl,
                            orientation_nl, speed_rate_nl, speed_factor_nl,
                            reload_time_nl, max_hit_points_nl, hit_points_nl,
@@ -651,6 +652,57 @@ bool UnitInterface::queryClosestEnemyUnit(UnitBase **closest_unit_ptr,
 }
 
 // ******************************************************************
+
+bool UnitInterface::queryClosestEnemyUnitInRange(UnitBase **closest_unit_ptr,
+        iXY &loc, unsigned long wrange, PlayerID player_index)
+{
+
+    UnitBase *closest_unit = 0;
+    long closest_magnitude = 0;
+
+    for(Units::iterator i = units.begin(); i != units.end(); ++i) {
+        UnitBase* unit = i->second;
+        PlayerID unitPlayerID = unit->player->getID();
+
+        if(unitPlayerID == player_index
+                || PlayerInterface::isAllied(player_index, unitPlayerID) // XXX ALLY
+                )
+            continue;
+
+        iXY delta;
+        long temp_mag;
+
+        if ( closest_unit == 0 ) {
+
+            delta  = loc - unit->unit_state.location;
+            closest_magnitude = long(delta.mag2());
+            if (delta.mag2() <= wrange) {
+            closest_unit = unit;
+            }
+        } else {
+            delta  = loc - unit->unit_state.location;
+            temp_mag = long(delta.mag2());
+
+            if ( closest_magnitude > temp_mag && (delta.mag2() <= wrange+17408) ) {
+                //LOGGER.info("dist=%li - range=%lu",temp_mag, wrange);
+                closest_unit = unit;
+                closest_magnitude = temp_mag;
+            }
+        }
+    }
+
+    if( closest_unit != 0 ) {
+        *closest_unit_ptr = closest_unit;
+        //*distance = closest_magnitude;
+        return true;
+    }
+
+    *closest_unit_ptr = 0;
+    return false;
+}
+
+// ******************************************************************
+
 
 unsigned char UnitInterface::queryUnitLocationStatus(iXY loc)
 {
@@ -1187,6 +1239,7 @@ void UnitInterface::unitCreateMessageFull(const NetMessage* net_message)
         unsigned long defend_range = create_mesg_full->getDefendRange();
 
         unsigned char unit_style = create_mesg_full->unit_style;
+        bool moving = create_mesg_full->moving;
 
         unsigned short unit_type = create_mesg_full->unit_type;
         UnitID id = create_mesg_full->getUnitID();
@@ -1200,7 +1253,7 @@ void UnitInterface::unitCreateMessageFull(const NetMessage* net_message)
 
         bool live = true;
         unit = new Vehicle(live, player, unit_type, id,
-                           unit_style, unitpos,
+                           unit_style, moving, unitpos,
                            body_angle, turret_angle,
                            orientation, speed_rate, speed_factor,
                            reload_time, max_hit_points, hit_points,

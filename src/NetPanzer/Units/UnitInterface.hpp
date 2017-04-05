@@ -141,9 +141,17 @@ public:
                                       iXY &loc,
                                       PlayerID player_index);
 
+    static bool queryClosestEnemyUnitInRange(UnitBase **closest_unit_ptr,
+                                      iXY &loc, unsigned long wrange,
+                                      PlayerID player_index);
+
     static bool queryUnitAtMapLoc( iXY map_loc, UnitID *query_unit_id );
 
     static unsigned char queryUnitLocationStatus( iXY loc );
+
+
+
+
 
 protected:
     // Unit Message Handler Methods

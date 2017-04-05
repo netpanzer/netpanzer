@@ -22,6 +22,7 @@ class UnitBase;
 class iXY;
 
 #include "BotTaskList.hpp"
+#include "Classes/SelectionList.hpp"
 
 class Bot {
     static class Bot *s_bot;
@@ -34,6 +35,14 @@ class Bot {
         virtual void processEvents() = 0;
         virtual void processEvents2() = 0;
         virtual void processEvents3() = 0;
+        virtual void processEvents4() = 0;
+        virtual void processEvents5() = 0;
+        virtual void processEvents6() = 0;
+        virtual void processEvents7() = 0;
+        virtual void processEvents8() = 0;
+        virtual void processEvents9() = 0;
+
+        void sendMoveCommand(const iXY& world_pos);
 
         void moveUnit(UnitBase *unit, iXY map_pos);
         void attackUnit(UnitBase *unit, UnitBase *enemyUnit);

@@ -31,6 +31,8 @@ int HostOptionsView::cloudCoverageCount = 0;
 int HostOptionsView::windSpeed          = 0;
 int HostOptionsView::gameType           = 0;
 
+int HostOptionsView::mapStyle           = 0;
+
 std::string HostOptionsView::cloudCoverageString;
 std::string HostOptionsView::windSpeedString;
 
@@ -217,6 +219,52 @@ static int getFragLimit()
     return GameConfig::game_fraglimit;
 }
 
+std::string HostOptionsView::getMapStyleString()
+{
+    return *GameConfig::game_mapstyle;
+}
+
+void HostOptionsView::updateGameConfigMapStyle()
+{
+    switch (mapStyle) {
+    case 0: {
+            *GameConfig::game_mapstyle = "SummerDay";
+        }
+        break;
+
+    case 1: {
+            *GameConfig::game_mapstyle = "Desert";
+        }
+        break;
+
+    case 2: {
+            *GameConfig::game_mapstyle = "IcyWinter";
+        }
+        break;
+
+    case 3: {
+            *GameConfig::game_mapstyle = "Moonlight";
+        }
+        break;
+
+    case 4: {
+            *GameConfig::game_mapstyle = "Scorched";
+        }
+        break;
+
+    case 5: {
+            *GameConfig::game_mapstyle = "Martian";
+        }
+        break;
+
+    }
+
+}
+
+
+
+
+
 void HostOptionsView::updateWindSpeedString()
 {
     float calmWindSpeed    = float(baseWindSpeed) * calmWindsPercentOfBase;
@@ -286,8 +334,8 @@ HostOptionsView::HostOptionsView() : RMouseHackView()
     setAllowMove(false);
     setVisible(false);
 
-    moveTo(bodyTextRect.min.x, bodyTextRect.min.y + 205);
-    resizeClientArea(bodyTextRect.getSizeX()-5, 168);
+    moveTo(bodyTextRect.min.x, bodyTextRect.min.y + 195);
+    resizeClientArea(bodyTextRect.getSizeX()-5, 218);
 
     addMeterButtons(iXY(BORDER_SPACE, BORDER_SPACE));
 
@@ -444,6 +492,21 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     add(&checkPowerUp);
 
 
+    choiceMapStyle.setName("Map Style");
+    choiceMapStyle.addItem("SummerDay");
+    choiceMapStyle.addItem("Desert");
+    choiceMapStyle.addItem("IcyWinter");
+    choiceMapStyle.addItem("Moonlight");
+    choiceMapStyle.addItem("Scorched");
+    choiceMapStyle.addItem("Martian");
+    choiceMapStyle.setMinWidth(minWidth);
+    choiceMapStyle.setLocation(358, 155);
+    choiceMapStyle.select(getMapStyleString());
+    add(&choiceMapStyle);
+
+
+
+
     /*
     	x = xTextStart;
     	//addLabelShadowed(iXY(x, y), "Allow Fog Of War", windowTextColor, windowTextColorShadow);
@@ -575,6 +638,12 @@ void HostOptionsView::actionPerformed(mMouseEvent me)
             gameType = choiceGameType.getSelectedIndex();
 
             updateGameConfigGameType();
+        }
+    } else if (me.getSource()==&choiceMapStyle) {
+        if ( getVisible() ) {
+            mapStyle = choiceMapStyle.getSelectedIndex();
+
+            updateGameConfigMapStyle();
         }
     }
 } // end HostOptionsView::actionPerformed

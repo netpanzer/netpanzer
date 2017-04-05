@@ -36,7 +36,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/InfoSocket.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
-
+#include "Util/TimerInterface.hpp"
 #include "Units/UnitProfileInterface.hpp"
 
 #include "Classes/Network/NetworkState.hpp"
@@ -202,16 +202,31 @@ DedicatedGameManager::mainLoop()
             player = PlayerInterface::getPlayer((unsigned short) i);
             if ( player->isActive() )
             {
+                if (player->getCheat() == 0 && player->getCheatHits() > 1)
+                {
+                player->setCheat(1);
+                char chat_cheat_warning[140];
+                sprintf(chat_cheat_warning, "Player '%s' is using unfair network tools!",player->getName().c_str());
+                LOGGER.info("CHEAT: %s", chat_cheat_warning);
+                ChatInterface::serversay(chat_cheat_warning);
+                //SERVER->kickClient(SERVER->getClientSocketByPlayerIndex((unsigned short) i)); // kicking is now at socket level
+                }
 
-                if (GameConfig::game_scrambler == true)
+                //LOGGER.info("Log level is %d", LOGGER.getLogLevel());
+                //if (GameConfig::game_scrambler == true)
+                if (LOGGER.getLogLevel() < 7) // if it's not DEBUG mode
                 {
                 // enckeychange msg
                 unsigned short x_key = (rand() %254)+1;
                 SystemEnckeychange ckmsg(x_key);
+                player->setTempTime(now());
+                player->setLastEncKey(x_key);
                 SERVER->sendMessage(player->getID(), &ckmsg, sizeof(SystemEnckeychange));
                 } else {
                 unsigned short x_key_no = 0;
                 SystemEnckeychange ckmsg(x_key_no);
+                player->setTempTime(now());
+                player->setLastEncKey(x_key_no);
                 SERVER->sendMessage(player->getID(), &ckmsg, sizeof(SystemEnckeychange));
                 }
                 //LOGGER.info("Sending key %d to client.", x_key);
@@ -259,14 +274,21 @@ DedicatedGameManager::mainLoop()
             {
 
 
-
-                if ( player->getTotal()<GameConfig::game_lowscorelimit+6 && player->getTotal()>GameConfig::game_lowscorelimit )
+                if ( player->getTotal()<GameConfig::game_lowscorelimit+10 && player->getTotal()>GameConfig::game_lowscorelimit )
                 {
                     char chat_string_warning[140];
                     sprintf(chat_string_warning, "Warning '%s' - players with %i points or less get kicked!", player->getName().c_str(), GameConfig::game_lowscorelimit);
                     //ChatInterface::serversay(chat_string_warning);
                     ChatInterface::serversayTo(player->getID(), chat_string_warning);
                 }
+/*
+                if (player->getPingLimitHits() > GameConfig::game_ping_limit && player->getDownLastPing() > GameConfig::game_ping_limit)
+                {
+                    char chat_string_warning[140];
+                    sprintf(chat_string_warning, "%s has a very slow connection (%.1f ms)!", player->getName().c_str(), player->getDownAvgPing());
+                    ChatInterface::serversay(chat_string_warning);
+                }
+*/
 
 
             }
@@ -364,6 +386,10 @@ bool DedicatedGameManager::launchNetPanzerGame()
     gameconfig->hostorjoin=_game_session_host;
 
     Particle2D::setCreateParticles(false);
+
+    //
+    // contacting authserver here and authenticating as gameserver
+    //
 
     *Console::server << "contacting masterserver." << std::endl;
     if( GameConfig::server_public

@@ -33,6 +33,8 @@ HelpView::HelpView() : MenuTemplateView()
     setSearchName("HelpView");
     setTitle("Help Information");
     setSubTitle("");
+    setAllowResize(false);
+    setAllowMove(false);
     //setVisible(true);
 } // end HelpView::HelpView
 
@@ -62,5 +64,5 @@ void HelpView::doDeactivate()
 //---------------------------------------------------------------------------
 void HelpView::loadTitleSurface()
 {
-    doLoadTitleSurface("helpTitle");
+    //doLoadTitleSurface("helpTitle");
 } // end HelpView::loadTitleSurface

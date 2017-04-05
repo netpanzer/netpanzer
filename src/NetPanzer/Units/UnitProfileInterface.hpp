@@ -75,6 +75,7 @@ protected:
 public:
     static vector<UnitProfileSprites *> profiles_sprites;
     static UnitProfileSprites * getUnitProfileSprites( unsigned short vector_index );
+    static void clearProfiles();
 
 };
 
@@ -119,6 +120,7 @@ public:
         return profiles.size();
     }
 
+    static void cleaning();
 
     static int fillProfileSyncMessage(NetMessage* message, int profile_id);
     static int fillProfileResetMessage(NetMessage* message);

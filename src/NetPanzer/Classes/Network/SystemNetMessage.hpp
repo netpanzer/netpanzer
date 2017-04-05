@@ -35,7 +35,8 @@ enum { _net_message_id_system_set_view,
        _net_message_id_system_ping_ack,
        _net_message_id_system_connect_alert,
        _net_message_id_system_enckeychange,
-       _net_message_id_system_enckeychange_ack
+       _net_message_id_system_enckeychange_ack,
+       _net_message_id_system_re_enckeychange_ack
      };
 
 
@@ -190,13 +191,46 @@ class SystemEnckeychangeAck : public NetMessage
 {
 
 private: Uint8 recvkey;
-
+         PlayerID player_index;
 public:
-    SystemEnckeychangeAck(unsigned short r_key)
+    SystemEnckeychangeAck(unsigned short r_key, PlayerID p_index)
     {
         message_class = _net_message_class_system;
         message_id = _net_message_id_system_enckeychange_ack; //_7
         recvkey = r_key;
+        player_index = p_index;
+    }
+
+    PlayerID getPlayerID() const
+    {
+    return player_index;
+    }
+
+    unsigned short getEncKey() const
+    {
+    return (unsigned short)recvkey;
+    }
+
+} __attribute__((packed));
+
+
+class SystemReEnckeychangeAck : public NetMessage
+{
+
+private: float down_ping;
+
+public:
+    SystemReEnckeychangeAck(float d_ping)
+    {
+        message_class = _net_message_class_system;
+        message_id = _net_message_id_system_re_enckeychange_ack;
+        down_ping = d_ping;
+
+    }
+
+    float getDownPing() const
+    {
+    return (float)down_ping;
     }
 
 } __attribute__((packed));

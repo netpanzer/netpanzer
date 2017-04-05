@@ -95,6 +95,10 @@ void CraterParticle2D::init()
     staticPackedCrater.load("pics/particles/craters/pak/craters.pak");
 } // end CraterParticle2D::init
 
+void CraterParticle2D::uninit()
+{
+    staticPackedCrater.unload("pics/particles/craters/pak/craters.pak");
+}
 // draw
 //---------------------------------------------------------------------------
 void CraterParticle2D::draw(const Surface&, SpriteSorter &sorter)

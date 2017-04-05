@@ -41,7 +41,7 @@ InfoSocket::InfoSocket(int p) : socket(0)
 {
     Address addr = Address::resolve( *GameConfig::server_bindaddress, p, false, true);
     socket = new network::UDPSocket(addr,this);
-    
+
     // This parameters are fixed always
     // others I plan to be modificable while game is running.
     stringstream s;
@@ -71,7 +71,7 @@ InfoSocket::onDataReceived(UDPSocket *s, const Address &from, const char *data, 
     (void)s;
     string querypacket(data,len);
     StringTokenizer qtokenizer(querypacket, '\\');
-    
+
     string query;
     while ( !(query = qtokenizer.getNextToken()).empty()) {
         LOGGER.debug("InfoSocket:: Received query '%s'", query.c_str());
@@ -112,14 +112,20 @@ InfoSocket::prepareStatusPacket()
     stringstream s;
     PlayerID playingPlayers = PlayerInterface::countPlayers();
     PlayerID maxPlayers = PlayerInterface::getMaxPlayers();
-    
+
     s << statusHead
       << "\\mapname\\"    << *GameConfig::game_map
       << "\\mapcycle\\"   << *GameConfig::game_mapcycle
-      << "\\password\\"   << (GameConfig::game_gamepass->size() == 0 ? 'n' : 'y')
-      << "\\numplayers\\" << (int)playingPlayers
+      << "\\mapstyle\\"   << *GameConfig::game_mapstyle
+      << "\\authentication\\"   << (GameConfig::server_authentication == false ? 'n' : 'y');
+    if (GameConfig::server_authentication == false)
+    s << "\\password\\"   << (GameConfig::game_gamepass->size() == 0 ? 'n' : 'y');
+    else
+    s << "\\password\\"   << 'n';
+
+    s << "\\numplayers\\" << (int)playingPlayers
       << "\\maxplayers\\" << (int)maxPlayers;
-    
+
     if ( playingPlayers == MIN_PLAYER_ID )
         s << "\\empty\\1";
     else if ( playingPlayers==maxPlayers )
@@ -149,7 +155,7 @@ InfoSocket::prepareStatusPacket()
             n++;
         }
     }
-    
+
     s << "\\final\\";
 
     return s.str();

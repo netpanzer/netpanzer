@@ -60,6 +60,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Scripts/ScriptManager.hpp"
 
+#include "Views/Components/InfoBar.hpp"
+
 WorldInputCmdProcessor COMMAND_PROCESSOR;
 
 enum { _cursor_regular,
@@ -422,6 +424,13 @@ WorldInputCmdProcessor::evaluateKeyCommands()
     if (KeyboardInterface::getKeyPressed( SDLK_F5 )) {
         //  DEBUG VIEW
         Desktop::toggleVisibility( "LibView" );
+    }
+
+    if (KeyboardInterface::getKeyPressed( SDLK_F7 )) {
+    if (InfoBar::bar_on == true) {
+            InfoBar::bar_on = false; } else {
+            InfoBar::bar_on = true;
+            }
     }
 
     if (KeyboardInterface::getKeyPressed(SDLK_u)

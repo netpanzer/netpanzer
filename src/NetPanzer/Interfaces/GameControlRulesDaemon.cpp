@@ -26,13 +26,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/ChatInterface.hpp"
 #include "PowerUps/PowerUpInterface.hpp"
-
+#include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/Network/SystemNetMessage.hpp"
 #include "Classes/Network/GameControlNetMessage.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/ServerConnectDaemon.hpp"
-
+#include "Classes/Network/PlayerNetMessage.hpp"
 #include "Units/UnitProfileInterface.hpp"
 
 #include "Views/Components/Desktop.hpp"
@@ -43,6 +43,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/Particle2D.hpp"
 #include "Particles/ParticleSystem2D.hpp"
 #include "Particles/ParticleInterface.hpp"
+
+#include "Bot/BotPlayer.hpp"
 
 
 
@@ -129,7 +131,7 @@ void GameControlRulesDaemon::mapCycleFsmClient()
                     const char* nustyle = GameManager::stmapstyle.c_str();
                     GameManager::startGameMapLoad(GameConfig::game_map->c_str(), nustyle, 20);
                 } catch(std::exception& e) {
-                    LoadingView::append("Error while loading map:");
+                    LoadingView::append("Error while loading map or mapstyle:");
                     LoadingView::append(e.what());
                     map_cycle_fsm_client_state = _map_cycle_client_idle;
                     return;
@@ -233,6 +235,43 @@ void GameControlRulesDaemon::mapCycleFsmBot()
 
         case _map_cycle_client_wait_for_respawn_ack : {
                 if( map_cycle_fsm_client_respawn_ack_flag == true ) {
+
+                // resetting some bot stuff
+                BotPlayer::bot_objs = 0;
+                BotPlayer::idle_units = true;
+                BotPlayer::bot_status = 0;
+                BotPlayer::state_change = 0;
+                BotPlayer::threat_level = 0;
+
+                BotPlayer::inrange = false;
+                BotPlayer::touch_flag = false;
+
+
+                // bots automatic ally request renew mgmt
+        if (NetworkState::status == _network_state_bot && GameConfig::bot_allied == true && GameConfig::game_allowallies == true) {
+
+        PlayerState * playerx = 0;
+        unsigned int localplayer = PlayerInterface::getLocalPlayerIndex();
+        unsigned long max_players;
+        max_players = PlayerInterface::getMaxPlayers();
+        for (unsigned long i = 0; i < max_players; i++)
+        {
+            playerx = PlayerInterface::getPlayer((unsigned short) i);
+
+            if (playerx->isActive()) {
+
+            if ( playerx->getID() != localplayer && playerx->getClientType() == 2)
+            {
+            PlayerAllianceRequest allie_request;
+            allie_request.set( localplayer, playerx->getID(), _player_make_alliance);
+            CLIENT->sendMessage( &allie_request, sizeof(PlayerAllianceRequest));
+            }
+
+            }
+        }
+
+        }
+        //
                     //LoadingView::loadFinish();
                     map_cycle_fsm_client_respawn_ack_flag = false;
                     map_cycle_fsm_client_state = _map_cycle_client_idle;
@@ -322,7 +361,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                                 (GameConfig::game_map->c_str(), GameConfig::game_mapstyle->c_str(), 20);
                         } catch(std::exception& e) {
                             LoadingView::append(
-                                    "Error while loading map:");
+                                    "Error while loading map or mapstyle:");
                             LoadingView::append(e.what());
                             map_cycle_fsm_server_state = _map_cycle_server_state_idle;
                             return;
@@ -360,6 +399,9 @@ void GameControlRulesDaemon::mapCycleFsmServer()
             break;
 
         case _map_cycle_server_state_load_unit_profiles: {
+                UnitProfileInterface::cleaning();
+                UnitProfileSprites::clearProfiles();
+                UnitProfileInterface::clearProfiles();
                 UnitProfileInterface::loadUnitProfiles();
                 Uint8 data[ _MAX_NET_PACKET_SIZE ];
                 NetMessage *pmsg = (NetMessage*)&data;

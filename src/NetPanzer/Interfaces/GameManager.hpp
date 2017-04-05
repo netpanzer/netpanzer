@@ -61,6 +61,8 @@ protected:
     static void netMessageResetGameLogic(const NetMessage* message);
 
     static void sendAckEnckeychange(const NetMessage* message);
+    static void recvAckEnckeychange(const NetMessage* message);
+    static void recvReAckEnckeychange(const NetMessage* message);
 
 public:
     static std::string stmapstyle;
@@ -86,6 +88,8 @@ public:
     static bool startClientGameSetup(const NetMessage* message, int *result_code);
     static bool clientGameSetup( int *percent_complete );
     static ConnectMesgServerGameSettings* getServerGameSetup();
+
+    static void cleaning();
 
 
 public:

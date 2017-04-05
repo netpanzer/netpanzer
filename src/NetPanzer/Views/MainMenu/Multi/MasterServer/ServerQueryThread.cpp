@@ -79,7 +79,7 @@ ServerQueryThread::~ServerQueryThread()
 {
     if (udpsocket)
         udpsocket->destroy();
-    
+
     if ( ! querying_msdata.empty() ) {
         map<network::TCPSocket *,MSInfo *>::iterator msiter;
         for (msiter = querying_msdata.begin(); msiter != querying_msdata.end(); msiter++) {
@@ -88,11 +88,11 @@ ServerQueryThread::~ServerQueryThread()
         }
         querying_msdata.clear();
     }
-    
+
     if ( ! querying_server.empty() ) {
         querying_server.clear();
     }
-    
+
 }
 
 void
@@ -102,7 +102,7 @@ ServerQueryThread::queryMasterServer()
         try {
             std::string masterserverip = masterservers.back();
             masterservers.pop_back();
-            
+
 //            network::Address ip
 //                = network::Address::resolve(masterserverip, 28900);
 
@@ -142,7 +142,7 @@ ServerQueryThread::onSocketError(network::TCPSocket *s)
 {
     LOGGER.warning("MASTERSERVER Socket error [%s]", s->getAddress().getIP().c_str());
     delete querying_msdata[s];
-    querying_msdata.erase(s);    
+    querying_msdata.erase(s);
 }
 
 void
@@ -156,19 +156,19 @@ void
 ServerQueryThread::onDataReceived(network::TCPSocket *s, const char *data, const int len)
 {
     string str;
-    
+
     MSInfo * msi = querying_msdata[s];
     msi->touch();
     str = msi->recdata;
     str.append(data,len);
-    
+
     if (str[0] != '\\') {
         delete msi;
         querying_msdata.erase(s);
         s->destroy();
         return; // invalid answer;
     }
-    
+
     string lastpart;
     if (str[str.length()-1] != '\\') {
         // received incomplete
@@ -178,19 +178,19 @@ ServerQueryThread::onDataReceived(network::TCPSocket *s, const char *data, const
     } else {
         msi->recdata = "\\";
     }
-    
+
     StringTokenizer tknizer(str,'\\');
-    
+
     string token = tknizer.getNextToken();
     while ( !token.empty()) {
         if ( token == "ip" ) {
             string dirip = tknizer.getNextToken();
             string port;
-            if ( dirip.empty() ) { 
+            if ( dirip.empty() ) {
                 msi->recdata.insert(0,"\\ip\\");
                 break;
             }
-            
+
             token = tknizer.getNextToken();
             if ( token.empty() ) {
                 msi->recdata.insert(0,dirip.insert(0,"\\ip\\")+"\\");
@@ -206,13 +206,13 @@ ServerQueryThread::onDataReceived(network::TCPSocket *s, const char *data, const
                 port=token;
                 token = tknizer.getNextToken();
             }
-            
+
             LOGGER.warning("Server IP received: [%s:%s]",dirip.c_str(),port.c_str());
 
             int iport;
             std::stringstream portstr(port);
             portstr >> iport;
-            
+
             bool found=false;
             // check if it is already in list
             std::vector<masterserver::ServerInfo*>::iterator si;
@@ -242,8 +242,8 @@ ServerQueryThread::onDataReceived(network::TCPSocket *s, const char *data, const
             s->destroy();
             break; // extra tokens
         }
-    }    
-    
+    }
+
 }
 
 void
@@ -258,7 +258,7 @@ ServerQueryThread::sendNextQuery()
     }
 }
 
-void 
+void
 ServerQueryThread::sendQuery(ServerInfo *server)
 {
     if (server->tryNum++ >= 3) { // 3 retrys fixed for now
@@ -266,7 +266,7 @@ ServerQueryThread::sendQuery(ServerInfo *server)
         sendNextQuery();
         return;
     }
-    
+
     if (server->ipaddress == network::Address::ANY) {
         server->ipaddress = network::Address::resolve(server->address, server->port);
     }
@@ -275,11 +275,11 @@ ServerQueryThread::sendQuery(ServerInfo *server)
     serveraddr << server->address << ":" << server->port;
     querying_server[serveraddr.str()]=server;
     LOGGER.warning("Querying server [%s]", serveraddr.str().c_str());
-    
+
     char q[] = "\\status\\final\\";
     server->querystartticks = SDL_GetTicks();
     udpsocket->send(server->ipaddress,q,sizeof(q)-1);
-    
+
 }
 
 void
@@ -288,10 +288,10 @@ ServerQueryThread::onDataReceived(network::UDPSocket *s, const network::Address&
     (void)s;
     stringstream fromaddress;
     fromaddress << from.getIP() << ":" << from.getPort();
-    
+
     string str;
     str.append(data,len);
-    
+
     ServerInfo * server = querying_server[fromaddress.str()];
     if (server) {
         parseServerData(server,str);
@@ -300,16 +300,16 @@ ServerQueryThread::onDataReceived(network::UDPSocket *s, const network::Address&
         LOGGER.warning("Received answer from unknown server [%s]", fromaddress.str().c_str());
         querying_server.erase(fromaddress.str()); // Quick & Dirty, should use find()
     }
-    
+
     sendNextQuery();
-    
+
 }
 
 void
 ServerQueryThread::parseServerData(ServerInfo *server, string &data)
 {
     server->ping = SDL_GetTicks() - server->querystartticks;
-    
+
     StringTokenizer tokenizer(data, '\\');
 
     std::string token;
@@ -327,6 +327,8 @@ ServerQueryThread::parseServerData(ServerInfo *server, string &data)
         } else if(token == "protocol") {
             std::stringstream str(tokenizer.getNextToken());
             str >> server->protocol;
+        } else if(token == "authentication") {
+            server->auth_on = tokenizer.getNextToken().compare("y") == 0 ? true : false;
         } else if(token == "password") {
             server->needs_password = tokenizer.getNextToken().compare("y") == 0 ? true : false;
         } else {
@@ -334,14 +336,14 @@ ServerQueryThread::parseServerData(ServerInfo *server, string &data)
         }
     }
     server->status = ServerInfo::RUNNING;
-    
+
 }
 
 void
 ServerQueryThread::checkTimeOuts()
 {
     Uint32 now = SDL_GetTicks();
-    
+
     if ( querying_msdata.empty() && querying_server.empty() && not_queried.empty()) {
         LOGGER.warning("Stopping querys to servers, no more servers");
         running = false;
@@ -352,7 +354,7 @@ ServerQueryThread::checkTimeOuts()
         }
         return;
     }
-    
+
     map<network::TCPSocket *,MSInfo *>::iterator msiter;
     for (msiter=querying_msdata.begin(); msiter!=querying_msdata.end(); msiter++) {
         if ( now - msiter->second->lastTicks > MS_TIMEOUT ) {
@@ -363,8 +365,8 @@ ServerQueryThread::checkTimeOuts()
             sendNextQuery();
         }
     }
-    
-    
+
+
     map<string, ServerInfo *>::iterator i;
     for (i=querying_server.begin(); i!=querying_server.end(); i++) {
         if ( i->second->status == ServerInfo::TIMEOUT ) {
@@ -376,8 +378,8 @@ ServerQueryThread::checkTimeOuts()
             sendQuery(i->second);
         }
     }
-    
-    
+
+
 }
 
 
@@ -390,7 +392,7 @@ ServerQueryThread::checkTimeOuts()
 
 //    for(std::vector<ServerInfo*>::iterator i = querying.begin();
 //            i != querying.end(); ) {
-//        if((*i) == server)                                          
+//        if((*i) == server)
 //            i = querying.erase(i);
 //        else
 //            ++i;

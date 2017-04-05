@@ -40,6 +40,7 @@ UnitState::UnitState()
     reload_time = 45;
 
     unit_style = 0;
+    moving = false;
 
     threat_level = _threat_level_all_clear;
 }
@@ -88,6 +89,7 @@ NetworkUnitState UnitState::getNetworkUnitState() const
     state.defend_range = htol32(defend_range);
 
     state.unit_style = unit_style;
+    state.moving = moving;
 
     state.threat_level = threat_level;
     state.lifecycle_state = lifecycle_state;
@@ -122,6 +124,7 @@ void UnitState::setFromNetworkUnitState(const NetworkUnitState& state)
     defend_range = ltoh32(state.defend_range);
 
     unit_style = state.unit_style;
+    moving = state.moving;
 
     threat_level = state.threat_level;
     lifecycle_state = state.lifecycle_state;

@@ -143,8 +143,8 @@ MenuTemplateView::MenuTemplateView() : RMouseHackView()
 
     initButtons();
 
-    curTitleFlashTime  = 0.0f;
-    titleFlashTimeHalf = 0.5;
+    //curTitleFlashTime  = 0.0f;
+    //titleFlashTimeHalf = 0.5;
 } // end MenuTemplateView constructor
 
 //---------------------------------------------------------------------------
@@ -168,7 +168,7 @@ void MenuTemplateView::initInGameOptionButtons()
         add( new newButton( "RESIGN", "Resign", resignPos, 0) );
         add( new newButton( "EXITNETNP", "Exit netPanzer", exitPos, 0) );
     } else {
-        add( new newButton( "RESIGN", "Resign", exitPos, 1) );
+        add( new newButton( "EXITNETNP", "Exit netPanzer", exitPos, 0) );
     }
 
     add( new newButton( "CLOSEOPT", "Close Options", returnToGamePos, 0) );
@@ -224,6 +224,7 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
         "netPanzer " PACKAGE_VERSION;
         clientArea.bltString(10, 590, text, Color::gray);
 */
+    //LOGGER.info("View is %s", currentView);
     View::doDraw(viewArea, clientArea);
 } // end doDraw
 
@@ -311,9 +312,9 @@ void MenuTemplateView::doActivate()
     sprintf(currentView, "%s", searchName);
     Desktop::setActiveView(searchName);
 
-    loadBackgroundSurface();
-    loadTitleSurface();
-    loadNetPanzerLogo();
+    //loadBackgroundSurface();
+    //loadTitleSurface();
+    //loadNetPanzerLogo();
 } // end doActivate
 
 // loadBackgroundSurface
@@ -337,13 +338,14 @@ void MenuTemplateView::doLoadBackgroundSurface(const std::string& string)
 //---------------------------------------------------------------------------
 void MenuTemplateView::loadTitleSurface()
 {
-    doLoadTitleSurface("mainTitle");
+    //doLoadTitleSurface("mainTitle");
 } // end MenuTemplateView::loadTitleSurface
 
 // doLoadBackgroundSurface
 //---------------------------------------------------------------------------
 void MenuTemplateView::doLoadTitleSurface(const std::string& string)
 {
+    /*
     curTitleFlashTime  = 0.0f;
     titleFlashTimeHalf = 2.5;
 
@@ -352,6 +354,7 @@ void MenuTemplateView::doLoadTitleSurface(const std::string& string)
     pakString += ".pak";
 
     titlePackedSurface.load(pakString);
+    */
 } // end MenuTemplateView::doLoadTitleSurface
 
 // doDeactivate

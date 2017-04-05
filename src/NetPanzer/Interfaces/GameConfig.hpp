@@ -159,9 +159,9 @@ public:
     static int       game_windspeed;
     static int       game_lowscorelimit;
     static int       game_anticheat;
-    static bool      game_authentication;
-    static bool      game_bots_allowed;
-    static bool      game_scrambler;
+    //static bool      game_authentication;
+    //static bool      game_bots_allowed;
+    //static bool      game_scrambler;
     //static int       game_maxchatlines;
     static NPString* game_map;
     static NPString* game_mapcycle;
@@ -171,7 +171,7 @@ public:
     static Uint8 player_flag_data[FLAG_WIDTH*FLAG_HEIGHT];
     static Uint8 bot_flag_data[FLAG_WIDTH*FLAG_HEIGHT];
 
-    // game Settings (there are not saved to disk)
+    // game Settings (they are not saved to disk)
     ConfigInt       hostorjoin;         // 1=host, 2=join
     ConfigBool      quickConnect;
     ConfigBool      needPassword;
@@ -188,7 +188,8 @@ public:
     static bool      server_public;
     static NPString* server_masterservers;
     static NPString* server_name;
-
+    static NPString* server_authserver;
+    static bool      server_authentication;
 
     static bool      sound_enable;
     static bool      sound_music;
@@ -213,6 +214,13 @@ public:
     static int       radar_alliedoutpostcolor;
     static int       radar_enemyoutpostcolor;
     static int       radar_unitsize;
+
+    // bot settings
+    static int       bot_class;
+    static bool      bot_allied;
+    static int       bot_action_speed;
+
+
 
 public:
 

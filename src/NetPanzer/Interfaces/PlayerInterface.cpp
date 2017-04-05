@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Classes/Network/PlayerNetMessage.hpp"
 #include "Classes/Network/NetworkServer.hpp"
+#include "Classes/Network/NetworkClient.hpp"
 #include "Util/Log.hpp"
 
 #include "Classes/Network/NetworkState.hpp" // needed to flag server or client state
@@ -44,6 +45,7 @@ PlayerID  PlayerInterface::local_player_index = INVALID_PLAYER_ID;
 PlayerID PlayerInterface::respawn_rule_player_index = INVALID_PLAYER_ID;
 
 SDL_mutex* PlayerInterface::mutex = 0;
+
 
 static void setAlliance(PlayerID by_player, PlayerID with_player )
 {
@@ -126,6 +128,19 @@ static void handleAllianceMessage(const int type,
                 ConsoleInterface::postMessage(Color::yellow, false, 0,
                                               "%s request to ally with you.",
                                               player_state->getName().c_str());
+
+                // bot automatic ally reply mgmt
+                if ( NetworkState::status == _network_state_bot && GameConfig::bot_allied == true && GameConfig::game_allowallies == true )
+                {
+                if (player_state->getClientType() == 2)
+                {
+                PlayerAllianceRequest allie_request_back;
+                allie_request_back.set( local_player, player_state->getID(), _player_make_alliance);
+                CLIENT->sendMessage( &allie_request_back, sizeof(PlayerAllianceRequest));
+                }
+                }
+                //
+
                 }
             }
         }
@@ -485,7 +500,7 @@ void PlayerInterface::netMessageConnectID(const NetMessage* message)
 
 void PlayerInterface::netMessageSyncState(const NetMessage* message)
 {
-    if ( NetworkState::status == _network_state_client ) // client only (security fix)
+    if ( NetworkState::status != _network_state_server ) // client or bot only (security fix)
     {
     const PlayerStateSync *sync_mesg
         = (const PlayerStateSync *) message;

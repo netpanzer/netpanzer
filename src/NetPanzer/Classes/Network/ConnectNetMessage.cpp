@@ -104,6 +104,16 @@ ConnectClientSettings::ConnectClientSettings()
     memset(&player_name, 0, sizeof(player_name));
 }
 
+Uint8 ConnectClientSettings::getNStatus() const
+{
+    return Uint8(nstatus);
+}
+
+void ConnectClientSettings::setNStatus(Uint8 ns)
+{
+    nstatus = Uint8(ns);
+}
+
 void ConnectClientSettings::set(const char *player_name)
 {
     strncpy(ConnectClientSettings::player_name, player_name, 21);

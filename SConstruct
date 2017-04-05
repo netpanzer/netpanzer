@@ -8,7 +8,7 @@ import subprocess
 # Set NetPanzer Version
 ################################################################
 
-NPVERSION = '0.9.0-RC3'
+NPVERSION = '0.9.0-RC4'
 SVERSION = ''
 
 try:
@@ -117,6 +117,15 @@ else:
     binpath = './'
 
 exeappend = ''
+
+if 'CXXFLAGS' in os.environ:
+    env.Append(CCFLAGS = os.environ['CXXFLAGS'])
+
+if 'CPPFLAGS' in os.environ:
+    env.Append(CCFLAGS = os.environ['CPPFLAGS'])
+
+if 'LDFLAGS' in os.environ:
+    env.Append(LINKFLAGS = os.environ['LDFLAGS'])
 
 if env['cross'] == 'mingw':
     print 'configuring for mingw cross compilation'

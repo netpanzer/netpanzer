@@ -45,7 +45,9 @@ short UnitProfileInterface::tsu_damage_factor;
 unsigned short UnitProfileInterface::tsu_reload_time;
 unsigned long UnitProfileInterface::tsu_weapon_range;
 
+vector<UnitProfile *> UnitProfileInterface::profiles;
 
+vector<UnitProfileSprites *> UnitProfileSprites::profiles_sprites;
 
 enum
 {
@@ -208,12 +210,7 @@ bool read_vehicle_profile(const NPString& unitName, UnitProfile *profile)
     file_path += unitName;
     file_path += ".upf";
 
-    /*
-    NPString spath = GameConfig::getUnitStyle(style_offset);
 
-    NPString ustylepath = "units/pics/pak/" + spath + "/";
-    //LOGGER.info("ustylepath = %s", ustylepath.c_str());
-*/
     profile->unitname = unitName;
 
 
@@ -290,9 +287,7 @@ bool read_vehicle_profile(const NPString& unitName, UnitProfile *profile)
 //------------------------------------------------
 // Units Profiles Mgmt
 
-vector<UnitProfile *> UnitProfileInterface::profiles;
 
-vector<UnitProfileSprites *> UnitProfileSprites::profiles_sprites;
 
 vector<unsigned short> UnitProfileInterface::su_speed_rate;
 vector<unsigned short> UnitProfileInterface::su_speed_factor;
@@ -315,6 +310,18 @@ UnitProfileInterface::clearProfiles()
     profiles.clear();
 }
 
+void
+UnitProfileSprites::clearProfiles()
+{
+    vector<UnitProfileSprites *>::iterator i = profiles_sprites.begin();
+    while ( i != profiles_sprites.end() )
+    {
+        delete *i;
+        i++;
+    }
+    profiles_sprites.clear();
+}
+
 void UnitProfileInterface::doLoadUnitProfiles()
 {
     std::vector<NPString> plist;
@@ -332,8 +339,9 @@ void UnitProfileInterface::doLoadUnitProfiles()
 
 void UnitProfileInterface::loadUnitProfiles( void )
 {
-    clearProfiles();
 
+    UnitProfileSprites::clearProfiles();
+    clearProfiles();
     doLoadUnitProfiles();
 
     //superunit calculation
@@ -559,6 +567,8 @@ UnitProfileInterface::loadProfileFromMessage(const NetMessage *message, size_t s
             ups->turretShadow.load(ustylepath+p->turretShadow_name);
 
         UnitProfileSprites::profiles_sprites.push_back(ups);
+
+
         style_index++;
     }
 
@@ -582,6 +592,7 @@ UnitProfileInterface::processNetMessage(const NetMessage* net_message, size_t si
             break;
 
         case _profile_msg_reset:
+            UnitProfileSprites::clearProfiles();
             clearProfiles();
             break;
 
@@ -601,3 +612,23 @@ UnitProfileInterface::handleProfileDescMessage(const NetMessage *net_message, si
         profiles.push_back(p);
     }
 }
+
+void
+UnitProfileInterface::cleaning()
+{
+    //UnitProfileSprites::profiles_sprites.clear();
+    //profiles.clear();
+    su_speed_rate.clear();
+    su_speed_factor.clear();
+    su_speed.clear();
+    su_hit_points.clear();
+    su_damage_factor.clear();
+    su_reload_time.clear();
+    su_weapon_range.clear();
+}
+
+
+
+
+
+

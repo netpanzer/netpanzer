@@ -37,10 +37,10 @@ public:
         QUERYING,
         TIMEOUT
     };
-    
+
     ServerInfo();
     ~ServerInfo();
-    
+
     std::string name;
     std::string address;
     int port;
@@ -52,10 +52,11 @@ public:
     int ping;
     int protocol;
     bool needs_password;
+    bool auth_on;
 
     network::Address ipaddress;
     Uint32 querystartticks;
-    
+
     int tryNum;
 };
 

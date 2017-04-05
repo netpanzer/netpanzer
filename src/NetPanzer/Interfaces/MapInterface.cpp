@@ -37,6 +37,7 @@ MapInterface::MapListenerList MapInterface::listenerList;
     unsigned char MapInterface::craters_lifetime;
     unsigned char MapInterface::craters_fading;
     unsigned char MapInterface::units_shadow_blending;
+    unsigned char MapInterface::chat_color_scheme;
 
 bool MapInterface::startMapLoad( const char *file_path, const char *mapstyle_mpath, bool load_tiles,
         size_t partitions )
@@ -78,6 +79,7 @@ bool MapInterface::startMapLoad( const char *file_path, const char *mapstyle_mpa
                   craters_lifetime = ScriptManager::getIntField("craters_lifetime",    0);
                   craters_fading = ScriptManager::getIntField("craters_fading",    0);
                   units_shadow_blending = ScriptManager::getIntField("units_shadow_blending",   0);
+                  chat_color_scheme = ScriptManager::getIntField("chat_color_scheme",   0);
 
                  } else {
                  throw Exception("cannot read tileset config file.");

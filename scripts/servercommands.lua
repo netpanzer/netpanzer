@@ -45,7 +45,7 @@ ServerCommands =
         do
             i = i + 1;
             local p = players[i];
-            netpanzer.serversayto(player, p.id .. " - " .. p.name .. " ip: " .. p.ip);
+            netpanzer.serversayto(player, p.id .. " - " .. p.name .. " ip: " .. p.ip .. " s.ping: " .. p.s_ping);
         end
     end,
 

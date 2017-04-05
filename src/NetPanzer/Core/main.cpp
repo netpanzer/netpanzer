@@ -38,7 +38,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SDL.h"
 
 #include <optionmm/command_line.hpp>
-
+#include "Util/Exception.hpp"
 #include "Util/Log.hpp"
 //#include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
@@ -52,6 +52,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Core/NetworkGlobals.hpp"
 #include "Scripts/ScriptManager.hpp"
 #include "2D/Palette.hpp"
+
+#include "Weapons/Weapon.hpp"
+#include "PowerUps/PowerUpInterface.hpp"
+#include "Particles/PuffParticle2D.hpp"
+#include "Particles/CloudParticle2D.hpp"
+#include "Particles/FlameParticle2D.hpp"
+#include "Particles/FlashParticle2D.hpp"
+#include "Particles/ChunkTrajectoryParticle2D.hpp"
+#include "Particles/CraterParticle2D.hpp"
+#include "Units/UnitProfileInterface.hpp"
+
 
 #ifndef PACKAGE_VERSION
 	#define PACKAGE_VERSION "testing"
@@ -68,6 +79,21 @@ void shutdown()
         unlink(pidfile.c_str());
     }
 #endif
+
+// final cleaning
+Weapon::uninit();
+PowerUpInterface::uninitialize();
+PuffParticle2D::unloadPAKFiles();
+CloudParticle2D::uninit();
+FlameParticle2D::uninit();
+FlashParticle2D::uninit();
+ChunkTrajectoryParticle2D::uninit();
+CraterParticle2D::uninit();
+//
+UnitProfileSprites::clearProfiles();
+UnitProfileInterface::clearProfiles();
+//
+
 
     SDL_Quit();
     if(gameconfig)
@@ -127,7 +153,7 @@ BaseGameManager *initialise(int argc, char** argv)
     // Parse commandline
     using namespace optionmm;
     command_line commandline("NetPanzer", PACKAGE_VERSION,
-            "Copyright(c) 1998 Pyrosoft Inc. and netpanzer-dev team", "",
+            "Copyright(c) 1998 Pyrosoft Inc. & NetPanzer Development Team", "",
             argc, argv);
 
     option<std::string, true, false> connect_option('c', "connect",
@@ -135,7 +161,7 @@ BaseGameManager *initialise(int argc, char** argv)
     commandline.add(&connect_option);
     bool_option dedicated_option('d', "dedicated", "Run as dedicated server", false);
     commandline.add(&dedicated_option);
-    option<std::string, true, false> bot_option('b', "bot", "Connect as bot to specific server", "");
+    option<std::string, true, false> bot_option('b', "bot", "Connect as bot to specific server (dedicated server accepts only localhost)", "");
     commandline.add(&bot_option);
 
     bool_option need_password(0, "password", "Ask for password when connecting, only useful on quick connect", false);
@@ -148,7 +174,7 @@ BaseGameManager *initialise(int argc, char** argv)
     option<std::string, true, false> master_server_option('\0', "master_server", "Use 'none' if you dont want to use the master server", "");
     commandline.add(&master_server_option);
     option<std::string, true, false> game_config_option(0, "game_config",
-        "Which config file should be used (only files inside config directory)",
+        "Which config file should be used (example '/config/[name].cfg')",
         "");
     commandline.add(&game_config_option);
     option<bool, false, false> protocol_option('\0', "protocol",
@@ -323,6 +349,8 @@ int netpanzer_main(int argc, char** argv)
     BaseGameManager *manager = initialise(argc, argv);
 
     ScriptManager::runFile("unused","scripts/initialize.lua");
+
+
 
     // we'll catch every exception here, to be sure the user gets at least
     // a usefull error message and SDL has a chance to shutdown...

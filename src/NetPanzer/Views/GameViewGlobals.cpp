@@ -29,7 +29,7 @@ iXY mainPos(MenuRect.min.x+8, MenuRect.min.y-26);
 iXY joinPos(mainPos.x+54, mainPos.y);
 iXY hostPos(joinPos.x+54, mainPos.y);
 iXY optionsPos(hostPos.x+54, mainPos.y);
-iXY creditsPos(optionsPos.x+78, mainPos.y);
+iXY creditsPos(hostPos.x+54+78, mainPos.y);
 iXY helpPos(creditsPos.x+78, mainPos.y);
 iXY exitPos(MenuRect.max.x-140, mainPos.y);
 iXY playPos(MenuRect.max.x-58, MenuRect.max.y);

@@ -49,6 +49,7 @@ protected:
 public:
 
     static void initialize();
+    static void uninitialize();
     static void resetLogic();
 
     static void updateState();

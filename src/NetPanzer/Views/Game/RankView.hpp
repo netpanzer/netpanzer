@@ -44,9 +44,13 @@ private:
     Surface colorImage;
     Surface muteImageW;
     Surface muteImageR;
+    Surface botImage;
+    Surface humanImage;
+    Surface unknownImage;
     std::vector<const PlayerState*> states;
     int selected_line;
     PlayerState* mstate;
+    PlayerState* tstate;
 
 public:
 

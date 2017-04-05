@@ -166,11 +166,16 @@ public:
 
 class ConnectClientSettings : public NetMessage
 {
+private:
+    Uint8 nstatus;
+
 public:
     char player_name[21];
     Uint8 player_flag[FLAG_WIDTH*FLAG_HEIGHT];
     ConnectClientSettings();
     void set(const char *player_name);
+    void setNStatus(unsigned char ns);
+    unsigned char getNStatus() const;
 } __attribute__((packed));
 
 class ConnectMesgServerGameSettings : public NetMessage

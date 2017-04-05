@@ -107,12 +107,19 @@ void ServerMessageRouter::routePacket(const NetPacket* packet)
         default:
             LOGGER.warning("Packet contained unknown message class: %d",
                     message->message_class);
-
+                    /*
                     char string_warning_k[140];
                     sprintf(string_warning_k, "Player '%s' is cheating (trying to use packet sniffer/editor tools)!",player->getName().c_str());
                     LOGGER.info("CHEAT: %s", string_warning_k);
                     ChatInterface::serversay(string_warning_k);
-                    SERVER->kickClient(SERVER->getClientSocketByPlayerIndex((unsigned short) player->getID()));
+                    */
+                    //player->setCheat(1);
+                    unsigned char p_hits = player->getCheatHits();
+                    if (p_hits < 255) {
+                    player->setCheatHits(p_hits++);
+                    }
+                    // kicking player here may cause server to crash!?!
+                    //SERVER->kickClient(SERVER->getClientSocketByPlayerIndex((unsigned short) player->getID()));
 
 
     }

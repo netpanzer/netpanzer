@@ -109,6 +109,16 @@ void ChunkTrajectoryParticle2D::init()
 
 } // end ChunkTrajectoryParticle2D::init
 
+void ChunkTrajectoryParticle2D::uninit()
+{
+    staticPackedGroundChunks.unload("pics/particles/chunks/pak/groundChunks.pak");
+    staticPackedBurnGroundChunks.unload("pics/particles/chunks/pak/greenUnitChunks.pak");
+    staticPackedUnitGreenChunks.unload("pics/particles/chunks/pak/grayUnitChunks.pak");
+    staticPackedUnitGrayChunks.unload("pics/particles/chunks/pak/burnGroundChunks.pak");
+}
+
+
+
 // draw
 //---------------------------------------------------------------------------
 void ChunkTrajectoryParticle2D::draw(const Surface& , SpriteSorter &sorter)

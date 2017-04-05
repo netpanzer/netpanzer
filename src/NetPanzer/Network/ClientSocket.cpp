@@ -104,6 +104,7 @@ ClientSocket::initId()
     if ( NetworkState::status == _network_state_server ) // server only
     {
     //AAdevice reset vars
+    mydatastrtime = 0;
     conn_end = 0; pre_conn_end = 0; packets_count = 0; lastPActTime0 = 0; commandBurst = 0; burstTime = 0; burstTime0 = 0; commandBurstLimit = 13;//slowdown = 0;
 
 
@@ -184,7 +185,7 @@ void ClientSocket::sendMessage(const void* data, size_t size)
         }
 
 
-        } else {
+        } else {  // client side
 
         if (encrypted == 1 && encryptedb == 7) {
         memcpy(&key2,buf+2,1);
@@ -282,17 +283,6 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
 
 
 
-
-
-
-
-
-
-
-
-
-
-
         if ( (tempoffset-2 < packetsize) && remaining )
         {
             unsigned int needsize = packetsize-(tempoffset-2);
@@ -331,12 +321,26 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
             encryptKeyRecv = opcv_2;
             }
 
-            } else {
-
+            } else {  // server side
 
             if (opcv_0 == 1 && opcv_1 == 7) {
             encryptKeyRecv = opcv_2;
+
+            // check if key sent is the same of received
+            if (encryptKeySend != encryptKeyRecv) {
+            LOGGER.debug("Suspect attack detected [IP = %s] (network cheating)!", cipstring);
+            //ChatInterface::serversay("Server blocked suspect attack (external)!");
+            observer->onClientDisconected(this, "Network Manager striked!");
+            hardClose();
+            break;
             }
+
+            }
+
+
+
+
+
 
 
         //XXX// start of anti-spam device
@@ -352,7 +356,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
 
 
         // anti pre-spawn chat string attack (multiple temporary patches)
-        if ( packetsize == 303 && packets_count == 1 && pre_conn_end == 1)
+        if ( packetsize == 304 && packets_count == 1 && pre_conn_end == 1)
         {
          //conn_pause.setTimeOut(10000);
          conn_end = 1;
@@ -386,7 +390,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
         //LOGGER.debug("%d %d %d", opc_0,opc_1,opc_2);
 
         if ( (opcv_0 == 10 && opcv_1 == 0 && opcv_2 == 3) || (opcv_0 == 10 && opcv_1 == 0 && opcv_2 == 1) ||
-             (opcv_0 == 3 && opcv_1 == 5) || (opcv_0 == 3 && opcv_1 == 2) ) // chat, ally chat, ally request, flag update
+             (opcv_0 == 3 && opcv_1 == 2) ) // chat, ally chat, flag update - removed ally req (opcv_0 == 3 && opcv_1 == 5) ||
         {
 
 
@@ -415,7 +419,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
         mydatastrc++;
         mydatastrtime0 = mydatastrtime;
         mydatastrtime = currentPActTime;
-        if (mydatastrtime - mydatastrtime0 < 600)
+        if (mydatastrtime - mydatastrtime0 < ANTI_SPAM_LIMIT)
         {
          if (mydatastrc>6) // max 7 lines
          {
@@ -456,7 +460,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
          {
          commandBurst = 0;
          LOGGER.debug("Suspect cheater terminated! [IP = %s]", cipstring);
-         ChatInterface::serversay("Suspect cheater terminated (too fast clicking)!");
+         ChatInterface::serversay("Suspect cheater terminated (packet flooding)!");
          observer->onClientDisconected(this, "Anti-cheating striked!");
 
          //hardClose();

@@ -72,9 +72,9 @@ int       GameConfig::game_respawntype = 0;
 int       GameConfig::game_windspeed = 30;
 int       GameConfig::game_lowscorelimit = -45;
 int       GameConfig::game_anticheat = 3;
-bool      GameConfig::game_authentication = false;
-bool      GameConfig::game_bots_allowed = false;
-bool      GameConfig::game_scrambler = true;
+//bool      GameConfig::game_authentication = false;
+//bool      GameConfig::game_bots_allowed = false;
+//bool      GameConfig::game_scrambler = true;
 //int       GameConfig::game_maxchatlines = 7;
 NPString* GameConfig::game_map = 0;
 NPString* GameConfig::game_mapcycle = 0;
@@ -111,6 +111,13 @@ bool      GameConfig::server_logging = false;
 bool      GameConfig::server_public = true;
 NPString* GameConfig::server_masterservers = 0;
 NPString* GameConfig::server_name = 0;
+NPString* GameConfig::server_authserver = 0;
+bool      GameConfig::server_authentication = false;
+
+int       GameConfig::bot_class = 1;
+bool      GameConfig::bot_allied = true;
+int       GameConfig::bot_action_speed = 1;
+
 
 NPString* GameConfig::player_name = 0;
 
@@ -209,9 +216,9 @@ static const ScriptVarBindRecord game_getters[] =
     { "windspeed",          GETSVTYPE_INT,     &GameConfig::game_windspeed },
     { "lowscorelimit",      GETSVTYPE_INT,     &GameConfig::game_lowscorelimit },
     { "anticheat",          GETSVTYPE_INT,     &GameConfig::game_anticheat },
-    { "authentication",     GETSVTYPE_BOOLEAN, &GameConfig::game_authentication },
-    { "bots_allowed",       GETSVTYPE_BOOLEAN, &GameConfig::game_bots_allowed },
-    { "scrambler",          GETSVTYPE_BOOLEAN, &GameConfig::game_scrambler },
+    //{ "authentication",     GETSVTYPE_BOOLEAN, &GameConfig::game_authentication },
+    //{ "bots_allowed",       GETSVTYPE_BOOLEAN, &GameConfig::game_bots_allowed },
+    //{ "scrambler",          GETSVTYPE_BOOLEAN, &GameConfig::game_scrambler },
     //{ "maxchatlines",       GETSVTYPE_INT,     &GameConfig::game_maxchatlines },
     { "map",                GETSVTYPE_STRING,  &GameConfig::game_map },
     { "mapcycle",           GETSVTYPE_STRING,  &GameConfig::game_mapcycle },
@@ -245,9 +252,9 @@ static const ScriptVarBindRecord game_setters[] =
     { "windspeed",          SETSVTYPE_INT,     &GameConfig::game_windspeed },
     { "lowscorelimit",      SETSVTYPE_INT,     &GameConfig::game_lowscorelimit },
     { "anticheat",          SETSVTYPE_INT,     &GameConfig::game_anticheat },
-    { "authentication",     SETSVTYPE_BOOLEAN, &GameConfig::game_authentication },
-    { "bots_allowed",       SETSVTYPE_BOOLEAN, &GameConfig::game_bots_allowed },
-    { "scrambler",          SETSVTYPE_BOOLEAN, &GameConfig::game_scrambler },
+    //{ "authentication",     SETSVTYPE_BOOLEAN, &GameConfig::game_authentication },
+    //{ "bots_allowed",       SETSVTYPE_BOOLEAN, &GameConfig::game_bots_allowed },
+    //{ "scrambler",          SETSVTYPE_BOOLEAN, &GameConfig::game_scrambler },
     //{ "maxchatlines",       SETSVTYPE_INT,     &GameConfig::game_maxchatlines },
     { "map",                SETSVTYPE_STRING,  &GameConfig::game_map },
     { "mapcycle",           SETSVTYPE_STRING,  &GameConfig::game_mapcycle },
@@ -309,6 +316,8 @@ static const ScriptVarBindRecord server_getters[] =
     { "public",         GETSVTYPE_BOOLEAN, &GameConfig::server_public },
     { "masterservers",  GETSVTYPE_STRING,  &GameConfig::server_masterservers },
     { "name",           GETSVTYPE_STRING,  &GameConfig::server_name },
+    { "authserver",     GETSVTYPE_STRING,  &GameConfig::server_authserver },
+    { "authentication", GETSVTYPE_BOOLEAN,  &GameConfig::server_authentication },
     {0,0}
 };
 
@@ -321,6 +330,8 @@ static const ScriptVarBindRecord server_setters[] =
     { "public",         SETSVTYPE_BOOLEAN, &GameConfig::server_public },
     { "masterservers",  SETSVTYPE_STRING,  &GameConfig::server_masterservers },
     { "name",           SETSVTYPE_STRING,  &GameConfig::server_name },
+    { "authserver",     SETSVTYPE_STRING,  &GameConfig::server_authserver },
+    { "authentication", SETSVTYPE_BOOLEAN,  &GameConfig::server_authentication },
     {0,0}
 };
 
@@ -335,6 +346,25 @@ static const ScriptVarBindRecord player_setters[] =
     { "name",           SETSVTYPE_STRING,  &GameConfig::player_name },
     {0,0}
 };
+
+static const ScriptVarBindRecord bot_getters[] =
+{
+    { "class",           GETSVTYPE_INT,  &GameConfig::bot_class },
+    { "allied",          GETSVTYPE_BOOLEAN,  &GameConfig::bot_allied },
+    { "action_speed",    GETSVTYPE_INT,  &GameConfig::bot_action_speed },
+    {0,0}
+};
+
+static const ScriptVarBindRecord bot_setters[] =
+{
+    { "class",           SETSVTYPE_INT,  &GameConfig::bot_class },
+    { "allied",          SETSVTYPE_BOOLEAN,  &GameConfig::bot_allied },
+    { "action_speed",    SETSVTYPE_INT,  &GameConfig::bot_action_speed },
+    {0,0}
+};
+
+
+
 
 void GameConfig::registerScript(const NPString& table_name)
 {
@@ -398,6 +428,11 @@ void GameConfig::registerScript(const NPString& table_name)
         server_name = new NPString("NetPanzer Server");
     }
 
+    if ( ! server_authserver )
+    {
+        server_authserver = new NPString("authserver.netpanzer.info");
+    }
+
     if ( ! player_name )
     {
         player_name = new NPString("Player");
@@ -434,6 +469,11 @@ void GameConfig::registerScript(const NPString& table_name)
     ScriptManager::bindStaticVariables(table_name + ".player",
                                        "ConfigPlayerMetaTable",
                                        player_getters, player_setters);
+
+    ScriptManager::bindStaticVariables(table_name + ".bot",
+                                       "ConfigBotMetaTable",
+                                       bot_getters, bot_setters);
+
 }
 
 GameConfig::GameConfig(const std::string& luaconfigfile,bool usePhysFS)

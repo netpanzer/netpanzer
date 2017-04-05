@@ -58,11 +58,7 @@ NetworkClient::onClientConnected(ClientSocket *s)
     ClientConnectJoinRequest join_request;
     unsigned char nms;
     connection_status = _connection_status_connected;
-    if (NetworkState::status == 2) {
-        nms = 15;
-    } else {
-        nms = 120;
-    }
+    nms = NetworkState::status;
     join_request.setProtocolVersion(NETPANZER_PROTOCOL_VERSION);
     join_request.setNMode(nms);
     join_request.setPassword(password);

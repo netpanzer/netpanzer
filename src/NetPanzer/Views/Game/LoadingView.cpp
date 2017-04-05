@@ -54,12 +54,12 @@ LoadingView::init()
 
     resize(800, 600);
 
-    addButtonCenterText(iXY(349, 260), 100, "Abort", "Cancel the joining of this game.", bAbort);
+    addButtonCenterText(iXY(348, 260), 101, "Abort", "Cancel the joining of this game.", bAbort);
 
 
-    okButton = Button::createTextButton("OK", "Enter", iXY(340,105), 100);
+    okButton = Button::createTextButton("OK", "Enter", iXY(348,105), 100);
     okButton->setTextColors(Color::black,Color::red,Color::darkGray);
-    passwordLabel = new Label(340, 60, "Game Password", Color::lightGray);
+    passwordLabel = new Label(348, 60, "Game Password", Color::lightGray);
 
 }
 
@@ -72,8 +72,8 @@ LoadingView::doDraw(Surface &viewArea, Surface &clientArea)
 
     screen->fill(Color::black);
     backgroundSurface.blt(clientArea, 0, 0);
-    clientArea.FillRoundRect(iRect(165, 40, 635, 225), 10, Color::black);
-    clientArea.RoundRect(iRect(165, 40, 635, 225), 10, Color::lightGray);
+    clientArea.FillRoundRect(iRect(166, 40, 628, 225), 10, Color::black);
+    clientArea.RoundRect(iRect(166, 40, 628, 225), 10, Color::lightGray);
     surface.blt(clientArea, 172, 45);
 
     View::doDraw(viewArea, clientArea);

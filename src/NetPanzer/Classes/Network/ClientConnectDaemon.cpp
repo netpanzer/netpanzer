@@ -213,7 +213,9 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(const NetMessage* mess
 
     case _connect_state_message_sync_unit_profiles:
         LoadingView::append("Synchronizing unit profiles...");
+        UnitProfileSprites::clearProfiles();
         UnitProfileInterface::clearProfiles();
+
         break;
 
     case  _connect_state_message_sync_units : {
@@ -233,6 +235,41 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(const NetMessage* mess
             LoadingView::append( "Game Synchronized" );
             LoadingView::loadFinish();
             connection_state = _connect_state_idle;
+
+
+
+        // bots automatic ally request mgmt
+        if (NetworkState::status == _network_state_bot && GameConfig::bot_allied == true) {
+
+        PlayerState * playerx = 0;
+        unsigned int localplayer = PlayerInterface::getLocalPlayerIndex();
+        unsigned long max_players;
+        max_players = PlayerInterface::getMaxPlayers();
+        for (unsigned long i = 0; i < max_players; i++)
+        {
+            playerx = PlayerInterface::getPlayer((unsigned short) i);
+
+            if (playerx->isActive()) {
+
+            if ( playerx->getID() != localplayer && playerx->getClientType() == 2)
+            {
+            PlayerAllianceRequest allie_request;
+            allie_request.set( localplayer, playerx->getID(), _player_make_alliance);
+            CLIENT->sendMessage( &allie_request, sizeof(PlayerAllianceRequest));
+            }
+
+            }
+        }
+
+        }
+        //
+
+
+
+
+
+
+            // temp disabled let the server provide a flag...
 
                     if ( NetworkState::status == _network_state_bot )
                     {
@@ -391,6 +428,7 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                     ConnectClientSettings client_setting;
 
                     client_setting.set(GameConfig::player_name->c_str());
+                    client_setting.setNStatus(NetworkState::status);
                     memcpy(&client_setting.player_flag, GameConfig::player_flag_data, sizeof(client_setting.player_flag));
 
                     CLIENT->sendMessage( &client_setting, sizeof(ConnectClientSettings));

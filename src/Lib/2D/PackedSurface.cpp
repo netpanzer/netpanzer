@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -31,6 +31,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PackedSurface.hpp"
 #include "Surface.hpp"
 #include "Span.hpp"
+
+#include "Util/Log.hpp"
 
 #ifdef MSVC
 #pragma pack (1)
@@ -74,14 +76,14 @@ void PackedSurface::free()
 {
     if (myMem && rowOffsetTable != 0) {
         totalByteCount -= (pix.y * frameCount + 1) * sizeof(*rowOffsetTable);
-
+        //LOGGER.info("Total bytes of surfaces = %d", totalByteCount);
         ::free(rowOffsetTable);
 
         //assert(totalByteCount >= 0);
     }
     if (myMem && packedDataChunk != 0) {
         totalByteCount -= pix.y * frameCount;
-
+        //LOGGER.info("Total bytes of chunks = %d", totalByteCount);
         ::free(packedDataChunk);
 
         //assert(totalByteCount >= 0);
@@ -199,7 +201,7 @@ void PackedSurface::load(const std::string& filename)
     try {
 	std::auto_ptr<filesystem::ReadFile> file(
                 filesystem::openRead(filename));
-
+    //LOGGER.info("Surface loaded: %s", filename.c_str());
 	free();
 	Sint32 version = file->readSLE32();
 	if (version < 1)
@@ -213,7 +215,7 @@ void PackedSurface::load(const std::string& filename)
 
 	center = pix / 2;
 
-	frameCount = file->readSLE32(); 
+	frameCount = file->readSLE32();
 	// should be done like following but this isn't backward compatible to
 	// the existing files :-/
 	//fps = float(file->readSLE32()) / 65536;
@@ -222,7 +224,7 @@ void PackedSurface::load(const std::string& filename)
 	fps = * ((float*) (void*) &fpsint);
 	offset.x = file->readSLE32();
 	offset.y = file->readSLE32();
-    
+
 	rowOffsetTable = (int *) malloc((pix.y * frameCount + 1) * sizeof(*rowOffsetTable));
 	if (rowOffsetTable == 0)
 	    throw Exception(
@@ -230,7 +232,7 @@ void PackedSurface::load(const std::string& filename)
 	for(int i=0;i<(pix.y * frameCount+1);i++) {
 	    rowOffsetTable[i] = file->readSLE32();
 	}
-    
+
 	packedDataChunk = (Uint8 *)malloc(rowOffsetTable[pix.y*frameCount]);
 	if (packedDataChunk == 0) {
 	    throw Exception(
@@ -250,6 +252,27 @@ void PackedSurface::load(const std::string& filename)
 }
 
 //--------------------------------------------------------------------------
+void PackedSurface::unload(const std::string& filename)
+{
+    try {
+	std::auto_ptr<filesystem::ReadFile> file(
+                filesystem::openRead(filename));
+    //LOGGER.info("Surface loaded: %s", filename.c_str());
+	free();
+    //LOGGER.info("Surface unloaded: %s", filename.c_str());
+
+    } catch(std::exception& e) {
+	throw Exception("Error while reading pakfile '%s': %s",
+	    filename.c_str(), e.what());
+    }
+
+
+}
+
+
+
+
+//--------------------------------------------------------------------------
 void PackedSurface::save(const std::string& filename) const
 {
     try {
@@ -260,7 +283,7 @@ void PackedSurface::save(const std::string& filename) const
 	file->writeSLE32(version);
 	file->writeSLE32(pix.x);
 	file->writeSLE32(pix.y);
-    
+
         file->writeSLE32(frameCount);
 
 	// is this correct?!?
@@ -268,11 +291,11 @@ void PackedSurface::save(const std::string& filename) const
 
 	file->writeSLE32(offset.x);
 	file->writeSLE32(offset.y);
-    
+
 	for(int i=0;i<(pix.y*frameCount+1); i++) {
 	    file->writeSLE32(rowOffsetTable[i]);
 	}
-    
+
 	file->write(packedDataChunk, rowOffsetTable[pix.y*frameCount], 1);
     } catch(std::exception& e) {
 	throw Exception("Error while writing pakfile '%s': %s",
@@ -596,8 +619,8 @@ int loadAllPAKInDirectory(const char *path, PackedSurfaceList& paklist)
     }
 
     filesystem::freeList(list);
-   
-    std::sort(filenames.begin(), filenames.end()); 
+
+    std::sort(filenames.begin(), filenames.end());
 
     // Now load in the sorted PAK names.
     for (size_t i = 0; i < filenames.size(); i++) {
@@ -608,4 +631,34 @@ int loadAllPAKInDirectory(const char *path, PackedSurfaceList& paklist)
 
     return filenames.size();
 } // end loadAllPAKInDirectory
+
+int unloadAllPAKInDirectory(const char *path, PackedSurfaceList& paklist)
+{
+    char** list = filesystem::enumerateFiles(path);
+
+    std::vector<std::string> filenames;
+    for(char** file = list; *file != 0; file++) {
+	std::string name = path;
+	name += *file;
+	if(name.find(".pak") != std::string::npos)
+	    filenames.push_back(name);
+    }
+
+    filesystem::freeList(list);
+
+    std::sort(filenames.begin(), filenames.end());
+
+    // Now load in the sorted PAK names.
+    for (size_t i = 0; i < filenames.size(); i++) {
+        PackedSurface* surface = new PackedSurface;
+        surface->unload(filenames[i].c_str());
+        paklist.push_back(surface);
+    }
+
+    return filenames.size();
+} // end loadAllPAKInDirectory
+
+
+
+
 

@@ -132,7 +132,10 @@ PlayerState::getColor() const
 PlayerState::PlayerState()
     : status(0), kills(0), kill_points(0), losses(0),
       loss_points(0), total(0), objectives_held(0), units_style(0),
-      stats_locked(false), admin_flag(false)
+      stats_locked(false), admin_flag(false),
+      cheating(0), cheating_hits(0), client_type(0), lastenckey(0),
+      up_last_ping(0), up_avg_ping(0),
+      down_last_ping(0), down_avg_ping(0), temp_time(0)
 {
     autokick.reset();
 }
@@ -142,7 +145,11 @@ PlayerState::PlayerState(const PlayerState& other)
       status(other.status), kills(other.kills), kill_points(other.kill_points),
       losses(other.losses), loss_points(other.loss_points),
       total(other.total), objectives_held(other.objectives_held), units_style(other.units_style),
-      stats_locked(other.stats_locked), unit_config(other.unit_config)
+      stats_locked(other.stats_locked),
+      cheating(other.cheating), cheating_hits(other.cheating_hits), client_type(other.client_type), lastenckey(other.lastenckey),
+      up_last_ping(other.up_last_ping), up_avg_ping(other.up_avg_ping),
+      down_last_ping(other.down_last_ping), down_avg_ping(other.down_avg_ping), temp_time(other.temp_time),
+      unit_config(other.unit_config)
 {
     // nothing
 }
@@ -164,6 +171,15 @@ void PlayerState::operator= (const PlayerState& other)
     admin_flag = other.admin_flag;
     autokick.reset();
     muted = other.muted;
+    cheating = other.cheating;
+    cheating_hits = other.cheating_hits;
+    client_type = other.client_type;
+    lastenckey = other.lastenckey;
+    up_last_ping = other.up_last_ping;
+    up_avg_ping = other.up_avg_ping;
+    down_last_ping = other.down_last_ping;
+    down_avg_ping = other.down_avg_ping;
+    temp_time = other.temp_time;
 }
 
 
@@ -412,6 +428,47 @@ bool PlayerState::getMute() const
     return muted;
 }
 
+void PlayerState::setCheat(unsigned char cheat_type)
+{
+    cheating = cheat_type;
+}
+
+unsigned char PlayerState::getCheat() const
+{
+    return cheating;
+}
+
+void PlayerState::setCheatHits(unsigned char cheat_hits)
+{
+    cheating_hits = cheat_hits;
+}
+
+unsigned char PlayerState::getCheatHits() const
+{
+    return cheating_hits;
+}
+
+void PlayerState::setClientType(unsigned char cl_type)
+{
+    client_type = cl_type;
+}
+
+unsigned char PlayerState::getClientType() const
+{
+    return client_type;
+}
+
+void PlayerState::setLastEncKey(unsigned char enc_key)
+{
+    lastenckey = enc_key;
+}
+
+unsigned char PlayerState::getLastEncKey() const
+{
+    return lastenckey;
+}
+
+
 NetworkPlayerState PlayerState::getNetworkPlayerState() const
 {
     NetworkPlayerState state;
@@ -427,6 +484,7 @@ NetworkPlayerState PlayerState::getNetworkPlayerState() const
     state.total = htol16(total);
     state.objectives_held = htol16(objectives_held);
     state.units_style = units_style;
+    state.client_type = client_type;
 
 
     return state;
@@ -445,7 +503,7 @@ void PlayerState::getNetworkPlayerState(NetworkPlayerState& state) const
     state.total = htol16(total);
     state.objectives_held = htol16(objectives_held);
     state.units_style = units_style;
-
+    state.client_type = client_type;
 }
 
 void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
@@ -463,4 +521,5 @@ void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
     total = ltoh16(state->total);
     objectives_held = ltoh16(state->objectives_held);
     units_style = state->units_style;
+    client_type = state->client_type;
 }

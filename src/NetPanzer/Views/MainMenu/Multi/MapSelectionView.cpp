@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -32,6 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 std::vector<MapInfo*> MapSelectionView::mapList;
 int MapSelectionView::curMap = 0;
+
 
 static void bNextMap()
 {
@@ -93,6 +94,14 @@ MapSelectionView::~MapSelectionView()
 
 // init
 //---------------------------------------------------------------------------
+
+
+
+
+
+
+//------------------------------------------------------------------------------
+
 void MapSelectionView::init()
 {
     const int arrowButtonWidth = (getClientRect().getSizeX() - MAP_SIZE - BORDER_SPACE * 3) / 2;
@@ -103,9 +112,17 @@ void MapSelectionView::init()
     pos.x += arrowButtonWidth;
     addButtonCenterText(pos, arrowButtonWidth, ">", "", bNextMap);
 
+
+
     loadMaps();
     HostOptionsView::updateGameConfigCloudCoverage();
     HostOptionsView::updateWindSpeedString();
+
+
+
+
+
+
 
 } // end MapSelectionView::init
 
@@ -132,6 +149,9 @@ void MapSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
         // Since maps were found, draw the selected map.
         mapList[curMap]->thumbnail.blt(clientArea, BORDER_SPACE, BORDER_SPACE);
         drawCurMapInfo(clientArea, iXY(MAP_SIZE + BORDER_SPACE * 2, BORDER_SPACE));
+
+
+
     }
     View::doDraw(viewArea, clientArea);
 
@@ -165,7 +185,7 @@ int MapSelectionView::loadMaps()
                         break;
                     mapname += c;
                 }
-                
+
                 mapfiles.push_back(mapname);
             }
         }
@@ -181,7 +201,7 @@ int MapSelectionView::loadMaps()
             std::string filename = mapsPath;
             filename += mapfiles[i];
             filename += ".npm";
-	    std::auto_ptr<filesystem::ReadFile> file 
+	    std::auto_ptr<filesystem::ReadFile> file
 		(filesystem::openRead(filename));
 
 	    MapFile netPanzerMapHeader;
@@ -198,7 +218,7 @@ int MapSelectionView::loadMaps()
                     break;
                 mapname += c;
             }
-            
+
             mapinfo->name = mapname;
 	    mapinfo->description = netPanzerMapHeader.description;
 
@@ -214,18 +234,18 @@ int MapSelectionView::loadMaps()
 	    pix.y = netPanzerMapHeader.thumbnail_height;
 
 	    mapinfo->thumbnail.create(pix.x, pix.y, 1);
-	    
+
 	    int numBytes = pix.getArea();
 
 	    file->read(mapinfo->thumbnail.getFrame0(), numBytes, 1);
 
 	    mapinfo->thumbnail.scale(100,100);
-	
+
 	    // Now try to get the outpost count from the outpost file.
 	    int objectiveCount = 0;
             filename = mapsPath + mapinfo->name + ".opt";
             IFileStream in(filename);
-      
+
             std::string dummy;
             in >> dummy >> objectiveCount;
             if(!in.good())
@@ -233,11 +253,12 @@ int MapSelectionView::loadMaps()
 
 	    mapinfo->objectiveCount = objectiveCount;
 	    mapList.push_back(mapinfo);
+
 	} catch(std::exception& e) {
-	    LOGGER.warning("cannot open map file '%s': %s", 
+	    LOGGER.warning("cannot open map file '%s': %s",
 		    mapfiles[i].c_str(), e.what());
 	    continue;
-	}	
+	}
     }
 
     if (mapList.size() == 0) {
@@ -246,6 +267,7 @@ int MapSelectionView::loadMaps()
 
     curMap = 0;
     GameConfig::game_mapcycle->assign( MapSelectionView::mapList[curMap]->name );
+
 
     // Success
     return -1;

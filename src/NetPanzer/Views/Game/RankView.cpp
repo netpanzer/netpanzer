@@ -16,6 +16,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+
+
+
 #include "Resources/ResourceManager.hpp"
 
 #include <vector>
@@ -48,7 +51,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #define TABLE_HEADER_PIX_LEN (52*8)
 
-#define WINDOW_WIDTH (TABLE_HEADER_PIX_LEN + ((DEFAULT_BORDER_SIZE+TABLE_BORDER) * 2 ) + 14+2+28)
+#define WINDOW_WIDTH (TABLE_HEADER_PIX_LEN + ((DEFAULT_BORDER_SIZE+TABLE_BORDER) * 2 ) + 14+2+28+14)
 
 static const char * table_header =
         "      Name                 Frags Deaths Points Objs.";
@@ -81,7 +84,10 @@ RankView::RankView() : GameTemplateView()
     noAllyImage.loadBMP("pics/default/noAlly.bmp");
     colorImage.loadBMP("pics/default/playerColor.bmp");
     muteImageW.loadBMP("pics/default/mute_W.bmp");
-    muteImageR.loadBMP("pics/default/mute_r.bmp");
+    muteImageR.loadBMP("pics/default/mute_R.bmp");
+    botImage.loadBMP("pics/default/Bot.bmp");
+    humanImage.loadBMP("pics/default/Human.bmp");
+    unknownImage.loadBMP("pics/default/Unknown.bmp");
 
     selected_line = -1;
 
@@ -223,6 +229,17 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
 
         }
 
+        tstate = PlayerInterface::getPlayer( state->getID() );
+        if (tstate->getClientType() == 1) {
+        humanImage.bltTrans(dest, TABLE_HEADER_PIX_LEN+2+14+14+18, flag_pos );
+        } else if (tstate->getClientType() == 2) {
+        botImage.bltTrans(dest, TABLE_HEADER_PIX_LEN+2+14+14+18, flag_pos );
+        } else if (tstate->getClientType() == 0) {
+        humanImage.bltTrans(dest, TABLE_HEADER_PIX_LEN+2+14+14+18, flag_pos );
+        } else {
+        unknownImage.bltTrans(dest, TABLE_HEADER_PIX_LEN+2+14+14+18, flag_pos );
+        }
+
 
         cur_line_pos += ENTRY_HEIGHT;
         flag_pos += ENTRY_HEIGHT;
@@ -271,6 +288,7 @@ void RankView::lMouseDown(const iXY& pos)
                     ConsoleInterface::postMessage(Color::orange, false, 0,
                                               "You've just muted %s.",
                                               mstate->getName().c_str());
+
                 }
 
 

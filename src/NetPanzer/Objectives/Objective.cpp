@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Units/UnitInterface.hpp"
 #include "Units/UnitProfileInterface.hpp"
-
+#include "Interfaces/ChatInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
@@ -35,6 +35,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/UnitMessageTypes.hpp"
 
 #include "Interfaces/GameManager.hpp"
+
+
 
 
 Objective::Objective(ObjectiveID id, iXY location, BoundBox area)
@@ -58,6 +60,8 @@ Objective::Objective(ObjectiveID id, iXY location, BoundBox area)
     unit_generation_loc = iXY( 1, 3 );
     occupation_pad_offset = iXY( 224, 48 );
     unit_generation_on_flag = false;
+
+
 
 }
 
@@ -151,6 +155,11 @@ Objective::attemptOccupationChange(PlayerState* player)
 
     if ( GameConfig::game_base_limit > 0 && player->getObjectivesHeld() >= GameConfig::game_base_limit )
     {
+/*
+        char base_limit_warning[140];
+        sprintf(base_limit_warning, "Warning '%s' - Max %i bases per player!", player->getName().c_str(), GameConfig::game_base_limit);
+        ChatInterface::serversayTo(player->getID(), base_limit_warning);
+*/
         return; // cannot capture more bases.
     }
 

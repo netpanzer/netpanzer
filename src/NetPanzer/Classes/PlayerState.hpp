@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string.h>
 #include "Core/CoreTypes.hpp"
 #include "Classes/PlayerUnitConfig.hpp"
+#include "Util/TimerInterface.hpp"
 #include "2D/Palette.hpp"
 #include "Util/NTimer.hpp"
 
@@ -58,6 +59,7 @@ private:
     Sint16 total;
     Sint16 objectives_held;
     Uint8 units_style;
+    Uint8 client_type;
 }__attribute__((packed));
 
 #ifdef MSVC
@@ -82,6 +84,16 @@ private:
     bool admin_flag;
     NTimer autokick;
     bool muted;
+    unsigned char cheating;
+    unsigned char cheating_hits;
+    unsigned char client_type;
+    unsigned char lastenckey;
+    float up_last_ping;
+    float up_avg_ping;
+    float down_last_ping;
+    float down_avg_ping;
+    TimeStamp temp_time;
+
 
 public:
     PlayerUnitConfig unit_config;
@@ -118,6 +130,26 @@ public:
     unsigned char getPlayerStyle();
     void setMute(bool mute);
     bool getMute() const;
+    void setCheat(unsigned char cheat_type);
+    unsigned char getCheat() const;
+    void setCheatHits(unsigned char cheat_hits);
+    unsigned char getCheatHits() const;
+    void setClientType(unsigned char cl_type);
+    unsigned char getClientType() const;
+    void setLastEncKey(unsigned char enc_key);
+    unsigned char getLastEncKey() const;
+    void setUpLastPing(float uplp) {up_last_ping = uplp;}
+    float getUpLastPing() const {return up_last_ping;}
+    void setUpAvgPing(float upap) {up_avg_ping = upap;}
+    float getUpAvgPing() const {return up_avg_ping;}
+    void setDownLastPing(float downlp) {down_last_ping = downlp;}
+    float getDownLastPing() const {return down_last_ping;}
+    void setDownAvgPing(float downap) {down_avg_ping = downap;}
+    float getDownAvgPing() const {return down_avg_ping;}
+
+    void setTempTime(TimeStamp ttime) {temp_time = ttime;}
+    TimeStamp getTempTime() const {return temp_time;}
+
     NetworkPlayerState getNetworkPlayerState() const;
     void getNetworkPlayerState(NetworkPlayerState& state) const;
     void setFromNetworkPlayerState(const NetworkPlayerState* state);

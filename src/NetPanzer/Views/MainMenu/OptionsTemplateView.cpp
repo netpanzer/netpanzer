@@ -457,14 +457,14 @@ void OptionsTemplateView::stateChanged(Component* source)
 //---------------------------------------------------------------------------
 void OptionsTemplateView::loadBackgroundSurface()
 {
-   MenuTemplateView::loadBackgroundSurface();
+   //MenuTemplateView::loadBackgroundSurface();
 } // end OptionsTemplateView::loadBackgroundSurface
 
 // loadTitleSurface
 //---------------------------------------------------------------------------
 void OptionsTemplateView::loadTitleSurface()
 {
-    doLoadTitleSurface("optionsTitle");
+    //doLoadTitleSurface("optionsTitle");
 
 } // end ControlsView::loadTitleSurface
 

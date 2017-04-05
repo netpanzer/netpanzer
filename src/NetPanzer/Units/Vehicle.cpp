@@ -74,7 +74,7 @@ enum{ _rotate_and_move, _rotate_stop_move };
 
 Vehicle::Vehicle(bool liveornot,
                  PlayerState* player, unsigned char utype,
-                 UnitID id, unsigned char unit_style, iXY initial_loc,
+                 UnitID id, unsigned char unit_style,  bool moving, iXY initial_loc,
                  AngleInt body_angle, AngleInt turret_angle,
                  unsigned short orientation, unsigned short speed_rate,
                  unsigned short speed_factor, unsigned short reload_time,
@@ -174,6 +174,9 @@ Vehicle::Vehicle(bool liveornot,
     unit_state.turret_angle = turret_angle;
 
     unit_state.unit_style = unit_style;
+
+    unit_state.moving = moving;
+
 
 
 
@@ -330,7 +333,7 @@ void Vehicle::setUnitProperties( unsigned char utype )
     unit_state.unit_type = utype;
 
     unit_state.unit_style = player->getPlayerStyle();
-
+    //unit_state.moving = moving;
 
     // full path of sprites here
 
@@ -658,6 +661,8 @@ void Vehicle::setFsmMove( unsigned short orientation )
      { interpolation_speed += 2; }
     fsmMove_first_stamp = true;
     */
+    //Server here!
+    //LOGGER.info("Unit speed rate=%d | speed_factor=%d", (unsigned short)unit_state.speed_rate, (unsigned short)unit_state.speed_factor);
 }
 
 bool Vehicle::fsmMove()
@@ -697,13 +702,17 @@ bool Vehicle::fsmMove()
 
         unit_state.location.y = unit_state.location.y + ( unit_state.speed_factor * fsmMove_offset_y );
 
+        if ( NetworkState::status == _network_state_client ) {
         ParticleInterface::addMoveDirtPuff(unit_state);
+        }
         //start_move_stamp = now();
+        unit_state.moving = true;
     }
-
+    //LOGGER.info("moves_counter=%d | moves_per_square=%d", (unsigned short)fsmMove_moves_counter, (unsigned short)fsmMove_moves_per_square);
     if( fsmMove_moves_counter >= fsmMove_moves_per_square)
     {
         //fsmMove_first_stamp = true;
+        unit_state.moving = false;
         fsm_timer.changeRate( 10 );
         return( true );
     }
@@ -989,7 +998,7 @@ void Vehicle::fsmGunneryLocation()
     iXY range_vector;
 
     range_vector = fsmGunneryLocation_target - unit_state.location;
-
+    //LOGGER.info("Unit reload=%d | Unit reload_time=%d", (unsigned short)reload_counter, (unsigned short)unit_state.reload_time);
     if ( (range_vector.mag2() < unit_state.weapon_range) &&
             (fsmTurretTrackPoint_on_target == true) &&
             (reload_counter >= unit_state.reload_time)
@@ -2087,6 +2096,8 @@ void Vehicle::setCommandMoveToLoc(const UMesgAICommand* message)
     //LOG( ("UnitID %d, %d : Start %d, %d : Goal %d, %d", id.getPlayer(), id.getIndex(),
     //                                                    start.x, start.y,
     //                                                    aiFsmMoveToLoc_goal.x, aiFsmMoveToLoc_goal.y ) );
+    //LOGGER.info("Unit speed rate=%d | speed_factor=%d", (unsigned short)unit_state.speed_rate, (unsigned short)unit_state.speed_factor);
+
 
     PathRequest path_request;
     path_request.set( id, start, aiFsmMoveToLoc_goal, 0, &path, _path_request_full );

@@ -659,6 +659,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
         }
         else
         {
+            checkMiniProductionRect2(outpostUserNameBuf, outpostNameBuf);
             dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
             if ( obj->occupying_player)
             {

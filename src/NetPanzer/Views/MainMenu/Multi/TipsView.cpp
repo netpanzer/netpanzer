@@ -117,6 +117,6 @@ void TipsView::doDraw(Surface &viewArea, Surface &clientArea)
 void TipsView::loadTitleSurface()
 {
 
-} // end HelpView::loadTitleSurface
+}
 
 

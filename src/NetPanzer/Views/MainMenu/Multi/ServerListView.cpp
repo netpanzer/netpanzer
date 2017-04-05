@@ -50,11 +50,12 @@ ServerListView::ServerListView()
     addButtonCenterText(iXY(getClientRect().getSizeX()-80,
                 getClientRect().getSizeY() - Surface::getFontHeight() * 2),
             80, "Refresh", "", buttonRefresh);
-    
+
     // XXX ugly
     serverlistview = this;
 
     lock_image.loadBMP("pics/default/lock.bmp");
+    auth_image.loadBMP("pics/default/auth.bmp");
 }
 
 ServerListView::~ServerListView()
@@ -66,14 +67,14 @@ ServerListView::~ServerListView()
 void
 ServerListView::refresh()
 {
-    if ( queryThread ) { 
+    if ( queryThread ) {
         if (queryThread->isRunning())
             return;
         else
             delete queryThread;
     }
     queryThread = 0;
-    
+
     // don't clear before the delete or after the new, as the thread contains
     // pointers to the serverlist
     for(std::vector<masterserver::ServerInfo*>::iterator i = serverlist.begin();
@@ -91,7 +92,7 @@ ServerListView::refresh()
         screen->unlock();
     screen->copyToVideoFlip(); // XXX uberhack
 
-    queryThread = new masterserver::ServerQueryThread(&serverlist);   
+    queryThread = new masterserver::ServerQueryThread(&serverlist);
 }
 
 void
@@ -113,11 +114,11 @@ void
 ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
 {
     clientArea.fill(Color::black);
-    
+
     if(queryThread && queryThread->isRunning()) {
         queryThread->checkTimeOuts();
     }
-    
+
     if(serverlist.empty()) {
         const char* msg;
         if ( queryThread ) {
@@ -150,12 +151,12 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
 
             std::stringstream pingstr;
             pingstr << server.ping;
-            
+
             std::stringstream servaddr;
             servaddr << server.address << ':' << server.port;
-            
+
             Uint8 textcolor = Color::white;
-            
+
             if (servaddr.str()==IPAddressView::szServer.getString()) {
                 textcolor = Color::yellow;
                 clientArea.fillRect(
@@ -165,10 +166,17 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
 
             char ssn[44];
             SDL_strlcpy(ssn, server.name.c_str(), sizeof(ssn));
-            if ( server.needs_password )
+
+            if ( server.auth_on )
+            {
+                auth_image.blt(clientArea, 0, y);
+            }
+
+            if ( server.needs_password && (server.auth_on == false) )
             {
                 lock_image.blt(clientArea, 0, y);
             }
+
             clientArea.bltString(8,   y, ssn, textcolor);
             clientArea.bltString(350, y, playerstr.str().c_str(), textcolor);
             clientArea.bltString(400, y, server.map.c_str(), textcolor);
@@ -178,7 +186,7 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
 
         y += Surface::getFontHeight();
         if(y >= clientArea.getHeight())
-            break;                             
+            break;
     }
 
     View::doDraw(windowArea, clientArea);
@@ -191,7 +199,7 @@ ServerListView::lMouseUp(const iXY& down_pos, const iXY& up_pos)
         return View::lMouseUp(down_pos, up_pos);
 
     int listpos = down_pos.y / Surface::getFontHeight();
-    if(listpos >= int(serverlist.size()) || 
+    if(listpos >= int(serverlist.size()) ||
             serverlist[listpos]->status != masterserver::ServerInfo::RUNNING)
         return View::lMouseUp(down_pos, up_pos);
 
@@ -205,7 +213,7 @@ ServerListView::lMouseUp(const iXY& down_pos, const iXY& up_pos)
     {
         lv->setNeedPassword(server.needs_password);
     }
-    
+
     return View::lMouseUp(down_pos, up_pos);
 }
 
