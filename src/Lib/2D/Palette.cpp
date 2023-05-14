@@ -292,7 +292,7 @@ void Palette::loadACT(const std::string& newname)
     name = newname;
     std::string filename = "wads/" + name + ".act";
 
-    std::auto_ptr<filesystem::ReadFile> file (filesystem::openRead(filename));
+    std::unique_ptr<filesystem::ReadFile> file (filesystem::openRead(filename));
 
     try {
 	for (int i = 0; i < 256; i++) {

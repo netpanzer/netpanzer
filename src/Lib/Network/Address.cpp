@@ -108,7 +108,7 @@ Address::setPort(unsigned short port)
 
 Address
 Address::resolve(const std::string& name, unsigned short port, bool isTcp, bool forBinding)
-    throw(NetworkException)
+    throw()
 {
     LOGGER.debug("Address:: Resolving '%s':%u", name.c_str(), port);
     Address result(isTcp, forBinding);
