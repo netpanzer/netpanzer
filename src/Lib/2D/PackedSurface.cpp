@@ -199,7 +199,7 @@ void PackedSurface::pack(const Surface &source)
 void PackedSurface::load(const std::string& filename)
 {
     try {
-	std::auto_ptr<filesystem::ReadFile> file(
+	std::unique_ptr<filesystem::ReadFile> file(
                 filesystem::openRead(filename));
     //LOGGER.info("Surface loaded: %s", filename.c_str());
 	free();
@@ -255,7 +255,7 @@ void PackedSurface::load(const std::string& filename)
 void PackedSurface::unload(const std::string& filename)
 {
     try {
-	std::auto_ptr<filesystem::ReadFile> file(
+	std::unique_ptr<filesystem::ReadFile> file(
                 filesystem::openRead(filename));
     //LOGGER.info("Surface loaded: %s", filename.c_str());
 	free();
@@ -276,7 +276,7 @@ void PackedSurface::unload(const std::string& filename)
 void PackedSurface::save(const std::string& filename) const
 {
     try {
-	std::auto_ptr<filesystem::WriteFile> file(
+	std::unique_ptr<filesystem::WriteFile> file(
                 filesystem::openWrite(filename));
 
 	Sint32 version = CURRENT_PAK_VERSION;

@@ -138,6 +138,8 @@ if env['cross'] == 'mingw':
 
 env.Append( LINKFLAGS = [ '-static-libgcc' ] )
 
+env.Append(CCFLAGS = '-std=c++17')
+
 if env['mode'] == 'debug':
     env.Append(CCFLAGS = ['-g', '-O0'])
     #exeappend = '-debug'

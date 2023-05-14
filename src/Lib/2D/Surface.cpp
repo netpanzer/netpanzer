@@ -1494,7 +1494,7 @@ void Surface::loadBMP(const char *fileName, bool needAlloc)
 
     if (needAlloc) free();
 
-    std::auto_ptr<filesystem::ReadFile> file(
+    std::unique_ptr<filesystem::ReadFile> file(
             filesystem::openRead(fileName));
 
     try {

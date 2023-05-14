@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 TipOfDay::TipOfDay(const std::string& filename)
 {
     try {
-        std::auto_ptr<filesystem::ReadFile> file(
+        std::unique_ptr<filesystem::ReadFile> file(
                 filesystem::openRead(filename));
 
         std::string currenttip;

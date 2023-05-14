@@ -201,7 +201,7 @@ int MapSelectionView::loadMaps()
             std::string filename = mapsPath;
             filename += mapfiles[i];
             filename += ".npm";
-	    std::auto_ptr<filesystem::ReadFile> file
+	    std::unique_ptr<filesystem::ReadFile> file
 		(filesystem::openRead(filename));
 
 	    MapFile netPanzerMapHeader;
