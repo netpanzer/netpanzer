@@ -24,13 +24,13 @@ try:
 except:
     pass
 
-print "NPVERSION = " + NPVERSION
-print "SVERSION = " + SVERSION
+print("NPVERSION = " + NPVERSION)
+print("SVERSION = " + SVERSION)
 if NPVERSION == '' and SVERSION != '':
     NPVERSION = 'svn-' + SVERSION;
 
 thisplatform = sys.platform;
-print 'Building version ' + NPVERSION + ' in ' + thisplatform
+print('Building version ' + NPVERSION + ' in ' + thisplatform)
 
 ################################################################
 # Fix compiling with long lines in windows
@@ -46,9 +46,9 @@ class ourSpawn:
         data, err = proc.communicate()
         rv = proc.wait()
         if rv:
-            print "====="
-            print err
-            print "====="
+            print("=====")
+            print(err)
+            print("=====")
         return rv
 
 def SetupSpawn( env ):
@@ -128,7 +128,7 @@ if 'LDFLAGS' in os.environ:
     env.Append(LINKFLAGS = os.environ['LDFLAGS'])
 
 if env['cross'] == 'mingw':
-    print 'configuring for mingw cross compilation'
+    print('configuring for mingw cross compilation')
     env.Tool('crossmingw', toolpath = ['.'])
     env.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
     env.Append( LDFLAGS = [ '-mwindows' ] )
@@ -183,11 +183,11 @@ if thisplatform == 'darwin':
                            '/Library/Frameworks/SDL_mixer.framework/Headers' ] )
     networkenv.Append( CPPPATH = ['/Library/Frameworks/SDL.framework/Headers'] )
     if env['universal'] != 'false':
-		env.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
-		luaenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
-		physfsenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
-		networkenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
-		env.Append( LINKFLAGS = [ '-mmacosx-version-min=10.4', '-arch', 'ppc', '-arch', 'i386' ] )
+        env.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
+        luaenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
+        physfsenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
+        networkenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
+        env.Append( LINKFLAGS = [ '-mmacosx-version-min=10.4', '-arch', 'ppc', '-arch', 'i386' ] )
     else:
         env.Append( CCFLAGS = [ '-arch', 'i386' ] )
         luaenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
