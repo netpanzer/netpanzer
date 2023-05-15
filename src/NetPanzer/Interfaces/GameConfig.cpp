@@ -111,6 +111,7 @@ bool      GameConfig::server_logging = false;
 bool      GameConfig::server_public = true;
 NPString* GameConfig::server_masterservers = 0;
 NPString* GameConfig::server_name = 0;
+bool      GameConfig::server_interactive_console = true;
 NPString* GameConfig::server_authserver = 0;
 bool      GameConfig::server_authentication = false;
 
@@ -309,29 +310,31 @@ static const ScriptVarBindRecord radar_setters[] =
 
 static const ScriptVarBindRecord server_getters[] =
 {
-    { "port",           GETSVTYPE_INT,     &GameConfig::server_port },
-    { "bindaddress",    GETSVTYPE_STRING,  &GameConfig::server_bindaddress },
-    { "motd",           GETSVTYPE_STRING,  &GameConfig::server_motd },
-    { "logging",        GETSVTYPE_BOOLEAN, &GameConfig::server_logging },
-    { "public",         GETSVTYPE_BOOLEAN, &GameConfig::server_public },
-    { "masterservers",  GETSVTYPE_STRING,  &GameConfig::server_masterservers },
-    { "name",           GETSVTYPE_STRING,  &GameConfig::server_name },
-    { "authserver",     GETSVTYPE_STRING,  &GameConfig::server_authserver },
-    { "authentication", GETSVTYPE_BOOLEAN,  &GameConfig::server_authentication },
+    { "port",                       GETSVTYPE_INT,     &GameConfig::server_port },
+    { "bindaddress",                GETSVTYPE_STRING,  &GameConfig::server_bindaddress },
+    { "motd",                       GETSVTYPE_STRING,  &GameConfig::server_motd },
+    { "logging",                    GETSVTYPE_BOOLEAN, &GameConfig::server_logging },
+    { "public",                     GETSVTYPE_BOOLEAN, &GameConfig::server_public },
+    { "masterservers",              GETSVTYPE_STRING,  &GameConfig::server_masterservers },
+    { "name",                       GETSVTYPE_STRING,  &GameConfig::server_name },
+    { "interactive_console",        GETSVTYPE_BOOLEAN, &GameConfig::server_interactive_console },
+    { "authserver",                 GETSVTYPE_STRING,  &GameConfig::server_authserver },
+    { "authentication",             GETSVTYPE_BOOLEAN, &GameConfig::server_authentication },
     {0,0}
 };
 
 static const ScriptVarBindRecord server_setters[] =
 {
-    { "port",           SETSVTYPE_INT,     &GameConfig::server_port },
-    { "bindaddress",    SETSVTYPE_STRING,  &GameConfig::server_bindaddress },
-    { "motd",           SETSVTYPE_STRING,  &GameConfig::server_motd },
-    { "logging",        SETSVTYPE_BOOLEAN, &GameConfig::server_logging },
-    { "public",         SETSVTYPE_BOOLEAN, &GameConfig::server_public },
-    { "masterservers",  SETSVTYPE_STRING,  &GameConfig::server_masterservers },
-    { "name",           SETSVTYPE_STRING,  &GameConfig::server_name },
-    { "authserver",     SETSVTYPE_STRING,  &GameConfig::server_authserver },
-    { "authentication", SETSVTYPE_BOOLEAN,  &GameConfig::server_authentication },
+    { "port",                SETSVTYPE_INT,     &GameConfig::server_port },
+    { "bindaddress",         SETSVTYPE_STRING,  &GameConfig::server_bindaddress },
+    { "motd",                SETSVTYPE_STRING,  &GameConfig::server_motd },
+    { "logging",             SETSVTYPE_BOOLEAN, &GameConfig::server_logging },
+    { "public",              SETSVTYPE_BOOLEAN, &GameConfig::server_public },
+    { "masterservers",       SETSVTYPE_STRING,  &GameConfig::server_masterservers },
+    { "name",                SETSVTYPE_STRING,  &GameConfig::server_name },
+    { "interactive_console", SETSVTYPE_BOOLEAN, &GameConfig::server_interactive_console },
+    { "authserver",          SETSVTYPE_STRING,  &GameConfig::server_authserver },
+    { "authentication",      SETSVTYPE_BOOLEAN, &GameConfig::server_authentication },
     {0,0}
 };
 

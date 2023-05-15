@@ -129,10 +129,10 @@ void ServerConsole::run()
         std::cout << "netpanzer-server: ";
 
         if (fgets(buf, sizeof(buf), stdin) != NULL) {
-        // eleminated \n at the end
-        buf[strlen(buf)-1] = '\0';
+            // eliminated \n at the end
+            buf[strlen(buf)-1] = '\0';
 
-        executeCommand(buf);
+            executeCommand(buf);
         }
     }
 }

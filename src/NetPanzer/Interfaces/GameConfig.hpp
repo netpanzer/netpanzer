@@ -188,6 +188,7 @@ public:
     static bool      server_public;
     static NPString* server_masterservers;
     static NPString* server_name;
+    static bool      server_interactive_console;
     static NPString* server_authserver;
     static bool      server_authentication;
 

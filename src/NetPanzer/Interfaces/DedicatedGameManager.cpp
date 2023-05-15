@@ -420,8 +420,10 @@ bool DedicatedGameManager::launchNetPanzerGame()
 
     *Console::server << "game started." << std::endl;
 
-    console = new ServerConsole(this);
-    console->startThread();
+    if (GameConfig::server_interactive_console) { // we may not always want the interactive console
+        console = new ServerConsole(this);
+        console->startThread();
+    }
 
     GameManager::startGameTimer();
     return true;
