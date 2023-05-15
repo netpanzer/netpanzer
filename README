@@ -320,7 +320,7 @@ Note: not ALL the entries in server.cfg are related to the server, only those ta
 
 	
 
-	server.masterservers = "masterserver.netpanzer.org, masterserver2.netpanzer.org, masterserver.netpanzer.info, netpanzer.io"
+	server.masterservers = "masterserver.netpanzer.info, netpanzer.io"
 
 	don't change these addresses unless you've been told to do so in our forum
 
