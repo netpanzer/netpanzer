@@ -169,7 +169,6 @@ public:
     static NPString* game_units_styles;
 
     static Uint8 player_flag_data[FLAG_WIDTH*FLAG_HEIGHT];
-    static Uint8 bot_flag_data[FLAG_WIDTH*FLAG_HEIGHT];
 
     // game Settings (they are not saved to disk)
     ConfigInt       hostorjoin;         // 1=host, 2=join

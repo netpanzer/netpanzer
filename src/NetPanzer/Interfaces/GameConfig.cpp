@@ -124,8 +124,6 @@ NPString* GameConfig::player_name = 0;
 
 Uint8 GameConfig::player_flag_data[FLAG_WIDTH*FLAG_HEIGHT] = {0};
 
-Uint8 GameConfig::bot_flag_data[FLAG_WIDTH*FLAG_HEIGHT] = {51};
-
 #define WRITE_BOOL(v) ((v)?"true":"false")
 
 // This generates the tables needed for script binding
