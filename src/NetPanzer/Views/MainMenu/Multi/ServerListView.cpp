@@ -110,6 +110,23 @@ ServerListView::buttonRefresh()
     serverlistview->refresh();
 }
 
+masterserver::ServerList
+ServerListView::getViewModel()
+{
+    masterserver::ServerList filteredList;
+    for (masterserver::ServerInfo* serverInfoPtr : serverlist) {
+        if (serverInfoPtr->protocol < NETPANZER_PROTOCOL_VERSION) {
+            // skipped
+            // We want to incentivize players to upgrade.
+            // But we don't want to punish players for running a newer version by cluttering the server list.
+            // So if server is too old - just ignore it.
+        } else {
+            filteredList.push_back(serverInfoPtr);
+        }
+    }
+    return filteredList;
+}
+
 void
 ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
 {
@@ -119,7 +136,9 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
         queryThread->checkTimeOuts();
     }
 
-    if(serverlist.empty()) {
+    masterserver::ServerList viewModel = getViewModel();
+
+    if(viewModel.empty()) {
         const char* msg;
         if ( queryThread ) {
             msg = queryThread->getStateMessage();
@@ -132,9 +151,8 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
     }
 
     unsigned int y = 0;
-    for(std::vector<masterserver::ServerInfo*>::iterator i = serverlist.begin();
-            i != serverlist.end(); ++i) {
-        const masterserver::ServerInfo& server = *(*i);
+    for(masterserver::ServerInfo* serverPtr : viewModel) {
+        const masterserver::ServerInfo& server = *serverPtr;
 
         if(server.status == masterserver::ServerInfo::QUERYING) {
             clientArea.bltString(0,   y, server.address.c_str(), Color::gray);
@@ -195,15 +213,18 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
 int
 ServerListView::lMouseUp(const iXY& down_pos, const iXY& up_pos)
 {
-    if(down_pos.x < 0 || down_pos.y < 0 || up_pos.x < 0 || up_pos.y < 0)
+    if(down_pos.x < 0 || down_pos.y < 0 || up_pos.x < 0 || up_pos.y < 0) {
         return View::lMouseUp(down_pos, up_pos);
+    }
 
     int listpos = down_pos.y / Surface::getFontHeight();
-    if(listpos >= int(serverlist.size()) ||
-            serverlist[listpos]->status != masterserver::ServerInfo::RUNNING)
+    masterserver::ServerList viewModel = getViewModel();
+    if(listpos >= int(viewModel.size()) ||
+            viewModel[listpos]->status != masterserver::ServerInfo::RUNNING) {
         return View::lMouseUp(down_pos, up_pos);
+    }
 
-    const masterserver::ServerInfo& server = *(serverlist[listpos]);
+    const masterserver::ServerInfo& server = *(viewModel[listpos]);
     std::stringstream addr;
     addr << server.address << ':' << server.port;
     IPAddressView::szServer.setString(addr.str());

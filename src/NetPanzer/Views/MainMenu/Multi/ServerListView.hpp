@@ -31,6 +31,7 @@ public:
 
     void refresh();
     void endQuery();
+    masterserver::ServerList getViewModel();
 
     virtual void doDraw(Surface& windowArea, Surface& clientArea);
     virtual int lMouseUp(const iXY& up_pos, const iXY& down_pos);
