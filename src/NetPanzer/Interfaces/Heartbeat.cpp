@@ -51,7 +51,7 @@ Heartbeat::Heartbeat() : nextHeartbeat(HEARTBEAT_INTERVAL)
         try {
             Address addr = Address::resolve(servname, MASTERSERVER_PORT, true, false);
             mslist.push_back(addr);
-        } catch (runtime_error e) {
+        } catch (NetworkException& e) {
             LOGGER.warning("Bad masterserver address: %s", e.what());
         }
     }
@@ -114,7 +114,7 @@ Heartbeat::startHeartbeat()
             msi = new MasterserverInfo();
             msi->timer.reset(now);
             masterservers[s]=msi;
-        } catch (NetworkException e) {
+        } catch (NetworkException& e) {
             LOGGER.warning("Error '%s' connecting to masterserver '%s'", e.what(), (*iter).getIP().c_str());
             if (msi)
                 delete msi;

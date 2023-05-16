@@ -28,7 +28,7 @@ protected:
     std::string errormsg;
 public:
     NetworkException(const std::string& s) : errormsg(s) {};
-    virtual ~NetworkException() throw() {};
+    virtual ~NetworkException() {};
     virtual const char * what() const throw() { return errormsg.c_str(); };
 };
 

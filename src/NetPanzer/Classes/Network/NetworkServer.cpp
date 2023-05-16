@@ -173,7 +173,7 @@ NetworkServer::sendMessage(const PlayerID player_index, NetMessage* message,
                 NetworkState::incPacketsSent(size);
                 return; // premature exit
             }
-            catch (NetworkException e)
+            catch (NetworkException& e)
             {
                 LOGGER.warning ("Network send error when sending to player %d: %s",
                        player_index, e.what() );

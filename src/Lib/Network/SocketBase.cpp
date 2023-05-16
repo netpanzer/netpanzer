@@ -55,7 +55,6 @@ SocketBase::SocketBase()
 }
 
 SocketBase::SocketBase(const Address &a, bool isTcp)
-    throw()
     : addr(a)
 {
     state = RESOLVED;
@@ -66,7 +65,6 @@ SocketBase::SocketBase(const Address &a, bool isTcp)
 }
 
 SocketBase::SocketBase(SOCKET fd, const Address &a)
-    throw()
     : sockfd(fd), addr(a)
 {
     state = CONNECTED;
@@ -93,7 +91,7 @@ SocketBase::setAddress(const Address &a)
 }
 
 void
-SocketBase::create () throw()
+SocketBase::create ()
 {
     if ( state == RESOLVED )
     {
@@ -117,7 +115,7 @@ SocketBase::create () throw()
 }
 
 void
-SocketBase::setNonBlocking() throw()
+SocketBase::setNonBlocking()
 {
     if ( state >= CREATED )
     {
@@ -143,7 +141,7 @@ SocketBase::setNonBlocking() throw()
 }
 
 void
-SocketBase::bindSocketTo(const Address& toaddr) throw()
+SocketBase::bindSocketTo(const Address& toaddr)
 {
     if ( state == CONFIGURED )
     {
@@ -167,7 +165,7 @@ SocketBase::bindSocketTo(const Address& toaddr) throw()
 }
 
 void
-SocketBase::setReuseAddr() throw()
+SocketBase::setReuseAddr()
 {
     if ( state == CONFIGURED )
     {
@@ -188,7 +186,7 @@ SocketBase::setReuseAddr() throw()
 }
 
 void
-SocketBase::setNoDelay() throw()
+SocketBase::setNoDelay()
 {
 #ifdef _WIN32
     if ( state >= CONFIGURED ) //  && state < LISTENING
@@ -214,7 +212,7 @@ SocketBase::setNoDelay() throw()
 }
 
 void
-SocketBase::doListen() throw()
+SocketBase::doListen()
 {
     if ( state == BOUND )
     {
@@ -235,7 +233,7 @@ SocketBase::doListen() throw()
 }
 
 void
-SocketBase::doConnect() throw()
+SocketBase::doConnect()
 {
     if ( state == CONFIGURED )
     {
@@ -262,7 +260,7 @@ SocketBase::doConnect() throw()
 }
 
 int
-SocketBase::doSend(const void* data, size_t len) throw()
+SocketBase::doSend(const void* data, size_t len)
 {
     if ( state == CONNECTED )
     {
@@ -292,7 +290,7 @@ SocketBase::doSend(const void* data, size_t len) throw()
 }
 
 int
-SocketBase::doReceive(void* buffer, size_t len) throw()
+SocketBase::doReceive(void* buffer, size_t len)
 {
     if ( state == CONNECTED )
     {
@@ -327,7 +325,7 @@ SocketBase::doReceive(void* buffer, size_t len) throw()
 }
 
 int
-SocketBase::doSendTo(const Address& toaddr, const void* data, size_t len) throw()
+SocketBase::doSendTo(const Address& toaddr, const void* data, size_t len)
 {
     if ( state == BOUND )
     {
@@ -353,7 +351,7 @@ SocketBase::doSendTo(const Address& toaddr, const void* data, size_t len) throw(
 }
 
 size_t
-SocketBase::doReceiveFrom(Address& fromaddr, void* buffer, size_t len) throw()
+SocketBase::doReceiveFrom(Address& fromaddr, void* buffer, size_t len)
 {
     if ( state == BOUND || state == CONNECTED )
     {
@@ -381,7 +379,7 @@ SocketBase::doReceiveFrom(Address& fromaddr, void* buffer, size_t len) throw()
 }
 
 SOCKET
-SocketBase::doAccept(Address& fromaddr) throw()
+SocketBase::doAccept(Address& fromaddr)
 {
     if ( state == LISTENING )
     {

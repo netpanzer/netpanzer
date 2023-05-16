@@ -45,8 +45,8 @@ protected:
     virtual ~SocketBase();
     
     SocketBase();
-    SocketBase(const Address &a, bool isTcp) throw();
-    SocketBase(SOCKET fd, const Address &a) throw();
+    SocketBase(const Address &a, bool isTcp);
+    SocketBase(SOCKET fd, const Address &a);
         
     virtual void onDataReady() = 0;
     virtual void onDisconected() {}
@@ -57,24 +57,24 @@ protected:
     
     void setAddress(const Address &a);
 
-    void setReuseAddr() throw();
-    void setNoDelay() throw();
+    void setReuseAddr();
+    void setNoDelay();
     void doClose();
     
-    void bindSocketTo(const Address& toaddr) throw();
-    void bindSocket() throw() { bindSocketTo(addr); };
-    void doListen() throw();
-    void doConnect() throw();
-    int  doSend(const void* data, size_t len) throw();
-    int  doReceive(void* buffer, size_t len) throw();
-    int  doSendTo(const Address& toaddr, const void* data, size_t len) throw();
-    size_t  doReceiveFrom(Address& fromaddr, void* buffer, size_t len) throw();
-    SOCKET doAccept(Address& fromaddr) throw();
+    void bindSocketTo(const Address& toaddr);
+    void bindSocket() { bindSocketTo(addr); };
+    void doListen();
+    void doConnect();
+    int  doSend(const void* data, size_t len);
+    int  doReceive(void* buffer, size_t len);
+    int  doSendTo(const Address& toaddr, const void* data, size_t len);
+    size_t  doReceiveFrom(Address& fromaddr, void* buffer, size_t len);
+    SOCKET doAccept(Address& fromaddr);
     
     void setConfigured() { state = CONFIGURED; }
 
-    void create() throw();
-    void setNonBlocking() throw();
+    void create();
+    void setNonBlocking();
 private:
 
     enum {
