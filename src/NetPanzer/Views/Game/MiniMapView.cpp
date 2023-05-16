@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 #include "MiniMapView.hpp"
+#include "Classes/WorldInputCmdProcessor.hpp"
 #include "Views/Components/MiniMap.hpp"
 
 // MiniMapView
@@ -56,6 +57,14 @@ void
 MiniMapView::checkResolution(iXY oldResolution, iXY newResolution)
 {
     moveTo(iXY(0,newResolution.y-160)); //160
+}
+
+void
+MiniMapView::processEvents()
+{
+    // We want to be able to move the map via keyboard even if mouse is in minimap. Anything else is annoying.
+    // We skip mouse event processing because then the cursor could change based on the map behind the mini map.
+    COMMAND_PROCESSOR.process(false);
 }
 
 // doDraw

@@ -38,6 +38,7 @@ public:
 
 protected:
     void checkResolution(iXY oldResolution, iXY newResolution);
+    virtual void processEvents();
 
 private:
 }; // end MiniMapView
