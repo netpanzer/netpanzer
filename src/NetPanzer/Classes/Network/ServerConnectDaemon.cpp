@@ -305,7 +305,7 @@ public:
             player->setName( client_setting->player_name );
 
             if (client_setting->getNStatus() != nss) {
-            LOGGER.warning("Client contradicts itself!!!!");
+                LOGGER.warning("Client contradicts itself!!!!");
             }
             player->setClientType(nss);
             //temp style

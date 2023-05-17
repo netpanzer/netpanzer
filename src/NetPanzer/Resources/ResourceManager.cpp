@@ -28,13 +28,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 using namespace std;
 
 #define DEFAULT_FLAGS_PATH "pics/flags/"
+#define MAX_FLAGS 256
 
 class _RMan
 {
 public:
     _RMan()
     {
-        for (int n = 0; n < 256; n++)
+        for (int n = 0; n < MAX_FLAGS; n++)
         {
             flagList[n]=new Surface(20,14,1);
             flagList[n]->fill(0);
@@ -46,7 +47,7 @@ public:
     {
         if ( flagList )
         {
-            for (int n = 0; n < 256; n++)
+            for (int n = 0; n < MAX_FLAGS; n++)
             {
                 delete flagList[n];
                 flagList[n] = 0;
@@ -55,8 +56,8 @@ public:
         }
     }
     
-    Surface * flagList[256];
-    unsigned char flagUsedCount[256];
+    Surface * flagList[MAX_FLAGS];
+    unsigned char flagUsedCount[MAX_FLAGS];
 };
 
 _RMan *RMan = 0;
@@ -111,7 +112,6 @@ ResourceManager::loadAllFlags(Surface& flags, vector<string>& names)
         tmpflags.loadBMP((path+names[i]).c_str(), false);
         tmpflags.blt(flags, 0, 0);
     }
-    
     return names.size();
 }
 

@@ -546,6 +546,8 @@ void GameConfig::loadConfig()
     {
         game_mapcycle->assign("Two clans");
     }
+
+    // TODO throw if max_players > 255 players (player id is int8)
 }
 
 void GameConfig::saveConfig()

@@ -253,29 +253,21 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(const NetMessage *mess
                 }
 
             }
-            //
 
-
-
-
-
-
-            // temp disabled let the server provide a flag...
-
+            // give bots a random flag.
+            // it would be good to let the server provide a flag instead since it knows which flags are taken...
             if (NetworkState::status == _network_state_bot) {
-
+                Surface game_flags;
+                std::vector<string> flag_names;
+                ResourceManager::loadAllFlags(game_flags, flag_names);
+                game_flags.setFrame(rand() % flag_names.size());
                 UpdatePlayerFlag upf;
-                Uint8 cnupf[280];
-                for (int i = 0; i < 280; i++) {
-                    cnupf[i] = 51;
-                }
-                memcpy(&upf.player_flag, cnupf, 280);
+                memcpy(&upf.player_flag, game_flags.getMem(), FLAG_WIDTH*FLAG_HEIGHT);
                 CLIENT->sendMessage(&upf, sizeof(upf));
             }
 
-
         }
-            break;
+        break;
     }
 }
 
