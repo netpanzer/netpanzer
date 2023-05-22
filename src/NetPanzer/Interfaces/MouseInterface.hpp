@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <map>
 #include <deque>
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 #include "2D/Surface.hpp"
 #include "Util/NTimer.hpp"
 
@@ -63,8 +63,6 @@ public:
         left_button   = SDL_BUTTON_LEFT,
         middle_button = SDL_BUTTON_MIDDLE,
         right_button  = SDL_BUTTON_RIGHT,
-        wheel_up      = SDL_BUTTON_WHEELUP,
-        wheel_down    = SDL_BUTTON_WHEELDOWN
     };
     
     enum {

@@ -35,7 +35,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <time.h>
 #include <ctype.h>
 #include <signal.h>
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 #include <optionmm/command_line.hpp>
 #include "Util/Exception.hpp"
@@ -206,7 +206,6 @@ BaseGameManager *initialise(int argc, char** argv)
         fprintf(stderr, "SDL_Init error: %s.\n", SDL_GetError());
         exit(1);
     }
-    SDL_EnableUNICODE(1);
 
     // Initialize libphysfs
     try {

@@ -43,10 +43,10 @@ building it. Here's a list of them:
 * SCons build tool
   http://www.scons.org/
 
-* SDL 1.2.5 or later
+* SDL 2
   http://www.libsdl.org
 
-* SDL_mixer 1.2.4 or later
+* SDL_mixer 2
   http://www.libsdl.org/projects/SDL_mixer/
 
 * Git (to fetch the source from repository)

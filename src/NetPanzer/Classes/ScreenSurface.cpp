@@ -40,20 +40,13 @@ void ScreenSurface::lock()
 {
     // XXX HERE HERE 
     assert(doesExist == false);
-    draw->lockDoubleBuffer( (unsigned char **) &frame0 );
     mem = frame0;
     tpitch = draw->getSurface()->pitch;
     doesExist = true;
 }
 
-void ScreenSurface::unlock() 
+void ScreenSurface::unlock()
 {
     assert(doesExist == true);
-    draw->unlockDoubleBuffer();
     doesExist = false;
-}
-
-void ScreenSurface::copyToVideoFlip()
-{
-    draw->copyDoubleBufferandFlip();
 }

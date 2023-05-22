@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __ENDIAN_HPP__
 #define __ENDIAN_HPP__
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 static inline Uint16 __swap16(Uint16 val)
 {

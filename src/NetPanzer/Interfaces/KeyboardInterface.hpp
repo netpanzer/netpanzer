@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _KEYBOARDINTERFACE_HPP
 #define _KEYBOARDINTERFACE_HPP
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 #include "Util/Log.hpp"
 #include <string.h>
 
@@ -28,8 +28,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class KeyboardInterface
 {
 protected:
-    static bool key_table[SDLK_LAST];
-    static bool previous_key_state[SDLK_LAST];
+    static bool key_table[SDL_NUM_SCANCODES];
+    static bool previous_key_state[SDL_NUM_SCANCODES];
     static bool textmode;
     static int char_buffer[ _CHAR_BUFFER_SIZE ];
     static unsigned long char_buffer_front;

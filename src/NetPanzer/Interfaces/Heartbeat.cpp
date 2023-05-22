@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string>
 #include <sstream>
 #include <stdexcept>
-#include "SDL.h"
+#include <SDL2/SDL.h>
 #include "Heartbeat.hpp"
 #include "Core/NetworkGlobals.hpp"
 #include "Interfaces/GameConfig.hpp"

@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PLAYERINTERFACE_HPP
 #define _PLAYERINTERFACE_HPP
 
-#include <SDL_thread.h>
+#include <SDL2/SDL_thread.h>
 #include "Core/CoreTypes.hpp"
 #include "Classes/PlayerState.hpp"
 #include "Units/UnitInterface.hpp"

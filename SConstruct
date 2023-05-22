@@ -181,9 +181,9 @@ env.Append( CPPPATH = [ 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/l
 
 # for this platform
 if thisplatform == 'darwin':
-    env.Append( CPPPATH = ['/Library/Frameworks/SDL.framework/Headers',
-                           '/Library/Frameworks/SDL_mixer.framework/Headers' ] )
-    networkenv.Append( CPPPATH = ['/Library/Frameworks/SDL.framework/Headers'] )
+    env.Append( CPPPATH = ['/Library/Frameworks/SDL2.framework/Headers',
+                           '/Library/Frameworks/SDL2_mixer.framework/Headers' ] )
+    networkenv.Append( CPPPATH = ['/Library/Frameworks/SDL2.framework/Headers'] )
     if env['universal'] != 'false':
         env.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
         luaenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
@@ -196,18 +196,18 @@ if thisplatform == 'darwin':
         physfsenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
         networkenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
         env.Append( LINKFLAGS = [ '-arch', 'i386' ] )
-    env.AppendUnique(FRAMEWORKS=Split('SDL SDL_mixer Cocoa IOKit'))
+    env.AppendUnique(FRAMEWORKS=Split('SDL2 SDL2_mixer Cocoa IOKit'))
     env.Append( NPSOURCES =  ['support/macosx/SDLMain.m'] )
 elif thisplatform == 'win32':
 
-    env.Append( CPPPATH = [ 'C:/MinGW/include/SDL' ] )
-    networkenv.Append( CPPPATH = [ 'C:/MinGW/include/SDL' ] )
+    env.Append( CPPPATH = [ 'C:/MinGW/include/SDL2' ] )
+    networkenv.Append( CPPPATH = [ 'C:/MinGW/include/SDL2' ] )
     #env.Append( LIBPATH = [ 'C:/MinGW/lib' ] )
-    env.Append( LIBS = [ 'ws2_32', 'mingw32', 'SDLMain', 'SDL' ] )
+    env.Append( LIBS = [ 'ws2_32', 'mingw32', 'SDLMain', 'SDL2' ] )
     env.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
     networkenv.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
     env.Append( _LIBFLAGS = [ '-mwindows' ] )
-    env.Prepend( _LIBFLAGS = [ 'C:/MinGW/lib/SDL_mixer.lib' ] )
+    env.Prepend( _LIBFLAGS = [ 'C:/MinGW/lib/SDL2_mixer.lib' ] )
     env['WINICON'] = env.RES( 'support/icon/npicon.rc' )
     SetupSpawn(env)
 else:
@@ -215,7 +215,7 @@ else:
     env.ParseConfig(env['sdlconfig'] + ' --cflags --libs')
     # note: for some magic reason, now doesn't need to put the full path for
     # SDL_mixer when using mingw crosscompilation
-    env.Append( LIBS = ['SDL_mixer' ] )
+    env.Append( LIBS = ['SDL2', 'SDL2_mixer' ] )
 
 ################################################################
 # Makes libs

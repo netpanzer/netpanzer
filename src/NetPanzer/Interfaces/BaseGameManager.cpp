@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "BaseGameManager.hpp"
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 // ** PObject netPanzer Network Includes
 #include "Classes/Network/ClientMessageRouter.hpp"

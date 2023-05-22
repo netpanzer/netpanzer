@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 #include <string>
 #include <map>
-#include <SDL_thread.h>
+#include <SDL2/SDL_thread.h>
 #include "Network/TCPSocket.hpp"
 #include "Network/UDPSocket.hpp"
 #include "Network/Address.hpp"

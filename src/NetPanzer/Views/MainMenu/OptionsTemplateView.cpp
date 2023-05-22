@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "System/Sound.hpp"
 #include "System/SDLSound.hpp"
 #include "System/DummySound.hpp"
+#include "Util/Exception.hpp"
 
 class Separator:public Component
 {
@@ -147,6 +148,31 @@ OptionsTemplateView::OptionsTemplateView() : MenuTemplateView()
 
 } // end OptionsTemplateView::OptionsTemplateView
 
+std::vector<SDL_DisplayMode> getUsableDisplayModes()
+{
+    std::vector<SDL_DisplayMode> results;
+    static int display_id = 0;
+    int display_mode_count = SDL_GetNumDisplayModes(display_id);
+    if (display_mode_count < 1) {
+        throw Exception("SDL_GetNumDisplayModes failed: %s", SDL_GetError());
+    }
+    for (int i = 0; i < display_mode_count; i++) {
+        SDL_DisplayMode mode;
+        if (SDL_GetDisplayMode(display_id, i, &mode) != 0) {
+            throw Exception("SDL_GetDisplayMode failed: %s", SDL_GetError());
+        }
+
+        if (mode.w > 799 && mode.h > 599) {
+            results.push_back(mode);
+        }
+
+//        SDL_Log("Mode %i\tbpp %i\t%s\t%i x %i",
+//                i, SDL_BITSPERPIXEL(mode.format),
+//                SDL_GetPixelFormatName(mode.format),
+//                mode.w, mode.h);
+    }
+    return results;
+}
 
 // initButtons
 //---------------------------------------------------------------------------
@@ -185,24 +211,13 @@ void OptionsTemplateView::initButtons()
     add(checkBoxDrawAllShadows);
 
     x = xTextStart;
-    char res_str[20];
     choiceResolution = new Choice();
     choiceResolution->setName("Resolution");
     choiceResolution->addItem("current");
-    SDL_Rect** modes = SDL_ListModes(0, SDL_FULLSCREEN);
-    int cur_mode = 0;
-    if ( modes && modes != (SDL_Rect**)-1 )
-    {
-        while ( modes[cur_mode] )
-        {
-            if ((modes[cur_mode]->w > 799) && (modes[cur_mode]->h > 599) )
-            {
-                snprintf(res_str,sizeof(res_str),"%dx%d", modes[cur_mode]->w, modes[cur_mode]->h);
-                res_str[sizeof(res_str)-1] = 0;
-                choiceResolution->addItem(res_str);
-            }
-            ++cur_mode;
-        }
+
+    std::vector<SDL_DisplayMode> displayModes = getUsableDisplayModes();
+    for (SDL_DisplayMode mode : displayModes) {
+        choiceResolution->addItem(mode.w + "x" + mode.h);
     }
 
     choiceResolution->setLocation(x, y-3);
@@ -380,24 +395,18 @@ void OptionsTemplateView::stateChanged(Component* source)
             return;
         }
 
-        SDL_Rect** modes = SDL_ListModes(0, SDL_FULLSCREEN);
-        SDL_Rect* mode = 0;
-        if ( modes && modes != (SDL_Rect**)-1 )
-        {
-            mode = modes[sel_index];
-        }
+        std::vector<SDL_DisplayMode> displayModes = getUsableDisplayModes();
+        SDL_DisplayMode mode = displayModes[sel_index];
 
-        if ( mode )
-        {
-            GameConfig::video_width = mode->w;
-            GameConfig::video_height = mode->h;
-        }
+        GameConfig::video_width = mode.w;
+        GameConfig::video_height = mode.h;
 
         if ( sel_index == 0 && ! GameConfig::video_fullscreen )
         {
             // on Mac crash if we are in window and we select the biggest
             // resolution (the first one in theory), we make it smaller so it
             // wont crash, it is a SDL error.
+            // TODO test w/ SDL2
             GameConfig::video_height -= 50;
         }
 
