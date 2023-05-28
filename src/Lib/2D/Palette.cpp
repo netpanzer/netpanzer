@@ -295,13 +295,13 @@ void Palette::loadACT(const std::string& newname)
     std::unique_ptr<filesystem::ReadFile> file (filesystem::openRead(filename));
 
     try {
-	for (int i = 0; i < 256; i++) {
-	    file->read(&color[i], 3, 1);
-	    originalColor[i] = color[i];
-	}
+        for (int i = 0; i < 256; i++) {
+            file->read(&color[i], 3, 1);
+            originalColor[i] = color[i];
+        }
     } catch(std::exception& e) {
-	throw Exception("Error while reading Palette '%s': %s",
-		filename.c_str(), e.what());
+        throw Exception("Error while reading Palette '%s': %s",
+            filename.c_str(), e.what());
     }
 } // end Palette::loadACT
 
