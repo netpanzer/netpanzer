@@ -91,7 +91,7 @@ ServerListView::refresh()
     if (mylock) {
         screen->unlock();
     }
-    // TODO render?
+    screen->render();
     queryThread = new masterserver::ServerQueryThread(&serverlist);
 }
 

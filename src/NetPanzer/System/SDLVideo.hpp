@@ -28,6 +28,7 @@ private:
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Surface* surface;
+    SDL_Texture* texture;
 
 public:
     SDLVideo();
@@ -36,6 +37,7 @@ public:
     void setVideoMode(int width, int height, int bpp, bool fullscreen);
     void setPalette(SDL_Color *color);
     SDL_Surface* getSurface();
+    void render();
     void doScreenshot();
 }; // end DirectDraw
 

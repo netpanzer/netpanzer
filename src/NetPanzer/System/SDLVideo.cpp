@@ -67,6 +67,9 @@ SDLVideo::~SDLVideo()
     if (surface) {
         SDL_FreeSurface(surface);
     }
+    if (texture) {
+        SDL_DestroyTexture(texture);
+    }
 
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
@@ -110,6 +113,12 @@ void SDLVideo::setVideoMode(int new_width, int new_height, int bpp, bool fullscr
         throw Exception("Couldn't create surface %s", SDL_GetError());
     }
 
+//    texture = SDL_CreateTextureFromSurface(renderer, surface);
+//
+//    if (texture == NULL) {
+//        throw Exception("Couldn't create texture %s", SDL_GetError());
+//    }
+
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");  // make the scaled rendering look smoother.
     SDL_RenderSetLogicalSize(renderer, new_width, new_height);
 
@@ -124,6 +133,13 @@ void SDLVideo::setPalette(SDL_Color *color)
 
 SDL_Surface* SDLVideo::getSurface() {
     return surface;
+}
+
+void SDLVideo::render()
+{
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    SDL_RenderPresent(renderer);
 }
 
 void SDLVideo::doScreenshot()

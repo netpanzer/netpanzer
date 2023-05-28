@@ -51,3 +51,7 @@ void ScreenSurface::unlock()
     assert(doesExist == true);
     doesExist = false;
 }
+
+void ScreenSurface::render() {
+    draw->render();
+}

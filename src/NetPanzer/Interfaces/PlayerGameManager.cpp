@@ -254,7 +254,7 @@ void PlayerGameManager::graphicsLoop()
     MouseInterface::draw(*screen);
 
     screen->unlock();
-    // TODO render?
+    screen->render();
 }
 //-----------------------------------------------------------------
 bool PlayerGameManager::launchNetPanzerGame()

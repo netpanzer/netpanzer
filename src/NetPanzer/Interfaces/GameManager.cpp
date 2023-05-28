@@ -140,7 +140,7 @@ void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
     text.blt(*screen,x,y);
 
     screen->unlock();
-    // TODO render?
+    screen->render();
 }
 
 // ******************************************************************

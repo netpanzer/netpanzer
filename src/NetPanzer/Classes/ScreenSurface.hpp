@@ -31,7 +31,7 @@ public:
 
     void lock();
     void unlock();
-    void copyToVideoFlip();
+    void render();
 
 private:
     SDLVideo* draw;
