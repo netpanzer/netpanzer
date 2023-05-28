@@ -130,16 +130,17 @@ static Surface hostLoadSurface;
 
 void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
 {
-        Surface text;
-        text.renderText(string, color, 0);
-        screen->lock();
+    Surface text;
+    text.renderText(string, color, 0);
+    screen->lock();
 
-        screen->fill(0);
-        int x = (screen->getWidth() / 2) - (text.getWidth() / 2);
-        int y = (screen->getHeight() / 2) - (text.getHeight() / 2);
-        text.blt(*screen,x,y);
+    screen->fill(0);
+    int x = (screen->getWidth() / 2) - (text.getWidth() / 2);
+    int y = (screen->getHeight() / 2) - (text.getHeight() / 2);
+    text.blt(*screen,x,y);
 
-        // TODO render?
+    screen->unlock();
+    // TODO render?
 }
 
 // ******************************************************************
@@ -156,7 +157,6 @@ void GameManager::loadPalette(const std::string& palette_name)
 
 void GameManager::setVideoMode()
 {
-    // construct flags
     iXY mode_res;
     iXY old_res = screen ? iXY(screen->getWidth(), screen->getHeight()): iXY(0,0);
 

@@ -40,6 +40,7 @@ void ScreenSurface::lock()
 {
     // XXX HERE HERE 
     assert(doesExist == false);
+    frame0 = (PIX*) draw->getSurface()->pixels;
     mem = frame0;
     tpitch = draw->getSurface()->pitch;
     doesExist = true;

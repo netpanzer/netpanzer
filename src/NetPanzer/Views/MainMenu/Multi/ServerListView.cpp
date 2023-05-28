@@ -88,7 +88,10 @@ ServerListView::refresh()
         mylock = true;
     }
     Desktop::draw(*screen); // XXX ultrahack
-
+    if (mylock) {
+        screen->unlock();
+    }
+    // TODO render?
     queryThread = new masterserver::ServerQueryThread(&serverlist);
 }
 

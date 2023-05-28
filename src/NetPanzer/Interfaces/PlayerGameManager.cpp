@@ -253,6 +253,7 @@ void PlayerGameManager::graphicsLoop()
 
     MouseInterface::draw(*screen);
 
+    screen->unlock();
     // TODO render?
 }
 //-----------------------------------------------------------------
