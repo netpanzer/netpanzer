@@ -104,7 +104,7 @@ void SDLVideo::setVideoMode(int new_width, int new_height, int bpp, bool fullscr
         throw Exception("Couldn't create renderer %s", SDL_GetError());
     }
 
-    surface = SDL_CreateRGBSurface(SDL_SWSURFACE, new_width, new_height, 8, 0, 0, 0, 0);
+    surface = SDL_CreateRGBSurfaceWithFormat(0, new_width, new_height, 8, SDL_PIXELFORMAT_INDEX8);
 
     if (surface == NULL) {
         throw Exception("Couldn't create surface %s", SDL_GetError());
