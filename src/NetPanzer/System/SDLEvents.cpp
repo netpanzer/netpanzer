@@ -27,12 +27,21 @@
 #include "Interfaces/GameManager.hpp"
 #include "Util/Log.hpp"
 
+static int eventCounter = 0;
+
 bool handleSDLEvents()
 {
     static SDL_Event event;
-
+    eventCounter++;
     KeyboardInterface::sampleKeyboard();
+    printf("Running and loop %d \n", eventCounter);
+//    int result = SDL_WaitEvent(&event);
+//    printf("wait done\n");
+//    if (result == 0) {
+//        printf("Wait event err %s \n", SDL_GetError());
+//    }
     while(SDL_PollEvent(&event)) {
+        printf("Event: %i \n", event.type);
         switch (event.type) {
         case SDL_QUIT:
             return true;
@@ -44,6 +53,7 @@ bool handleSDLEvents()
             MouseInterface::onMouseButtonUp(&event.button);
             break;
         case SDL_MOUSEMOTION:
+            printf("MOUSE MOVED\n");
             MouseInterface::onMouseMoved(&event.motion);
             break;
         case SDL_KEYDOWN: {

@@ -33,52 +33,49 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Color.hpp"
 
 #ifdef _WIN32
-  #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/GameConfig.hpp"
 #endif
 
 #ifndef PACKAGE_VERSION
-	#define PACKAGE_VERSION "testing"
+#define PACKAGE_VERSION "testing"
 #endif
 
-SDLVideo* Screen; // get rid of this later...
+SDLVideo *Screen; // get rid of this later...
 
 SDLVideo::SDLVideo()
-        : window(0)
-{
+        : window(0) {
 #ifdef _WIN32
     if ( GameConfig::video_usedirectx ) {
         putenv("SDL_VIDEODRIVER=directx");
     }
 #endif
-    if(SDL_InitSubSystem(SDL_INIT_VIDEO)) {
+    if (SDL_InitSubSystem(SDL_INIT_VIDEO)) {
         throw Exception("Couldn't initialize SDL_video subsystem: %s",
-                SDL_GetError());
+                        SDL_GetError());
     }
 }
 
-SDLVideo::~SDLVideo()
-{
-    if (window) {
-        SDL_DestroyWindow(window);
+SDLVideo::~SDLVideo() {
+    if (texture != NULL) {
+        SDL_DestroyTexture(texture);
     }
-    if (renderer) {
-        SDL_DestroyRenderer(renderer);
-    }
-    if (surface) {
+    if (surface != NULL) {
         SDL_FreeSurface(surface);
     }
-    if (texture) {
-        SDL_DestroyTexture(texture);
+    if (renderer != NULL) {
+        SDL_DestroyRenderer(renderer);
+    }
+    if (window != NULL) {
+        SDL_DestroyWindow(window);
     }
 
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
 
-void SDLVideo::setVideoMode(int new_width, int new_height, int bpp, bool fullscreen)
-{
-    if (window)
-    {
+void SDLVideo::setVideoMode(int new_width, int new_height, int bpp, bool fullscreen) {
+    printf("setVideoMode \n");
+    if (window) {
         SDL_DestroyWindow(window);
     }
 
@@ -94,7 +91,7 @@ void SDLVideo::setVideoMode(int new_width, int new_height, int bpp, bool fullscr
                                   SDL_WINDOWPOS_UNDEFINED,
                                   SDL_WINDOWPOS_UNDEFINED,
                                   new_width, new_height,
-                                  SDL_WINDOW_SHOWN);
+                                  SDL_WINDOW_RESIZABLE);
     }
 
     if (window == NULL) {
@@ -113,42 +110,52 @@ void SDLVideo::setVideoMode(int new_width, int new_height, int bpp, bool fullscr
         throw Exception("Couldn't create surface %s", SDL_GetError());
     }
 
-//    texture = SDL_CreateTextureFromSurface(renderer, surface);
-//
-//    if (texture == NULL) {
-//        throw Exception("Couldn't create texture %s", SDL_GetError());
-//    }
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+    // TODO switch to this once UpdateTexture method is working
+//    texture = SDL_CreateTexture(renderer,
+//                     SDL_PIXELFORMAT_INDEX8,
+//                     SDL_TEXTUREACCESS_TARGET,
+//                     640, 480);
+
+    if (texture == NULL) {
+        throw Exception("Couldn't create texture %s", SDL_GetError());
+    }
 
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");  // make the scaled rendering look smoother.
     SDL_RenderSetLogicalSize(renderer, new_width, new_height);
 
+    SDL_ShowWindow(window);
+
     // let's scare the mouse :)
-    SDL_ShowCursor(SDL_DISABLE);
+    int showCursorResult = SDL_ShowCursor(SDL_DISABLE);
+    if (showCursorResult < 0) {
+        printf("Could not show cursor! %s\n", SDL_GetError());
+    }
 }
 
-void SDLVideo::setPalette(SDL_Color *color)
-{
+void SDLVideo::setPalette(SDL_Color *color) {
     SDL_SetPaletteColors(surface->format->palette, color, 0, 256);
 }
 
-SDL_Surface* SDLVideo::getSurface() {
+SDL_Surface *SDLVideo::getSurface() {
     return surface;
 }
 
-void SDLVideo::render()
-{
+void SDLVideo::render() {
+    // TODO would like to use SDL_UpdateTexture instead
+//    SDL_UpdateTexture(texture, NULL, surface->pixels, surface->pitch);
     texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, texture, NULL, NULL);
     SDL_RenderPresent(renderer);
 }
 
-void SDLVideo::doScreenshot()
-{
+void SDLVideo::doScreenshot() {
     // this is called blind faith
     static NTimer timer(1000);
 
-    if ( ! timer.isTimeOut() )
-    {
+    if (!timer.isTimeOut()) {
         return;
     }
 
@@ -156,7 +163,7 @@ void SDLVideo::doScreenshot()
 
     char buf[256];
     time_t curtime = time(0);
-    struct tm* loctime = localtime(&curtime);
+    struct tm *loctime = localtime(&curtime);
     strftime(buf, sizeof(buf), "screenshots/%Y%m%d_%H%M%S.bmp", loctime);
 
     std::string bmpfile = filesystem::getRealWriteName(buf);
