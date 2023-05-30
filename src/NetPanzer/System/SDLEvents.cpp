@@ -27,36 +27,25 @@
 #include "Interfaces/GameManager.hpp"
 #include "Util/Log.hpp"
 
-static int eventCounter = 0;
-
-bool handleSDLEvents()
-{
+bool handleSDLEvents() {
     static SDL_Event event;
-    eventCounter++;
     KeyboardInterface::sampleKeyboard();
-    printf("Running and loop %d \n", eventCounter);
-//    int result = SDL_WaitEvent(&event);
-//    printf("wait done\n");
-//    if (result == 0) {
-//        printf("Wait event err %s \n", SDL_GetError());
-//    }
-    while(SDL_PollEvent(&event)) {
-        printf("Event: %i \n", event.type);
+    while (SDL_PollEvent(&event)) {
         switch (event.type) {
-        case SDL_QUIT:
-            return true;
-            break;
-        case SDL_MOUSEBUTTONDOWN:
-            MouseInterface::onMouseButtonDown(&event.button);
-            break;
-        case SDL_MOUSEBUTTONUP:
-            MouseInterface::onMouseButtonUp(&event.button);
-            break;
-        case SDL_MOUSEMOTION:
-            printf("MOUSE MOVED\n");
-            MouseInterface::onMouseMoved(&event.motion);
-            break;
-        case SDL_KEYDOWN: {
+            case SDL_QUIT:
+                return true;
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+                MouseInterface::onMouseButtonDown(&event.button);
+                break;
+            case SDL_MOUSEBUTTONUP:
+                MouseInterface::onMouseButtonUp(&event.button);
+                break;
+            case SDL_MOUSEMOTION:
+                printf("MOUSE MOVED\n");
+                MouseInterface::onMouseMoved(&event.motion);
+                break;
+            case SDL_KEYDOWN: {
 //                LOGGER.debug("Pressed key : scancode[%d] unicode[%d]", event.key.keysym.sym, event.key.keysym.unicode);
                 KeyboardInterface::keyPressed(event.key.keysym.sym);
 
@@ -66,10 +55,10 @@ bool handleSDLEvents()
 
                 break;
             }
-        case SDL_KEYUP:
+            case SDL_KEYUP:
 //            LOGGER.debug("Released key: scancode[%d] unicode[%d]", event.key.keysym.sym, event.key.keysym.unicode);
-            KeyboardInterface::keyReleased(event.key.keysym.sym);
-            break;
+                KeyboardInterface::keyReleased(event.key.keysym.sym);
+                break;
         }
     }
 
