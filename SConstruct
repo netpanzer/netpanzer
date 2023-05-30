@@ -90,7 +90,7 @@ opts.AddVariables(
     EnumVariable('mode', 'set compile mode', 'release', allowed_values=('debug', 'release')),
     EnumVariable('cross','do a cross compilation','', allowed_values=('','mingw','linux')),
     ('datadir','define the extra directory where the netpanzer will look for data files, usefull for linux distributions, defaults to no extra directory',''),
-    ('sdlconfig','sets the sdl-config full path, cross compilation sure needs this', 'sdl-config'),
+    ('sdlconfig','sets the sdl-config full path, cross compilation sure needs this', 'sdl2-config'),
     ('universal','builds universal app in Max OS X(default false, other value is true)', 'false'),
     ('compilerprefix', 'sets the prefix for the cross linux compiler, example: i686-pc-linux-gnu-', ''),
 )
