@@ -42,7 +42,6 @@ bool handleSDLEvents() {
                 MouseInterface::onMouseButtonUp(&event.button);
                 break;
             case SDL_MOUSEMOTION:
-                printf("MOUSE MOVED\n");
                 MouseInterface::onMouseMoved(&event.motion);
                 break;
             case SDL_KEYDOWN: {
