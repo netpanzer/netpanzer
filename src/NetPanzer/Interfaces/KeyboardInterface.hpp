@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <SDL2/SDL.h>
 #include "Util/Log.hpp"
 #include <string.h>
+#include <unordered_set>
 
 #define _CHAR_BUFFER_SIZE 256
 #define _CHAR_BUFFER_MOD  255
@@ -28,27 +29,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class KeyboardInterface
 {
 protected:
-    static bool key_table[SDL_NUM_SCANCODES];
-    static bool previous_key_state[SDL_NUM_SCANCODES];
+    static std::unordered_set<int> key_table;
+    static std::unordered_set<int> previous_key_state;
     static bool textmode;
     static int char_buffer[ _CHAR_BUFFER_SIZE ];
     static unsigned long char_buffer_front;
     static unsigned long char_buffer_rear;
 
 public:
-    static void clearKeyTable()
-    {
-        memset(key_table, 0, sizeof(key_table));
-        memset(previous_key_state, 0, sizeof(previous_key_state));
-    }
-
     static void sampleKeyboard()
     {
-        memcpy(previous_key_state, key_table, sizeof(key_table));
+        previous_key_state = key_table;
     }
 
-    static void keyPressed(int scancode) { key_table[scancode] = true; }
-    static void keyReleased(int scancode){ key_table[scancode] = false;}
+    static void keyPressed(int scancode) { key_table.insert(scancode); }
+    static void keyReleased(int scancode){ key_table.erase(scancode);}
 
     static bool getKeyPressed(int scanCode)
     {
@@ -66,12 +61,12 @@ public:
 
     static inline bool getKeyState(int scan_code)
     {
-        return key_table[scan_code];
+        return key_table.find(scan_code) != key_table.end();
     }
 
     static inline bool getPrevKeyState(int scan_code)
     {
-        return previous_key_state[scan_code];
+        return previous_key_state.find(scan_code) != previous_key_state.end();
     }
 
     static inline void flushCharBuffer()

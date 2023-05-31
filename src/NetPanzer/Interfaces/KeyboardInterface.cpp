@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "KeyboardInterface.hpp"
 
-bool KeyboardInterface::key_table[SDL_NUM_SCANCODES];
-bool KeyboardInterface::previous_key_state[SDL_NUM_SCANCODES];
+std::unordered_set<int> KeyboardInterface::key_table;
+std::unordered_set<int> KeyboardInterface::previous_key_state;
 bool KeyboardInterface::textmode;
 
 int KeyboardInterface::char_buffer[ _CHAR_BUFFER_SIZE ];
