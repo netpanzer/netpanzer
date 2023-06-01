@@ -37,6 +37,7 @@ private:
     CheckBox * checkBoxFullscreen;
     CheckBox * checkBoxSoundEnabled;
     CheckBox * checkBoxMusicEnabled;
+    std::vector<SDL_DisplayMode> usableDisplayModes;
 #ifdef _WIN32
     CheckBox * checkBoxUseDirectX;
 #endif
@@ -51,19 +52,7 @@ private:
     Choice   * choiceMiniMapObjectiveDrawMode;
     Choice   * choiceMiniMapUnitSize;
     Choice   * choiceUnitSelectionDrawMode;
-
-    //Choice   choiceUnitInfoDrawLayer;
-
-#if 0
-    // Color choices.
-    Choice   choiceYourRadarUnit;
-    Choice   choiceAlliedRadarUnit;
-    Choice   choiceYourRadarObjective;
-    Choice   choiceAlliedRadarObjective;
-    Choice   choiceEnemyRadarObjective;
-    Choice   choiceVehicleSelectionBox;
-    Choice   choiceConsoleText;
-#endif
+    std::vector<SDL_DisplayMode> getUsableDisplayModes();
 
     virtual void loadTitleSurface();
 protected:

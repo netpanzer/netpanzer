@@ -148,9 +148,11 @@ OptionsTemplateView::OptionsTemplateView() : MenuTemplateView()
 
 } // end OptionsTemplateView::OptionsTemplateView
 
-std::vector<SDL_DisplayMode> getUsableDisplayModes()
+std::vector<SDL_DisplayMode> OptionsTemplateView::getUsableDisplayModes()
 {
-    std::vector<SDL_DisplayMode> results;
+    if (!usableDisplayModes.empty()) {
+        return usableDisplayModes;
+    }
     static int display_id = 0;
     int display_mode_count = SDL_GetNumDisplayModes(display_id);
     if (display_mode_count < 1) {
@@ -163,7 +165,7 @@ std::vector<SDL_DisplayMode> getUsableDisplayModes()
         }
 
         if (mode.w > 799 && mode.h > 599) {
-            results.push_back(mode);
+            usableDisplayModes.push_back(mode);
         }
 
 //        SDL_Log("Mode %i\tbpp %i\t%s\t%i x %i",
@@ -171,7 +173,7 @@ std::vector<SDL_DisplayMode> getUsableDisplayModes()
 //                SDL_GetPixelFormatName(mode.format),
 //                mode.w, mode.h);
     }
-    return results;
+    return usableDisplayModes;
 }
 
 // initButtons
@@ -217,7 +219,8 @@ void OptionsTemplateView::initButtons()
 
     std::vector<SDL_DisplayMode> displayModes = getUsableDisplayModes();
     for (SDL_DisplayMode mode : displayModes) {
-        choiceResolution->addItem(mode.w + "x" + mode.h);
+        std::string optionName = std::to_string(mode.w) + "x" + std::to_string(mode.h);
+        choiceResolution->addItem(optionName);
     }
 
     choiceResolution->setLocation(x, y-3);
