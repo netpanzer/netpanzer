@@ -74,7 +74,6 @@ SDLVideo::~SDLVideo() {
 
 
 void SDLVideo::setVideoMode(int new_width, int new_height, int bpp, bool fullscreen) {
-    printf("setVideoMode \n");
     if (window) {
         SDL_DestroyWindow(window);
     }
