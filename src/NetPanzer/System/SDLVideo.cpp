@@ -111,12 +111,6 @@ void SDLVideo::setVideoMode(int new_width, int new_height, int bpp, bool fullscr
 
     texture = SDL_CreateTextureFromSurface(renderer, surface);
 
-    // TODO switch to this once UpdateTexture method is working
-//    texture = SDL_CreateTexture(renderer,
-//                     SDL_PIXELFORMAT_INDEX8,
-//                     SDL_TEXTUREACCESS_STREAMING,
-//                     new_width, new_height);
-
     if (texture == NULL) {
         throw Exception("Couldn't create texture %s", SDL_GetError());
     }
@@ -142,11 +136,11 @@ SDL_Surface *SDLVideo::getSurface() {
 }
 
 void SDLVideo::render() {
-    // TODO would like to use SDL_UpdateTexture instead
+    // This mechanism is only about 5-10% slower than SDL_BlitSurface && SDL_UpdateWindowSurface.
+    // But, it gets us a lot (simpler code, much nicer rendering and scaling).
     if (texture) {
         SDL_DestroyTexture(texture);
     }
-//    SDL_UpdateTexture(texture, NULL, surface->pixels, surface->pitch);
     texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, texture, NULL, NULL);
