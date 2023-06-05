@@ -90,7 +90,7 @@ public:
 
         return true;
     }
-   
+
     static inline void putChar(int c)
     {
         char_buffer.push_back(c);
