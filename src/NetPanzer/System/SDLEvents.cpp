@@ -45,17 +45,27 @@ bool handleSDLEvents() {
                 MouseInterface::onMouseMoved(&event.motion);
                 break;
             case SDL_KEYDOWN: {
-//                LOGGER.debug("Pressed key : scancode[%d] unicode[%d]", event.key.keysym.sym, event.key.keysym.unicode);
+//                LOGGER.info("Pressed key : scancode[%d] keycode[%d]", event.key.keysym.scancode, event.key.keysym.sym);
+//                printf("Pressed key : scancode[%d] keycode[%d]\n", event.key.keysym.scancode, event.key.keysym.sym);
                 KeyboardInterface::keyPressed(event.key.keysym.sym);
 
-                // TODO test internationalization
-                // TODO test arrow keys in chat?
-                KeyboardInterface::putChar(event.key.keysym.sym);
+                if ((event.key.keysym.sym & 0xFF80) == 0) {
+                    SDL_Keycode c = event.key.keysym.sym;
+                    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' ') {
+                        KeyboardInterface::putChar(c);
+                    } else {
+                        // extended chars, first push a 0
+                        KeyboardInterface::putChar(0);
+                        KeyboardInterface::putChar(c);
+                    }
+                } else {
+                    // international character ignored for now
+                }
 
                 break;
             }
             case SDL_KEYUP:
-//            LOGGER.debug("Released key: scancode[%d] unicode[%d]", event.key.keysym.sym, event.key.keysym.unicode);
+//                LOGGER.debug("Released key : scancode[%d] keycode[%d]", event.key.keysym.scancode, event.key.keysym.sym);
                 KeyboardInterface::keyReleased(event.key.keysym.sym);
                 break;
         }
