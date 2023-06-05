@@ -49,17 +49,29 @@ bool handleSDLEvents() {
 //                printf("Pressed key : scancode[%d] keycode[%d]\n", event.key.keysym.scancode, event.key.keysym.sym);
                 KeyboardInterface::keyPressed(event.key.keysym.sym);
 
-                if ((event.key.keysym.sym & 0xFF80) == 0) {
-                    SDL_Keycode c = event.key.keysym.sym;
-                    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' ') {
-                        KeyboardInterface::putChar(c);
-                    } else {
-                        // extended chars, first push a 0
-                        KeyboardInterface::putChar(0);
-                        KeyboardInterface::putChar(c);
-                    }
+                SDL_Keycode c = event.key.keysym.sym;
+                if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' ') {
+                    KeyboardInterface::putChar(c);
                 } else {
-                    // international character ignored for now
+                    switch (c) {
+                        // see cInputField
+                        case SDLK_HOME:
+                        case SDLK_LEFT:
+                        case SDLK_RIGHT:
+                        case SDLK_END:
+                        case SDLK_INSERT:
+                        case SDLK_DELETE:
+                        case SDLK_BACKSPACE:
+                        case SDLK_KP_ENTER:
+                        case SDLK_RETURN:
+                            // extended chars, first push a 0
+                            KeyboardInterface::putChar(0);
+                            KeyboardInterface::putChar(c);
+                            break;
+                        default:
+                            // international character ignored for now
+                            break;
+                    }
                 }
 
                 break;
