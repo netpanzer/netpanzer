@@ -258,6 +258,7 @@ void cInputField::addExtendedChar(int newExtendedChar)
             if ( cursorPos >= maxCharCount ) {
                 cursorPos = maxCharCount - 1;
             } else if ( cursorPos > length ) {
+                // this is not an off by one error. we want cursor to be at the end.
                 cursorPos = length;
             }
         }
