@@ -50,7 +50,10 @@ bool handleSDLEvents() {
                 KeyboardInterface::keyPressed(event.key.keysym.sym);
 
                 SDL_Keycode c = event.key.keysym.sym;
-                if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' ') {
+                if ((c >= 'a' && c <= 'z') || c == ' ') {
+                    if (KeyboardInterface::getKeyState(SDLK_LSHIFT)) {
+                        c = toupper(c);
+                    }
                     KeyboardInterface::putChar(c);
                 } else {
                     switch (c) {
