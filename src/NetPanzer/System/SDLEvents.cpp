@@ -44,37 +44,37 @@ bool handleSDLEvents() {
             case SDL_MOUSEMOTION:
                 MouseInterface::onMouseMoved(&event.motion);
                 break;
+            case SDL_TEXTINPUT: {
+                size_t text_length = strlen(event.text.text);
+
+                for (size_t i = 0; i < text_length; i++) {
+                    KeyboardInterface::putChar(event.text.text[i]);
+                }
+                break;
+            }
             case SDL_KEYDOWN: {
 //                LOGGER.info("Pressed key : scancode[%d] keycode[%d]", event.key.keysym.scancode, event.key.keysym.sym);
-//                printf("Pressed key : scancode[%d] keycode[%d]\n", event.key.keysym.scancode, event.key.keysym.sym);
                 KeyboardInterface::keyPressed(event.key.keysym.sym);
 
                 SDL_Keycode c = event.key.keysym.sym;
-                if ((c >= 'a' && c <= 'z') || c == ' ') {
-                    if (KeyboardInterface::getKeyState(SDLK_LSHIFT)) {
-                        c = toupper(c);
-                    }
-                    KeyboardInterface::putChar(c);
-                } else {
-                    switch (c) {
-                        // see cInputField
-                        case SDLK_HOME:
-                        case SDLK_LEFT:
-                        case SDLK_RIGHT:
-                        case SDLK_END:
-                        case SDLK_INSERT:
-                        case SDLK_DELETE:
-                        case SDLK_BACKSPACE:
-                        case SDLK_KP_ENTER:
-                        case SDLK_RETURN:
-                            // extended chars, first push a 0
-                            KeyboardInterface::putChar(0);
-                            KeyboardInterface::putChar(c);
-                            break;
-                        default:
-                            // international character ignored for now
-                            break;
-                    }
+                switch (c) {
+                    // see cInputField
+                    case SDLK_HOME:
+                    case SDLK_LEFT:
+                    case SDLK_RIGHT:
+                    case SDLK_END:
+                    case SDLK_INSERT:
+                    case SDLK_DELETE:
+                    case SDLK_BACKSPACE:
+                    case SDLK_KP_ENTER:
+                    case SDLK_RETURN:
+                        // extended chars, first push a 0
+                        KeyboardInterface::putChar(0);
+                        KeyboardInterface::putChar(c);
+                        break;
+                    default:
+                        // international character ignored for now
+                        break;
                 }
 
                 break;
