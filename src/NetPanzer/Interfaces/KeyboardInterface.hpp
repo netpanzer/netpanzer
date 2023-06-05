@@ -22,9 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include <string.h>
 #include <unordered_set>
-
-#define _CHAR_BUFFER_SIZE 256
-#define _CHAR_BUFFER_MOD  255
+#include <deque>
 
 class KeyboardInterface
 {
@@ -32,9 +30,7 @@ protected:
     static std::unordered_set<int> key_table;
     static std::unordered_set<int> previous_key_state;
     static bool textmode;
-    static int char_buffer[ _CHAR_BUFFER_SIZE ];
-    static unsigned long char_buffer_front;
-    static unsigned long char_buffer_rear;
+    static std::deque<int> char_buffer;
 
 public:
     static void sampleKeyboard()
@@ -61,18 +57,17 @@ public:
 
     static inline bool getKeyState(int scan_code)
     {
-        return key_table.find(scan_code) != key_table.end();
+        return key_table.count(scan_code);
     }
 
     static inline bool getPrevKeyState(int scan_code)
     {
-        return previous_key_state.find(scan_code) != previous_key_state.end();
+        return previous_key_state.count(scan_code);
     }
 
     static inline void flushCharBuffer()
     {
-        char_buffer_front = 0;
-        char_buffer_rear = 0;
+        char_buffer.clear();
     }
 
     /** enable text input mode, which has the effect that getKeyPressed
@@ -86,19 +81,19 @@ public:
 
     static inline bool getChar(int &c)
     {
-        if ( char_buffer_front == char_buffer_rear )
+        if (char_buffer.empty()) {
             return false;
+        }
 
-        char_buffer_front = ( char_buffer_front + 1 ) & _CHAR_BUFFER_MOD;
-        c = char_buffer[ char_buffer_front ];
+        c = char_buffer.front();
+        char_buffer.pop_front();
 
         return true;
     }
    
     static inline void putChar(int c)
     {
-        char_buffer[ (char_buffer_rear + 1) & _CHAR_BUFFER_MOD ] = c;
-        char_buffer_rear = (char_buffer_rear + 1) & _CHAR_BUFFER_MOD;
+        char_buffer.push_back(c);
     }
 };
 

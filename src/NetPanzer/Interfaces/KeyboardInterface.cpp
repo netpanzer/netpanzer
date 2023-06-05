@@ -23,6 +23,4 @@ std::unordered_set<int> KeyboardInterface::key_table;
 std::unordered_set<int> KeyboardInterface::previous_key_state;
 bool KeyboardInterface::textmode;
 
-int KeyboardInterface::char_buffer[ _CHAR_BUFFER_SIZE ];
-unsigned long KeyboardInterface::char_buffer_front = 0;
-unsigned long KeyboardInterface::char_buffer_rear = 0;
+std::deque<int> KeyboardInterface::char_buffer;
