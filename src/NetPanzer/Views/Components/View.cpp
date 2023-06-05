@@ -1363,17 +1363,17 @@ void View::setActive(const bool &newStatus)
 void View::processEvents(void)
 {
     if (selectedInputField >= 0) {
-        int shit;
-        while (KeyboardInterface::getChar(shit)) {
+        int key_char;
+        while (KeyboardInterface::getChar(key_char)) {
             // Check for extended code.
-            if (shit == 0) {
-                if (KeyboardInterface::getChar(shit)) {
-                    inputFields[selectedInputField]->addExtendedChar(shit);
+            if (key_char == 0) {
+                if (KeyboardInterface::getChar(key_char)) {
+                    inputFields[selectedInputField]->addExtendedChar(key_char);
                 } else {
                     throw Exception("ERROR: Expecting extended char code.");
                 }
             } else {
-                inputFields[selectedInputField]->addChar(shit);
+                inputFields[selectedInputField]->addChar(key_char);
             }
         }
     }
