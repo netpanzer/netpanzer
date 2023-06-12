@@ -254,7 +254,7 @@ npdirs = """
 """
 
 env.Append( NPSOURCES = globSources(env, 'src/NetPanzer', npdirs, "*.cpp") )
-if env.has_key('WINICON'):
+if 'WINICON' in env:
     env.Append( NPSOURCES = env['WINICON'] )
 
 env.Prepend( LIBS = ['np2d','nplua','npnetwork','nplibs','npphysfs'] )
