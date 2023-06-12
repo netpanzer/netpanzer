@@ -37,7 +37,7 @@ print('Building version ' + NPVERSION + ' in ' + thisplatform)
 ################################################################
 class ourSpawn:
     def ourspawn(self, sh, escape, cmd, args, env):
-        newargs = string.join(args[1:], ' ')
+        newargs = ' '.join(args[1:])
         cmdline = cmd + " " + newargs
         startupinfo = subprocess.STARTUPINFO()
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
@@ -70,7 +70,6 @@ def globSources(localenv, sourcePrefix, sourceDirs, pattern):
     targetsources = []
     for s in sources:
         targetsources.append(buildpath + s)
-
     return targetsources
 
 ################################################################
@@ -199,7 +198,7 @@ if thisplatform == 'darwin':
     env.AppendUnique(FRAMEWORKS=Split('SDL2 SDL2_mixer Cocoa IOKit'))
     env.Append( NPSOURCES =  ['support/macosx/SDLMain.m'] )
 elif thisplatform == 'win32':
-
+    env.Tool('mingw', toolpath = ['.']) # we assume gcc
     env.Append( CPPPATH = [ 'C:/MinGW/include/SDL2' ] )
     networkenv.Append( CPPPATH = [ 'C:/MinGW/include/SDL2' ] )
     #env.Append( LIBPATH = [ 'C:/MinGW/lib' ] )
