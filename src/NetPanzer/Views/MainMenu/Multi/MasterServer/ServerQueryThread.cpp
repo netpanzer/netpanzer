@@ -42,7 +42,7 @@ class MSInfo {
 public:
     MSInfo() { touch(); };
     void touch() { lastTicks = SDL_GetTicks(); };
-    string recdata;
+    std::string recdata;
     Uint32 lastTicks;
 };
 
@@ -81,7 +81,7 @@ ServerQueryThread::~ServerQueryThread()
         udpsocket->destroy();
 
     if ( ! querying_msdata.empty() ) {
-        map<network::TCPSocket *,MSInfo *>::iterator msiter;
+        std::map<network::TCPSocket *,MSInfo *>::iterator msiter;
         for (msiter = querying_msdata.begin(); msiter != querying_msdata.end(); msiter++) {
             delete msiter->second;
             msiter->first->destroy();
@@ -155,7 +155,7 @@ ServerQueryThread::onSocketError(network::UDPSocket *s)
 void
 ServerQueryThread::onDataReceived(network::TCPSocket *s, const char *data, const int len)
 {
-    string str;
+    std::string str;
 
     MSInfo * msi = querying_msdata[s];
     msi->touch();
@@ -169,10 +169,10 @@ ServerQueryThread::onDataReceived(network::TCPSocket *s, const char *data, const
         return; // invalid answer;
     }
 
-    string lastpart;
+    std::string lastpart;
     if (str[str.length()-1] != '\\') {
         // received incomplete
-        string::size_type p = str.rfind('\\');
+        std::string::size_type p = str.rfind('\\');
         msi->recdata = str.substr(p);
         str.erase(p);
     } else {
@@ -181,11 +181,11 @@ ServerQueryThread::onDataReceived(network::TCPSocket *s, const char *data, const
 
     StringTokenizer tknizer(str,'\\');
 
-    string token = tknizer.getNextToken();
+    std::string token = tknizer.getNextToken();
     while ( !token.empty()) {
         if ( token == "ip" ) {
-            string dirip = tknizer.getNextToken();
-            string port;
+            std::string dirip = tknizer.getNextToken();
+            std::string port;
             if ( dirip.empty() ) {
                 msi->recdata.insert(0,"\\ip\\");
                 break;
@@ -271,7 +271,7 @@ ServerQueryThread::sendQuery(ServerInfo *server)
         server->ipaddress = network::Address::resolve(server->address, server->port);
     }
 
-    stringstream serveraddr;
+    std::stringstream serveraddr;
     serveraddr << server->address << ":" << server->port;
     querying_server[serveraddr.str()]=server;
     LOGGER.warning("Querying server [%s]", serveraddr.str().c_str());
@@ -286,10 +286,10 @@ void
 ServerQueryThread::onDataReceived(network::UDPSocket *s, const network::Address& from, const char *data, const int len)
 {
     (void)s;
-    stringstream fromaddress;
+    std::stringstream fromaddress;
     fromaddress << from.getIP() << ":" << from.getPort();
 
-    string str;
+    std::string str;
     str.append(data,len);
 
     ServerInfo * server = querying_server[fromaddress.str()];
@@ -306,7 +306,7 @@ ServerQueryThread::onDataReceived(network::UDPSocket *s, const network::Address&
 }
 
 void
-ServerQueryThread::parseServerData(ServerInfo *server, string &data)
+ServerQueryThread::parseServerData(ServerInfo *server, std::string &data)
 {
     server->ping = SDL_GetTicks() - server->querystartticks;
 
@@ -355,7 +355,7 @@ ServerQueryThread::checkTimeOuts()
         return;
     }
 
-    map<network::TCPSocket *,MSInfo *>::iterator msiter;
+    std::map<network::TCPSocket *,MSInfo *>::iterator msiter;
     for (msiter=querying_msdata.begin(); msiter!=querying_msdata.end(); msiter++) {
         if ( now - msiter->second->lastTicks > MS_TIMEOUT ) {
             LOGGER.warning("Masterserver [%s] timeout", msiter->first->getAddress().getIP().c_str());
@@ -367,7 +367,7 @@ ServerQueryThread::checkTimeOuts()
     }
 
 
-    map<string, ServerInfo *>::iterator i;
+    std::map<std::string, ServerInfo *>::iterator i;
     for (i=querying_server.begin(); i!=querying_server.end(); i++) {
         if ( i->second->status == ServerInfo::TIMEOUT ) {
             LOGGER.warning("Server [%s] timeout, removing", i->first.c_str());

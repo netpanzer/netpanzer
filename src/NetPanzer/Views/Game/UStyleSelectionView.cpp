@@ -181,7 +181,7 @@ void UStyleSelectionView::processEvents()
 
 void UStyleSelectionView::onComponentClicked(Component* c)
 {
-    string cname = c->getName();
+    std::string cname = c->getName();
 
     // send the style msg
 

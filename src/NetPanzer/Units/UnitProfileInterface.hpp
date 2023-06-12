@@ -21,8 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string>
 #include <vector>
 
-using namespace std;
-
 #include "Units/UnitTypes.hpp"
 #include "Units/UnitState.hpp"
 #include "2D/PackedSurface.hpp"
@@ -73,7 +71,7 @@ public:
 protected:
 
 public:
-    static vector<UnitProfileSprites *> profiles_sprites;
+    static std::vector<UnitProfileSprites *> profiles_sprites;
     static UnitProfileSprites * getUnitProfileSprites( unsigned short vector_index );
     static void clearProfiles();
 
@@ -82,18 +80,18 @@ public:
 class UnitProfileInterface
 {
 protected:
-    static vector<UnitProfile *> profiles;
+    static std::vector<UnitProfile *> profiles;
     static void doLoadUnitProfiles();
 
 
 private:
-    static vector<unsigned short> su_speed_rate;
-    static vector<unsigned short> su_speed_factor;
-    static vector<unsigned short> su_speed;
-    static vector<short> su_hit_points;
-    static vector<short> su_damage_factor;
-    static vector<unsigned short> su_reload_time;
-    static vector<unsigned long> su_weapon_range;
+    static std::vector<unsigned short> su_speed_rate;
+    static std::vector<unsigned short> su_speed_factor;
+    static std::vector<unsigned short> su_speed;
+    static std::vector<short> su_hit_points;
+    static std::vector<short> su_damage_factor;
+    static std::vector<unsigned short> su_reload_time;
+    static std::vector<unsigned long> su_weapon_range;
 
 public:
 

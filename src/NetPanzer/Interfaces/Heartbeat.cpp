@@ -27,7 +27,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/StringUtil.hpp"
 #include "Util/Log.hpp"
 
-using namespace std;
 using namespace network;
 
 #define MSQUERY_TIMEOUT 5 * 1000
@@ -38,7 +37,7 @@ public:
     MasterserverInfo() : timer(MSQUERY_TIMEOUT){ };
     ~MasterserverInfo(){};
     inline void touch() { timer.reset(); };
-    string recdata;
+    std::string recdata;
     NTimer timer;
     
 };
@@ -46,7 +45,7 @@ public:
 Heartbeat::Heartbeat() : nextHeartbeat(HEARTBEAT_INTERVAL)
 {
     StringTokenizer mstokenizer(*GameConfig::server_masterservers, ',');
-    string servname;
+    std::string servname;
     while( (servname = removeSurroundingSpaces(mstokenizer.getNextToken())) != "") {
         try {
             Address addr = Address::resolve(servname, MASTERSERVER_PORT, true, false);
@@ -56,7 +55,7 @@ Heartbeat::Heartbeat() : nextHeartbeat(HEARTBEAT_INTERVAL)
         }
     }
     
-    stringstream msg;
+    std::stringstream msg;
     msg << "\\heartbeat\\gamename\\netpanzer\\port\\" << GameConfig::server_port
         << "\\protocol\\" << NETPANZER_PROTOCOL_VERSION
         << "\\final\\";
@@ -69,7 +68,7 @@ Heartbeat::Heartbeat() : nextHeartbeat(HEARTBEAT_INTERVAL)
 Heartbeat::~Heartbeat()
 {
     if ( !masterservers.empty() ) {
-        map<TCPSocket *, MasterserverInfo *>::iterator msiter;
+        std::map<TCPSocket *, MasterserverInfo *>::iterator msiter;
         for (msiter=masterservers.begin(); msiter!=masterservers.end(); msiter++) {
             delete msiter->second;
             msiter->first->destroy();
@@ -85,7 +84,7 @@ Heartbeat::checkHeartbeat()
     Uint32 now = SDL_GetTicks();
 
     if ( !masterservers.empty() ) {
-        map<TCPSocket *, MasterserverInfo *>::iterator msiter;
+        std::map<TCPSocket *, MasterserverInfo *>::iterator msiter;
         for (msiter=masterservers.begin(); msiter!=masterservers.end(); msiter++) {
             if ( msiter->second->timer.isTimeOut(now) ) {
                 LOGGER.warning("Masterserver timeout [%s]", msiter->first->getAddress().getIP().c_str());
@@ -104,7 +103,7 @@ Heartbeat::checkHeartbeat()
 void
 Heartbeat::startHeartbeat()
 {
-    vector<Address>::iterator iter = mslist.begin();
+    std::vector<Address>::iterator iter = mslist.begin();
     Uint32 now = SDL_GetTicks();
     while ( iter != mslist.end() ) {
         TCPSocket *s = 0;
@@ -151,7 +150,7 @@ Heartbeat::onSocketError(TCPSocket *so)
 void
 Heartbeat::onDataReceived(TCPSocket *so, const char *data, const int len)
 {
-    string str;
+    std::string str;
     
     MSMapIterator i = masterservers.find(so);
     if ( i == masterservers.end() ) {
@@ -173,17 +172,17 @@ Heartbeat::onDataReceived(TCPSocket *so, const char *data, const int len)
         return; // invalid answer, needs '\\' at beggining;
     }
     
-    string::size_type strpos = str.find('\\',1);
-    if ( strpos == string::npos ) {
+    std::string::size_type strpos = str.find('\\',1);
+    if ( strpos == std::string::npos ) {
         msi->recdata=str;
         return; // unfinished token, needs '\\' at end
     }
     
-    string token = str.substr(1,strpos-1);
+    std::string token = str.substr(1,strpos-1);
     if ( !token.empty() ) {
         if ( token == "error" ) {
-            string::size_type msgend = str.find('\\',strpos+1);
-            if ( msgend == string::npos ) {
+            std::string::size_type msgend = str.find('\\',strpos+1);
+            if ( msgend == std::string::npos ) {
                 return; // need '\\' at end, continue with the socket
             } else if ( msgend == strpos+1 ) {
                 LOGGER.warning("Masterserver returns empty error");

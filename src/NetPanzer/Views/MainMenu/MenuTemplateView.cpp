@@ -375,7 +375,7 @@ void MenuTemplateView::processEvents()
 
 void MenuTemplateView::onComponentClicked(Component* c)
 {
-    string cname = c->getName();
+    std::string cname = c->getName();
     if ( !cname.compare("Button.MAIN") )
     {
         bMain();

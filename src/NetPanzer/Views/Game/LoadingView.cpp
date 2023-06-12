@@ -22,7 +22,7 @@
 
 #include "Particles/ParticleInterface.hpp"
 
-list<string> LoadingView::lines;
+std::list<std::string> LoadingView::lines;
 bool LoadingView::dirty = true;
 
 static void bAbort()
@@ -89,7 +89,7 @@ LoadingView::render()
     int ypos = surface.getHeight() - Surface::getFontHeight();
     int fontHeight = Surface::getFontHeight();
 
-    list<string>::reverse_iterator i = lines.rbegin();
+    std::list<std::string>::reverse_iterator i = lines.rbegin();
     while ( i != lines.rend() && ypos > -fontHeight )
     {
         surface.bltString( 0, ypos, (*i).c_str(), Color::white);
@@ -138,7 +138,7 @@ LoadingView::setNeedPassword(bool need_password)
 void
 LoadingView::onComponentClicked(Component* c)
 {
-    string cname = c->getName();
+    std::string cname = c->getName();
     if ( !cname.compare("Button.OK") )
     {
         CLIENT->joinServer(gameconfig->serverConnect, NPString(password_str.getString()));

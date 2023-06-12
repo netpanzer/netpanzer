@@ -31,8 +31,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <list>
 #include <algorithm>
 
-using namespace std;
-
 enum DEFAULT_VIEW_BUTTON
 {
     CLOSE_VIEW_BUTTON,
@@ -47,7 +45,7 @@ public:
     void add(DEFAULT_VIEW_BUTTON button);
 
 public:
-    typedef list<Component *> ComponentList;
+    typedef std::list<Component *> ComponentList;
     typedef ComponentList::iterator ComponentsIterator;
     
     ComponentList components;

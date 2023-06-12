@@ -42,8 +42,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Interfaces/ChatInterface.hpp"
 
-using namespace std;
-
 ClientSocket::ClientSocket(ClientSocketObserver *o, const std::string& whole_servername)
     : observer(0), socket(0), sendpos(0), tempoffset(0), player_id(INVALID_PLAYER_ID)
 {

@@ -29,12 +29,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <iostream>
 #include <string>
 
-using namespace std;
-
-string trim(const string& str)
+std::string trim(const std::string& str)
 {
     size_t first = str.find_first_not_of(' ');
-    if (string::npos == first)
+    if (std::string::npos == first)
     {
         return str;
     }

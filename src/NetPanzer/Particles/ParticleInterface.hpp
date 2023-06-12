@@ -29,8 +29,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <vector>
 
-using namespace std;
-
 class Surface;
 class PackedSurface;
 
@@ -55,8 +53,8 @@ private:
     static void getMuzzleTips(PackedSurface &packedSource, iXY muzzleTips [36]);
     static void getMinBounds(PackedSurface &packedSource, iRect &minBounds);
 
-    static vector<int>   unitHitPointTable;
-    static vector<int>   unitAttackFactorTable;
+    static std::vector<int>   unitHitPointTable;
+    static std::vector<int>   unitAttackFactorTable;
 
     static void  buildUnitTables();
     static float getFrameRateAdjustment();

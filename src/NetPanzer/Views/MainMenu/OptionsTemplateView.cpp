@@ -32,7 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class Separator:public Component
 {
 public:
-    Separator(int x, int y, int endx, string t, PIX color)
+    Separator(int x, int y, int endx, std::string t, PIX color)
     {
         text = t;
         foreground = color;
@@ -54,7 +54,7 @@ public:
     }
 
 private:
-    string text;
+    std::string text;
     int xend;
 };
 
