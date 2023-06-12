@@ -206,7 +206,7 @@ elif thisplatform == 'win32':
     env.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
     networkenv.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
     env.Append( _LIBFLAGS = [ '-mwindows' ] )
-    env.Prepend( _LIBFLAGS = [ 'C:/MinGW/lib/SDL2_mixer.lib' ] )
+#     env.Prepend( _LIBFLAGS = [ 'C:/MinGW/lib/SDL2_mixer' ] )
     env['WINICON'] = env.RES( 'support/icon/npicon.rc' )
     SetupSpawn(env)
 else:
