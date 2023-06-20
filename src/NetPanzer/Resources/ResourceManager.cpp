@@ -25,8 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Surface.hpp"
 #include "Util/FileSystem.hpp"
 
-using namespace std;
-
 #define DEFAULT_FLAGS_PATH "pics/flags/"
 #define MAX_FLAGS 256
 
@@ -83,15 +81,15 @@ ResourceManager::finalize()
 
 // actually loads all the flags.
 int
-ResourceManager::loadAllFlags(Surface& flags, vector<string>& names)
+ResourceManager::loadAllFlags(Surface& flags, std::vector<std::string>& names)
 {
     char** list = filesystem::enumerateFiles(DEFAULT_FLAGS_PATH);
-    string flagname;
+    std::string flagname;
     
     for(char** file = list; *file != 0; file++)
     {
         flagname = *file;
-        if ( flagname.find(".bmp") != string::npos )
+        if ( flagname.find(".bmp") != std::string::npos )
         {
             names.push_back(flagname);
         }
@@ -104,9 +102,9 @@ ResourceManager::loadAllFlags(Surface& flags, vector<string>& names)
     tmpflags.create( FLAG_WIDTH, FLAG_HEIGHT, 1);
 
     sort(names.begin(), names.end());
-    string path(DEFAULT_FLAGS_PATH);
+    std::string path(DEFAULT_FLAGS_PATH);
 
-    for (vector<string>::size_type i = 0; i < names.size(); i++)
+    for (std::vector<std::string>::size_type i = 0; i < names.size(); i++)
     {
         flags.setFrame(i);
         tmpflags.loadBMP((path+names[i]).c_str(), false);
@@ -116,7 +114,7 @@ ResourceManager::loadAllFlags(Surface& flags, vector<string>& names)
 }
 
 bool
-ResourceManager::loadFlag(Surface* dest, string name)
+ResourceManager::loadFlag(Surface* dest, std::string name)
 {
     dest->loadBMP((DEFAULT_FLAGS_PATH + name).c_str());
     return true;

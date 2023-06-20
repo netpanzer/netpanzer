@@ -316,7 +316,7 @@ void Desktop::add(View *view, bool autoActivate)
 
 void Desktop::clearAll()
 {
-    vector<View*>::iterator i = views.begin();
+    std::vector<View*>::iterator i = views.begin();
     while ( i != views.end() )
     {
         delete *i;

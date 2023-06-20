@@ -254,7 +254,7 @@ void PlayerGameManager::graphicsLoop()
     MouseInterface::draw(*screen);
 
     screen->unlock();
-    screen->copyToVideoFlip();
+    screen->render();
 }
 //-----------------------------------------------------------------
 bool PlayerGameManager::launchNetPanzerGame()
@@ -542,7 +542,7 @@ void PlayerGameManager::processSystemKeys()
 
         if ( KeyboardInterface::getKeyState(SDLK_F9) )
         {
-            Screen->doScreenshoot();
+            Screen->doScreenshot();
         }
 
         if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE)) {

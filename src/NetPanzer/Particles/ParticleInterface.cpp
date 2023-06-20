@@ -59,8 +59,8 @@ int ParticleInterface::gExplosionFlameFlashCullHitCount  = 1;
 int ParticleInterface::gMuzzleSystemCullMissCount        = 1;
 int ParticleInterface::gMuzzleSystemCullHitCount         = 1;
 
-vector<int> ParticleInterface::unitHitPointTable;
-vector<int> ParticleInterface::unitAttackFactorTable;
+std::vector<int> ParticleInterface::unitHitPointTable;
+std::vector<int> ParticleInterface::unitAttackFactorTable;
 
 
 //--------------------------------------------------------------------------

@@ -45,9 +45,9 @@ short UnitProfileInterface::tsu_damage_factor;
 unsigned short UnitProfileInterface::tsu_reload_time;
 unsigned long UnitProfileInterface::tsu_weapon_range;
 
-vector<UnitProfile *> UnitProfileInterface::profiles;
+std::vector<UnitProfile *> UnitProfileInterface::profiles;
 
-vector<UnitProfileSprites *> UnitProfileSprites::profiles_sprites;
+std::vector<UnitProfileSprites *> UnitProfileSprites::profiles_sprites;
 
 enum
 {
@@ -289,19 +289,19 @@ bool read_vehicle_profile(const NPString& unitName, UnitProfile *profile)
 
 
 
-vector<unsigned short> UnitProfileInterface::su_speed_rate;
-vector<unsigned short> UnitProfileInterface::su_speed_factor;
-vector<unsigned short> UnitProfileInterface::su_speed;
-vector<short> UnitProfileInterface::su_hit_points;
-vector<short> UnitProfileInterface::su_damage_factor;
-vector<unsigned short> UnitProfileInterface::su_reload_time;
-vector<unsigned long> UnitProfileInterface::su_weapon_range;
+std::vector<unsigned short> UnitProfileInterface::su_speed_rate;
+std::vector<unsigned short> UnitProfileInterface::su_speed_factor;
+std::vector<unsigned short> UnitProfileInterface::su_speed;
+std::vector<short> UnitProfileInterface::su_hit_points;
+std::vector<short> UnitProfileInterface::su_damage_factor;
+std::vector<unsigned short> UnitProfileInterface::su_reload_time;
+std::vector<unsigned long> UnitProfileInterface::su_weapon_range;
 
 
 void
 UnitProfileInterface::clearProfiles()
 {
-    vector<UnitProfile *>::iterator i = profiles.begin();
+    std::vector<UnitProfile *>::iterator i = profiles.begin();
     while ( i != profiles.end() )
     {
         delete *i;
@@ -313,7 +313,7 @@ UnitProfileInterface::clearProfiles()
 void
 UnitProfileSprites::clearProfiles()
 {
-    vector<UnitProfileSprites *>::iterator i = profiles_sprites.begin();
+    std::vector<UnitProfileSprites *>::iterator i = profiles_sprites.begin();
     while ( i != profiles_sprites.end() )
     {
         delete *i;
@@ -455,7 +455,7 @@ UnitProfile * UnitProfileInterface::getUnitProfile( unsigned short unit_type )
 UnitProfile *
 UnitProfileInterface::getProfileByName( const NPString& name )
 {
-    vector<UnitProfile *>::iterator i = profiles.begin();
+    std::vector<UnitProfile *>::iterator i = profiles.begin();
     while ( i != profiles.end() )
     {
         if ( name.length() != (*i)->unitname.length() )

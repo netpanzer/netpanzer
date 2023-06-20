@@ -156,7 +156,8 @@ WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos)
             // we're holding down the right mouse button, and mouse has moved
             int x_move=mouse_pos.x-right_mouse_scroll_pos.x;
             int y_move=mouse_pos.y-right_mouse_scroll_pos.y;
-            SDL_WarpMouse(right_mouse_scroll_pos.x,right_mouse_scroll_pos.y);
+            // TODO Is null okay here?
+            SDL_WarpMouseInWindow(NULL, right_mouse_scroll_pos.x,right_mouse_scroll_pos.y);
 
             WorldViewInterface::scroll_right(x_move*4);
             WorldViewInterface::scroll_down(y_move*4);

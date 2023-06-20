@@ -130,17 +130,17 @@ static Surface hostLoadSurface;
 
 void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
 {
-        Surface text;
-        text.renderText(string, color, 0);
-        screen->lock();
+    Surface text;
+    text.renderText(string, color, 0);
+    screen->lock();
 
-        screen->fill(0);
-        int x = (screen->getWidth() / 2) - (text.getWidth() / 2);
-        int y = (screen->getHeight() / 2) - (text.getHeight() / 2);
-        text.blt(*screen,x,y);
+    screen->fill(0);
+    int x = (screen->getWidth() / 2) - (text.getWidth() / 2);
+    int y = (screen->getHeight() / 2) - (text.getHeight() / 2);
+    text.blt(*screen,x,y);
 
-        screen->unlock();
-        screen->copyToVideoFlip();
+    screen->unlock();
+    screen->render();
 }
 
 // ******************************************************************
@@ -157,17 +157,8 @@ void GameManager::loadPalette(const std::string& palette_name)
 
 void GameManager::setVideoMode()
 {
-    // construct flags
     iXY mode_res;
     iXY old_res = screen ? iXY(screen->getWidth(), screen->getHeight()): iXY(0,0);
-    Uint32 flags = GameConfig::video_fullscreen ? SDL_FULLSCREEN : 0;
-//    flags |= GameConfig::video_hardwaresurface ? SDL_HWSURFACE : 0;
-//    flags |= GameConfig::video_doublebuffer ? SDL_DOUBLEBUF : 0;
-
-    if ( ! GameConfig::video_fullscreen )
-    {
-        flags |= SDL_RESIZABLE;
-    }
 
     if ( GameConfig::video_width < 800 )
     {
@@ -182,11 +173,7 @@ void GameManager::setVideoMode()
     mode_res.x = GameConfig::video_width;
     mode_res.y = GameConfig::video_height;
 
-    Screen->setVideoMode(mode_res.x, mode_res.y, 8, flags);
-
-    SDL_Surface* vs = Screen->getSurface();
-    mode_res.x = vs->w;
-    mode_res.y = vs->h;
+    Screen->setVideoMode(mode_res.x, mode_res.y, 8, GameConfig::video_fullscreen);
 
     WorldViewInterface::setCameraSize( mode_res.x, mode_res.y);
     delete screen;

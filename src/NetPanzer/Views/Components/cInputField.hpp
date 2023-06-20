@@ -121,8 +121,6 @@ private:
     size_t   maxCharCount;
     int     strDisplayStart;  // which char to start displaying from
     int     maxWidth;         // max width in the gui
-    int     depressedKey;     // currently depressed key
-    unsigned int depressedKeyTimeNext;  // tick to repeat the key
     bool    insertMode;
     char    *destString;
     char    *excludedCharacters;
@@ -131,8 +129,6 @@ private:
     Surface inputFieldSurface;
     ACTION_FUNC_PTR textaction;
 
-    void pressKey(int ch);
-    void checkRepeat();
     void reset();
 }; // end cInputField
 

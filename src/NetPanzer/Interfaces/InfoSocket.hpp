@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Network/UDPSocket.hpp"
 #include <string>
 
-using namespace std;
 using namespace network;
 
 class InfoSocket : public UDPSocketObserver
@@ -36,9 +35,9 @@ protected:
     void onSocketError(UDPSocket *so);
     
 private:
-    string prepareStatusPacket();
-    string prepareFlagPacket(const int flagNum);
-    string statusHead;
+    std::string prepareStatusPacket();
+    std::string prepareFlagPacket(const int flagNum);
+    std::string statusHead;
     UDPSocket * socket;
     
 };

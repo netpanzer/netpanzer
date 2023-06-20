@@ -35,7 +35,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <time.h>
 #include <ctype.h>
 #include <signal.h>
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 #include <optionmm/command_line.hpp>
 #include "Util/Exception.hpp"
@@ -200,13 +200,12 @@ BaseGameManager *initialise(int argc, char** argv)
     }
 
     // Initialize SDL (we have to start the video subsystem as well so that
-    // the eventloop is started, otherwise we'll have problems in dedicated
+    // the event loop is started, otherwise we'll have problems in dedicated
     // server)
-    if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {
-        fprintf(stderr, "SDL_Init error: %s.\n", SDL_GetError());
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_EVENTS) < 0) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize SDL: %s", SDL_GetError());
         exit(1);
     }
-    SDL_EnableUNICODE(1);
 
     // Initialize libphysfs
     try {

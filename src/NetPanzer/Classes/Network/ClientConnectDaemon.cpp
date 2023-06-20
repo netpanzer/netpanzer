@@ -258,7 +258,7 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(const NetMessage *mess
             // it would be good to let the server provide a flag instead since it knows which flags are taken...
             if (NetworkState::status == _network_state_bot) {
                 Surface game_flags;
-                std::vector<string> flag_names;
+                std::vector<std::string> flag_names;
                 ResourceManager::loadAllFlags(game_flags, flag_names);
                 game_flags.setFrame(rand() % flag_names.size());
                 UpdatePlayerFlag upf;

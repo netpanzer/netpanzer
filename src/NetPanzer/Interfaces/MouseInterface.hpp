@@ -22,19 +22,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <map>
 #include <deque>
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 #include "2D/Surface.hpp"
 #include "Util/NTimer.hpp"
 
 class MouseEvent
 {
 public:
-    enum {
+    typedef enum {
         EVENT_DOWN = SDL_MOUSEBUTTONDOWN,
         EVENT_UP = SDL_MOUSEBUTTONUP
-    };
+    } MouseEventType;
     unsigned char button;
-    unsigned char event;
+    MouseEventType event;
     iXY pos;
 };
 
@@ -63,10 +63,8 @@ public:
         left_button   = SDL_BUTTON_LEFT,
         middle_button = SDL_BUTTON_MIDDLE,
         right_button  = SDL_BUTTON_RIGHT,
-        wheel_up      = SDL_BUTTON_WHEELUP,
-        wheel_down    = SDL_BUTTON_WHEELDOWN
     };
-    
+
     enum {
         left_button_mask   = SDL_BUTTON_LMASK,
         middle_button_mask = SDL_BUTTON_MMASK,
@@ -81,7 +79,7 @@ public:
 
     static void initialize();
     static void shutdown();
-    
+
     static void draw(Surface &dest)
     {
         if (cursor) {
@@ -111,12 +109,12 @@ public:
         mouse_pos.x = e->x;
         mouse_pos.y = e->y;
     }
-    
+
     static inline iXY getMousePosition()   { return mouse_pos; }
-    
+
     static inline unsigned int getMouseX() { return mouse_pos.x; }
     static inline unsigned int getMouseY() { return mouse_pos.y; }
-    
+
 };
 
 #endif // ** _MOUSEINTERFACE_HPP

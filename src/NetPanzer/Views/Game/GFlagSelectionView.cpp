@@ -122,7 +122,7 @@ void GFlagSelectionView::init()
     int y = flagStartOffset.y;
 
     Surface game_flags;
-    std::vector<string> flag_names;
+    std::vector<std::string> flag_names;
 
     ResourceManager::loadAllFlags(game_flags, flag_names);
 

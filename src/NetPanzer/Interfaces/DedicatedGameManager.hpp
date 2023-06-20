@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _DEDICATEDGAMEMANAGER_HPP
 
 #include <queue>
-#include "SDL.h"
+#include <SDL2/SDL.h>
 #include "BaseGameManager.hpp"
 #include "ServerConsole.hpp"
 #include "ServerCommand.hpp"

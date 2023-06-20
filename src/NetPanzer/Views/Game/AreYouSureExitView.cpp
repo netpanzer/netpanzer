@@ -100,7 +100,7 @@ void AreYouSureExitView::doActivate()
 
 void AreYouSureExitView::onComponentClicked(Component* c)
 {
-    string cname = c->getName();
+    std::string cname = c->getName();
     if ( !cname.compare("Button.YES") )
     {
         bYES();

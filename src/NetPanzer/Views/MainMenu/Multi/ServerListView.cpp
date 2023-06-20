@@ -88,10 +88,10 @@ ServerListView::refresh()
         mylock = true;
     }
     Desktop::draw(*screen); // XXX ultrahack
-    if ( mylock )
+    if (mylock) {
         screen->unlock();
-    screen->copyToVideoFlip(); // XXX uberhack
-
+    }
+    screen->render();
     queryThread = new masterserver::ServerQueryThread(&serverlist);
 }
 

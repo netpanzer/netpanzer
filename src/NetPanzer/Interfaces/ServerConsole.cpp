@@ -31,8 +31,7 @@ ServerConsole::ServerConsole(DedicatedGameManager* newmanager)
 ServerConsole::~ServerConsole()
 {
     if(thread && running) {
-        // TODO avoid KillThread here...
-        SDL_KillThread(thread);
+        running = false;
     } else {
         SDL_WaitThread(thread, 0);
     }
@@ -108,7 +107,7 @@ void ServerConsole::commandQuit()
 void ServerConsole::startThread()
 {
     typedef int (*threadfunc) (void*);
-    thread = SDL_CreateThread( (threadfunc) _run, this);
+    thread = SDL_CreateThread( (threadfunc) _run, "np-console-thread", this);
 
     if(!thread)
         throw Exception("Couldn't start console thread.");

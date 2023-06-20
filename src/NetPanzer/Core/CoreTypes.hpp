@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define	_CORETYPES_HPP
 
 // SDL.h included for the basic types [U|S]int[8|16|32]
-#include "SDL.h"
+#include <SDL2/SDL.h>
 #include "Util/Endian.hpp"
 #include <string>
 

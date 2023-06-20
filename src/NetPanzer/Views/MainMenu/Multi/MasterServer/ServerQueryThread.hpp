@@ -21,14 +21,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 #include <string>
 #include <map>
-#include <SDL_thread.h>
+#include <SDL2/SDL_thread.h>
 #include "Network/TCPSocket.hpp"
 #include "Network/UDPSocket.hpp"
 #include "Network/Address.hpp"
 
 #include "ServerList.hpp"
-
-using namespace std;
 
 namespace masterserver
 {
@@ -58,7 +56,7 @@ protected:
     
 private:
     
-    void parseServerData(ServerInfo *server, string &data);
+    void parseServerData(ServerInfo *server, std::string &data);
     void sendNextQuery();
     void sendQuery(ServerInfo *server);
 
@@ -85,8 +83,8 @@ private:
     std::vector<ServerInfo*> not_queried;
     int queries; // number of currently running queries
     
-    map<network::TCPSocket *,MSInfo *> querying_msdata;
-    map<string, ServerInfo *> querying_server;
+    std::map<network::TCPSocket *,MSInfo *> querying_msdata;
+    std::map<std::string, ServerInfo *> querying_server;
 };
 
 } // masterserver

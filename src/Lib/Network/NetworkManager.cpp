@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <list>
 
 #include <map>
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 namespace network
 {
@@ -99,7 +99,7 @@ bool NetworkManager::initialize()
 
     network_running = true;
     semaphore = SDL_CreateSemaphore(0);
-    resolverThread = SDL_CreateThread(resolver_worker, 0);
+    resolverThread = SDL_CreateThread(resolver_worker, "np-resolver", 0);
 
     return true;
 }
