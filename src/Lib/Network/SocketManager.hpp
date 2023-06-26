@@ -49,8 +49,8 @@ protected:
     static void removeInvalidSockets();
 
 private:
-    typedef set<SocketBase *> Sockets;
-    typedef set<SocketBase *>::iterator SocketsIterator;
+    typedef std::set<SocketBase *> Sockets;
+    typedef std::set<SocketBase *>::iterator SocketsIterator;
     
     static SocketSet sset;
     static Sockets socketList;
