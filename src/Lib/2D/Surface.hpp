@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/NoCopy.hpp"
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 class ColorTable;
 class Palette;
@@ -152,6 +153,7 @@ public:
     void blt(Surface &dest, int x, int y) const;
     void bltTrans(Surface &dest, int x, int y) const;
     void bltTransColor(Surface &dest, int x, int y, const PIX color) const;
+    void bltTransColorFromSDLSurface(SDL_Surface *source, int x, int y, const PIX color) const;
     void bltScale(const Surface &source, const iRect &destRect);
     void bltLookup(const iRect &destRect, const PIX table[]);
 

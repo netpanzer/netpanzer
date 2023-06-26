@@ -214,7 +214,7 @@ else:
     env.ParseConfig(env['sdlconfig'] + ' --cflags --libs')
     # note: for some magic reason, now doesn't need to put the full path for
     # SDL_mixer when using mingw crosscompilation
-    env.Append( LIBS = ['SDL2', 'SDL2_mixer' ] )
+    env.Append( LIBS = ['SDL2', 'SDL2_mixer', 'SDL2_ttf' ] )
 
 ################################################################
 # Makes libs

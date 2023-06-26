@@ -38,7 +38,8 @@ using std::swap;
 using std::min;
 using std::max;
 
-extern char staticFont[8192];
+static TTF_Font* font;
+#define FONT_SIZE 14
 #define FONT_HEIGHT 8
 #define FONT_WIDTH 8
 #define FONT_MAXCHAR 127
@@ -603,6 +604,85 @@ void Surface::bltTransColor(Surface &dest, int x, int y, const Uint8 color) cons
 
     int srcAdjustment  = getPitch()      - pixelsPerRow;
     int destAdjustment = dest.getPitch() - pixelsPerRow;
+
+    for (unsigned int row = 0; row < numRows; row++) {
+        for (unsigned int col = 0; col < pixelsPerRow; col++) {
+            if (*sPtr != 0)
+                *dPtr = color;
+            sPtr++;
+            dPtr++;
+        }
+
+        sPtr += srcAdjustment;
+        dPtr += destAdjustment;
+    }
+} // end Surface::bltTransC
+
+void Surface::bltTransColorFromSDLSurface(SDL_Surface *source, int x, int y, const Uint8 color) const
+{
+    if (mem == 0) {
+        return; // TODO??? how?
+    }
+    assert(getDoesExist());
+    assert(source != 0);
+    assert(mem != 0);
+
+    // Trivial clipping rejection - no overlap.
+    // Also will jump out immediately if either image has zero size.
+    if (x >= (int)getWidth() || y >= (int)getHeight())
+        return;
+
+    int end_x = x + source->w;
+    int end_y = y + source->h;
+    if ( end_x <= 0 || end_y <= 0 ) return;
+
+    unsigned int pixelsPerRow = source->w;
+    unsigned int numRows      = source->h;
+
+    PIX	*sPtr	= (PIX*) source->pixels; // Pointer to source Surface start of memory.
+    PIX	*dPtr	= mem; // Pointer to destination Surface start of memory.
+
+    // Check for partial clip, calculate number of pixels
+    // per row to copy, and number of rows to copy.  Adjust
+    // sPtr and dPtr.
+
+    // CLIP LEFT
+    if (x < 0) {
+        pixelsPerRow +=  x; // This will subtract the neg. x value.
+        sPtr         += -x; // This will move the sPtr to x = 0, from the neg. x.
+    } else {
+        dPtr += x;
+    }
+
+    // CLIP RIGHT
+    // This subtracts only the portion hanging over the right edge of the
+    // destination Surface
+    if ((unsigned int)end_x > getWidth())
+        pixelsPerRow -= end_x - getWidth();
+
+    // CLIP TOP
+    if (y < 0) {
+        numRows += y;
+        sPtr    -= y * source->pitch;
+    } else {
+        dPtr += y * (int)getPitch();
+    }
+
+    // CLIP BOTTOM
+    // This subtracts only the portion hanging over the bottom edge of the
+    // destination Surface
+    if ((unsigned int)end_y > getHeight())
+        numRows -= end_y - getHeight();
+
+    // Now, Check to make sure I actually have something
+    // to draw.  I should - because I checked for trivial
+    // rejection first.  These asserts just make sure
+    // my clipping is working...
+    assert(pixelsPerRow > 0);
+    assert(numRows > 0);
+
+    int srcAdjustment  = source->pitch - pixelsPerRow;
+    int destAdjustment = getPitch() - pixelsPerRow;
 
     for (unsigned int row = 0; row < numRows; row++) {
         for (unsigned int col = 0; col < pixelsPerRow; col++) {
@@ -1285,24 +1365,15 @@ PIX Surface::getAverageColor()
 
 // initFont
 //---------------------------------------------------------------------------
-// Purpose: Load all the characters into a surface of 128 frames.  Then the
-//          characters can be accesed by changing the frame appropriately.
+// Purpose: Load the TTF font.
 //---------------------------------------------------------------------------
 void initFont()
 {
-    ascii8x8.create(8, 8, 128);
-
-    for ( int c = 0; c < 128; c++) {
-        ascii8x8.setFrame(c);
-        char * fptr = (char *)&staticFont + (c * FONT_WIDTH);
-        PIX * dptr = ascii8x8.getMem();
-        int n = FONT_HEIGHT;
-        do {
-            memcpy(dptr,fptr,FONT_WIDTH);
-            dptr += FONT_WIDTH;
-            fptr += FONT_WIDTH*128;
-        } while (--n);
+    if (TTF_Init() < 0) {
+        printf("Couldn't initialize SDL TTF: %s\n", SDL_GetError());
+        exit(1);
     }
+    font = TTF_OpenFont("fonts/Roboto-Regular.ttf", FONT_SIZE);
 } // Surface::initFont
 
 unsigned int
@@ -1337,8 +1408,10 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
     if ( !len )
         return;
 
-    unsigned int need_width = len * FONT_WIDTH;
-    unsigned int need_height = FONT_HEIGHT;
+    printf("rendering text %s\n", str);
+    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, SDL_Color{255, 255, 255});
+    unsigned int need_width = font_surface->w;
+    unsigned int need_height = font_surface->h;
 
     if ( frame0 != 0 ) {
         if ( getWidth() != need_width || getHeight() != need_height ) {
@@ -1349,14 +1422,12 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
         create( need_width, need_height, 1);
     }
 
-    for ( int line = 0; line < FONT_HEIGHT; ++line) {
+    for ( int line = 0; line < FONT_SIZE; ++line) {
         PIX * dptr = getFrame0() + (line * (int)getPitch());
         const char * pstr = str;
         for ( unsigned char c = *pstr; c; c= *(++pstr)) {
-            if ( c >=128 ) c = ' ';
-
-            char * fptr = staticFont + (c*FONT_WIDTH) + (128*FONT_WIDTH*line);
-            PIX * eptr = dptr+FONT_WIDTH;
+            char * fptr = (char*) font_surface->pixels + (c*FONT_SIZE) + (128*FONT_SIZE*line);
+            PIX * eptr = dptr+FONT_SIZE;
             do {
                 *(dptr++) = *(fptr++)?color:bgcolor;
             } while ( dptr < eptr );
@@ -1373,11 +1444,12 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
 //---------------------------------------------------------------------------
 void Surface::bltChar8x8(int x, int y, unsigned char character, const PIX &color)
 {
-    if (character >= ascii8x8.getNumFrames())
-        return;
-
-    ascii8x8.setFrame(character);
-    ascii8x8.bltTransColor(*this, x, y, color);
+    // TODO
+//    if (character >= ascii8x8.getNumFrames())
+//        return;
+//
+//    ascii8x8.setFrame(character);
+//    ascii8x8.bltTransColor(*this, x, y, color);
 } // end Surface::bltChar8x8
 
 // bltString
@@ -1388,24 +1460,19 @@ void Surface::bltChar8x8(int x, int y, unsigned char character, const PIX &color
 //---------------------------------------------------------------------------
 void Surface::bltString(int x, int y, const char * str, const Uint8 &color)
 {
-    for (int index = 0; str[index] != 0; index++) {
-        // Don't attempt blank spaces.
-        if (str[index] == 32) {
-            continue;
-        }
-
-        bltChar8x8(x + (index << 3), y, str[index], color);
-    }
+    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, SDL_Color{255, 255, 255}); // TODO cleanup
+    bltTransColorFromSDLSurface(font_surface, x, y, color);
 } // end Surface::bltString
 
 // bltStringShadowed
 //---------------------------------------------------------------------------
 void Surface::bltStringShadowed(int x, int y, char const *str, const Uint8 &textColor, const Uint8 &shadowColor)
 {
-    for (int index = 0; str[index] != 0; index++) {
-        bltChar8x8(x + (index << 3) + 1, y + 1, str[index], shadowColor);
-        bltChar8x8(x + (index << 3),     y,     str[index], textColor);
-    }
+    // TODO
+//    for (int index = 0; str[index] != 0; index++) {
+//        bltChar8x8(x + (index << 3) + 1, y + 1, str[index], shadowColor);
+//        bltChar8x8(x + (index << 3),     y,     str[index], textColor);
+//    }
 
 } // end Surface::bltStringShadowed
 
@@ -1416,17 +1483,19 @@ void Surface::bltStringShadowed(int x, int y, char const *str, const Uint8 &text
 //---------------------------------------------------------------------------
 void Surface::bltStringCenter(const char *string, PIX color)
 {
-    bltString(  (getWidth() - (strlen(string) * ascii8x8.getWidth())) / 2,
-                (getHeight() - getFontHeight()) / 2,
-                string, color);
+    // TODO
+//    bltString(  (getWidth() - (strlen(string) * ascii8x8.getWidth())) / 2,
+//                (getHeight() - getFontHeight()) / 2,
+//                string, color);
 
 } // end Surface::bltStringCenter
 
 void Surface::bltStringCenterMin30(const char *string, PIX color)
 {
-    bltString(  (getWidth() - (strlen(string) * ascii8x8.getWidth())) / 2,
-                (getHeight() - getFontHeight()) / 2 - 30,
-                string, color);
+    // TODO
+//    bltString(  (getWidth() - (strlen(string) * ascii8x8.getWidth())) / 2,
+//                (getHeight() - getFontHeight()) / 2 - 30,
+//                string, color);
 
 } // end Surface::bltStringCenter
 
@@ -1437,9 +1506,10 @@ void Surface::bltStringCenterMin30(const char *string, PIX color)
 //---------------------------------------------------------------------------
 void Surface::bltStringShadowedCenter(const char *string, PIX foreground, PIX background)
 {
-    bltStringShadowed((getWidth() - (strlen(string) * ascii8x8.getWidth())) / 2,
-                      (getHeight() - getFontHeight()) / 2,
-                      string, foreground, background);
+    // TODO
+//    bltStringShadowed((getWidth() - (strlen(string) * ascii8x8.getWidth())) / 2,
+//                      (getHeight() - getFontHeight()) / 2,
+//                      string, foreground, background);
 
 } // end Surface::bltStringShadowedCenter
 
@@ -1449,15 +1519,16 @@ void Surface::bltStringShadowedCenter(const char *string, PIX foreground, PIX ba
 //---------------------------------------------------------------------------
 void Surface::bltStringCenteredInRect(const iRect &rect, const char *string, const PIX &color)
 {
-    int length = strlen(string);
-
-    iXY destPos;
-    destPos.x = rect.min.x + (rect.getSizeX() - (length * ascii8x8.getWidth())) / 2;
-    destPos.y = rect.min.y + (rect.getSizeY() - getFontHeight()) / 2;
-
-    for (int i = 0; string[i] != 0; i++) {
-        bltChar8x8(destPos.x + (i << 3), destPos.y, string[i], color);
-    }
+    // TODO
+//    int length = strlen(string);
+//
+//    iXY destPos;
+//    destPos.x = rect.min.x + (rect.getSizeX() - (length * ascii8x8.getWidth())) / 2;
+//    destPos.y = rect.min.y + (rect.getSizeY() - getFontHeight()) / 2;
+//
+//    for (int i = 0; string[i] != 0; i++) {
+//        bltChar8x8(destPos.x + (i << 3), destPos.y, string[i], color);
+//    }
 
 } // end Surface::bltStringCenteredInRect
 
