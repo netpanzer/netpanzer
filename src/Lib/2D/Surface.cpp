@@ -1460,8 +1460,9 @@ void Surface::bltChar8x8(int x, int y, unsigned char character, const PIX &color
 //---------------------------------------------------------------------------
 void Surface::bltString(int x, int y, const char * str, const Uint8 &color)
 {
-    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, SDL_Color{255, 255, 255}); // TODO cleanup
+    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, SDL_Color{255, 255, 255});
     bltTransColorFromSDLSurface(font_surface, x, y, color);
+    SDL_FreeSurface(font_surface);
 } // end Surface::bltString
 
 // bltStringShadowed
