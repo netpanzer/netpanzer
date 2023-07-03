@@ -1409,7 +1409,7 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
         return;
 
     printf("rendering text %s\n", str);
-    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, SDL_Color{255, 255, 255});
+    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, Palette::color[color]);
     unsigned int need_width = font_surface->w;
     unsigned int need_height = font_surface->h;
 
@@ -1421,6 +1421,9 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
     } else {
         create( need_width, need_height, 1);
     }
+    printf("freeing...\n");
+    SDL_FreeSurface(font_surface); // todo remove
+    return; // todo
 
     for ( int line = 0; line < FONT_SIZE; ++line) {
         PIX * dptr = getFrame0() + (line * (int)getPitch());
@@ -1437,21 +1440,6 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
     }
 }
 
-// bltChar8x8
-//---------------------------------------------------------------------------
-// Purpose: Blits the specied rom character to the screen at the specified
-//          location.
-//---------------------------------------------------------------------------
-void Surface::bltChar8x8(int x, int y, unsigned char character, const PIX &color)
-{
-    // TODO
-//    if (character >= ascii8x8.getNumFrames())
-//        return;
-//
-//    ascii8x8.setFrame(character);
-//    ascii8x8.bltTransColor(*this, x, y, color);
-} // end Surface::bltChar8x8
-
 // bltString
 //---------------------------------------------------------------------------
 // Purpose: Blits the specified string of text to the screen by making
@@ -1460,6 +1448,7 @@ void Surface::bltChar8x8(int x, int y, unsigned char character, const PIX &color
 //---------------------------------------------------------------------------
 void Surface::bltString(int x, int y, const char * str, const Uint8 &color)
 {
+    // TODO optimize
     SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, SDL_Color{255, 255, 255});
     bltTransColorFromSDLSurface(font_surface, x, y, color);
     SDL_FreeSurface(font_surface);
@@ -1469,12 +1458,12 @@ void Surface::bltString(int x, int y, const char * str, const Uint8 &color)
 //---------------------------------------------------------------------------
 void Surface::bltStringShadowed(int x, int y, char const *str, const Uint8 &textColor, const Uint8 &shadowColor)
 {
-    // TODO
-//    for (int index = 0; str[index] != 0; index++) {
-//        bltChar8x8(x + (index << 3) + 1, y + 1, str[index], shadowColor);
-//        bltChar8x8(x + (index << 3),     y,     str[index], textColor);
-//    }
-
+    SDL_Surface* font_surface_back = TTF_RenderUTF8_Solid(font, str, Palette::color[shadowColor]);
+    bltTransColorFromSDLSurface(font_surface_back, x + 1, y + 1, shadowColor);
+    SDL_FreeSurface(font_surface_back);
+    SDL_Surface* font_surface_front = TTF_RenderUTF8_Solid(font, str, Palette::color[textColor]);
+    bltTransColorFromSDLSurface(font_surface_front, x, y, textColor);
+    SDL_FreeSurface(font_surface_front);
 } // end Surface::bltStringShadowed
 
 // bltStringCenter
@@ -1484,20 +1473,18 @@ void Surface::bltStringShadowed(int x, int y, char const *str, const Uint8 &text
 //---------------------------------------------------------------------------
 void Surface::bltStringCenter(const char *string, PIX color)
 {
-    // TODO
-//    bltString(  (getWidth() - (strlen(string) * ascii8x8.getWidth())) / 2,
-//                (getHeight() - getFontHeight()) / 2,
-//                string, color);
-
+    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, string, Palette::color[color]);
+    bltTransColorFromSDLSurface(font_surface, (getWidth() - (font_surface->w)) / 2,
+                                (getHeight() - font_surface->h) / 2, color);
+    SDL_FreeSurface(font_surface);
 } // end Surface::bltStringCenter
 
 void Surface::bltStringCenterMin30(const char *string, PIX color)
 {
-    // TODO
-//    bltString(  (getWidth() - (strlen(string) * ascii8x8.getWidth())) / 2,
-//                (getHeight() - getFontHeight()) / 2 - 30,
-//                string, color);
-
+    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, string, Palette::color[color]);
+    bltTransColorFromSDLSurface(font_surface, (getWidth() - (font_surface->w)) / 2,
+                                (getHeight() - font_surface->h) / 2 - 30, color);
+    SDL_FreeSurface(font_surface);
 } // end Surface::bltStringCenter
 
 // bltStringShadowedCenter
@@ -1505,12 +1492,17 @@ void Surface::bltStringCenterMin30(const char *string, PIX color)
 // Purpose: Blits a string of text and centers it horizontally and vertically
 //          on the screen. Does not handle wrapping.
 //---------------------------------------------------------------------------
-void Surface::bltStringShadowedCenter(const char *string, PIX foreground, PIX background)
+void Surface::bltStringShadowedCenter(const char *string, PIX textColor, PIX shadowColor)
 {
-    // TODO
-//    bltStringShadowed((getWidth() - (strlen(string) * ascii8x8.getWidth())) / 2,
-//                      (getHeight() - getFontHeight()) / 2,
-//                      string, foreground, background);
+    // TODO OPTIMIZE
+    SDL_Surface* font_surface_back = TTF_RenderUTF8_Solid(font, string, Palette::color[shadowColor]);
+    int x = (getWidth() - font_surface_back->w) / 2;
+    int y = (getHeight() - font_surface_back->h) / 2;
+    bltTransColorFromSDLSurface(font_surface_back, x + 1, y + 1, shadowColor);
+    SDL_FreeSurface(font_surface_back);
+    SDL_Surface* font_surface_front = TTF_RenderUTF8_Solid(font, string, Palette::color[textColor]);
+    bltTransColorFromSDLSurface(font_surface_front, x, y, textColor);
+    SDL_FreeSurface(font_surface_front);
 
 } // end Surface::bltStringShadowedCenter
 
@@ -1520,17 +1512,11 @@ void Surface::bltStringShadowedCenter(const char *string, PIX foreground, PIX ba
 //---------------------------------------------------------------------------
 void Surface::bltStringCenteredInRect(const iRect &rect, const char *string, const PIX &color)
 {
-    // TODO
-//    int length = strlen(string);
-//
-//    iXY destPos;
-//    destPos.x = rect.min.x + (rect.getSizeX() - (length * ascii8x8.getWidth())) / 2;
-//    destPos.y = rect.min.y + (rect.getSizeY() - getFontHeight()) / 2;
-//
-//    for (int i = 0; string[i] != 0; i++) {
-//        bltChar8x8(destPos.x + (i << 3), destPos.y, string[i], color);
-//    }
-
+    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, string, Palette::color[color]);
+    int x = rect.min.x + (rect.getSizeX() - font_surface->w) / 2;
+    int y = rect.min.y + (rect.getSizeY() - font_surface->h) / 2;
+    bltTransColorFromSDLSurface(font_surface, x,y, color);
+    SDL_FreeSurface(font_surface);
 } // end Surface::bltStringCenteredInRect
 
 // create

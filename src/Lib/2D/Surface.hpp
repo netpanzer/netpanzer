@@ -200,8 +200,6 @@ public:
     // Text rendering functions
     void renderText(const char *str, PIX color, PIX bgcolor);
 
-    // Blit a single character of text.
-    void bltChar8x8(int x, int y, unsigned char character, const PIX &color);
     void bltString(int x, int y, const char * str, const PIX& color);
     void bltStringInBox(const iRect &rect, const char *string, PIX color, int gapSpace = 14, bool drawBox = false);
 
