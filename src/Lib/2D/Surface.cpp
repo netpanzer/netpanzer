@@ -705,7 +705,7 @@ void Surface::bltTransColorFromSDLSurface(SDL_Surface *source, int x, int y, con
         sPtr += srcAdjustment;
         dPtr += destAdjustment;
     }
-} // end Surface::bltTransC
+} // end Surface::bltTransColorFromSDLSurface
 
 // drawHLine
 //---------------------------------------------------------------------------
@@ -1433,18 +1433,9 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
         create( need_width, need_height, 1);
     }
 
-    for ( int line = 0; line < FONT_SIZE; ++line) {
-        PIX * dptr = getFrame0() + (line * (int)getPitch());
-        const char * pstr = str;
-        for ( unsigned char c = *pstr; c; c= *(++pstr)) {
-            char * fptr = (char*) font_surface->pixels + (c*FONT_SIZE) + (128*FONT_SIZE*line);
-            PIX * eptr = dptr+FONT_SIZE;
-            do {
-                *(dptr++) = *(fptr++)?color:bgcolor;
-            } while ( dptr < eptr );
+    drawRect(iRect(0, 0, getWidth(), getHeight()), bgcolor);
+    bltTransColorFromSDLSurface(font_surface, 0, 0, color);
 
-        }
-    }
     SDL_FreeSurface(font_surface); // todo optimize
 }
 
@@ -1457,7 +1448,7 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
 void Surface::bltString(int x, int y, const char * str, const Uint8 &color)
 {
     // TODO optimize
-    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, SDL_Color{255, 255, 255});
+    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, Palette::color[color]);
     bltTransColorFromSDLSurface(font_surface, x, y, color);
     SDL_FreeSurface(font_surface);
 } // end Surface::bltString
