@@ -40,9 +40,9 @@ using std::max;
 
 static TTF_Font* font;
 #define FONT_SIZE 14
-#define FONT_HEIGHT 8
-#define FONT_WIDTH 8
-#define FONT_MAXCHAR 127
+// TODO REMOVE
+#define FONT_HEIGHT 14
+#define FONT_WIDTH 14
 
 // orderCoords
 //---------------------------------------------------------------------------
@@ -132,8 +132,6 @@ BitmapInfoHeader::BitmapInfoHeader(filesystem::ReadFile* file)
     biClrUsed = file->readULE32();
     biClrImportant = file->readULE32();
 }
-
-Surface ascii8x8;
 
 int Surface::totalSurfaceCount = 0;
 int Surface::totalByteCount    = 0;
@@ -290,6 +288,7 @@ void Surface::setTo(const Surface &source, iRect bounds)
     orderCoords(bounds);
 
     myMem      = false;
+    printf("Surface::setTo\n");
     frame0     = source.pixPtr(bounds.min.x, bounds.min.y);
     mem	       = frame0;
     if ( (unsigned int)bounds.max.x > source.getWidth() )
@@ -356,6 +355,17 @@ bool Surface::grab(const Surface &source,
     return true;
 
 } // end Surface::grab
+
+// pixPtr
+//---------------------------------------------------------------------------
+// Purpose: Gets a pixel from a given position.
+//---------------------------------------------------------------------------
+PIX *Surface::pixPtr(unsigned int x, unsigned int y) const
+{
+    printf("pixPtr assert %i * %i + %i < %i * %i\n", y, getPitch(), x, getPitch(), getHeight());
+    assert((y * getPitch() + x) < getPitch() * getHeight());
+    return mem + (y * getPitch()) + x;
+} // end Surface::pixPtr
 
 // blt
 //---------------------------------------------------------------------------
@@ -1224,6 +1234,7 @@ void Surface::bltScale(const Surface &source, const iRect &destRect)
 
     float xdelta = float(source.getWidth()) / float(max.x - min.x);
     for (size_t yCount = 0 ; yCount < numRows ; yCount++) {
+        printf("bltScale\n");
         const PIX *sRow = source.pixPtr(0, srcY >> 16) + (srcX1 >> 16);
 
 #if 0
@@ -1379,12 +1390,12 @@ void initFont()
 unsigned int
 Surface::getFontHeight()
 {
-    return ascii8x8.getHeight();
+    return FONT_HEIGHT; // TODO support multiple fonts + dynamic height (depends on glyph?)
 }
 
 int Surface::getTextLength(const char* text)
 {
-    return ascii8x8.getWidth() * strlen(text);
+    return FONT_WIDTH * strlen(text); // TODO REMOVE
 }
 
 // renderText
@@ -1421,9 +1432,6 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
     } else {
         create( need_width, need_height, 1);
     }
-    printf("freeing...\n");
-    SDL_FreeSurface(font_surface); // todo remove
-    return; // todo
 
     for ( int line = 0; line < FONT_SIZE; ++line) {
         PIX * dptr = getFrame0() + (line * (int)getPitch());
@@ -1436,8 +1444,8 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
             } while ( dptr < eptr );
 
         }
-
     }
+    SDL_FreeSurface(font_surface); // todo optimize
 }
 
 // bltString
@@ -1651,7 +1659,7 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, i
 
         // Remove any spaces.
         while (string[length] == ' ') {
-            pos.x += ascii8x8.getWidth();
+            pos.x += FONT_WIDTH; // TODO REMOVE
             length++;
         }
 
@@ -1672,7 +1680,7 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, i
 
         strBuf[strBufLength] = '\0';
 
-        if ((int) (pos.x + strlen(strBuf) * ascii8x8.getWidth()) > rect.max.x) {
+        if ((int) (pos.x + strlen(strBuf) * FONT_WIDTH) > rect.max.x) {
             pos.x = rect.min.x;
             pos.y += gapSpace;
         }
@@ -1683,7 +1691,7 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, i
             return;
         }
 
-        pos.x += strlen(strBuf) * ascii8x8.getWidth();
+        pos.x += strlen(strBuf) * FONT_WIDTH;
 
         length += strBufLength;
     }

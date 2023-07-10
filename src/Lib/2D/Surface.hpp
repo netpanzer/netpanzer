@@ -119,12 +119,7 @@ private:
 
     void alloc(unsigned int w, unsigned int h, int nframes);
     bool grab(const Surface &s, iRect bounds);
-
-    PIX *pixPtr(unsigned int x, unsigned int y) const
-    {
-        assert((y * getPitch() + x) < getPitch() * getHeight());
-        return mem + (y * getPitch()) + x;
-    }
+    PIX *pixPtr(unsigned int x, unsigned int y) const;
 
 protected:
     iXY   offset;     // Used like a hot spot for drawing.
