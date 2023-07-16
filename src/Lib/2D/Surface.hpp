@@ -221,8 +221,8 @@ public:
     }
 
     static unsigned int getFontHeight();
-    static int getTextLength(const char* text);
-    static int getTextLength(const std::string& text)
+    static unsigned int getTextLength(const char* text);
+    static unsigned int getTextLength(const std::string& text)
     {
         return getTextLength(text.c_str());
     }

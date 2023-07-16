@@ -1390,12 +1390,20 @@ void initFont()
 unsigned int
 Surface::getFontHeight()
 {
-    return FONT_HEIGHT; // TODO support multiple fonts + dynamic height (depends on glyph?)
+    // TODO cache
+    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, ".", Palette::color[0]);
+    unsigned int height = font_surface->h;
+    SDL_FreeSurface(font_surface);
+    return height;
 }
 
-int Surface::getTextLength(const char* text)
+unsigned int Surface::getTextLength(const char* text)
 {
-    return FONT_WIDTH * strlen(text); // TODO REMOVE
+    // TODO cache
+    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, text, Palette::color[0]);
+    unsigned int width = font_surface->w;
+    SDL_FreeSurface(font_surface);
+    return width;
 }
 
 // renderText

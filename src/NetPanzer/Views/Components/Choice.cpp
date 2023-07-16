@@ -42,7 +42,7 @@ void Choice::addItem(const std::string& item)
 
     int borderSpace = borderSize * 2;
 
-    size.x = std::max((Surface::getTextLength(item) + borderSpace), size.y);
+    size.x = std::max((((int) Surface::getTextLength(item)) + borderSpace), size.y);
     size.y = ChoiceItemHeight;
 }
 
@@ -227,7 +227,7 @@ void Choice::add(const std::string& item)
 
     int borderSpace = borderSize * 2;
 
-    size.x = std::max(Surface::getTextLength(item) + borderSpace, size.y);
+    size.x = std::max(((int) Surface::getTextLength(item)) + borderSpace, size.y);
     size.x = std::max(minWidth, size.x);
 } // end Choice::add
 
