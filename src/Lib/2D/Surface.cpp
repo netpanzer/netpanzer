@@ -1429,6 +1429,10 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
 
     printf("rendering text %s\n", str);
     SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, Palette::color[color]);
+    if (!font_surface) {
+        printf("Could not renderText() %s %s\n", str, SDL_GetError());
+        return;
+    }
     unsigned int need_width = font_surface->w;
     unsigned int need_height = font_surface->h;
 
@@ -1455,8 +1459,14 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
 //---------------------------------------------------------------------------
 void Surface::bltString(int x, int y, const char * str, const Uint8 &color)
 {
-    // TODO optimize
+    int len = strlen(str);
+    if ( !len )
+        return;
     SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, Palette::color[color]);
+    if (!font_surface) {
+        printf("Could not bltString() %s %s\n", str, SDL_GetError());
+        return;
+    }
     bltTransColorFromSDLSurface(font_surface, x, y, color);
     SDL_FreeSurface(font_surface);
 } // end Surface::bltString
@@ -1465,10 +1475,21 @@ void Surface::bltString(int x, int y, const char * str, const Uint8 &color)
 //---------------------------------------------------------------------------
 void Surface::bltStringShadowed(int x, int y, char const *str, const Uint8 &textColor, const Uint8 &shadowColor)
 {
+    int len = strlen(str);
+    if ( !len )
+        return;
     SDL_Surface* font_surface_back = TTF_RenderUTF8_Solid(font, str, Palette::color[shadowColor]);
+    if (!font_surface_back) {
+        printf("Could not bltStringShadowed() %s %s\n", str, SDL_GetError());
+        return;
+    }
     bltTransColorFromSDLSurface(font_surface_back, x + 1, y + 1, shadowColor);
     SDL_FreeSurface(font_surface_back);
     SDL_Surface* font_surface_front = TTF_RenderUTF8_Solid(font, str, Palette::color[textColor]);
+    if (!font_surface_front) {
+        printf("Could not bltStringShadowed() %s %s\n", str, SDL_GetError());
+        return;
+    }
     bltTransColorFromSDLSurface(font_surface_front, x, y, textColor);
     SDL_FreeSurface(font_surface_front);
 } // end Surface::bltStringShadowed
@@ -1478,17 +1499,31 @@ void Surface::bltStringShadowed(int x, int y, char const *str, const Uint8 &text
 // Purpose: Blits a string of text and centers it horizontally and vertically
 //          on the screen. Does not handle wrapping.
 //---------------------------------------------------------------------------
-void Surface::bltStringCenter(const char *string, PIX color)
+void Surface::bltStringCenter(const char *str, PIX color)
 {
-    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, string, Palette::color[color]);
+    int len = strlen(str);
+    if ( !len )
+        return;
+    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, Palette::color[color]);
+    if (!font_surface) {
+        printf("Could not bltStringCenter() %s %s\n", str, SDL_GetError());
+        return;
+    }
     bltTransColorFromSDLSurface(font_surface, (getWidth() - (font_surface->w)) / 2,
                                 (getHeight() - font_surface->h) / 2, color);
     SDL_FreeSurface(font_surface);
 } // end Surface::bltStringCenter
 
-void Surface::bltStringCenterMin30(const char *string, PIX color)
+void Surface::bltStringCenterMin30(const char *str, PIX color)
 {
-    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, string, Palette::color[color]);
+    int len = strlen(str);
+    if ( !len )
+        return;
+    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, Palette::color[color]);
+    if (!font_surface) {
+        printf("Could not bltStringCenterMin30() %s %s\n", str, SDL_GetError());
+        return;
+    }
     bltTransColorFromSDLSurface(font_surface, (getWidth() - (font_surface->w)) / 2,
                                 (getHeight() - font_surface->h) / 2 - 30, color);
     SDL_FreeSurface(font_surface);
@@ -1499,15 +1534,26 @@ void Surface::bltStringCenterMin30(const char *string, PIX color)
 // Purpose: Blits a string of text and centers it horizontally and vertically
 //          on the screen. Does not handle wrapping.
 //---------------------------------------------------------------------------
-void Surface::bltStringShadowedCenter(const char *string, PIX textColor, PIX shadowColor)
+void Surface::bltStringShadowedCenter(const char *str, PIX textColor, PIX shadowColor)
 {
+    int len = strlen(str);
+    if ( !len )
+        return;
     // TODO OPTIMIZE
-    SDL_Surface* font_surface_back = TTF_RenderUTF8_Solid(font, string, Palette::color[shadowColor]);
+    SDL_Surface* font_surface_back = TTF_RenderUTF8_Solid(font, str, Palette::color[shadowColor]);
+    if (!font_surface_back) {
+        printf("Could not bltStringShadowedCenter() %s %s\n", str, SDL_GetError());
+        return;
+    }
     int x = (getWidth() - font_surface_back->w) / 2;
     int y = (getHeight() - font_surface_back->h) / 2;
     bltTransColorFromSDLSurface(font_surface_back, x + 1, y + 1, shadowColor);
     SDL_FreeSurface(font_surface_back);
-    SDL_Surface* font_surface_front = TTF_RenderUTF8_Solid(font, string, Palette::color[textColor]);
+    SDL_Surface* font_surface_front = TTF_RenderUTF8_Solid(font, str, Palette::color[textColor]);
+    if (!font_surface_front) {
+        printf("Could not bltStringShadowedCenter() %s %s\n", str, SDL_GetError());
+        return;
+    }
     bltTransColorFromSDLSurface(font_surface_front, x, y, textColor);
     SDL_FreeSurface(font_surface_front);
 
@@ -1517,9 +1563,16 @@ void Surface::bltStringShadowedCenter(const char *string, PIX textColor, PIX sha
 //---------------------------------------------------------------------------
 // Purpose: Blits the string centered inside the specified rectangle.
 //---------------------------------------------------------------------------
-void Surface::bltStringCenteredInRect(const iRect &rect, const char *string, const PIX &color)
+void Surface::bltStringCenteredInRect(const iRect &rect, const char *str, const PIX &color)
 {
-    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, string, Palette::color[color]);
+    int len = strlen(str);
+    if ( !len )
+        return;
+    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, Palette::color[color]);
+    if (!font_surface) {
+        printf("Could not bltStringCenteredInRect() %s %s\n", str, SDL_GetError());
+        return;
+    }
     int x = rect.min.x + (rect.getSizeX() - font_surface->w) / 2;
     int y = rect.min.y + (rect.getSizeY() - font_surface->h) / 2;
     bltTransColorFromSDLSurface(font_surface, x,y, color);
