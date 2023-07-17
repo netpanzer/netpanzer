@@ -345,7 +345,7 @@ void MenuTemplateView::loadTitleSurface()
     //doLoadTitleSurface("mainTitle");
 } // end MenuTemplateView::loadTitleSurface
 
-// doLoadBackgroundSurface
+// doLoadTitleSurface
 //---------------------------------------------------------------------------
 void MenuTemplateView::doLoadTitleSurface(const std::string& string)
 {
