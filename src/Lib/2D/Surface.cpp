@@ -362,7 +362,6 @@ bool Surface::grab(const Surface &source,
 //---------------------------------------------------------------------------
 PIX *Surface::pixPtr(unsigned int x, unsigned int y) const
 {
-    printf("pixPtr assert %i * %i + %i < %i * %i\n", y, getPitch(), x, getPitch(), getHeight());
     assert((y * getPitch() + x) < getPitch() * getHeight());
     return mem + (y * getPitch()) + x;
 } // end Surface::pixPtr
@@ -1384,7 +1383,7 @@ void initFont()
         printf("Couldn't initialize SDL TTF: %s\n", SDL_GetError());
         exit(1);
     }
-    font = TTF_OpenFont("fonts/Roboto-Regular.ttf", FONT_SIZE);
+    font = TTF_OpenFont("fonts/Quantico-Regular.ttf", FONT_SIZE);
 } // Surface::initFont
 
 unsigned int
