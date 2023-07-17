@@ -288,7 +288,6 @@ void Surface::setTo(const Surface &source, iRect bounds)
     orderCoords(bounds);
 
     myMem      = false;
-    printf("Surface::setTo\n");
     frame0     = source.pixPtr(bounds.min.x, bounds.min.y);
     mem	       = frame0;
     if ( (unsigned int)bounds.max.x > source.getWidth() )
