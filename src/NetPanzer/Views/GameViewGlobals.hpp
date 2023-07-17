@@ -44,16 +44,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 extern iXY exitPos;
 extern iXY readyPos;
 extern iXY playPos;
-extern iXY mainPos;
+extern iXY mainTopButtonsStartPos;
 extern iXY multiPos;
-extern iXY optionsPos;
-extern iXY helpPos;
 extern iXY creditsPos;
-extern iXY soundPos;
 extern iXY joinPos;
-extern iXY interfacePos;
 extern iXY hostPos;
-extern iXY visualsPos;
 extern iXY controlsPos;
 extern iXY returnToGamePos;
 extern iXY resignPos;

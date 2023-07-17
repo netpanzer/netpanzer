@@ -42,10 +42,11 @@ class View : public iRect
     friend class Desktop;
 public:
     void add(Component *Component);
+    void addHorizontal(iXY start_pos, u_int spacing, std::vector<Component*> new_components);
     void add(DEFAULT_VIEW_BUTTON button);
 
 public:
-    typedef std::list<Component *> ComponentList;
+    typedef std::vector<Component *> ComponentList; // switched to vector instead of list because memory is stored in continuous block, faster lookup.
     typedef ComponentList::iterator ComponentsIterator;
     
     ComponentList components;
