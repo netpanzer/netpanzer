@@ -37,7 +37,7 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     //moveTo(iXY(0, 0));
     //resize(iXY(800, 600));
 
-
+    // TODO - with new variable spaced font support - render two columns - keys on left and descriptions on right.
     insert("Key");
     insert("");
     insert("  LMC = Left Mouse Click");
