@@ -29,10 +29,11 @@ void Choice::reset()
     index     = 0;
     minWidth  = 0;
     size.x    = 10;
-    size.y    = ChoiceItemHeight;
+    size.y    = Surface::getFontHeight();
     isOpen    = 0;
     mouseover = 0;
     adjustedY = 0;
+    choiceItemHeight = Surface::getFontHeight();
 }
 
 //---------------------------------------------------------------------------
@@ -43,7 +44,7 @@ void Choice::addItem(const std::string& item)
     int borderSpace = borderSize * 2;
 
     size.x = std::max((((int) Surface::getTextLength(item)) + borderSpace), size.y);
-    size.y = ChoiceItemHeight;
+    size.y = choiceItemHeight;
 }
 
 //---------------------------------------------------------------------------
@@ -87,14 +88,14 @@ void Choice::actionPerformed(const mMouseEvent &me)
         isOpen = true;
 
         // Set the size to accomodate all items.
-        size.y = choiceList.size() * ChoiceItemHeight;
+        size.y = choiceList.size() * choiceItemHeight;
 
         // Make sure the choice fits on the screen.
         if (position.y + size.y >= parentDimensions.y) {
             // Check to see if it will fit above the base position.
-            if ((position.y + ChoiceItemHeight) - size.y > 0) {
+            if ((position.y + choiceItemHeight) - size.y > 0) {
                 // Since it fits above, put it there.
-                adjustedY =  size.y - ChoiceItemHeight;
+                adjustedY =  size.y - choiceItemHeight;
                 position.y     -= adjustedY;
 
             } else {
@@ -110,9 +111,9 @@ void Choice::actionPerformed(const mMouseEvent &me)
     } else if (me.getID() == mMouseEvent::MOUSE_EVENT_DRAGGED &&
                 (me.getModifiers() & InputEvent::BUTTON1_MASK)) {
         isOpen = true;
-        size.y = choiceList.size() * ChoiceItemHeight;
+        size.y = choiceList.size() * choiceItemHeight;
 
-        iRect r(position.x, position.y, position.x + size.x, position.y + ChoiceItemHeight);
+        iRect r(position.x, position.y, position.x + size.x, position.y + choiceItemHeight);
 
         for (size_t i = 0; i < choiceList.size(); i++) {
             // Find the selected item.
@@ -121,7 +122,7 @@ void Choice::actionPerformed(const mMouseEvent &me)
                 break;
             }
 
-            r.translate(iXY(0, ChoiceItemHeight));
+            r.translate(iXY(0, choiceItemHeight));
         }
     } else if (	me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED &&
                 (me.getModifiers() & InputEvent::BUTTON1_MASK)) {
@@ -129,7 +130,7 @@ void Choice::actionPerformed(const mMouseEvent &me)
         isOpen = false;
 
         // Set the size back down to a single item.
-        size.y = ChoiceItemHeight;
+        size.y = choiceItemHeight;
 
         // Move the choice back to its original location.
         position.y += adjustedY;
@@ -149,7 +150,7 @@ void Choice::actionPerformed(const mMouseEvent &me)
         isOpen = false;
 
         // Set the size back down to a single item.
-        size.y = ChoiceItemHeight;
+        size.y = choiceItemHeight;
 
         // Move the choice back to its original location.
         position.y += adjustedY;
@@ -196,7 +197,7 @@ void Choice::draw(Surface &dest)
         //s.bltStringShadowedCenter(choiceList[index].c_str(), componentActiveTextColor, Color::black);
         s.bltStringCenter(choiceList[index].c_str(), Color::black);
     } else {
-        r = iRect(position.x, position.y, position.x + size.x, position.y + ChoiceItemHeight);
+        r = iRect(position.x, position.y, position.x + size.x, position.y + choiceItemHeight);
 
         size_t count = choiceList.size();
 
@@ -213,7 +214,7 @@ void Choice::draw(Surface &dest)
                 s.bltStringCenter(choiceList[i].c_str(), Color::black);
             }
 
-            r.translate(iXY(0, ChoiceItemHeight));
+            r.translate(iXY(0, choiceItemHeight));
         }
     }
     //isOpen = 0;
