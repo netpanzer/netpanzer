@@ -231,7 +231,6 @@ public:
     View(const iXY &pos, const iXY &size, const char *title);
     virtual ~View();
 
-    enum { DEFAULT_MOVE_AREA_HEIGHT  = 12 };
     enum { DEFAULT_STATUS_BAR_HEIGHT = 16 };
     enum { DEFAULT_BORDER_SIZE       =  3 };
     enum { DEFAULT_SNAP_TOLERANCE    = 20 };
