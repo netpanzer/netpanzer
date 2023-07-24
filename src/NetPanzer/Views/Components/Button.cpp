@@ -61,11 +61,7 @@ Button::render()
 
     if ( label.length() )
     {
-        Surface text;
-        text.renderText( label.c_str(), textColors[bstate], 0);
-        // blit centered and transparent
-        text.bltTrans(surface, (surface.getWidth()/2) - (text.getWidth()/2),
-                      (surface.getHeight()/2) - (text.getHeight()/2));
+        surface.bltStringCenter( label.c_str(), textColors[bstate]);
     }
 
     dirty = false;
