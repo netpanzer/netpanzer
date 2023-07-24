@@ -1388,6 +1388,7 @@ void initFont()
 unsigned int
 Surface::getFontHeight()
 {
+    // TODO pass in string? some characters are taller than others
     // TODO cache
     SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, ".", Palette::color[0]);
     unsigned int height = font_surface->h;
@@ -1458,8 +1459,9 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
 void Surface::bltString(int x, int y, const char * str, const Uint8 &color)
 {
     int len = strlen(str);
-    if ( !len )
+    if ( !len ) {
         return;
+    }
     SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, Palette::color[color]);
     if (!font_surface) {
         printf("Could not bltString() %s %s\n", str, SDL_GetError());
@@ -1504,11 +1506,10 @@ void Surface::bltStringCenter(const char *str, PIX color)
         return;
     SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, Palette::color[color]);
     if (!font_surface) {
-        printf("Could not bltStringCenter() %s %s\n", str, SDL_GetError());
         return;
     }
-    bltTransColorFromSDLSurface(font_surface, (getWidth() - (font_surface->w)) / 2,
-                                (getHeight() - font_surface->h) / 2, color);
+    bltTransColorFromSDLSurface(font_surface, (getWidth() - std::min(font_surface->w, ((int) getWidth()))) / 2,
+                                (getHeight() - std::min(font_surface->h, ((int) getHeight()))) / 2, color);
     SDL_FreeSurface(font_surface);
 } // end Surface::bltStringCenter
 
