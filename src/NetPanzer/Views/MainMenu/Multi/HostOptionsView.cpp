@@ -523,13 +523,14 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos)
 {
     char strBuf[256];
 
+    int fontHeight = Surface::getFontHeight();
     const int arrowButtonWidth = 16;
-    const int yOffset          = 15;
+    const int yOffset          = fontHeight;
 
     int x = pos.x + 270 + arrowButtonWidth;
     int y = pos.y;
 
-    Surface tempSurface(meterWidth, 14, 1);
+    Surface tempSurface(meterWidth, fontHeight, 1);
     tempSurface.fill(meterColor);
 
     // Game Max Player Count

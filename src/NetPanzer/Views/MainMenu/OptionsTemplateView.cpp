@@ -332,7 +332,7 @@ void OptionsTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 
     MenuTemplateView::doDraw(viewArea, clientArea);
 
-    Surface tempSurface(optionsMeterWidth, 14, 1);
+    Surface tempSurface(optionsMeterWidth, Surface::getFontHeight(), 1);
 
     // Scroll Rate
     tempSurface.fill(meterColor);

@@ -55,9 +55,7 @@ void cButton::createCenterText(iXY pos,
 {
     Surface tempTopSurface;
 
-    const unsigned GAP_SPACE = 6;
-
-    int ySize = Surface::getFontHeight() + GAP_SPACE;
+    int ySize = Surface::getFontHeight();
     tempTopSurface.create(xSize, ySize, 3);
 
     // Find out the horizontal offset to put the button name on the button.
