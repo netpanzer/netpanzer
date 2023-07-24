@@ -205,7 +205,7 @@ void Choice::draw(Surface &dest)
             s.setTo(dest, r);
 
             if (i == mouseover) {
-                // Higlight the selected item.
+                // Highlight the selected item.
                 s.fill(componentActiveTextColor);
                 s.bltStringCenter(choiceList[i].c_str(), Color::black);
 
