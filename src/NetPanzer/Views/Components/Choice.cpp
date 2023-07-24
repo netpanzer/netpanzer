@@ -181,7 +181,7 @@ void Choice::draw(Surface &dest)
     //dest.bltStringShadowed( position.x, pos.y + adjustedY,
                             //componentName.c_str(), componentActiveTextColor, Color::black);
 
-    dest.bltString( position.x, pos.y + adjustedY,
+    dest.bltString( position.x, pos.y + adjustedY + (choiceItemHeight / 3),
                             componentName.c_str(), Color::black);
 
     getBounds(r);
