@@ -203,6 +203,7 @@ public:
 
     // Blits a string of text and centers it horizontally and vertically on the screen.
     void bltStringCenter(const char *string, PIX color);
+    void bltStringCenterBlended(const char *string, PIX color, PIX backgroundColor);
     void bltStringCenterMin30(const char *string, PIX color);
     void bltStringShadowedCenter(const char *string, PIX foreground, PIX background);
     void bltStringCenteredInRect(const iRect &rect, const char *string, const PIX &color);

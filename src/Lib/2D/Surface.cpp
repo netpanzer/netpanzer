@@ -1513,6 +1513,25 @@ void Surface::bltStringCenter(const char *str, PIX color)
     SDL_FreeSurface(font_surface);
 } // end Surface::bltStringCenter
 
+// bltStringCenter
+//---------------------------------------------------------------------------
+// Purpose: Blits a string of text and centers it horizontally and vertically
+//          on the screen. Does not handle wrapping.
+//---------------------------------------------------------------------------
+void Surface::bltStringCenterBlended(const char *str, PIX color, PIX backgroundColor)
+{
+    int len = strlen(str);
+    if ( !len )
+        return;
+    SDL_Surface* font_surface = TTF_RenderUTF8_Shaded(font, str, Palette::color[color], Palette::color[backgroundColor]);
+    if (!font_surface) {
+        return;
+    }
+    bltTransColorFromSDLSurface(font_surface, (getWidth() - std::min(font_surface->w, ((int) getWidth()))) / 2,
+                                (getHeight() - std::min(font_surface->h, ((int) getHeight()))) / 2, color);
+    SDL_FreeSurface(font_surface);
+} // end Surface::bltStringCenter
+
 void Surface::bltStringCenterMin30(const char *str, PIX color)
 {
     int len = strlen(str);
