@@ -218,7 +218,7 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 
         static char text[] =
         "NetPanzer " PACKAGE_VERSION;
-        clientArea.bltString(10, 590, text, Color::gray);
+        clientArea.bltString(10, 580, text, Color::gray);
         // I don't like them so I delete them!
         //titlePackedSurface.blt(clientArea, bodyTextRect.min.x, 390);
         //titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x, bodyTextRect.max.y-50, Palette::colorTable6040);
@@ -264,7 +264,7 @@ void MenuTemplateView::doDrawM(Surface &viewArea, Surface &clientArea)  // start
 
     static char text[] =
         "NetPanzer " PACKAGE_VERSION;
-        clientArea.bltString(10, 590, text, Color::gray);
+        clientArea.bltString(10, 580, text, Color::gray);
 
     View::doDraw(viewArea, clientArea);
 } // end doDrawM
