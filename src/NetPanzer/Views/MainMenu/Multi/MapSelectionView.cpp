@@ -77,7 +77,7 @@ MapSelectionView::MapSelectionView() : RMouseHackView()
     setAllowMove(false);
     setVisible(false);
 
-    moveTo(bodyTextRect.min.x, bodyTextRect.min.y + 50);
+    moveTo(bodyTextRect.min.x, bodyTextRect.min.y + 65);
 
     resizeClientArea(bodyTextRect.getSizeX() / 2 - 10 + 30, MAP_SIZE + BORDER_SPACE * 2);
 
@@ -106,7 +106,7 @@ void MapSelectionView::init()
 {
     const int arrowButtonWidth = (getClientRect().getSizeX() - MAP_SIZE - BORDER_SPACE * 3) / 2;
 
-    iXY pos(MAP_SIZE + BORDER_SPACE * 2, getClientRect().getSizeY() - 14 - BORDER_SPACE);
+    iXY pos(MAP_SIZE + BORDER_SPACE * 2, getClientRect().getSizeY() - Surface::getFontHeight() - BORDER_SPACE);
 
     addButtonCenterText(pos, arrowButtonWidth - 1, "<", "", bPreviousMap);
     pos.x += arrowButtonWidth;
