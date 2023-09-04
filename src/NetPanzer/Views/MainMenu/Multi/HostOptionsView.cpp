@@ -350,7 +350,7 @@ void HostOptionsView::doDraw(Surface &viewArea, Surface &clientArea)
     drawMeterInfo(clientArea, iXY(BORDER_SPACE, BORDER_SPACE));
 
     clientArea.bltString( 4, clientArea.getHeight() - Surface::getFontHeight(),
-                    "Note: Use the right mouse button to accomplish fast mouse clicking.",
+                    "Note: Use the right mouse button to scroll quickly.",
                     windowTextColor);
 
     //if (!Desktop::getVisible("GameView")) {

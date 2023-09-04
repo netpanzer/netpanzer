@@ -126,7 +126,7 @@ void CreditsScrollView::doDraw(Surface &viewArea, Surface &clientArea)
 
     clientArea.bltString(   4,
                             clientArea.getHeight() - Surface::getFontHeight(),
-                            "Note: Use the right mouse button to accomplish fast mouse clicking.",
+                            "Note: Use the right mouse button to scroll quickly.",
                             windowTextColor);
     //char strBuf[256];
     //sprintf(strBuf, "%d", scrollBar->getValue());
