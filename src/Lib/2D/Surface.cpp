@@ -1232,7 +1232,6 @@ void Surface::bltScale(const Surface &source, const iRect &destRect)
 
     float xdelta = float(source.getWidth()) / float(max.x - min.x);
     for (size_t yCount = 0 ; yCount < numRows ; yCount++) {
-        printf("bltScale\n");
         const PIX *sRow = source.pixPtr(0, srcY >> 16) + (srcX1 >> 16);
 
 #if 0
@@ -1382,7 +1381,8 @@ void initFont()
         printf("Couldn't initialize SDL TTF: %s\n", SDL_GetError());
         exit(1);
     }
-    font = TTF_OpenFont("fonts/Quantico-Regular.ttf", FONT_SIZE);
+    // Quantico-Regular looked good too but some issues with some characters.
+    font = TTF_OpenFont("fonts/GNUUnifont9FullHintInstrUCSUR.ttf", FONT_SIZE); // works well but not many characters
 } // Surface::initFont
 
 unsigned int
@@ -1505,25 +1505,6 @@ void Surface::bltStringCenter(const char *str, PIX color)
     if ( !len )
         return;
     SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, Palette::color[color]);
-    if (!font_surface) {
-        return;
-    }
-    bltTransColorFromSDLSurface(font_surface, (getWidth() - std::min(font_surface->w, ((int) getWidth()))) / 2,
-                                (getHeight() - std::min(font_surface->h, ((int) getHeight()))) / 2, color);
-    SDL_FreeSurface(font_surface);
-} // end Surface::bltStringCenter
-
-// bltStringCenter
-//---------------------------------------------------------------------------
-// Purpose: Blits a string of text and centers it horizontally and vertically
-//          on the screen. Does not handle wrapping.
-//---------------------------------------------------------------------------
-void Surface::bltStringCenterBlended(const char *str, PIX color, PIX backgroundColor)
-{
-    int len = strlen(str);
-    if ( !len )
-        return;
-    SDL_Surface* font_surface = TTF_RenderUTF8_Shaded(font, str, Palette::color[color], Palette::color[backgroundColor]);
     if (!font_surface) {
         return;
     }
