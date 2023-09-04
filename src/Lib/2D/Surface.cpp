@@ -40,8 +40,6 @@ using std::max;
 
 static TTF_Font* font;
 #define FONT_SIZE 14
-// TODO REMOVE
-#define FONT_HEIGHT 14
 #define FONT_WIDTH 14
 
 // orderCoords
