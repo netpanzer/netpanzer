@@ -54,8 +54,8 @@ CreditsScrollView::CreditsScrollView() : SpecialButtonView()
     insert("  - and don't forget to register your nickname for the ranking");
     insert("");
     insert("  Current Development Team");
+    insert("  - Devon Winrick (winrid)");
     insert("  - Fulvio Testi (fu)");
-    insert("  - Guido Ueffing (Lohengrin)");
     insert("");
     insert("");
     insert("  Authors");
