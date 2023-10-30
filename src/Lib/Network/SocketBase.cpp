@@ -49,6 +49,8 @@ const char * SocketBase::state_str[] =
 
 SocketBase::SocketBase()
 {
+    lastError = 0;
+    sockfd = NULL_SOCKET;
     state = UNINITIALIZED;
     disconnectTimer.setTimeOut(500);
 }
@@ -56,6 +58,8 @@ SocketBase::SocketBase()
 SocketBase::SocketBase(const Address &a, bool isTcp)
     : addr(a)
 {
+    lastError = 0;
+    sockfd = NULL_SOCKET;
     state = RESOLVED;
     create();
     setNonBlocking();
@@ -66,6 +70,7 @@ SocketBase::SocketBase(const Address &a, bool isTcp)
 SocketBase::SocketBase(SOCKET fd, const Address &a)
     : sockfd(fd), addr(a)
 {
+    lastError = 0;
     state = CONNECTED;
     SocketManager::addSocket(this);
     setNonBlocking();
@@ -77,8 +82,10 @@ SocketBase::~SocketBase()
     // XXX this might be needed if sockets doesn't close nicely
 //    int tmp;
 //    while ( recv(sockfd, (char*)&tmp, sizeof(tmp), RECV_FLAGS) > 0 ) ; // read until there is no more.
-    shutdown(sockfd, SHUTDOWN_BOTH);
-    closesocket(sockfd);
+    if (sockfd > -1) {
+        shutdown(sockfd, SHUTDOWN_BOTH);
+        closesocket(sockfd);
+    }
 }
 
 void
