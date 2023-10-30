@@ -59,6 +59,7 @@
 typedef int SOCKET;
 #define SOCKET_ERROR -1
 #define INVALID_SOCKET -1
+#define NULL_SOCKET -2
 #define closesocket(s) ::close(s)
 #define SHUTDOWN_BOTH SHUT_RDWR
 #define GET_NET_ERROR() errno
