@@ -200,16 +200,9 @@ BaseGameManager *initialise(int argc, char** argv)
     }
 
     // Initialize SDL (don't initialize video or audio for dedicated servers)
-    if (dedicated_option.value()) {
-        if (dedicated_option.value() && SDL_Init(SDL_INIT_TIMER | SDL_INIT_EVENTS) < 0) {
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize SDL: %s", SDL_GetError());
-            exit(1);
-        }
-    } else {
-        if (dedicated_option.value() && SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_EVENTS) < 0) {
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize SDL: %s", SDL_GetError());
-            exit(1);
-        }
+    if (dedicated_option.value() && SDL_Init(SDL_INIT_TIMER | SDL_INIT_EVENTS) < 0) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize SDL: %s", SDL_GetError());
+        exit(1);
     }
 
     // Initialize libphysfs
