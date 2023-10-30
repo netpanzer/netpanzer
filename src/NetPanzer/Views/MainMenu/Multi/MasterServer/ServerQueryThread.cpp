@@ -55,12 +55,12 @@ ServerQueryThread::ServerQueryThread(ServerList* newserverlist)
     // parse masterserverlist
     std::string server;
     StringTokenizer tokenizer(*GameConfig::server_masterservers, ',');
-    while( (server = tokenizer.getNextToken()) != "") {
+    while( !(server = tokenizer.getNextToken()).empty()) {
         masterservers.push_back(removeSurroundingSpaces(server));
     }
     //std::random_shuffle(masterservers.begin(), masterservers.end());
 
-    if(masterservers.size() == 0) {
+    if(masterservers.empty()) {
         state = STATE_NOSERVERS;
         running = false;
         return;
@@ -107,6 +107,7 @@ ServerQueryThread::queryMasterServer()
 //                = network::Address::resolve(masterserverip, 28900);
 
 //            network::TCPSocket *s = new network::TCPSocket(ip, this);
+            LOGGER.info("Querying masterserver: %s.", masterserverip.c_str());
             network::TCPSocket *s = new network::TCPSocket(masterserverip, "28900", this);
             MSInfo * msi = new MSInfo();
             querying_msdata[s]=msi;
@@ -149,7 +150,7 @@ void
 ServerQueryThread::onSocketError(network::UDPSocket *s)
 {
     LOGGER.warning("SERVER query socket error [%s]", s->getAddress().getIP().c_str());
-    udpsocket = 0;
+    udpsocket = nullptr;
 }
 
 void
@@ -350,36 +351,37 @@ ServerQueryThread::checkTimeOuts()
         state = STATE_DONE;
         if (udpsocket) {
             udpsocket->destroy();
-            udpsocket = 0;
+            udpsocket = nullptr;
         }
         return;
     }
 
-    std::map<network::TCPSocket *,MSInfo *>::iterator msiter;
-    for (msiter=querying_msdata.begin(); msiter!=querying_msdata.end(); msiter++) {
+    auto msiter = querying_msdata.begin();
+    while (msiter != querying_msdata.end()) {
         if ( now - msiter->second->lastTicks > MS_TIMEOUT ) {
             LOGGER.warning("Masterserver [%s] timeout", msiter->first->getAddress().getIP().c_str());
             delete msiter->second;
             msiter->first->destroy();
-            querying_msdata.erase(msiter);
+            msiter = querying_msdata.erase(msiter);
             sendNextQuery();
+        } else {
+            msiter++;
         }
     }
 
 
-    std::map<std::string, ServerInfo *>::iterator i;
-    for (i=querying_server.begin(); i!=querying_server.end(); i++) {
+    auto i = querying_server.begin();
+    while (i != querying_server.end()) {
         if ( i->second->status == ServerInfo::TIMEOUT ) {
             LOGGER.warning("Server [%s] timeout, removing", i->first.c_str());
-            querying_server.erase(i);
+            i = querying_server.erase(i);
             break; // no more today, needed for invalid iterator
         } else if ( now - i->second->querystartticks > QUERY_TIMEOUT ) {
             LOGGER.warning("Server [%s] timeout, retrying", i->first.c_str());
             sendQuery(i->second);
         }
+        i++;
     }
-
-
 }
 
 
