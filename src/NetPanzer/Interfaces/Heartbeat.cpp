@@ -46,7 +46,7 @@ Heartbeat::Heartbeat() : nextHeartbeat(HEARTBEAT_INTERVAL)
 {
     StringTokenizer mstokenizer(*GameConfig::server_masterservers, ',');
     std::string servname;
-    while( (servname = removeSurroundingSpaces(mstokenizer.getNextToken())) != "") {
+    while( !(servname = removeSurroundingSpaces(mstokenizer.getNextToken())).empty()) {
         try {
             Address addr = Address::resolve(servname, MASTERSERVER_PORT, true, false);
             mslist.push_back(addr);
@@ -106,8 +106,8 @@ Heartbeat::startHeartbeat()
     std::vector<Address>::iterator iter = mslist.begin();
     Uint32 now = SDL_GetTicks();
     while ( iter != mslist.end() ) {
-        TCPSocket *s = 0;
-        MasterserverInfo *msi = 0;
+        TCPSocket *s = nullptr;
+        MasterserverInfo *msi = nullptr;
         try {
             s = new TCPSocket(*iter, this);
             msi = new MasterserverInfo();
