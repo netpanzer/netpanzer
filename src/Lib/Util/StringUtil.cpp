@@ -19,11 +19,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "StringUtil.hpp"
 
-#include <ctype.h>
+#include <cctype>
 
 std::string removeSurroundingSpaces(const std::string& str)
 {
-    if(str.size() == 0)
+    if(str.empty())
         return "";
     
     std::string::size_type s = 0;

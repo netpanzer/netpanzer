@@ -35,13 +35,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	#define PACKAGE_VERSION "testing"
 #endif
 
-InfoSocket::InfoSocket(int p) : socket(0)
+InfoSocket::InfoSocket(int p) : socket(nullptr)
 {
     Address addr = Address::resolve( *GameConfig::server_bindaddress, p, false, true);
     socket = new network::UDPSocket(addr,this);
 
-    // This parameters are fixed always
-    // others I plan to be modificable while game is running.
+    // These parameters are fixed always
+    // others I plan to be modifiable while game is running.
     std::stringstream s;
     s << "gamename\\netpanzer\\protocol\\" << NETPANZER_PROTOCOL_VERSION
       << "\\hostname\\" << *GameConfig::player_name
@@ -53,7 +53,7 @@ InfoSocket::~InfoSocket()
 {
     if (socket)
         socket->destroy();
-    socket=0;
+    socket = nullptr;
 }
 
 void

@@ -421,7 +421,7 @@ void GameConfig::registerScript(const NPString& table_name)
 
     if ( ! server_masterservers )
     {
-        server_masterservers = new NPString("masterserver.netpanzer.info, netpanzer.io");
+        server_masterservers = new NPString("netpanzer.io");
     }
 
     if ( ! server_name )
