@@ -283,7 +283,7 @@ BaseGameManager *initialise(int argc, char** argv)
         if (dedicated_option.value()) {
             manager = new DedicatedGameManager();
         }
-        else if (bot_option.value().size() > 0) {
+        else if (!bot_option.value().empty()) {
             manager = new BotGameManager(bot_option.value());
         } else {
             manager = new PlayerGameManager();
@@ -292,11 +292,11 @@ BaseGameManager *initialise(int argc, char** argv)
         manager->initialize(game_config_option.value());
 
         // gameconfig exists now...
-        if(connect_option.value() != "") {
+        if(!connect_option.value().empty()) {
             std::string connecthost = connect_option.value();
             if(connecthost.find("netpanzer://") == 0) {
                 connecthost = connecthost.substr(12, connecthost.size()-12);
-                std::string::size_type p = connecthost.find("/");
+                std::string::size_type p = connecthost.find('/');
                 if(p != std::string::npos) {
                     if ( connecthost[p+1] == 'p' )
                     {
@@ -314,7 +314,7 @@ BaseGameManager *initialise(int argc, char** argv)
             gameconfig->serverConnect = connecthost;
             gameconfig->quickConnect = true;
         }
-        if (master_server_option.value().size() > 0) {
+        if (!master_server_option.value().empty()) {
             if (master_server_option.value() == "none") {
                 *GameConfig::server_masterservers = "";
             }

@@ -393,27 +393,27 @@ bool DedicatedGameManager::launchNetPanzerGame()
 
     *Console::server << "contacting masterserver." << std::endl;
     if( GameConfig::server_public
-        && *GameConfig::server_masterservers != "") {
+        && !GameConfig::server_masterservers->empty()) {
         try {
             if ( infosocket ) {
                 delete infosocket;
-                infosocket = 0;
+                infosocket = nullptr;
             }
             infosocket = new InfoSocket(GameConfig::server_port);
             if ( heartbeat ) {
                 delete heartbeat;
-                heartbeat = 0;
+                heartbeat = nullptr;
             }
             heartbeat = new Heartbeat();
         } catch(std::exception& e) {
             LOGGER.warning("heartbeats disabled: %s", e.what());
             if ( infosocket ) {
                 delete infosocket;
-                infosocket = 0;
+                infosocket = nullptr;
             }
             if ( heartbeat ) {
                 delete heartbeat;
-                heartbeat = 0;
+                heartbeat = nullptr;
             }
         }
     }
@@ -441,12 +441,12 @@ DedicatedGameManager::shutdownNetworkSubSystem()
 {
     if ( infosocket ) {
         delete infosocket;
-        infosocket = 0;
+        infosocket = nullptr;
     }
 
     if ( heartbeat ) {
         delete heartbeat;
-        heartbeat=0;
+        heartbeat = nullptr;
     }
     BaseGameManager::shutdownNetworkSubSystem();
 }
