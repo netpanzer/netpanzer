@@ -148,7 +148,7 @@ void
 Logger::log(int priority, const char *fmt, va_list ap)
 {
     char buf[2048];
-    time_t curtime = time(0);
+    time_t curtime = time(nullptr);
     struct tm* loctime = localtime(&curtime);
     int timelen = strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S ", loctime);
     
