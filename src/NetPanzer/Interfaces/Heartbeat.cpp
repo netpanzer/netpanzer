@@ -191,9 +191,9 @@ Heartbeat::onDataReceived(TCPSocket *so, const char *data, const int len)
             }
             return;
         } else if ( token == "final") {
-            LOGGER.debug("Masterserver answer ok, disconecting [%s]", so->getAddress().getIP().c_str());
+            LOGGER.debug("Masterserver answer ok, disconnecting [%s]", so->getAddress().getIP().c_str());
         } else {
-            LOGGER.warning("Masterservend sent unknown answer: '%s'", token.c_str());
+            LOGGER.warning("Masterserver sent unknown answer: '%s'", token.c_str());
             msi->recdata=str.substr(strpos); // includes the initial '\\'
             return; // continues with the socket;
         }
