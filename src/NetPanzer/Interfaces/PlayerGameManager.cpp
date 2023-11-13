@@ -141,15 +141,15 @@ void PlayerGameManager::initializeVideoSubSystem()
 void PlayerGameManager::shutdownVideoSubSystem()
 {
     delete sdlVideo;
-    sdlVideo = 0;
-    Screen = 0;
+    sdlVideo = nullptr;
+    Screen = nullptr;
 
 }
 //-----------------------------------------------------------------
 void PlayerGameManager::initializeSoundSubSystem()
 {
     delete sound;
-    sound = 0;
+    sound = nullptr;
 
     LOGGER.info("Initializing sound system.");
     try {
@@ -159,7 +159,7 @@ void PlayerGameManager::initializeSoundSubSystem()
         LOGGER.warning("Couldn't initialize sound: %s", e.what());
     }
 
-    if(sound == 0)
+    if(sound == nullptr)
         sound = new DummySound();
 
     sound->setSoundVolume(GameConfig::sound_effectsvol);
@@ -277,11 +277,11 @@ void PlayerGameManager::shutdownNetworkSubSystem()
 {
     if ( infosocket ) {
         delete infosocket;
-        infosocket = 0;
+        infosocket = nullptr;
     }
     if ( heartbeat ) {
         delete heartbeat;
-        heartbeat = 0;
+        heartbeat = nullptr;
     }
     BaseGameManager::shutdownNetworkSubSystem();
 }
@@ -302,34 +302,34 @@ void PlayerGameManager::hostMultiPlayerGame()
     try {
     	if (CLIENT) {
 		delete CLIENT;
-		CLIENT=0;
+		CLIENT = nullptr;
 	}
 	CLIENT = new NetworkClient();
         SERVER->hostSession();
 
         if ( GameConfig::server_public
-             && GameConfig::server_masterservers->size() != 0 )
+             && !GameConfig::server_masterservers->empty() )
         {
             try {
                 if ( infosocket ) {
                     delete infosocket;
-                    infosocket = 0;
+                    infosocket = nullptr;
                 }
                 infosocket = new InfoSocket(GameConfig::server_port);
                 if ( heartbeat ) {
                     delete heartbeat;
-                    heartbeat = 0;
+                    heartbeat = nullptr;
                 }
                 heartbeat = new Heartbeat();
             } catch(std::exception& e) {
                 LOGGER.warning("heartbeats disabled: %s", e.what());
                 if ( infosocket ) {
                     delete infosocket;
-                    infosocket = 0;
+                    infosocket = nullptr;
                 }
                 if ( heartbeat ) {
                     delete heartbeat;
-                    heartbeat = 0;
+                    heartbeat = nullptr;
                 }
             }
         }
@@ -386,17 +386,17 @@ void PlayerGameManager::hostMultiPlayerGame()
         if ( infosocket )
         {
             delete infosocket;
-            infosocket = 0;
+            infosocket = nullptr;
         }
         if ( heartbeat )
         {
             delete heartbeat;
-            heartbeat = 0;
+            heartbeat = nullptr;
         }
         if (CLIENT)
         {
             delete CLIENT;
-            CLIENT=0;
+            CLIENT=nullptr;
         }
 
         SERVER->closeSession();
@@ -443,11 +443,11 @@ void PlayerGameManager::quitGame()
 {
     if ( infosocket ) {
         delete infosocket;
-        infosocket = 0;
+        infosocket = nullptr;
     }
     if ( heartbeat ) {
         delete heartbeat;
-        heartbeat = 0;
+        heartbeat = nullptr;
     }
 }
 
@@ -499,7 +499,7 @@ bool PlayerGameManager::mainLoop()
         if (aktimer.isTimeOut())
         {
             aktimer.reset();
-            PlayerState * player = 0;
+            PlayerState * player = nullptr;
             unsigned long max_players;
             max_players = PlayerInterface::getMaxPlayers();
             for (unsigned long i = 0; i < max_players; i++)
