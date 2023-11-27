@@ -1389,7 +1389,7 @@ Surface::getFontHeight()
     // TODO pass in string? some characters are taller than others
     // TODO cache
     SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, ".", Palette::color[0]);
-    unsigned int height = font_surface->h;
+    unsigned int height = font_surface->h + 3; // magic number works with GNUUnifont9FullHintInstrUCSUR font
     SDL_FreeSurface(font_surface);
     return height;
 }
