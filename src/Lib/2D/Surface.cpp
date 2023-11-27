@@ -1330,16 +1330,6 @@ void Surface::shrinkWrap()
 
 } // end Surface::shrinkWrap
 
-static inline float getRand(float lo, float hi)
-{
-    return (float(rand()%10000)/10000.0*(hi-lo))+lo;
-}
-
-static inline float calcY(float average, float ruggedness, unsigned distance)
-{
-    return average+getRand(-ruggedness, ruggedness)*float(distance);
-}
-
 // getAverageColor
 //---------------------------------------------------------------------------
 // Purpose: Recalculates the best single color to represent this Surface.
