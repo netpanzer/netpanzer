@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameManager.hpp"
 
 
-bool InfoBar::bar_on = true;
+bool InfoBar::bar_on = false;
 
 
 static const PIX titles_color = 206; // #6d78c1 more or less "slate blue"
@@ -61,7 +61,7 @@ static const char *format2alt =
 
 void
 InfoBar::draw(Surface &dest) {
-    iRect r(position.x, position.y, dest.getWidth(), position.y + 12);
+    iRect r(position.x, position.y, dest.getWidth(), position.y + Surface::getFontHeight() + 2);
     dest.bltLookup(r, Palette::darkGray256.getColorArray());
 
     char buf[512];
