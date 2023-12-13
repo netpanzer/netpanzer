@@ -101,7 +101,7 @@ void RankView::doDraw(Surface &viewArea, Surface &clientArea)
     unsigned int newheight = HEADER_HEIGHT
                              + (TABLE_BORDER * 2)
                              + (ENTRY_HEIGHT * PlayerInterface::countPlayers())
-                             + DEFAULT_MOVE_AREA_HEIGHT
+                             + Surface::getFontHeight()
                              + (DEFAULT_BORDER_SIZE * 2);
 
     if ( newheight != (unsigned int)getSizeY() )

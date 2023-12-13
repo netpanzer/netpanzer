@@ -55,32 +55,27 @@ void cButton::createCenterText(iXY pos,
 {
     Surface tempTopSurface;
 
-    const unsigned GAP_SPACE = 6;
-
-    int ySize = Surface::getFontHeight() + GAP_SPACE;
+    int ySize = Surface::getFontHeight();
     tempTopSurface.create(xSize, ySize, 3);
 
     // Find out the horizontal offset to put the button name on the button.
-    int xOffset;
-    if (nName != 0) xOffset = (xSize-(Surface::getTextLength(nName)))/2;
-    else xOffset = xSize/2;
 
     // Make the unselected button
     tempTopSurface.fill(componentBodyColor);
     tempTopSurface.drawButtonBorder(topLeftBorderColor, bottomRightBorderColor);
-    tempTopSurface.bltString(xOffset, GAP_SPACE/2, nName, componentInActiveTextColor);
+    tempTopSurface.bltStringCenter(nName, componentInActiveTextColor);
 
     // Make the mouse-over button
     tempTopSurface.setFrame(1);
     tempTopSurface.fill(componentBodyColor);
     tempTopSurface.drawButtonBorder(topLeftBorderColor, bottomRightBorderColor);
-    tempTopSurface.bltString(xOffset, GAP_SPACE/2, nName, componentFocusTextColor);
+    tempTopSurface.bltStringCenter(nName, componentFocusTextColor);
 
     // Make the selected button
     tempTopSurface.setFrame(2);
     tempTopSurface.fill(componentBodyColor);
     tempTopSurface.drawButtonBorder(bottomRightBorderColor, topLeftBorderColor);
-    tempTopSurface.bltString(xOffset+1, GAP_SPACE/2+1, nName, componentActiveTextColor);
+    tempTopSurface.bltStringCenter(nName, componentActiveTextColor);
 
     // Save the button name.
     setName(nName); assert(name != 0);

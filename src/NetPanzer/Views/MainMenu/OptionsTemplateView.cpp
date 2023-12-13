@@ -39,6 +39,7 @@ public:
         position.x = x;
         position.y = y;
         xend = endx;
+        text_y = y - (Surface::getFontHeight() / 3);
     }
 
     void draw(Surface &dest);
@@ -56,13 +57,14 @@ public:
 private:
     std::string text;
     int xend;
+    int text_y;
 };
 
 void Separator::draw(Surface &dest)
 {
     dest.drawLine(position.x, position.y+3, position.x+20, position.y+3, foreground);
     //dest.drawLine(position.x, position.y+2, position.x+20, position.y+2, Color::gray);
-    dest.bltStringShadowed(position.x+25,position.y, text.c_str(),  foreground, Color::gray);
+    dest.bltStringShadowed(position.x+25, text_y, text.c_str(),  foreground, Color::gray);
     int lentxt = 30+dest.getTextLength(text);
     dest.drawLine(position.x+lentxt, position.y+3, xend, position.y+3, foreground);
     //dest.drawLine(position.x+lentxt, position.y+2, xend, position.y+2, Color::gray);
@@ -330,7 +332,7 @@ void OptionsTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 
     MenuTemplateView::doDraw(viewArea, clientArea);
 
-    Surface tempSurface(optionsMeterWidth, 14, 1);
+    Surface tempSurface(optionsMeterWidth, Surface::getFontHeight(), 1);
 
     // Scroll Rate
     tempSurface.fill(meterColor);

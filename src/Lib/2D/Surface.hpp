@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/NoCopy.hpp"
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 class ColorTable;
 class Palette;
@@ -118,12 +119,7 @@ private:
 
     void alloc(unsigned int w, unsigned int h, int nframes);
     bool grab(const Surface &s, iRect bounds);
-
-    PIX *pixPtr(unsigned int x, unsigned int y) const
-    {
-        assert((y * getPitch() + x) < getPitch() * getHeight());
-        return mem + (y * getPitch()) + x;
-    }
+    PIX *pixPtr(unsigned int x, unsigned int y) const;
 
 protected:
     iXY   offset;     // Used like a hot spot for drawing.
@@ -152,6 +148,7 @@ public:
     void blt(Surface &dest, int x, int y) const;
     void bltTrans(Surface &dest, int x, int y) const;
     void bltTransColor(Surface &dest, int x, int y, const PIX color) const;
+    void bltTransColorFromSDLSurface(SDL_Surface *source, int x, int y, const PIX color) const;
     void bltScale(const Surface &source, const iRect &destRect);
     void bltLookup(const iRect &destRect, const PIX table[]);
 
@@ -198,8 +195,6 @@ public:
     // Text rendering functions
     void renderText(const char *str, PIX color, PIX bgcolor);
 
-    // Blit a single character of text.
-    void bltChar8x8(int x, int y, unsigned char character, const PIX &color);
     void bltString(int x, int y, const char * str, const PIX& color);
     void bltStringInBox(const iRect &rect, const char *string, PIX color, int gapSpace = 14, bool drawBox = false);
 
@@ -226,8 +221,8 @@ public:
     }
 
     static unsigned int getFontHeight();
-    static int getTextLength(const char* text);
-    static int getTextLength(const std::string& text)
+    static unsigned int getTextLength(const char* text);
+    static unsigned int getTextLength(const std::string& text)
     {
         return getTextLength(text.c_str());
     }

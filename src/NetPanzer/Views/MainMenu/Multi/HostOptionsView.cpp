@@ -334,7 +334,7 @@ HostOptionsView::HostOptionsView() : RMouseHackView()
     setAllowMove(false);
     setVisible(false);
 
-    moveTo(bodyTextRect.min.x, bodyTextRect.min.y + 195);
+    moveTo(bodyTextRect.min.x, bodyTextRect.min.y + 205);
     resizeClientArea(bodyTextRect.getSizeX()-5, 218);
 
     addMeterButtons(iXY(BORDER_SPACE, BORDER_SPACE));
@@ -350,7 +350,7 @@ void HostOptionsView::doDraw(Surface &viewArea, Surface &clientArea)
     drawMeterInfo(clientArea, iXY(BORDER_SPACE, BORDER_SPACE));
 
     clientArea.bltString( 4, clientArea.getHeight() - Surface::getFontHeight(),
-                    "Note: Use the right mouse button to accomplish fast mouse clicking.",
+                    "Note: Use the right mouse button to scroll quickly.",
                     windowTextColor);
 
     //if (!Desktop::getVisible("GameView")) {
@@ -369,7 +369,7 @@ void HostOptionsView::doDeactivate()
 //---------------------------------------------------------------------------
 void HostOptionsView::addMeterButtons(const iXY &pos)
 {
-    const int yOffset          = 15;
+    const int yOffset          = Surface::getFontHeight();
     const int arrowButtonWidth = 16;
 
     int x;
@@ -440,7 +440,7 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseFragLimit);
     x += arrowButtonWidth + meterWidth;
     addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseFragLimit);
-    y += yOffset;
+    y += yOffset + 20;
 
     const int minWidth = 150;
     int xChoiceOffset = 2;
@@ -452,7 +452,7 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     choiceGameType.addItem("Obj.+Frags");
     choiceGameType.addItem("Frags+Time");
     choiceGameType.setMinWidth(minWidth);
-    choiceGameType.setLocation(xChoiceOffset, 100);
+    choiceGameType.setLocation(xChoiceOffset, y);
     choiceGameType.select( getGameTypeString() );
     add(&choiceGameType);
     xChoiceOffset += minWidth + 123;
@@ -464,7 +464,7 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     choiceCloudCoverage.addItem("Overcast");
     choiceCloudCoverage.addItem("Extremely Cloudy");
     choiceCloudCoverage.setMinWidth(minWidth);
-    choiceCloudCoverage.setLocation(xChoiceOffset, 100);
+    choiceCloudCoverage.setLocation(xChoiceOffset, y);
     choiceCloudCoverage.select(cloudCoverageCount);
     add(&choiceCloudCoverage);
     xChoiceOffset += minWidth + 13;
@@ -476,19 +476,20 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     choiceWindSpeed.addItem("Heavy");
     choiceWindSpeed.addItem("Typhoon");
     choiceWindSpeed.setMinWidth(minWidth);
-    choiceWindSpeed.setLocation(xChoiceOffset, 100);
+    choiceWindSpeed.setLocation(xChoiceOffset, y);
     choiceWindSpeed.select(windSpeed);
     add(&choiceWindSpeed);
     xChoiceOffset += minWidth + 10;
 
+    int checkboxesPosY = y + choiceGameType.getSize().y + Surface::getFontHeight();
     checkPublic.setLabel("Public");
     checkPublic.setState(GameConfig::server_public);
-    checkPublic.setLocation(2, 125);
+    checkPublic.setLocation(2, checkboxesPosY);
     add(&checkPublic);
 
     checkPowerUp.setLabel("PowerUps");
     checkPowerUp.setState(GameConfig::game_powerups);
-    checkPowerUp.setLocation(120, 125);
+    checkPowerUp.setLocation(120, checkboxesPosY);
     add(&checkPowerUp);
 
 
@@ -500,7 +501,7 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     choiceMapStyle.addItem("Scorched");
     choiceMapStyle.addItem("Martian");
     choiceMapStyle.setMinWidth(minWidth);
-    choiceMapStyle.setLocation(358, 155);
+    choiceMapStyle.setLocation(358, y + choiceWindSpeed.getSize().y + Surface::getFontHeight());
     choiceMapStyle.select(getMapStyleString());
     add(&choiceMapStyle);
 
@@ -523,13 +524,14 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos)
 {
     char strBuf[256];
 
+    int fontHeight = Surface::getFontHeight();
     const int arrowButtonWidth = 16;
-    const int yOffset          = 15;
+    const int yOffset          = fontHeight;
 
     int x = pos.x + 270 + arrowButtonWidth;
     int y = pos.y;
 
-    Surface tempSurface(meterWidth, 14, 1);
+    Surface tempSurface(meterWidth, fontHeight, 1);
     tempSurface.fill(meterColor);
 
     // Game Max Player Count

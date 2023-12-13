@@ -37,8 +37,7 @@ private:
     size_t              mouseover;
     int                 adjustedY;  // The y translation value to keep the choice on the screen.
     StateChangedCallback* callback;
-
-    enum { ChoiceItemHeight = 14 };
+    int                 choiceItemHeight;
 
 public:
     Choice(StateChangedCallback* newcallback = 0)

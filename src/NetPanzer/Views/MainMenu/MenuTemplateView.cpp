@@ -16,6 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include <vector>
 
 #include "Views/MainMenu/MenuTemplateView.hpp"
 #include "2D/Palette.hpp"
@@ -151,13 +152,16 @@ MenuTemplateView::MenuTemplateView() : RMouseHackView()
 // initPreGameOptionButtons
 void MenuTemplateView::initPreGameOptionButtons()
 {
-    add( new newButton( "MAIN", "Main", mainPos, 0) );
-    add( new newButton( "JOIN", "Join", joinPos, 0) );
-    add( new newButton( "HOST", "Host", hostPos, 0) );
-    add( new newButton( "OPTIONS", "Options", optionsPos, 0) );
-    add( new newButton( "CREDITS", "Credits", creditsPos, 0) );
-    add( new newButton( "HELP", "Help", helpPos, 0) );
-    add( new newButton( "EXITNP", "Exit netPanzer", exitPos, 0) );
+    iXY emptyPos;
+    addHorizontal(mainTopButtonsStartPos, 5, std::vector<Component*> {
+            new newButton( "MAIN", "Main", emptyPos, 0),
+            new newButton( "JOIN", "Join", emptyPos, 0),
+            new newButton( "HOST", "Host", emptyPos, 0),
+            new newButton( "OPTIONS", "Options", emptyPos, 0),
+            new newButton( "CREDITS", "Credits", emptyPos, 0),
+            new newButton( "HELP", "Help", emptyPos, 0),
+    });
+    add(new newButton( "EXITNP", "Exit netPanzer", exitPos, 0));
 } // end MenuTemplateView::initPreGameOptionButtons
 
 // initInGameOptionButtons
@@ -214,7 +218,7 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 
         static char text[] =
         "NetPanzer " PACKAGE_VERSION;
-        clientArea.bltString(10, 590, text, Color::gray);
+        clientArea.bltString(10, 580, text, Color::gray);
         // I don't like them so I delete them!
         //titlePackedSurface.blt(clientArea, bodyTextRect.min.x, 390);
         //titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x, bodyTextRect.max.y-50, Palette::colorTable6040);
@@ -260,7 +264,7 @@ void MenuTemplateView::doDrawM(Surface &viewArea, Surface &clientArea)  // start
 
     static char text[] =
         "NetPanzer " PACKAGE_VERSION;
-        clientArea.bltString(10, 590, text, Color::gray);
+        clientArea.bltString(10, 580, text, Color::gray);
 
     View::doDraw(viewArea, clientArea);
 } // end doDrawM
@@ -341,7 +345,7 @@ void MenuTemplateView::loadTitleSurface()
     //doLoadTitleSurface("mainTitle");
 } // end MenuTemplateView::loadTitleSurface
 
-// doLoadBackgroundSurface
+// doLoadTitleSurface
 //---------------------------------------------------------------------------
 void MenuTemplateView::doLoadTitleSurface(const std::string& string)
 {

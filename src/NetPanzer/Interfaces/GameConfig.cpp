@@ -557,7 +557,7 @@ void GameConfig::saveConfig()
     lua_getglobal(L,"config");
     if ( ! lua_istable(L, -1) )
     {
-        LOGGER.warning("ERROR: Can't save configuration, config doesn't exits.");
+        LOGGER.warning("ERROR: Can't save configuration, config doesn't exist.");
         return;
     }
 
@@ -565,7 +565,7 @@ void GameConfig::saveConfig()
     lua_rawget(L, -2);
     if ( ! lua_isfunction(L, -1) )
     {
-        LOGGER.warning("ERROR: Can't save configuration, config.dump function doesn't exits.");
+        LOGGER.warning("ERROR: Can't save configuration, config.dump function doesn't exist.");
         lua_pop(L, 2);
         return;
     }

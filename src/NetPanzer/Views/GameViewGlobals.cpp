@@ -25,41 +25,17 @@ iRect MenuRect(80, 80, 80+640, 80+470);
 iRect MenuRectStart(80, 80, 80+640, 80+5);
 iRect bodyTextRect(MenuRect.min.x +10, MenuRect.min.y+10, MenuRect.max.x-10, MenuRect.max.y-10);
 
-iXY mainPos(MenuRect.min.x+8, MenuRect.min.y-26);
-iXY joinPos(mainPos.x+54, mainPos.y);
-iXY hostPos(joinPos.x+54, mainPos.y);
-iXY optionsPos(hostPos.x+54, mainPos.y);
-iXY creditsPos(hostPos.x+54+78, mainPos.y);
-iXY helpPos(creditsPos.x+78, mainPos.y);
-iXY exitPos(MenuRect.max.x-140, mainPos.y);
+iXY mainTopButtonsStartPos(MenuRect.min.x+8, MenuRect.min.y-26);
+iXY joinPos(mainTopButtonsStartPos.x+54, mainTopButtonsStartPos.y);
+iXY hostPos(joinPos.x+54, mainTopButtonsStartPos.y);
+iXY exitPos(MenuRect.max.x-125, mainTopButtonsStartPos.y);
 iXY playPos(MenuRect.max.x-58, MenuRect.max.y);
-iXY returnToGamePos(mainPos);
-//iXY resignPos(optionsPos);
-iXY resignPos(MenuRect.min.x+134, mainPos.y);
-//iXY creditsPos(0, 0);
+iXY returnToGamePos(mainTopButtonsStartPos);
+iXY resignPos(MenuRect.min.x+134, mainTopButtonsStartPos.y);
 iXY readyPos(480, 32);
 iXY backPos(480, 575);
 
-const iXY sub1(mainPos.x, mainPos.y+ButonHeight);
-const iXY sub2(joinPos.x, sub1.y);
-const iXY sub3(hostPos.x, sub1.y);
-const iXY sub4(optionsPos.x, sub1.y);
-
-#if 0 // XXX
-iXY soundPos = sub1;
-iXY interfacePos = sub2;
-iXY visualsPos = sub3;
-iXY controlsPos = sub4;
-#else
-iXY visualsPos = sub1;
-iXY interfacePos = sub2;
-iXY soundPos = sub3; // XXX 2
-#endif
-
-
-
-
-bool gDrawGameHelp          = false;
+bool gDrawGameHelp = false;
 
 //--------------------------------------------------------------------------
 void bltViewBackground(Surface &dest)

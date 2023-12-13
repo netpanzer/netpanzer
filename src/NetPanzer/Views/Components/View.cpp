@@ -45,6 +45,19 @@ void View::add(Component *component)
     }
 } // end View::add
 
+// addHorizontal
+//---------------------------------------------------------------------------
+void View::addHorizontal(iXY start_pos, u_int spacing, std::vector<Component*> new_components)
+{
+    iXY pos = start_pos;
+    for (Component* component : new_components) {
+        component->setLocation(pos);
+        pos = iXY(pos.x + component->getSize().x + spacing, pos.y);
+        components.push_back(component);
+        component->setParent(this);
+    }
+} // end View::addHorizontal
+
 // View
 //---------------------------------------------------------------------------
 View::View()
@@ -117,7 +130,7 @@ void View::reset()
 
     removeComponents();
 
-    moveAreaHeight  = DEFAULT_MOVE_AREA_HEIGHT;
+    moveAreaHeight  = Surface::getFontHeight(); // one row of text plus some padding
     borderSize      = DEFAULT_BORDER_SIZE;
     snapToTolerance = DEFAULT_SNAP_TOLERANCE;
 
@@ -1220,7 +1233,7 @@ void View::checkArea(iXY viewarea)
 //---------------------------------------------------------------------------
 void View::resizeClientArea(const iXY &size)
 {
-    // These variables constitue the gap space needed for the window borders and
+    // These variables constitute the gap space needed for the window borders and
     // move area.
     int xExtra = borderSize * 2;
     int yExtra = xExtra + moveAreaHeight;

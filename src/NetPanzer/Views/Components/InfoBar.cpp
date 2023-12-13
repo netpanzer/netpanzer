@@ -27,52 +27,45 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameManager.hpp"
 
 
-bool InfoBar::bar_on = true;
+bool InfoBar::bar_on = false;
 
 
 static const PIX titles_color = 206; // #6d78c1 more or less "slate blue"
-static const char* titles =
+static const char *titles =
         "game              units           frags             objs.           time               FPS";
 
 static const PIX format_color = 249; // #d9d9ff
-static const char* format =
+static const char *format =
         "     %10s         %3d/%-3d         %4d/%-4d         %3d/%-3d        %02d:%02d/%02d:%02d       %.2f";
 
 static const PIX bars_color = 185; // #6f906d
-static const char* bars =
+static const char *bars =
         "                |               |                 |               |                  |";
 
 
-
-
 static const PIX titles_color2 = 206; // #6d78c1 more or less "slate blue"
-static const char* titles2 =
+static const char *titles2 =
         "client ping             server ping             avg c. ping             avg s. ping               ";
 
 static const PIX bars_color2 = 185; // #6f906d
-static const char* bars2 =
+static const char *bars2 =
         "                      |                       |                       |                           ";
 
 static const PIX format_color2 = 217; // gray
-static const char* format2 =
+static const char *format2 =
         "            %.1f                     %.1f                    %.1f                    %.1f         ";
 
-static const char* format2alt =
+static const char *format2alt =
         "            %s                     %s                     %s                     %s               ";
 
 
-
-
 void
-InfoBar::draw(Surface &dest)
-{
-    iRect r(position.x, position.y, dest.getWidth(), position.y+12);
+InfoBar::draw(Surface &dest) {
+    iRect r(position.x, position.y, dest.getWidth(), position.y + Surface::getFontHeight() + 2);
     dest.bltLookup(r, Palette::darkGray256.getColorArray());
 
     char buf[512];
-
     char buf2[512];
-
     char buf2alt[512];
 
 
@@ -85,20 +78,26 @@ InfoBar::draw(Surface &dest)
              GameConfig::game_maxunits / GameConfig::game_maxplayers,
 
              PlayerInterface::getLocalPlayer()->getKills(),
-             (GameConfig::game_gametype == _gametype_fraglimit || GameConfig::game_gametype == _gametype_objectiveANDfraglimit || GameConfig::game_gametype == _gametype_fraglimitORtimelimit)?(int)GameConfig::game_fraglimit:0,
+             (GameConfig::game_gametype == _gametype_fraglimit ||
+              GameConfig::game_gametype == _gametype_objectiveANDfraglimit ||
+              GameConfig::game_gametype == _gametype_fraglimitORtimelimit) ? (int) GameConfig::game_fraglimit : 0,
 
 
              PlayerInterface::getLocalPlayer()->getObjectivesHeld(),
-             (GameConfig::game_gametype == _gametype_objective || GameConfig::game_gametype == _gametype_objectiveANDfraglimit)?(int)ObjectiveInterface::getObjectiveLimit():0,
+             (GameConfig::game_gametype == _gametype_objective ||
+              GameConfig::game_gametype == _gametype_objectiveANDfraglimit)
+             ? (int) ObjectiveInterface::getObjectiveLimit() : 0,
 
 
-             (int)GameManager::getGameTime() / 3600,
-             (int)(GameManager::getGameTime() / 60) % 60,
-             (GameConfig::game_gametype == _gametype_timelimit || GameConfig::game_gametype == _gametype_fraglimitORtimelimit)?GameConfig::game_timelimit / 60:0,
-             (GameConfig::game_gametype == _gametype_timelimit || GameConfig::game_gametype == _gametype_fraglimitORtimelimit)?GameConfig::game_timelimit % 60:0,
+             (int) GameManager::getGameTime() / 3600,
+             (int) (GameManager::getGameTime() / 60) % 60,
+             (GameConfig::game_gametype == _gametype_timelimit ||
+              GameConfig::game_gametype == _gametype_fraglimitORtimelimit) ? GameConfig::game_timelimit / 60 : 0,
+             (GameConfig::game_gametype == _gametype_timelimit ||
+              GameConfig::game_gametype == _gametype_fraglimitORtimelimit) ? GameConfig::game_timelimit % 60 : 0,
 
              TimerInterface::getFPSAvg()
-             );
+    );
 
 
     int posx = position.x + 2 + 4;
@@ -108,65 +107,49 @@ InfoBar::draw(Surface &dest)
     dest.bltStringShadowed(posx, posy, buf, format_color, Color::black);
 
 
-
-
     if (bar_on) {
+        float getUpLastPing = PlayerInterface::getLocalPlayer()->getUpLastPing();
 
+        float getDownLastPing = PlayerInterface::getLocalPlayer()->getDownLastPing();
 
+        float getUpAvgPing = PlayerInterface::getLocalPlayer()->getUpAvgPing();
 
-             float getUpLastPing = PlayerInterface::getLocalPlayer()->getUpLastPing();
+        float getDownAvgPing = PlayerInterface::getLocalPlayer()->getDownAvgPing();
 
-             float getDownLastPing = PlayerInterface::getLocalPlayer()->getDownLastPing();
+        snprintf(buf2, sizeof(buf2),
 
-             float getUpAvgPing = PlayerInterface::getLocalPlayer()->getUpAvgPing();
+                 format2,
+                 float(getUpLastPing),
+                 float(getDownLastPing),
+                 float(getUpAvgPing),
+                 float(getDownAvgPing)
 
-             float getDownAvgPing = PlayerInterface::getLocalPlayer()->getDownAvgPing();
+        );
 
+        static const char *na = "n/a";
+        snprintf(buf2alt, sizeof(buf2alt),
 
+                 format2alt,
+                 na,
+                 na,
+                 na,
+                 na
 
+        );
 
-    snprintf(buf2, sizeof(buf2),
+        int pos2y = posy + Surface::getFontHeight();
+        int pos2x = 0;
 
-             format2,
-             float(getUpLastPing),
-             float(getDownLastPing),
-             float(getUpAvgPing),
-             float(getDownAvgPing)
+        iRect r2(0, pos2y, dest.getWidth(), pos2y + 12);
+        dest.bltLookup(r2, Palette::darkGray256.getColorArray());
 
-             );
-
-
-             static const char* na = "n/a";
-    snprintf(buf2alt, sizeof(buf2alt),
-
-             format2alt,
-             na,
-             na,
-             na,
-             na
-
-             );
-
-
-    int pos2y = posy+10;
-    int pos2x = 0;
-
-    iRect r2(0, pos2y, dest.getWidth(), pos2y+12);
-    dest.bltLookup(r2, Palette::darkGray256.getColorArray());
-
-    dest.bltStringShadowed(pos2x+2+4, pos2y+1, titles2, titles_color2, Color::black);
-    dest.bltStringShadowed(pos2x+2+4, pos2y+1, bars2, bars_color2, Color::black);
-    if (getUpLastPing == 0 && getDownLastPing == 0) {
-    // do nothing
-    dest.bltStringShadowed(pos2x+2+4, pos2y+1, buf2alt, format_color2, Color::black);
-    } else {
-    dest.bltStringShadowed(pos2x+2+4, pos2y+1, buf2, format_color2, Color::black);
+        dest.bltStringShadowed(pos2x + 2 + 4, pos2y + 1, titles2, titles_color2, Color::black);
+        dest.bltStringShadowed(pos2x + 2 + 4, pos2y + 1, bars2, bars_color2, Color::black);
+        if (getUpLastPing == 0 && getDownLastPing == 0) {
+            // do nothing
+            dest.bltStringShadowed(pos2x + 2 + 4, pos2y + 1, buf2alt, format_color2, Color::black);
+        } else {
+            dest.bltStringShadowed(pos2x + 2 + 4, pos2y + 1, buf2, format_color2, Color::black);
+        }
     }
-
-
-
-    }
-
-
-
 }

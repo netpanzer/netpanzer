@@ -54,8 +54,8 @@ CreditsScrollView::CreditsScrollView() : SpecialButtonView()
     insert("  - and don't forget to register your nickname for the ranking");
     insert("");
     insert("  Current Development Team");
+    insert("  - Devon Winrick (winrid)");
     insert("  - Fulvio Testi (fu)");
-    insert("  - Guido Ueffing (Lohengrin)");
     insert("");
     insert("");
     insert("  Authors");
@@ -126,7 +126,7 @@ void CreditsScrollView::doDraw(Surface &viewArea, Surface &clientArea)
 
     clientArea.bltString(   4,
                             clientArea.getHeight() - Surface::getFontHeight(),
-                            "Note: Use the right mouse button to accomplish fast mouse clicking.",
+                            "Note: Use the right mouse button to scroll quickly.",
                             windowTextColor);
     //char strBuf[256];
     //sprintf(strBuf, "%d", scrollBar->getValue());
