@@ -140,7 +140,7 @@ InfoBar::draw(Surface &dest) {
         int pos2y = posy + Surface::getFontHeight();
         int pos2x = 0;
 
-        iRect r2(0, pos2y, dest.getWidth(), pos2y + 12);
+        iRect r2(0, pos2y, dest.getWidth(), pos2y + Surface::getFontHeight() + 2);
         dest.bltLookup(r2, Palette::darkGray256.getColorArray());
 
         dest.bltStringShadowed(pos2x + 2 + 4, pos2y + 1, titles2, titles_color2, Color::black);
