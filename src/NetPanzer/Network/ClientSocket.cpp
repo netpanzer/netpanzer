@@ -233,7 +233,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
     unsigned int remaining = len;
     Uint16 packetsize=0;
 
-    LOGGER.debug("Received [%s] from server [%s]", data, so->getAddress().getIP().c_str());
+//    LOGGER.debug("Received [%s] from server [%s]", data, so->getAddress().getIP().c_str());
 
     while ( remaining )
     {
