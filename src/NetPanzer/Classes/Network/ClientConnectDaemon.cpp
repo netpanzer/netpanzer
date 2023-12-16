@@ -187,53 +187,64 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(const NetMessage *mess
 
     switch (state_mesg->getMessageEnum()) {
         case _connect_state_message_load_game_data : {
-            LoadingView::append("Loading Game Data ...");
+            if (NetworkState::status == _network_state_client) {
+                LoadingView::append("Loading Game Data ...");
+            }
         }
             break;
 
         case _connect_state_message_sync_player_info : {
-            LoadingView::append("Synchronizing Player Info ...");
+            if (NetworkState::status == _network_state_client) {
+                LoadingView::append("Synchronizing Player Info ...");
+            }
         }
             break;
 
         case _connect_state_message_sync_player_info_percent : {
-            snprintf(str_buf, sizeof(str_buf),
-                     "Synchronizing Player Info ... (%d%%)",
-                     state_mesg->getPercentComplete());
-            LoadingView::update(str_buf);
+            if (NetworkState::status == _network_state_client) {
+                snprintf(str_buf, sizeof(str_buf),
+                         "Synchronizing Player Info ... (%d%%)",
+                         state_mesg->getPercentComplete());
+                LoadingView::update(str_buf);
+            }
         }
             break;
 
         case _connect_state_message_sync_unit_profiles:
-            LoadingView::append("Synchronizing unit profiles...");
-            UnitProfileSprites::clearProfiles();
-            UnitProfileInterface::clearProfiles();
+            if (NetworkState::status == _network_state_client) {
+                LoadingView::append("Synchronizing unit profiles...");
+                UnitProfileSprites::clearProfiles();
+                UnitProfileInterface::clearProfiles();
+            }
 
             break;
 
         case _connect_state_message_sync_units : {
-            LoadingView::append("Synchronizing Game Elements ...");
+            if (NetworkState::status == _network_state_client) {
+                LoadingView::append("Synchronizing Game Elements ...");
+            }
         }
             break;
 
         case _connect_state_message_sync_units_percent : {
-            snprintf(str_buf, sizeof(str_buf),
-                     "Synchronizing Game Elements ... (%d%%)",
-                     state_mesg->getPercentComplete());
-            LoadingView::update(str_buf);
+            if (NetworkState::status == _network_state_client) {
+                snprintf(str_buf, sizeof(str_buf),
+                         "Synchronizing Game Elements ... (%d%%)",
+                         state_mesg->getPercentComplete());
+                LoadingView::update(str_buf);
+            }
         }
             break;
 
         case _connect_state_sync_complete : {
-            LoadingView::append("Game Synchronized");
-            LoadingView::loadFinish();
+            if (NetworkState::status == _network_state_client) {
+                LoadingView::append("Game Synchronized");
+                LoadingView::loadFinish();
+            }
             connection_state = _connect_state_idle;
-
-
 
             // bots automatic ally request mgmt
             if (NetworkState::status == _network_state_bot && GameConfig::bot_allied == true) {
-
                 PlayerState *playerx = 0;
                 unsigned int localplayer = PlayerInterface::getLocalPlayerIndex();
                 unsigned long max_players;
