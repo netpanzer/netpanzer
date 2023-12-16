@@ -346,7 +346,7 @@ ServerQueryThread::checkTimeOuts()
     Uint32 now = SDL_GetTicks();
 
     if ( querying_msdata.empty() && querying_server.empty() && not_queried.empty()) {
-        LOGGER.warning("Stopping querys to servers, no more servers");
+        LOGGER.warning("Stopping queries to servers, no more servers");
         running = false;
         state = STATE_DONE;
         if (udpsocket) {
