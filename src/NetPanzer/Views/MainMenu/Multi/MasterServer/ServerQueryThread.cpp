@@ -295,6 +295,7 @@ ServerQueryThread::onDataReceived(network::UDPSocket *s, const network::Address&
 
     ServerInfo * server = querying_server[fromaddress.str()];
     if (server) {
+        LOGGER.debug("Got data [%s] from server [%s]", str.c_str(), fromaddress.str().c_str());
         parseServerData(server,str);
         querying_server.erase(fromaddress.str());
     } else {
