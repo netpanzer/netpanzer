@@ -38,7 +38,7 @@ public:
     
 protected:
     void onConnected(TCPSocket *so);
-    void onDisconected(TCPSocket *so);
+    void onDisconnected(network::TCPSocket *so);
     void onDataReceived(TCPSocket *so, const char *data, const int len);
     void onSocketError(TCPSocket *so);
     void startHeartbeat();

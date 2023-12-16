@@ -49,7 +49,7 @@ public:
 protected:
     void onDataReceived(network::TCPSocket *s, const char *data, const int len);
     void onConnected(network::TCPSocket *s);
-    void onDisconected(network::TCPSocket *s);    
+    void onDisconnected(network::TCPSocket *s);
     void onDataReceived(network::UDPSocket *s, const network::Address &from, const char *data, const int len);
     void onSocketError(network::TCPSocket *s);
     void onSocketError(network::UDPSocket *s);

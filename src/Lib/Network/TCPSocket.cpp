@@ -103,7 +103,7 @@ void
 TCPSocket::onDisconected()
 {
     if (observer)
-        observer->onDisconected(this);
+        observer->onDisconnected(this);
     destroy();
 }
 

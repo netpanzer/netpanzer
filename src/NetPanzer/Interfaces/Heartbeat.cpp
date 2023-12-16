@@ -132,11 +132,11 @@ Heartbeat::onConnected(TCPSocket *so)
 }
 
 void
-Heartbeat::onDisconected(TCPSocket *so)
+Heartbeat::onDisconnected(network::TCPSocket *s)
 {
-    LOGGER.debug("Masterserver disconected [%s]", so->getAddress().getIP().c_str());
-    delete masterservers[so];
-    masterservers.erase(so);
+    LOGGER.debug("Masterserver disconected [%s]", s->getAddress().getIP().c_str());
+    delete masterservers[s];
+    masterservers.erase(s);
 }
 
 void

@@ -121,19 +121,18 @@ ServerQueryThread::queryMasterServer()
 void
 ServerQueryThread::onConnected(network::TCPSocket *s)
 {
-    LOGGER.warning("MASTERSERVER Connected [%s]", s->getAddress().getIP().c_str());
+    LOGGER.info("MASTERSERVER Connected [%s], sending query.", s->getAddress().getIP().c_str());
 //    char query[] = "\\list\\gamename\\master\\final\\list\\gamename\\netpanzer\\final\\";
     char query[] = "\\list\\gamename\\netpanzer\\final\\";
 
     querying_msdata[s]->touch();
     s->send(query,sizeof(query)-1);
-
 }
 
 void
-ServerQueryThread::onDisconected(network::TCPSocket *s)
+ServerQueryThread::onDisconnected(network::TCPSocket *s)
 {
-    LOGGER.warning("MASTERSERVER Disconected [%s]", s->getAddress().getIP().c_str());
+    LOGGER.warning("MASTERSERVER Disconnected [%s]", s->getAddress().getIP().c_str());
     delete querying_msdata[s];
     querying_msdata.erase(s);
 }
@@ -156,6 +155,8 @@ ServerQueryThread::onSocketError(network::UDPSocket *s)
 void
 ServerQueryThread::onDataReceived(network::TCPSocket *s, const char *data, const int len)
 {
+    LOGGER.debug("ServerQueryThread: Received [%s] from server [%s]", data, s->getAddress().getIP().c_str());
+
     std::string str;
 
     MSInfo * msi = querying_msdata[s];

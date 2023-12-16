@@ -233,8 +233,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
     unsigned int remaining = len;
     Uint16 packetsize=0;
 
-
-
+    LOGGER.debug("Received [%s] from server [%s]", data, so->getAddress().getIP().c_str());
 
     while ( remaining )
     {
@@ -512,10 +511,10 @@ ClientSocket::onConnected(network::TCPSocket *so)
 }
 
 void
-ClientSocket::onDisconected(network::TCPSocket *so)
+ClientSocket::onDisconnected(network::TCPSocket *s)
 {
-    (void)so;
-    LOGGER.debug("ClientSocket: Disconected id=%d", id);
+    (void)s;
+    LOGGER.debug("ClientSocket: Disconnected id=%d", id);
     socket=0;
     observer->onClientDisconected(this, "Network connection closed");
 }
