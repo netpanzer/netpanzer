@@ -46,6 +46,9 @@ building it. Here's a list of them:
 * SDL 2
   http://www.libsdl.org
 
+* SDL 2 TTF
+  https://wiki.libsdl.org/SDL2_ttf/FrontPage
+
 * SDL_mixer 2
   http://www.libsdl.org/projects/SDL_mixer/
 
