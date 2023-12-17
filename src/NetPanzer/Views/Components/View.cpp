@@ -47,7 +47,7 @@ void View::add(Component *component)
 
 // addHorizontal
 //---------------------------------------------------------------------------
-void View::addHorizontal(iXY start_pos, u_int spacing, std::vector<Component*> new_components)
+void View::addHorizontal(iXY start_pos, int spacing, std::vector<Component*> new_components)
 {
     iXY pos = start_pos;
     for (Component* component : new_components) {

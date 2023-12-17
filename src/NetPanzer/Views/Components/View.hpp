@@ -42,7 +42,7 @@ class View : public iRect
     friend class Desktop;
 public:
     void add(Component *Component);
-    void addHorizontal(iXY start_pos, u_int spacing, std::vector<Component*> new_components);
+    void addHorizontal(iXY start_pos, int spacing, std::vector<Component*> new_components);
     void add(DEFAULT_VIEW_BUTTON button);
 
 public:
