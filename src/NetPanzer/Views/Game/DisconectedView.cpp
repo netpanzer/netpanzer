@@ -99,7 +99,7 @@ DisconectedView::init()
     resize(screen->getWidth(),screen->getHeight());
     moveTo(0,0);
 
-    int bsize = Surface::getTextLength(" ") * 8;
+    int bsize = Surface::getTextWidth(" ") * 8;
     addButtonCenterText(iXY((getClientRect().getSizeX()/2)-(bsize/2),
                 (getClientRect().getSizeY()/2)+(Surface::getFontHeight() * 2)),
                 bsize, "Ok", "", buttonOk);

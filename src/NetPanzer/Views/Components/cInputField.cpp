@@ -161,8 +161,8 @@ void cInputField::setInputFieldString(cInputFieldString *string)
     this->maxWidth = string->maxWidth;
 
     iXY size;
-    // XXX (8 is hardcoded here...)
-    size.x = (string->maxWidth+1) * 8 + 8;
+    int charWidth = Surface::getTextWidth(" ");
+    size.x = ((string->maxWidth - 1) * charWidth) + charWidth;
     size.y = Surface::getFontHeight() + 4;
 
     bounds.max = bounds.min + size;
@@ -337,14 +337,9 @@ void cInputField::drawHighlighted(Surface &dest)
             timeForBlink = 0.0f;
         }
     } else {
-        int cursorPos=cInputField::cursorPos-strDisplayStart;
-        if ((size_t)cursorPos >= maxCharCount) {
-            // XXX hardcoded CHAR_PIXX (8)
-            inputFieldSurface.bltString(((cursorPos - 1) * 8) + 4, 2, "_", Color::red);
-        } else {
-            // XXX hardcoded CHAR_PIXX(8)
-            inputFieldSurface.bltString(cursorPos * 8 + 4, 2, "_", Color::red);
-        }
+        int cursorPos = std::max(std::min(cInputField::cursorPos-strDisplayStart, maxCharCount - 1), (size_t) 0);
+        int charWidth = Surface::getTextWidth(" ");
+        inputFieldSurface.bltString(cursorPos * charWidth + (charWidth / 2), 2, "_", Color::red);
     }
 
     inputFieldSurface.blt(dest, pos.x, pos.y);

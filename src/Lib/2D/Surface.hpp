@@ -221,10 +221,10 @@ public:
     }
 
     static unsigned int getFontHeight();
-    static unsigned int getTextLength(const char* text);
+    static unsigned int getTextWidth(const char* text);
     static unsigned int getTextLength(const std::string& text)
     {
-        return getTextLength(text.c_str());
+        return getTextWidth(text.c_str());
     }
 
     void circle(int cx, int cy, int radius, PIX color);
