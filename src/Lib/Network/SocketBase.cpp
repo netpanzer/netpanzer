@@ -103,7 +103,7 @@ SocketBase::create ()
     {
         sockfd = socket(PF_INET, addr.socktype, addr.protocol);
 
-        LOGGER.debug("SocketBase:: Create [%s:%d] socket", (addr.socktype == SOCK_STREAM)?"tcp":"udp",sockfd);
+        LOGGER.debug("SocketBase:: Create [%s:%lld] socket", (addr.socktype == SOCK_STREAM)?"tcp":"udp",sockfd);
 
         if(sockfd == INVALID_SOCKET)
         {

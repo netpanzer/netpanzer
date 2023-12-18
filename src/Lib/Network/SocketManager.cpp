@@ -38,7 +38,7 @@ SocketManager::handleEvents()
 
     if (!newSockets.empty()) {
         for (i = newSockets.begin(); i!=newSockets.end(); i++) {
-            LOGGER.debug("SocketManager:: Adding socket [%d]", (*i)->sockfd);
+            LOGGER.debug("SocketManager:: Adding socket [%lld]", (*i)->sockfd);
             socketList.insert(*i);
         }
         newSockets.clear();
