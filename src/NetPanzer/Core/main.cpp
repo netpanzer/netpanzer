@@ -366,12 +366,12 @@ int netpanzer_main(int argc, char** argv)
 // stack backtrace
 #if !defined(DEBUG) || defined(WIN32)
     catch(std::exception& e) {
-        LOGGER.warning("An unexpected exception occured: '%s'\nShutdown needed.",
+        LOGGER.warning("An unexpected exception occurred: '%s'\nShutdown needed.",
                 e.what());
         shutdown();
         return 1;
     } catch(...) {
-        LOGGER.warning("An unexpected exception occured.\nShutdown needed.");
+        LOGGER.warning("An unexpected exception occurred.\nShutdown needed.");
         shutdown();
         return 1;
     }
