@@ -43,6 +43,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/SystemNetMessage.hpp"
 //#include "Classes/Network/ConnectNetMessage.hpp"
 #include "Classes/Network/PlayerNetMessage.hpp"
+#include "ParticleInterface.hpp"
 
 
 enum {
@@ -253,21 +254,20 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(const NetMessage *mess
                     playerx = PlayerInterface::getPlayer((unsigned short) i);
 
                     if (playerx->isActive()) {
-
                         if (playerx->getID() != localplayer && playerx->getClientType() == 2) {
                             PlayerAllianceRequest allie_request;
                             allie_request.set(localplayer, playerx->getID(), _player_make_alliance);
                             CLIENT->sendMessage(&allie_request, sizeof(PlayerAllianceRequest));
                         }
-
                     }
                 }
-
             }
 
-            // give bots a random flag.
-            // it would be good to let the server provide a flag instead since it knows which flags are taken...
             if (NetworkState::status == _network_state_bot) {
+                ParticleInterface::rebuildUnitParticleData(); // bots need this
+
+                // give bots a random flag.
+                // it would be good to let the server provide a flag instead since it knows which flags are taken...
                 Surface game_flags;
                 std::vector<std::string> flag_names;
                 ResourceManager::loadAllFlags(game_flags, flag_names);
