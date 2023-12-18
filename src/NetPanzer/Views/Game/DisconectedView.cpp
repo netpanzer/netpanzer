@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/OptionsTemplateView.hpp"
 #include "Classes/ScreenSurface.hpp"
 
+#include "Units/UnitProfileInterface.hpp"
+#include "UStyleSelectionView.hpp"
+
 #include "Util/Log.hpp"
 
 
@@ -53,6 +56,17 @@ DisconectedView::buttonOk()
     // Must remove the gameView first so that the initButtons detects that
     // and loads the correct buttons.
     Desktop::setVisibilityAllWindows(false);
+
+     // cleaning some vectors and resetting stuff - important on restart!
+    UnitProfileInterface::cleaning();
+    GameManager::cleaning();
+    UnitProfileSprites::clearProfiles();
+    UnitProfileInterface::clearProfiles();
+
+
+    UStyleSelectionView::rstyle_mem = 0;
+
+
     Desktop::setVisibility("MainView", true);
 
     View *v = Desktop::getView("OptionsView");
@@ -85,7 +99,7 @@ DisconectedView::init()
     resize(screen->getWidth(),screen->getHeight());
     moveTo(0,0);
 
-    int bsize = Surface::getTextLength(" ") * 8;
+    int bsize = Surface::getTextWidth(" ") * 8;
     addButtonCenterText(iXY((getClientRect().getSizeX()/2)-(bsize/2),
                 (getClientRect().getSizeY()/2)+(Surface::getFontHeight() * 2)),
                 bsize, "Ok", "", buttonOk);

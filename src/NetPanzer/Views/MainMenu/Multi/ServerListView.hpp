@@ -31,7 +31,8 @@ public:
 
     void refresh();
     void endQuery();
-        
+    masterserver::ServerList getViewModel();
+
     virtual void doDraw(Surface& windowArea, Surface& clientArea);
     virtual int lMouseUp(const iXY& up_pos, const iXY& down_pos);
 
@@ -40,6 +41,7 @@ private:
     masterserver::ServerQueryThread* queryThread;
 
     Surface lock_image;
+    Surface auth_image;
 
     static void buttonRefresh();
 };

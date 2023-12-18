@@ -42,8 +42,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Interfaces/ChatInterface.hpp"
 
-using namespace std;
-
 ClientSocket::ClientSocket(ClientSocketObserver *o, const std::string& whole_servername)
     : observer(0), socket(0), sendpos(0), tempoffset(0), player_id(INVALID_PLAYER_ID)
 {
@@ -92,33 +90,43 @@ ClientSocket::ClientSocket(ClientSocketObserver *o)
 void
 ClientSocket::initId()
 {
-    static int curid=1;
-    id=curid++;
+    //static int curid=1;
+    //id=curid++;
+    // init XOR key
+    encryptKeySend = 0;
+    encryptKeyRecv = 0;
+    //encryptKeySendS = 0;
+    //encryptKeyRecvS = 0;
+    //recvf = false;
 
     if ( NetworkState::status == _network_state_server ) // server only
     {
     //AAdevice reset vars
+    mydatastrtime = 0;
     conn_end = 0; pre_conn_end = 0; packets_count = 0; lastPActTime0 = 0; commandBurst = 0; burstTime = 0; burstTime0 = 0; commandBurstLimit = 13;//slowdown = 0;
+
+
+
 
     if (GameConfig::game_anticheat < 1 || GameConfig::game_anticheat > 5)
     {
-    GameConfig::game_lowscorelimit = 3; // default
+    GameConfig::game_anticheat = 3; // default
     }
 
     if (GameConfig::game_anticheat == 1)
     {
-    commandBurstLimit = 7; // strict
+    commandBurstLimit = 11; // very strict
     } else if (GameConfig::game_anticheat == 2)
               {
-               commandBurstLimit = 8; // normal
+               commandBurstLimit = 12; // strict
               } else if (GameConfig::game_anticheat == 3)
                         {
-                         commandBurstLimit = 10; // permissive
+                         commandBurstLimit = 13; // normal
                         } else if (GameConfig::game_anticheat == 4)
                                   {
-                                   commandBurstLimit = 12; // very permissive
+                                   commandBurstLimit = 14; // permissive
                                   } else {
-                                          commandBurstLimit = 14; // pretty null
+                                          commandBurstLimit = 15; // pretty null
                                          }
 
 
@@ -130,6 +138,9 @@ ClientSocket::~ClientSocket()
     if (socket)
         socket->destroy();
 }
+
+
+
 
 void ClientSocket::sendMessage(const void* data, size_t size)
 {
@@ -145,11 +156,51 @@ void ClientSocket::sendMessage(const void* data, size_t size)
 
         Uint16 *buf = (Uint16*)(sendbuffer+sendpos);
         *buf = htol16(size);
+
+        Uint8 *bufb = (Uint8*)(sendbuffer+sendpos);
+
         memcpy(buf+1, data, size);
         sendpos += size+2;
+
+        // Encoding
+
+        memcpy(&encrypted,buf+1,1);
+        memcpy(&encryptedb,bufb+3,1);
+        encrypted2 = encrypted;
+        encryptedb2 = encryptedb;
+
+        encrypted2 ^= encryptKeySend;
+        memcpy(buf+1,&encrypted2,1);
+        encryptedb2 ^= encryptKeySend;
+        memcpy(bufb+3,&encryptedb2,1);
+
+        if ( NetworkState::status == _network_state_server )  // server only
+        {
+
+        if (encrypted == 1 && encryptedb == 6) {
+        memcpy(&key2,buf+2,1);
+        encryptKeySend = key2;
+        }
+
+
+        } else {  // client side
+
+        if (encrypted == 1 && encryptedb == 7) {
+        memcpy(&key2,buf+2,1);
+        encryptKeySend = key2;
+        }
+
+
+        }
+
 //        sendRemaining(); // lets send later
     }
 }
+
+
+
+
+
 
 void
 ClientSocket::sendRemaining()
@@ -182,8 +233,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
     unsigned int remaining = len;
     Uint16 packetsize=0;
 
-
-
+//    LOGGER.debug("Received [%s] from server [%s]", data, so->getAddress().getIP().c_str());
 
     while ( remaining )
     {
@@ -229,11 +279,70 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
 
 
 
-        // fu's Anti-Spam/Cheat device
 
-        if ( NetworkState::status == _network_state_server ) // server only
+        if ( (tempoffset-2 < packetsize) && remaining )
         {
+            unsigned int needsize = packetsize-(tempoffset-2);
+            unsigned int tocopy   = (remaining>needsize)?needsize:remaining;
+            memcpy(tempbuffer+tempoffset, data+dataptr, tocopy);
+            remaining  -= tocopy;
+            tempoffset += tocopy;
+            dataptr    += tocopy;
+        }
 
+        if ( tempoffset-2 == packetsize )
+        {
+            //LOGGER.info("Packet Last %d", packetsize);
+
+            // Decoding
+            Uint8 *buf2 = (Uint8*)(tempbuffer);
+
+            popc_t = (Uint8)tempbuffer[2];
+            popc_0b = popc_t;
+            popc_t1 = (Uint8)tempbuffer[3];
+            popc_1b = popc_t1;
+
+            popc_0b ^= encryptKeyRecv;
+            memcpy(buf2+2,&popc_0b,1);
+            popc_1b ^= encryptKeyRecv;
+            memcpy(buf2+3,&popc_1b,1);
+
+            opcv_0 = (int)tempbuffer[2];
+            opcv_1 = (int)tempbuffer[3];
+            opcv_2 = (Uint8)tempbuffer[4];
+
+            if ( NetworkState::status != _network_state_server ) // clients only
+            {
+
+            if (opcv_0 == 1 && opcv_1 == 6) {
+            encryptKeyRecv = opcv_2;
+            }
+
+            } else {  // server side
+
+            if (opcv_0 == 1 && opcv_1 == 7) {
+            encryptKeyRecv = opcv_2;
+
+            // check if key sent is the same of received
+            if (encryptKeySend != encryptKeyRecv) {
+            LOGGER.debug("Suspect attack detected [IP = %s] (network cheating)!", cipstring);
+            //ChatInterface::serversay("Server blocked suspect attack (external)!");
+            observer->onClientDisconected(this, "Network Manager striked!");
+            hardClose();
+            break;
+            }
+
+            }
+
+
+
+
+
+
+
+        //XXX// start of anti-spam device
+
+        //LOGGER.info("Packet %d", packetsize);
 
         if ( packetsize > 2 )
         {
@@ -244,19 +353,19 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
 
 
         // anti pre-spawn chat string attack (multiple temporary patches)
-        if ( packetsize == 346 && packets_count == 1 && pre_conn_end == 1)
+        if ( packetsize == 304 && packets_count == 1 && pre_conn_end == 1)
         {
          //conn_pause.setTimeOut(10000);
          conn_end = 1;
         }
 
-        if ( packetsize == 38 && packets_count == 0)
+        if ( packetsize == 39 && packets_count == 0)
         {
          //conn_pause.setTimeOut(10000);
          pre_conn_end = 1;
         }
 
-        if (packets_count == 0 && packetsize != 38)
+        if (packets_count == 0 && packetsize != 39)
         {
          LOGGER.debug("Suspect attack detected [IP = %s] (pre-spawning)!", cipstring);
          //ChatInterface::serversay("Server blocked suspect attack (external)!");
@@ -272,12 +381,13 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
         }
 
         //packet opc identifier
-        opc_0 = (int)data[dataptr];
-        opc_1 = (int)data[dataptr+1];
-        opc_2 = (int)data[dataptr+2];
+        //opc_0 = (int)data[dataptr];
+        //opc_1 = (int)data[dataptr+1];
+        //opc_2 = (int)data[dataptr+2];
+        //LOGGER.debug("%d %d %d", opc_0,opc_1,opc_2);
 
-
-        if ( (opc_0 == 10 && opc_1 == 0 && opc_2 == 3) || (opc_0 == 10 && opc_1 == 0 && opc_2 == 1) || (opc_0 == 3 && opc_1 == 5) ) // chat, ally chat, ally request
+        if ( (opcv_0 == 10 && opcv_1 == 0 && opcv_2 == 3) || (opcv_0 == 10 && opcv_1 == 0 && opcv_2 == 1) ||
+             (opcv_0 == 3 && opcv_1 == 2) ) // chat, ally chat, flag update - removed ally req (opcv_0 == 3 && opcv_1 == 5) ||
         {
 
 
@@ -306,16 +416,16 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
         mydatastrc++;
         mydatastrtime0 = mydatastrtime;
         mydatastrtime = currentPActTime;
-        if (mydatastrtime - mydatastrtime0 < 700)
+        if (mydatastrtime - mydatastrtime0 < ANTI_SPAM_LIMIT)
         {
          if (mydatastrc>6) // max 7 lines
          {
-          LOGGER.debug("Anti-Spam terminated a connection [IP = %s] (chat abuse)", cipstring);
-          ChatInterface::serversay("Anti-Spam terminated a connection (chat abuse)!");
-          observer->onClientDisconected(this, "Network Manager striked!");
+         LOGGER.debug("Anti-Spam terminated a connection [IP = %s] (chat abuse)", cipstring);
+         ChatInterface::serversay("Anti-Spam terminated a connection (chat abuse)!");
+         observer->onClientDisconected(this, "Network Manager striked!");
 
-          hardClose();
-          break;
+         hardClose();
+         break;
          }
         }
         else
@@ -343,11 +453,11 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
          if (burstDelta<800) // Does it depend on tanks number? It seems not.
          {
 
-         if ( commandBurst>commandBurstLimit ) // (7-8-10-12-14) too many consecutive bursts - player is cheating!
+         if ( commandBurst>commandBurstLimit ) // too many consecutive bursts - player is cheating!
          {
          commandBurst = 0;
          LOGGER.debug("Suspect cheater terminated! [IP = %s]", cipstring);
-         ChatInterface::serversay("Suspect cheater terminated (too fast clicking)!");
+         ChatInterface::serversay("Suspect cheater terminated (packet flooding)!");
          observer->onClientDisconected(this, "Anti-cheating striked!");
 
          //hardClose();
@@ -364,42 +474,24 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
         }
 
 
-
         //lastPActTime2 = lastPActTime1;
         lastPActTime1 = lastPActTime0;
         lastPActTime0 = currentPActTime;
 
         }
 
-        }
-
-        // end of Anti-Spam/Cheat device
+        // end of anti-spam device
 
 
 
 
 
+            }
 
 
-
-
-        if ( (tempoffset-2 < packetsize) && remaining )
-        {
-            unsigned int needsize = packetsize-(tempoffset-2);
-            unsigned int tocopy   = (remaining>needsize)?needsize:remaining;
-            memcpy(tempbuffer+tempoffset, data+dataptr, tocopy);
-            remaining  -= tocopy;
-            tempoffset += tocopy;
-            dataptr    += tocopy;
-        }
-
-        if ( tempoffset-2 == packetsize )
-        {
             EnqueueIncomingPacket(tempbuffer+sizeof(Uint16), packetsize, player_id, this);
             tempoffset = 0;
         }
-
-
 
 
 
@@ -419,10 +511,10 @@ ClientSocket::onConnected(network::TCPSocket *so)
 }
 
 void
-ClientSocket::onDisconected(network::TCPSocket *so)
+ClientSocket::onDisconnected(network::TCPSocket *s)
 {
-    (void)so;
-    LOGGER.debug("ClientSocket: Disconected id=%d", id);
+    (void)s;
+    LOGGER.debug("ClientSocket: Disconnected id=%d", id);
     socket=0;
     observer->onClientDisconected(this, "Network connection closed");
 }

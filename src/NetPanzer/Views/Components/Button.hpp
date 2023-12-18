@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -37,15 +37,15 @@ private:
     int extraBorder;
 protected:
     std::string label;
-       
+
     PIX borders[3][2];
     PIX textColors[3];
-   
+
     Surface bimage;
-   
+
     void render();
     ButtonState bstate;
-   
+
     void resetState()
     {
         bstate = BNORMAL;
@@ -67,6 +67,11 @@ public:
                                         std::string label,
                                         iXY loc);
 
+    /*static Button * createSpecialUSButton(std::string cname,
+                                        std::string label,
+                                        iXY loc);
+                                        */
+
     void setTextColors( PIX normal, PIX over, PIX pressed)
     {
         textColors[BNORMAL] = normal;
@@ -79,7 +84,7 @@ public:
         label = l;
         dirty = true;
     }
-   
+
     void setImage(const Surface &s)
     {
         if ( s.getNumFrames() ) {
@@ -92,7 +97,7 @@ public:
     {
 //        bimage.freeFrames();
     }
-   
+
     void setUnitSelectionBorder()
     {
         setExtraBorder();
@@ -104,7 +109,7 @@ public:
         borders[2][1] = Color::darkGray;
         dirty = true;
     }
-   
+
     void setNormalBorder()
     {
         setExtraBorder();
@@ -133,7 +138,7 @@ public:
         memset(borders, 0, sizeof(borders));
         dirty = true;
     }
-   
+
     void setSize(int x, int y)
     {
         Component::setSize(x+(extraBorder*2), y+(extraBorder*2));
@@ -143,7 +148,7 @@ public:
     {
         Component::setSize(xsize+(extraBorder*2), Surface::getFontHeight() + 4 + (extraBorder*2));
     }
-   
+
     void setExtraBorder()
     {
         if ( !extraBorder )
@@ -152,7 +157,7 @@ public:
             setSize( size.x, size.y);
         }
     }
-   
+
     void clearExtraBorder()
     {
         if ( extraBorder )

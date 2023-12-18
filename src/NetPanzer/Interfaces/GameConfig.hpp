@@ -22,8 +22,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string.h>
 #include <vector>
 #include <string>
+#include <stdexcept>
 
 #include "Core/CoreTypes.hpp"
+#include "Util/Log.hpp"
 
 #include "2D/Surface.hpp"
 #include "2D/Color.hpp"
@@ -31,7 +33,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ConfigVariable.hpp"
 #include "Classes/PlayerUnitConfig.hpp"
 
+#include "Util/StringUtil.hpp"
+
+#define MAX_STYLES_NUM 12
 #define DEFAULT_UNIT_PROFILES "Manta, Panther1, Titan, Stinger, Bobcat, Bear, Archer, Wolf, Drake, Spanzer"
+#define DEFAULT_UNITS_STYLES "original, danisch, desert, metro, night, nva, platane, surpat, tiger, woodland"
 
 enum { _mini_map_objective_draw_mode_solid_rect,
        _mini_map_objective_draw_mode_outline_rect,
@@ -60,6 +66,8 @@ enum { _game_session_host,
 enum { _gametype_objective,
        _gametype_fraglimit,
        _gametype_timelimit,
+       _gametype_objectiveANDfraglimit,
+       _gametype_fraglimitORtimelimit,
        _gametype_last
      };
 
@@ -70,6 +78,7 @@ enum { _connection_tcpip,
 
 enum { _game_config_respawn_type_round_robin,
        _game_config_respawn_type_random,
+       _game_config_respawn_type_random_alt,
        _game_config_respawn_type_last
      };
 
@@ -119,7 +128,7 @@ public:
     static bool         video_doublebuffer;
     static bool         video_shadows;
     static bool         video_blendsmoke;
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
     static bool         video_usedirectx;
 #endif
 
@@ -150,14 +159,18 @@ public:
     static int       game_windspeed;
     static int       game_lowscorelimit;
     static int       game_anticheat;
+    //static bool      game_authentication;
+    //static bool      game_bots_allowed;
+    //static bool      game_scrambler;
     //static int       game_maxchatlines;
     static NPString* game_map;
     static NPString* game_mapcycle;
+    static NPString* game_mapstyle;
+    static NPString* game_units_styles;
 
     static Uint8 player_flag_data[FLAG_WIDTH*FLAG_HEIGHT];
-    static Uint8 bot_flag_data[FLAG_WIDTH*FLAG_HEIGHT];
 
-    // game Settings (there are not saved to disk)
+    // game Settings (they are not saved to disk)
     ConfigInt       hostorjoin;         // 1=host, 2=join
     ConfigBool      quickConnect;
     ConfigBool      needPassword;
@@ -174,7 +187,9 @@ public:
     static bool      server_public;
     static NPString* server_masterservers;
     static NPString* server_name;
-
+    static bool      server_interactive_console;
+    static NPString* server_authserver;
+    static bool      server_authentication;
 
     static bool      sound_enable;
     static bool      sound_music;
@@ -200,7 +215,39 @@ public:
     static int       radar_enemyoutpostcolor;
     static int       radar_unitsize;
 
+    // bot settings
+    static int       bot_class;
+    static bool      bot_allied;
+    static int       bot_action_speed;
+
+
+
 public:
+
+    static NPString getUnitStyle(unsigned short style_vn)
+    {
+        std::vector<NPString> slist;
+        NPString sl = *GameConfig::game_units_styles;
+        string_to_params(sl, slist);
+        NPString cstyle = slist[style_vn];
+        return cstyle;
+    }
+
+    static unsigned short getUnitStylesNum()
+    {
+        std::vector<NPString> slist;
+        NPString sl = *GameConfig::game_units_styles;
+        unsigned short numc = 0;
+        string_to_params(sl, slist);
+        numc = slist.size();
+        if ( numc > MAX_STYLES_NUM ) {
+        LOGGER.warning("Too many unit styles provided by user. Max number is %d", MAX_STYLES_NUM);
+        throw std::runtime_error("Stop!!!");
+        }
+        return numc;
+    }
+
+
     const char* getGameTypeString() const
     {
         switch ( game_gametype )
@@ -211,6 +258,10 @@ public:
                 return( "Frag Limit" );
             case _gametype_timelimit :
                 return( "Time Limit" );
+            case _gametype_objectiveANDfraglimit :
+                return( "Obj.+Frags" );
+            case _gametype_fraglimitORtimelimit :
+                return( "Frags+Time" );
         }
         return( "Unknown" );
     }
@@ -237,6 +288,11 @@ public:
             case _game_config_respawn_type_random :
                 return( "Random" );
                 break;
+
+            case _game_config_respawn_type_random_alt :
+                return( "Random Alt" );
+                break;
+
         } // ** switch
 
         assert(false);

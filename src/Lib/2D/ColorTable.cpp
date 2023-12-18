@@ -284,7 +284,7 @@ void ColorTable::create(
 void ColorTable::loadTable(const char *filename)
 {
     try {
-        std::auto_ptr<filesystem::ReadFile> file(filesystem::openRead(filename));
+        std::unique_ptr<filesystem::ReadFile> file(filesystem::openRead(filename));
 
     	// make sure palette in file is the same as current one
 	for(size_t i=0; i<PALETTE_LENGTH; i++) {
@@ -306,7 +306,7 @@ void ColorTable::loadTable(const char *filename)
 void ColorTable::saveTable(const char *filename) const
 {
     try {
-        std::auto_ptr<filesystem::WriteFile> file(
+        std::unique_ptr<filesystem::WriteFile> file(
                 filesystem::openWrite(filename));
 
     	file->write(&Palette::color, 768, 1);

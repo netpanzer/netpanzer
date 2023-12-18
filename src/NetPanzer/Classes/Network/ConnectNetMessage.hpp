@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -53,13 +53,16 @@ class ClientConnectJoinRequest : public NetMessage
 private:
     Uint32 protocol_version;
     char password[32];
-    
+    Uint8 n_mode;
+
 public:
     ClientConnectJoinRequest();
     Uint32 getProtocolVersion() const;
     void setProtocolVersion(Uint32 version);
     void setPassword( const NPString& password );
     void getPassword(NPString& password) const;
+    void setNMode(unsigned char nm);
+    unsigned char getNMode() const;
 
 } __attribute__((packed));
 
@@ -68,7 +71,9 @@ enum { _join_request_result_success,
        _join_request_result_server_busy,
        _join_request_result_already_connected,
        _join_request_result_wrong_password,
-       _join_request_result_banned // XXX to be done
+       _join_request_result_banned, // XXX to be done
+       _join_request_result_access_denied,
+       _join_request_result_authentication_failed
      };
 
 class ClientConnectJoinRequestAck : public NetMessage
@@ -161,11 +166,16 @@ public:
 
 class ConnectClientSettings : public NetMessage
 {
+private:
+    Uint8 nstatus;
+
 public:
-    char player_name[64];
+    char player_name[21];
     Uint8 player_flag[FLAG_WIDTH*FLAG_HEIGHT];
     ConnectClientSettings();
     void set(const char *player_name);
+    void setNStatus(unsigned char ns);
+    unsigned char getNStatus() const;
 } __attribute__((packed));
 
 class ConnectMesgServerGameSettings : public NetMessage
@@ -175,17 +185,28 @@ private:
     Uint16 max_units;
 public:
     char     map_name[32];
+    char     map_style[17];
+    char     tank_styles[176];
 private:
     Sint32  cloud_coverage;
     float    wind_speed;
     Sint32  game_type;
 public:
     Uint8  powerup_state;
+    Uint8  occupation_percentage;
+    Uint8  enable_bases;
+    Uint8  base_capture_mode;
+    Uint8  base_limit;
+    Uint8  allowmultiip;
+    Uint8  allowallies;
+    Uint8  respawntype;
 private:
     Sint32  frag_limit;
     Sint32  time_limit;
     time_t   elapsed_time;
     Sint32  flag_time;
+    Sint32  low_score_limit;
+
 
 public:
     ConnectMesgServerGameSettings();
@@ -199,8 +220,6 @@ public:
     void setWindSpeed(float windSpeed);
     Sint32 getGameType() const;
     void setGameType(Sint32 gameType);
-    Uint8 getPowerupState() const;
-    void setPowerupState(Uint8 powerupState);
     Sint32 getFragLimit() const;
     void setFragLimit(Sint32 fragLimit);
     Sint32 getTimeLimit() const;
@@ -209,6 +228,8 @@ public:
     void setElapsedTime(time_t elapsedTime);
     Sint32 getFlagTime() const;
     void setFlagTime(Sint32 flagtime);
+    Sint32 getLowScoreLimit() const;
+    void setLowScoreLimit(Sint32 lowScoreLimit);
 } __attribute__((packed));
 
 class ConnectMesgClientGameSetupAck : public NetMessage

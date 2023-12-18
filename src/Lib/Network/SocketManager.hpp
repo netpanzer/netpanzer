@@ -24,8 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "TCPSocket.hpp"
 #include "SocketSet.hpp"
 
-using namespace std;
-
 namespace network {
     
 class SocketManager
@@ -51,8 +49,8 @@ protected:
     static void removeInvalidSockets();
 
 private:
-    typedef set<SocketBase *> Sockets;
-    typedef set<SocketBase *>::iterator SocketsIterator;
+    typedef std::set<SocketBase *> Sockets;
+    typedef std::set<SocketBase *>::iterator SocketsIterator;
     
     static SocketSet sset;
     static Sockets socketList;

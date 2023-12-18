@@ -57,7 +57,7 @@ TCPListenSocket::onDataReady()
             newcon->setNoDelay();
             newcon->onConnected();
         }
-    } catch (NetworkException e) {
+    } catch (NetworkException &e) {
         LOGGER.warning("Error Accepting new connections: '%s'", e.what());
     }
 }

@@ -27,6 +27,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class ClientSocket;
 #define SEND_BUFFER_LEN 32768
 
+#define ANTI_SPAM_LIMIT 600
+
+
 class ClientSocketObserver
 {
 public:
@@ -50,6 +53,7 @@ public:
     void sendRemaining();
     ProxyServer proxy;
 
+
     int getId() { return id; };
     std::string getFullIPAddress();
     std::string getIPAddress();
@@ -70,7 +74,7 @@ public:
 protected:
     void onDataReceived(network::TCPSocket *so, const char *data, const int len);
     void onConnected(network::TCPSocket *so);
-    void onDisconected(network::TCPSocket *so);
+    void onDisconnected(network::TCPSocket *so);
     void onSocketError(network::TCPSocket *so);
 
 private:
@@ -108,6 +112,42 @@ public:    PlayerID player_id;
     int opc_0;
     int opc_1;
     int opc_2;
+
+    Uint8 encryptKeySend;
+    Uint8 encryptKeyRecv;
+    Uint8 popc_0;
+    Uint8 popc_0b;
+    Uint8 popc_t;
+    Uint8 popc_1b;
+    Uint8 popc_t1;
+    int opcv_0;
+    int opcv_1;
+    Uint8 key2;
+    Uint8 key0;
+    Uint8 opcv_2;
+    Uint8 encrypted;
+    Uint8 encryptedb;
+    Uint8 encrypted2;
+    Uint8 encryptedb2;
+/*
+    Uint8 popc_0;
+    Uint8 popc_0b;
+    Uint8 popc_t;
+    int opcv_0;
+    int opcv_1;
+    Uint8 key2;
+    Uint8 key0;
+    Uint8 opcv_2;
+    Uint8 encrypted;
+    Uint8 encryptedb;
+    Uint8 encrypted2;
+    Uint8 encryptKeySend;
+    Uint8 encryptKeyRecv;
+    Uint8 encryptKeySendS;
+    Uint8 encryptKeyRecvS;
+    bool recvf;
+*/
+
 };
 
 #endif

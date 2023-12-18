@@ -31,6 +31,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/OptionsTemplateView.hpp"
 
 #include "Views/GameViewGlobals.hpp"
+#include "Units/UnitProfileInterface.hpp"
+#include "UStyleSelectionView.hpp"
 
 
 //---------------------------------------------------------------------------
@@ -57,6 +59,15 @@ static void bYES()
     // Must remove the gameView first so that the initButtons detects that
     // and loads the correct buttons.
     Desktop::setVisibilityAllWindows(false);
+
+    // cleaning some vectors and resetting stuff - important on restart!
+    UnitProfileInterface::cleaning();
+    GameManager::cleaning();
+    UnitProfileSprites::clearProfiles();
+    UnitProfileInterface::clearProfiles();
+
+
+    UStyleSelectionView::rstyle_mem = 0;
 
     Desktop::setVisibility("MainView", true);
 
@@ -136,7 +147,7 @@ void AreYouSureResignView::doActivate()
 
 void AreYouSureResignView::onComponentClicked(Component* c)
 {
-    string cname = c->getName();
+    std::string cname = c->getName();
     if ( !cname.compare("Button.YES") )
     {
         bYES();

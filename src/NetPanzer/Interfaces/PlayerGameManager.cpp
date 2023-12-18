@@ -63,6 +63,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/OrderingView.hpp"
 #include "Views/MainMenu/SkirmishView.hpp"
 #include "Views/MainMenu/HelpView.hpp"
+#include "Views/MainMenu/CreditsScrollView.hpp"
 #include "Views/MainMenu/CreditsView.hpp"
 #include "Views/MainMenu/Multi/JoinView.hpp"
 #include "Views/MainMenu/Multi/HostView.hpp"
@@ -79,6 +80,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Game/RankView.hpp"
 #include "Views/Game/EndRoundView.hpp"
 #include "Views/Game/GFlagSelectionView.hpp"
+
+#include "Views/Game/UStyleSelectionView.hpp"
+
 #include "Views/Game/VehicleSelectionView.hpp"
 #include "Views/Game/CodeStatsView.hpp"
 #include "Views/Game/LibView.hpp"
@@ -89,6 +93,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Game/AreYouSureExitView.hpp"
 #include "Views/Game/GameView.hpp"
 #include "Views/Game/MiniMapView.hpp"
+#include "Views/Game/MiniMapViewAlt.hpp"
 #include "Views/Game/DisconectedView.hpp"
 #include "Views/Game/LoadingView.hpp"
 
@@ -136,14 +141,15 @@ void PlayerGameManager::initializeVideoSubSystem()
 void PlayerGameManager::shutdownVideoSubSystem()
 {
     delete sdlVideo;
-    sdlVideo = 0;
-    Screen = 0;
+    sdlVideo = nullptr;
+    Screen = nullptr;
+
 }
 //-----------------------------------------------------------------
 void PlayerGameManager::initializeSoundSubSystem()
 {
     delete sound;
-    sound = 0;
+    sound = nullptr;
 
     LOGGER.info("Initializing sound system.");
     try {
@@ -153,7 +159,7 @@ void PlayerGameManager::initializeSoundSubSystem()
         LOGGER.warning("Couldn't initialize sound: %s", e.what());
     }
 
-    if(sound == 0)
+    if(sound == nullptr)
         sound = new DummySound();
 
     sound->setSoundVolume(GameConfig::sound_effectsvol);
@@ -177,8 +183,10 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new RankView());
     Desktop::add(new EndRoundView());
     Desktop::add(new GFlagSelectionView());
+    Desktop::add(new UStyleSelectionView());
     Desktop::add(new VehicleSelectionView());
     Desktop::add(new MiniMapView() );
+    Desktop::add(new MiniMapViewAlt() );
     Desktop::add(new CodeStatsView());
     Desktop::add(new LibView());
     Desktop::add(new HelpScrollView());
@@ -189,13 +197,16 @@ void PlayerGameManager::initializeWindowSubSystem()
 
     Desktop::add(new MapSelectionView());
     Desktop::add(new MainMenuView());
+    Desktop::add(new HelpView());
+    Desktop::add(new CreditsScrollView());
+    Desktop::add(new CreditsView());
     Desktop::add(new JoinView());
     Desktop::add(new HostView());
     Desktop::add(new GetSessionView());
     Desktop::add(new OptionsTemplateView());
     Desktop::add(new OrderingView());
-    Desktop::add(new HelpView());
-    Desktop::add(new CreditsView());
+
+
     Desktop::add(new HostOptionsView());
     Desktop::add(new PlayerNameView());
     Desktop::add(new ResignView());
@@ -243,7 +254,7 @@ void PlayerGameManager::graphicsLoop()
     MouseInterface::draw(*screen);
 
     screen->unlock();
-    screen->copyToVideoFlip();
+    screen->render();
 }
 //-----------------------------------------------------------------
 bool PlayerGameManager::launchNetPanzerGame()
@@ -266,11 +277,11 @@ void PlayerGameManager::shutdownNetworkSubSystem()
 {
     if ( infosocket ) {
         delete infosocket;
-        infosocket = 0;
+        infosocket = nullptr;
     }
     if ( heartbeat ) {
         delete heartbeat;
-        heartbeat = 0;
+        heartbeat = nullptr;
     }
     BaseGameManager::shutdownNetworkSubSystem();
 }
@@ -291,34 +302,34 @@ void PlayerGameManager::hostMultiPlayerGame()
     try {
     	if (CLIENT) {
 		delete CLIENT;
-		CLIENT=0;
+		CLIENT = nullptr;
 	}
 	CLIENT = new NetworkClient();
         SERVER->hostSession();
 
         if ( GameConfig::server_public
-             && GameConfig::server_masterservers->size() != 0 )
+             && !GameConfig::server_masterservers->empty() )
         {
             try {
                 if ( infosocket ) {
                     delete infosocket;
-                    infosocket = 0;
+                    infosocket = nullptr;
                 }
                 infosocket = new InfoSocket(GameConfig::server_port);
                 if ( heartbeat ) {
                     delete heartbeat;
-                    heartbeat = 0;
+                    heartbeat = nullptr;
                 }
                 heartbeat = new Heartbeat();
             } catch(std::exception& e) {
                 LOGGER.warning("heartbeats disabled: %s", e.what());
                 if ( infosocket ) {
                     delete infosocket;
-                    infosocket = 0;
+                    infosocket = nullptr;
                 }
                 if ( heartbeat ) {
                     delete heartbeat;
-                    heartbeat = 0;
+                    heartbeat = nullptr;
                 }
             }
         }
@@ -344,9 +355,10 @@ void PlayerGameManager::hostMultiPlayerGame()
 
     GameConfig::game_map->assign( MapsManager::getNextMap("") );
     const char* mapname = GameConfig::game_map->c_str();
+    const char* mapstyle = GameConfig::game_mapstyle->c_str();
 
     try {
-        GameManager::startGameMapLoad(mapname, 20);
+        GameManager::startGameMapLoad(mapname, mapstyle, 20);
     } catch(std::exception& e) {
         LOGGER.warning("Error while loading map '%s': %s", mapname, e.what());
         LoadingView::loadError();
@@ -374,17 +386,17 @@ void PlayerGameManager::hostMultiPlayerGame()
         if ( infosocket )
         {
             delete infosocket;
-            infosocket = 0;
+            infosocket = nullptr;
         }
         if ( heartbeat )
         {
             delete heartbeat;
-            heartbeat = 0;
+            heartbeat = nullptr;
         }
         if (CLIENT)
         {
             delete CLIENT;
-            CLIENT=0;
+            CLIENT=nullptr;
         }
 
         SERVER->closeSession();
@@ -412,7 +424,9 @@ void PlayerGameManager::hostMultiPlayerGame()
     player_state = PlayerInterface::allocateLoopBackPlayer();
     const char* playername = GameConfig::player_name->c_str();
     player_state->setName(playername);
-
+    //temp fix
+    player_state->setPlayerStyle(0);
+    //
     LoadingView::update( "Spawning Player ... (100%)" );
 
     graphicsLoop();
@@ -429,11 +443,11 @@ void PlayerGameManager::quitGame()
 {
     if ( infosocket ) {
         delete infosocket;
-        infosocket = 0;
+        infosocket = nullptr;
     }
     if ( heartbeat ) {
         delete heartbeat;
-        heartbeat = 0;
+        heartbeat = nullptr;
     }
 }
 
@@ -485,7 +499,7 @@ bool PlayerGameManager::mainLoop()
         if (aktimer.isTimeOut())
         {
             aktimer.reset();
-            PlayerState * player = 0;
+            PlayerState * player = nullptr;
             unsigned long max_players;
             max_players = PlayerInterface::getMaxPlayers();
             for (unsigned long i = 0; i < max_players; i++)
@@ -528,7 +542,7 @@ void PlayerGameManager::processSystemKeys()
 
         if ( KeyboardInterface::getKeyState(SDLK_F9) )
         {
-            Screen->doScreenshoot();
+            Screen->doScreenshot();
         }
 
         if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE)) {
@@ -541,6 +555,10 @@ void PlayerGameManager::processSystemKeys()
                 else if ( Desktop::getVisible("GFlagSelectionView") )
                 {
                     Desktop::toggleVisibility("GFlagSelectionView");
+                }
+                else if ( Desktop::getVisible("UStyleSelectionView") )
+                {
+                    Desktop::toggleVisibility("UStyleSelectionView");
                 }
                 else
                 {

@@ -22,13 +22,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <vector>
 
-using namespace std;
-
 class PlayerUnitConfig
 {
 protected:
     unsigned int max_allowed_units;
-    vector<unsigned int> unit_spawn_list;
+    std::vector<unsigned int> unit_spawn_list;
     char unit_color;
 
 public:

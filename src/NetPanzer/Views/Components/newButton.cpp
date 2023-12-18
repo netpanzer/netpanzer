@@ -26,15 +26,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 void newButton::render()
 {
     surface.fill(0);
-    Surface text;
-    text.renderText( label.c_str(), textColors[bstate], 0);
     surface.FillRoundRect(surface.getRect(), 3, borders[bstate][1]);
     if ( bimage.getNumFrames() == 1 )
     {
         bimage.bltTrans(surface, 1, 1);
     }
     surface.RoundRect(surface.getRect(), 3, borders[bstate][0]);
-    text.bltTrans(surface, (surface.getWidth()/2) - (text.getWidth()/2),
-                 (surface.getHeight()/2) - (text.getHeight()/2));        
+    surface.bltStringCenter(label.c_str(), textColors[bstate]);
     dirty = false;
 }

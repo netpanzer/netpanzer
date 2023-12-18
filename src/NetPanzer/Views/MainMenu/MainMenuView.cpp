@@ -47,10 +47,10 @@ void MainMenuView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     MenuTemplateView::doDrawM(viewArea, clientArea);
 
-    static char text[] =
-        "";
+    //static char text[] =
+    //    "";
 
-    viewArea.bltStringInBox(bodyTextRect, text, windowTextColor, 12);
+    //viewArea.bltStringInBox(bodyTextRect, text, windowTextColor, 12);
 } // end MainMenuView::doDraw
 /*
 void MainMenuView::drawMBack()

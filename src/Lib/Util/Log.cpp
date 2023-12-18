@@ -32,7 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Exception.hpp"
 #include "FileSystem.hpp"
 #include "Log.hpp"
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 #define MAX_LOG_FILES 25
 #define MAX_LOGFILE_SIZE 10000000
@@ -148,7 +148,7 @@ void
 Logger::log(int priority, const char *fmt, va_list ap)
 {
     char buf[2048];
-    time_t curtime = time(0);
+    time_t curtime = time(nullptr);
     struct tm* loctime = localtime(&curtime);
     int timelen = strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S ", loctime);
     

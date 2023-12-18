@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __cButton_hpp__
 #define __cButton_hpp__
 
+#include <string.h>
 #include <stdlib.h>
 #include "Types/iXY.hpp"
 #include "Types/iRect.hpp"

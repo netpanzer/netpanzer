@@ -8,8 +8,8 @@ import subprocess
 # Set NetPanzer Version
 ################################################################
 
-NPVERSION = '0.8.7'
-SVERSION = ''
+NPVERSION = '0.9.0-RC5'
+GITVERSION = ''
 
 try:
     FILE = open('RELEASE_VERSION', 'r')
@@ -19,25 +19,24 @@ except:
     pass
 
 try:
-    SVERSION = os.popen('svnversion').read()[:-1]
-    SVERSION = SVERSION.split(':')[-1]
+    GITVERSION = os.popen('git rev-parse --short HEAD').read()
 except:
     pass
 
-print "NPVERSION = " + NPVERSION
-print "SVERSION = " + SVERSION
-if NPVERSION == '' and SVERSION != '':
-    NPVERSION = 'svn-' + SVERSION;
+print("NPVERSION = " + NPVERSION)
+print("GITVERSION = " + GITVERSION)
+if NPVERSION == '' and GITVERSION != '':
+    NPVERSION = 'git-' + GITVERSION;
 
 thisplatform = sys.platform;
-print 'Building version ' + NPVERSION + ' in ' + thisplatform
+print('Building version ' + NPVERSION + ' in ' + thisplatform)
 
 ################################################################
 # Fix compiling with long lines in windows
 ################################################################
 class ourSpawn:
     def ourspawn(self, sh, escape, cmd, args, env):
-        newargs = string.join(args[1:], ' ')
+        newargs = ' '.join(args[1:])
         cmdline = cmd + " " + newargs
         startupinfo = subprocess.STARTUPINFO()
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
@@ -46,9 +45,9 @@ class ourSpawn:
         data, err = proc.communicate()
         rv = proc.wait()
         if rv:
-            print "====="
-            print err
-            print "====="
+            print("=====")
+            print(err)
+            print("=====")
         return rv
 
 def SetupSpawn( env ):
@@ -70,7 +69,6 @@ def globSources(localenv, sourcePrefix, sourceDirs, pattern):
     targetsources = []
     for s in sources:
         targetsources.append(buildpath + s)
-
     return targetsources
 
 ################################################################
@@ -90,7 +88,7 @@ opts.AddVariables(
     EnumVariable('mode', 'set compile mode', 'release', allowed_values=('debug', 'release')),
     EnumVariable('cross','do a cross compilation','', allowed_values=('','mingw','linux')),
     ('datadir','define the extra directory where the netpanzer will look for data files, usefull for linux distributions, defaults to no extra directory',''),
-    ('sdlconfig','sets the sdl-config full path, cross compilation sure needs this', 'sdl-config'),
+    ('sdlconfig','sets the sdl-config full path, cross compilation sure needs this', 'sdl2-config'),
     ('universal','builds universal app in Max OS X(default false, other value is true)', 'false'),
     ('compilerprefix', 'sets the prefix for the cross linux compiler, example: i686-pc-linux-gnu-', ''),
 )
@@ -118,8 +116,17 @@ else:
 
 exeappend = ''
 
+if 'CXXFLAGS' in os.environ:
+    env.Append(CCFLAGS = os.environ['CXXFLAGS'])
+
+if 'CPPFLAGS' in os.environ:
+    env.Append(CCFLAGS = os.environ['CPPFLAGS'])
+
+if 'LDFLAGS' in os.environ:
+    env.Append(LINKFLAGS = os.environ['LDFLAGS'])
+
 if env['cross'] == 'mingw':
-    print 'configuring for mingw cross compilation'
+    print('configuring for mingw cross compilation')
     env.Tool('crossmingw', toolpath = ['.'])
     env.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
     env.Append( LDFLAGS = [ '-mwindows' ] )
@@ -128,6 +135,8 @@ if env['cross'] == 'mingw':
 
 
 env.Append( LINKFLAGS = [ '-static-libgcc' ] )
+
+env.Append(CCFLAGS = '-std=c++17')
 
 if env['mode'] == 'debug':
     env.Append(CCFLAGS = ['-g', '-O0'])
@@ -170,33 +179,34 @@ env.Append( CPPPATH = [ 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/l
 
 # for this platform
 if thisplatform == 'darwin':
-    env.Append( CPPPATH = ['/Library/Frameworks/SDL.framework/Headers',
-                           '/Library/Frameworks/SDL_mixer.framework/Headers' ] )
-    networkenv.Append( CPPPATH = ['/Library/Frameworks/SDL.framework/Headers'] )
+    env.Append( CPPPATH = ['/Library/Frameworks/SDL2.framework/Headers',
+                           '/Library/Frameworks/SDL2_mixer.framework/Headers' ] )
+    networkenv.Append( CPPPATH = ['/Library/Frameworks/SDL2.framework/Headers'] )
     if env['universal'] != 'false':
-		env.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
-		luaenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
-		physfsenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
-		networkenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
-		env.Append( LINKFLAGS = [ '-mmacosx-version-min=10.4', '-arch', 'ppc', '-arch', 'i386' ] )
+        env.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
+        luaenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
+        physfsenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
+        networkenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
+        env.Append( LINKFLAGS = [ '-mmacosx-version-min=10.4', '-arch', 'ppc', '-arch', 'i386' ] )
     else:
         env.Append( CCFLAGS = [ '-arch', 'i386' ] )
         luaenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
         physfsenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
         networkenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
         env.Append( LINKFLAGS = [ '-arch', 'i386' ] )
-    env.AppendUnique(FRAMEWORKS=Split('SDL SDL_mixer Cocoa IOKit'))
+    env.AppendUnique(FRAMEWORKS=Split('SDL2 SDL2_mixer Cocoa IOKit'))
     env.Append( NPSOURCES =  ['support/macosx/SDLMain.m'] )
 elif thisplatform == 'win32':
-
-    env.Append( CPPPATH = [ 'C:/MinGW/include/SDL' ] )
-    networkenv.Append( CPPPATH = [ 'C:/MinGW/include/SDL' ] )
-    #env.Append( LIBPATH = [ 'C:/MinGW/lib' ] )
-    env.Append( LIBS = [ 'ws2_32', 'mingw32', 'SDLMain', 'SDL' ] )
-    env.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
-    networkenv.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
-    env.Append( _LIBFLAGS = [ '-mwindows' ] )
-    env.Prepend( _LIBFLAGS = [ 'C:/MinGW/lib/SDL_mixer.lib' ] )
+    env.Tool('mingw', toolpath = ['.']) # we assume gcc
+    luaenv.Tool('mingw', toolpath = ['.']) # we assume gcc
+    networkenv.Tool('mingw', toolpath = ['.']) # we assume gcc
+    physfsenv.Tool('mingw', toolpath = ['.']) # we assume gcc
+    env.Append( CPPPATH = [ 'C:/MinGW/include/SDL2' ] )
+    networkenv.Append( CPPPATH = [ 'C:/MinGW/include/SDL2' ] )
+    env.Append( LIBPATH = [ 'C:/MinGW/lib' ] )
+    env.Append( LIBS = [ 'ws2_32', 'mingw32', 'SDL2main', 'SDL2', 'SDL2_mixer', 'SDL2_ttf' ] )
+    env.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0601' ] )
+    env.Append( _LIBFLAGS = [ '-mwindows' ] ) # Comment out to get console logs on Windows
     env['WINICON'] = env.RES( 'support/icon/npicon.rc' )
     SetupSpawn(env)
 else:
@@ -204,19 +214,19 @@ else:
     env.ParseConfig(env['sdlconfig'] + ' --cflags --libs')
     # note: for some magic reason, now doesn't need to put the full path for
     # SDL_mixer when using mingw crosscompilation
-    env.Append( LIBS = ['SDL_mixer' ] )
+    env.Append( LIBS = ['SDL2', 'SDL2_mixer', 'SDL2_ttf' ] )
 
 ################################################################
 # Makes libs
 ################################################################
 
 # BUILDS NETWORK
-networkenv.Append(           CPPPATH = [ 'src/Lib' ] )
-MakeStaticLib(          networkenv, 'npnetwork', 'Network', '*.cpp')
+networkenv.Append(CPPPATH = [ 'src/Lib' ] )
+MakeStaticLib(networkenv, 'npnetwork', 'Network', '*.cpp')
 
 # BUILDS LUA
-luaenv.Append(           CPPPATH = [ 'src/Lib/lua'] )
-MakeStaticLib(          luaenv, 'nplua', 'lua', '*.c')
+luaenv.Append(CPPPATH = [ 'src/Lib/lua'] )
+MakeStaticLib(luaenv, 'nplua', 'lua', '*.c')
 
 # BUILDS PHYSFS
 physfsenv.Append( CFLAGS = [ '-DPHYSFS_SUPPORTS_ZIP=1', '-DZ_PREFIX=1', '-DPHYSFS_NO_CDROM_SUPPORT=1' ] )
@@ -243,7 +253,7 @@ npdirs = """
 """
 
 env.Append( NPSOURCES = globSources(env, 'src/NetPanzer', npdirs, "*.cpp") )
-if env.has_key('WINICON'):
+if 'WINICON' in env:
     env.Append( NPSOURCES = env['WINICON'] )
 
 env.Prepend( LIBS = ['np2d','nplua','npnetwork','nplibs','npphysfs'] )

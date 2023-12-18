@@ -35,6 +35,9 @@ private:
     static int windSpeed;
     static int gameType;
 
+    Choice choiceMapStyle;
+    static int mapStyle;
+
 
     enum { BORDER_SPACE = 4 };
 
@@ -78,6 +81,12 @@ public:
 
     static std::string cloudCoverageString;
     static std::string windSpeedString;
+
+    static void updateGameConfigMapStyle();
+    static std::string getMapStyleString();
+
+
+
 }; // end HostOptionsView
 
 #endif // end __HostOptionsView_hpp__

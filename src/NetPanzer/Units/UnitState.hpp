@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -49,7 +49,7 @@ private:
     Sint32     bbox_min_y;
     Sint32     bbox_max_x;
     Sint32     bbox_max_y;
-    
+
     NetworkAngleInt body_angle;
     NetworkAngleInt turret_angle;
 
@@ -58,11 +58,14 @@ private:
     Uint16    speed_factor;
 
     Uint16    reload_time;
-    Sint16     max_hit_points;
-    Sint16     hit_points;
+    Sint16    max_hit_points;
+    Sint16    hit_points;
     Uint16    damage_factor;
     Uint32    weapon_range;
     Uint32    defend_range;
+
+    Uint8     unit_style;
+    Uint8     moving;
 
     Uint8 threat_level;
     Uint8 lifecycle_state;
@@ -93,11 +96,14 @@ public:
     unsigned short speed_factor;
 
     unsigned short reload_time;
-    short	   max_hit_points;
+    short	       max_hit_points;
     short          hit_points;
     unsigned short damage_factor;
     unsigned long  weapon_range;
     unsigned long  defend_range;
+
+    unsigned char  unit_style;
+    bool           moving;
 
     unsigned char  threat_level;
     unsigned char  lifecycle_state;

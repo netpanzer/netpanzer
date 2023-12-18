@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Units/UnitInterface.hpp"
 #include "Units/UnitProfileInterface.hpp"
-
+#include "Interfaces/ChatInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
@@ -33,6 +33,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/UnitNetMessage.hpp"
 #include "Classes/Network/ObjectiveNetMessage.hpp"
 #include "Classes/UnitMessageTypes.hpp"
+
+#include "Interfaces/GameManager.hpp"
+
+
 
 
 Objective::Objective(ObjectiveID id, iXY location, BoundBox area)
@@ -57,6 +61,8 @@ Objective::Objective(ObjectiveID id, iXY location, BoundBox area)
     occupation_pad_offset = iXY( 224, 48 );
     unit_generation_on_flag = false;
 
+
+
 }
 
 void
@@ -77,7 +83,7 @@ Objective::changeOwner( PlayerState * new_owner )
                                       "'%s' has been occupied by '%s'",
                                       name, new_owner->getName().c_str() );
     }
-    
+
     unit_collection_loc = outpost_map_loc + iXY( 13, 13 );
     unit_generation_on_flag = false;
 }
@@ -88,7 +94,17 @@ Objective::changeUnitGeneration(bool is_on, int unit_type)
     unit_generation_on_flag = is_on;
     if ( is_on )
     {
-        UnitProfile *profile = UnitProfileInterface::getUnitProfile( unit_type );
+
+        UnitProfile *profile;
+        if ( NetworkState::status == _network_state_server )  // server only
+        {
+        profile = UnitProfileInterface::getUnitProfile( unit_type );
+        } else {
+        profile = UnitProfileInterface::getUnitProfile( unit_type );
+        }
+
+        //LOGGER.info("unit_type = %d", unit_type);
+        //LOGGER.info("unit_type = %d", unit_type*GameConfig::getUnitStylesNum());
         if ( profile )
         {
             unit_generation_type = unit_type;
@@ -139,6 +155,11 @@ Objective::attemptOccupationChange(PlayerState* player)
 
     if ( GameConfig::game_base_limit > 0 && player->getObjectivesHeld() >= GameConfig::game_base_limit )
     {
+/*
+        char base_limit_warning[140];
+        sprintf(base_limit_warning, "Warning '%s' - Max %i bases per player!", player->getName().c_str(), GameConfig::game_base_limit);
+        ChatInterface::serversayTo(player->getID(), base_limit_warning);
+*/
         return; // cannot capture more bases.
     }
 

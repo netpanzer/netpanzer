@@ -38,10 +38,9 @@ using std::swap;
 using std::min;
 using std::max;
 
-extern char staticFont[8192];
-#define FONT_HEIGHT 8
-#define FONT_WIDTH 8
-#define FONT_MAXCHAR 127
+static TTF_Font* font;
+#define FONT_SIZE 14
+#define FONT_WIDTH 14
 
 // orderCoords
 //---------------------------------------------------------------------------
@@ -131,8 +130,6 @@ BitmapInfoHeader::BitmapInfoHeader(filesystem::ReadFile* file)
     biClrUsed = file->readULE32();
     biClrImportant = file->readULE32();
 }
-
-Surface ascii8x8;
 
 int Surface::totalSurfaceCount = 0;
 int Surface::totalByteCount    = 0;
@@ -355,6 +352,25 @@ bool Surface::grab(const Surface &source,
     return true;
 
 } // end Surface::grab
+
+// pixPtr
+//---------------------------------------------------------------------------
+// Purpose: Gets a pixel from a given position.
+//---------------------------------------------------------------------------
+PIX *Surface::pixPtr(unsigned int x, unsigned int y) const
+{
+    assert(isInBounds(x, y));
+    return mem + (y * getPitch()) + x;
+} // end Surface::pixPtr
+
+// isInBounds
+//---------------------------------------------------------------------------
+// Purpose: Determines if the given position is within the surface.
+//---------------------------------------------------------------------------
+bool Surface::isInBounds(unsigned int x, unsigned int y) const
+{
+    return (y * getPitch() + x) < getPitch() * getHeight();
+} // end Surface::isInBounds
 
 // blt
 //---------------------------------------------------------------------------
@@ -616,6 +632,85 @@ void Surface::bltTransColor(Surface &dest, int x, int y, const Uint8 color) cons
         dPtr += destAdjustment;
     }
 } // end Surface::bltTransC
+
+void Surface::bltTransColorFromSDLSurface(SDL_Surface *source, int x, int y, const Uint8 color) const
+{
+    if (mem == 0) {
+        return; // TODO??? how?
+    }
+    assert(getDoesExist());
+    assert(source != 0);
+    assert(mem != 0);
+
+    // Trivial clipping rejection - no overlap.
+    // Also will jump out immediately if either image has zero size.
+    if (x >= (int)getWidth() || y >= (int)getHeight())
+        return;
+
+    int end_x = x + source->w;
+    int end_y = y + source->h;
+    if ( end_x <= 0 || end_y <= 0 ) return;
+
+    unsigned int pixelsPerRow = source->w;
+    unsigned int numRows      = source->h;
+
+    PIX	*sPtr	= (PIX*) source->pixels; // Pointer to source Surface start of memory.
+    PIX	*dPtr	= mem; // Pointer to destination Surface start of memory.
+
+    // Check for partial clip, calculate number of pixels
+    // per row to copy, and number of rows to copy.  Adjust
+    // sPtr and dPtr.
+
+    // CLIP LEFT
+    if (x < 0) {
+        pixelsPerRow +=  x; // This will subtract the neg. x value.
+        sPtr         += -x; // This will move the sPtr to x = 0, from the neg. x.
+    } else {
+        dPtr += x;
+    }
+
+    // CLIP RIGHT
+    // This subtracts only the portion hanging over the right edge of the
+    // destination Surface
+    if ((unsigned int)end_x > getWidth())
+        pixelsPerRow -= end_x - getWidth();
+
+    // CLIP TOP
+    if (y < 0) {
+        numRows += y;
+        sPtr    -= y * source->pitch;
+    } else {
+        dPtr += y * (int)getPitch();
+    }
+
+    // CLIP BOTTOM
+    // This subtracts only the portion hanging over the bottom edge of the
+    // destination Surface
+    if ((unsigned int)end_y > getHeight())
+        numRows -= end_y - getHeight();
+
+    // Now, Check to make sure I actually have something
+    // to draw.  I should - because I checked for trivial
+    // rejection first.  These asserts just make sure
+    // my clipping is working...
+    assert(pixelsPerRow > 0);
+    assert(numRows > 0);
+
+    int srcAdjustment  = source->pitch - pixelsPerRow;
+    int destAdjustment = getPitch() - pixelsPerRow;
+
+    for (unsigned int row = 0; row < numRows; row++) {
+        for (unsigned int col = 0; col < pixelsPerRow; col++) {
+            if (*sPtr != 0)
+                *dPtr = color;
+            sPtr++;
+            dPtr++;
+        }
+
+        sPtr += srcAdjustment;
+        dPtr += destAdjustment;
+    }
+} // end Surface::bltTransColorFromSDLSurface
 
 // drawHLine
 //---------------------------------------------------------------------------
@@ -1244,16 +1339,6 @@ void Surface::shrinkWrap()
 
 } // end Surface::shrinkWrap
 
-static inline float getRand(float lo, float hi)
-{
-    return (float(rand()%10000)/10000.0*(hi-lo))+lo;
-}
-
-static inline float calcY(float average, float ruggedness, unsigned distance)
-{
-    return average+getRand(-ruggedness, ruggedness)*float(distance);
-}
-
 // getAverageColor
 //---------------------------------------------------------------------------
 // Purpose: Recalculates the best single color to represent this Surface.
@@ -1285,35 +1370,44 @@ PIX Surface::getAverageColor()
 
 // initFont
 //---------------------------------------------------------------------------
-// Purpose: Load all the characters into a surface of 128 frames.  Then the
-//          characters can be accesed by changing the frame appropriately.
+// Purpose: Load the TTF font.
 //---------------------------------------------------------------------------
 void initFont()
 {
-    ascii8x8.create(8, 8, 128);
-
-    for ( int c = 0; c < 128; c++) {
-        ascii8x8.setFrame(c);
-        char * fptr = (char *)&staticFont + (c * FONT_WIDTH);
-        PIX * dptr = ascii8x8.getMem();
-        int n = FONT_HEIGHT;
-        do {
-            memcpy(dptr,fptr,FONT_WIDTH);
-            dptr += FONT_WIDTH;
-            fptr += FONT_WIDTH*128;
-        } while (--n);
+    if (TTF_Init() < 0) {
+        printf("Couldn't initialize SDL TTF: %s\n", SDL_GetError());
+        exit(1);
     }
+    // Quantico-Regular looked good too but some issues with some characters.
+    font = TTF_OpenFont("fonts/GNUUnifont9FullHintInstrUCSUR.ttf", FONT_SIZE);
+    TTF_SetFontStyle(font, TTF_STYLE_BOLD);
+    TTF_SetFontHinting(font, TTF_HINTING_NORMAL);
 } // Surface::initFont
 
 unsigned int
 Surface::getFontHeight()
 {
-    return ascii8x8.getHeight();
+    // TODO pass in string? some characters are taller than others
+    // TODO cache
+    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, ".", Palette::color[0]);
+    unsigned int height = font_surface->h + 3; // magic number works with GNUUnifont9FullHintInstrUCSUR font
+    SDL_FreeSurface(font_surface);
+    return height;
 }
 
-int Surface::getTextLength(const char* text)
+unsigned int Surface::getTextWidth(const char* text)
 {
-    return ascii8x8.getWidth() * strlen(text);
+    if (!text) {
+        return 0;
+    }
+    // TODO cache
+    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, text, Palette::color[0]);
+    if (!font_surface) {
+        return 0;
+    }
+    unsigned int width = font_surface->w;
+    SDL_FreeSurface(font_surface);
+    return width;
 }
 
 // renderText
@@ -1337,8 +1431,14 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
     if ( !len )
         return;
 
-    unsigned int need_width = len * FONT_WIDTH;
-    unsigned int need_height = FONT_HEIGHT;
+    printf("rendering text %s\n", str);
+    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, Palette::color[color]);
+    if (!font_surface) {
+        printf("Could not renderText() %s %s\n", str, SDL_GetError());
+        return;
+    }
+    unsigned int need_width = font_surface->w;
+    unsigned int need_height = font_surface->h;
 
     if ( frame0 != 0 ) {
         if ( getWidth() != need_width || getHeight() != need_height ) {
@@ -1349,36 +1449,11 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
         create( need_width, need_height, 1);
     }
 
-    for ( int line = 0; line < FONT_HEIGHT; ++line) {
-        PIX * dptr = getFrame0() + (line * (int)getPitch());
-        const char * pstr = str;
-        for ( unsigned char c = *pstr; c; c= *(++pstr)) {
-            if ( c >=128 ) c = ' ';
+    drawRect(iRect(0, 0, getWidth(), getHeight()), bgcolor);
+    bltTransColorFromSDLSurface(font_surface, 0, 0, color);
 
-            char * fptr = staticFont + (c*FONT_WIDTH) + (128*FONT_WIDTH*line);
-            PIX * eptr = dptr+FONT_WIDTH;
-            do {
-                *(dptr++) = *(fptr++)?color:bgcolor;
-            } while ( dptr < eptr );
-
-        }
-
-    }
+    SDL_FreeSurface(font_surface); // todo optimize
 }
-
-// bltChar8x8
-//---------------------------------------------------------------------------
-// Purpose: Blits the specied rom character to the screen at the specified
-//          location.
-//---------------------------------------------------------------------------
-void Surface::bltChar8x8(int x, int y, unsigned char character, const PIX &color)
-{
-    if (character >= ascii8x8.getNumFrames())
-        return;
-
-    ascii8x8.setFrame(character);
-    ascii8x8.bltTransColor(*this, x, y, color);
-} // end Surface::bltChar8x8
 
 // bltString
 //---------------------------------------------------------------------------
@@ -1388,25 +1463,40 @@ void Surface::bltChar8x8(int x, int y, unsigned char character, const PIX &color
 //---------------------------------------------------------------------------
 void Surface::bltString(int x, int y, const char * str, const Uint8 &color)
 {
-    for (int index = 0; str[index] != 0; index++) {
-        // Don't attempt blank spaces.
-        if (str[index] == 32) {
-            continue;
-        }
-
-        bltChar8x8(x + (index << 3), y, str[index], color);
+    int len = strlen(str);
+    if ( !len ) {
+        return;
     }
+    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, Palette::color[color]);
+    if (!font_surface) {
+        printf("Could not bltString() %s %s\n", str, SDL_GetError());
+        return;
+    }
+    bltTransColorFromSDLSurface(font_surface, x, y, color);
+    SDL_FreeSurface(font_surface);
 } // end Surface::bltString
 
 // bltStringShadowed
 //---------------------------------------------------------------------------
 void Surface::bltStringShadowed(int x, int y, char const *str, const Uint8 &textColor, const Uint8 &shadowColor)
 {
-    for (int index = 0; str[index] != 0; index++) {
-        bltChar8x8(x + (index << 3) + 1, y + 1, str[index], shadowColor);
-        bltChar8x8(x + (index << 3),     y,     str[index], textColor);
+    int len = strlen(str);
+    if ( !len )
+        return;
+    SDL_Surface* font_surface_back = TTF_RenderUTF8_Solid(font, str, Palette::color[shadowColor]);
+    if (!font_surface_back) {
+        printf("Could not bltStringShadowed() %s %s\n", str, SDL_GetError());
+        return;
     }
-
+    bltTransColorFromSDLSurface(font_surface_back, x + 1, y + 1, shadowColor);
+    SDL_FreeSurface(font_surface_back);
+    SDL_Surface* font_surface_front = TTF_RenderUTF8_Solid(font, str, Palette::color[textColor]);
+    if (!font_surface_front) {
+        printf("Could not bltStringShadowed() %s %s\n", str, SDL_GetError());
+        return;
+    }
+    bltTransColorFromSDLSurface(font_surface_front, x, y, textColor);
+    SDL_FreeSurface(font_surface_front);
 } // end Surface::bltStringShadowed
 
 // bltStringCenter
@@ -1414,20 +1504,33 @@ void Surface::bltStringShadowed(int x, int y, char const *str, const Uint8 &text
 // Purpose: Blits a string of text and centers it horizontally and vertically
 //          on the screen. Does not handle wrapping.
 //---------------------------------------------------------------------------
-void Surface::bltStringCenter(const char *string, PIX color)
+void Surface::bltStringCenter(const char *str, PIX color)
 {
-    bltString(  (getWidth() - (strlen(string) * ascii8x8.getWidth())) / 2,
-                (getHeight() - getFontHeight()) / 2,
-                string, color);
-
+    int len = strlen(str);
+    if ( !len )
+        return;
+    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, Palette::color[color]);
+    if (!font_surface) {
+        return;
+    }
+    bltTransColorFromSDLSurface(font_surface, (getWidth() - std::min(font_surface->w, ((int) getWidth()))) / 2,
+                                (getHeight() - std::min(font_surface->h, ((int) getHeight()))) / 2, color);
+    SDL_FreeSurface(font_surface);
 } // end Surface::bltStringCenter
 
-void Surface::bltStringCenterMin30(const char *string, PIX color)
+void Surface::bltStringCenterMin30(const char *str, PIX color)
 {
-    bltString(  (getWidth() - (strlen(string) * ascii8x8.getWidth())) / 2,
-                (getHeight() - getFontHeight()) / 2 - 30,
-                string, color);
-
+    int len = strlen(str);
+    if ( !len )
+        return;
+    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, Palette::color[color]);
+    if (!font_surface) {
+        printf("Could not bltStringCenterMin30() %s %s\n", str, SDL_GetError());
+        return;
+    }
+    bltTransColorFromSDLSurface(font_surface, (getWidth() - (font_surface->w)) / 2,
+                                (getHeight() - font_surface->h) / 2 - 30, color);
+    SDL_FreeSurface(font_surface);
 } // end Surface::bltStringCenter
 
 // bltStringShadowedCenter
@@ -1435,11 +1538,28 @@ void Surface::bltStringCenterMin30(const char *string, PIX color)
 // Purpose: Blits a string of text and centers it horizontally and vertically
 //          on the screen. Does not handle wrapping.
 //---------------------------------------------------------------------------
-void Surface::bltStringShadowedCenter(const char *string, PIX foreground, PIX background)
+void Surface::bltStringShadowedCenter(const char *str, PIX textColor, PIX shadowColor)
 {
-    bltStringShadowed((getWidth() - (strlen(string) * ascii8x8.getWidth())) / 2,
-                      (getHeight() - getFontHeight()) / 2,
-                      string, foreground, background);
+    int len = strlen(str);
+    if ( !len )
+        return;
+    // TODO OPTIMIZE
+    SDL_Surface* font_surface_back = TTF_RenderUTF8_Solid(font, str, Palette::color[shadowColor]);
+    if (!font_surface_back) {
+        printf("Could not bltStringShadowedCenter() %s %s\n", str, SDL_GetError());
+        return;
+    }
+    int x = (getWidth() - font_surface_back->w) / 2;
+    int y = (getHeight() - font_surface_back->h) / 2;
+    bltTransColorFromSDLSurface(font_surface_back, x + 1, y + 1, shadowColor);
+    SDL_FreeSurface(font_surface_back);
+    SDL_Surface* font_surface_front = TTF_RenderUTF8_Solid(font, str, Palette::color[textColor]);
+    if (!font_surface_front) {
+        printf("Could not bltStringShadowedCenter() %s %s\n", str, SDL_GetError());
+        return;
+    }
+    bltTransColorFromSDLSurface(font_surface_front, x, y, textColor);
+    SDL_FreeSurface(font_surface_front);
 
 } // end Surface::bltStringShadowedCenter
 
@@ -1447,18 +1567,20 @@ void Surface::bltStringShadowedCenter(const char *string, PIX foreground, PIX ba
 //---------------------------------------------------------------------------
 // Purpose: Blits the string centered inside the specified rectangle.
 //---------------------------------------------------------------------------
-void Surface::bltStringCenteredInRect(const iRect &rect, const char *string, const PIX &color)
+void Surface::bltStringCenteredInRect(const iRect &rect, const char *str, const PIX &color)
 {
-    int length = strlen(string);
-
-    iXY destPos;
-    destPos.x = rect.min.x + (rect.getSizeX() - (length * ascii8x8.getWidth())) / 2;
-    destPos.y = rect.min.y + (rect.getSizeY() - getFontHeight()) / 2;
-
-    for (int i = 0; string[i] != 0; i++) {
-        bltChar8x8(destPos.x + (i << 3), destPos.y, string[i], color);
+    int len = strlen(str);
+    if ( !len )
+        return;
+    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, Palette::color[color]);
+    if (!font_surface) {
+        printf("Could not bltStringCenteredInRect() %s %s\n", str, SDL_GetError());
+        return;
     }
-
+    int x = rect.min.x + (rect.getSizeX() - font_surface->w) / 2;
+    int y = rect.min.y + (rect.getSizeY() - font_surface->h) / 2;
+    bltTransColorFromSDLSurface(font_surface, x,y, color);
+    SDL_FreeSurface(font_surface);
 } // end Surface::bltStringCenteredInRect
 
 // create
@@ -1494,7 +1616,7 @@ void Surface::loadBMP(const char *fileName, bool needAlloc)
 
     if (needAlloc) free();
 
-    std::auto_ptr<filesystem::ReadFile> file(
+    std::unique_ptr<filesystem::ReadFile> file(
             filesystem::openRead(fileName));
 
     try {
@@ -1593,7 +1715,7 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, i
 
         // Remove any spaces.
         while (string[length] == ' ') {
-            pos.x += ascii8x8.getWidth();
+            pos.x += FONT_WIDTH; // TODO REMOVE
             length++;
         }
 
@@ -1614,7 +1736,7 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, i
 
         strBuf[strBufLength] = '\0';
 
-        if ((int) (pos.x + strlen(strBuf) * ascii8x8.getWidth()) > rect.max.x) {
+        if ((int) (pos.x + strlen(strBuf) * FONT_WIDTH) > rect.max.x) {
             pos.x = rect.min.x;
             pos.y += gapSpace;
         }
@@ -1625,7 +1747,7 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, i
             return;
         }
 
-        pos.x += strlen(strBuf) * ascii8x8.getWidth();
+        pos.x += strlen(strBuf) * FONT_WIDTH;
 
         length += strBufLength;
     }

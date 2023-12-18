@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -183,6 +183,31 @@ void PuffParticle2D::loadPAKFiles()
         throw Exception("ERROR: Unable to load any dirt puff particle images in %s", pathDirt);
     }
 }
+
+//---------------------------------------------------------------------------
+
+void PuffParticle2D::unloadPAKFiles()
+{
+    char pathSmokeLight[] = "pics/particles/puff/smokeLight/pak/";
+
+    if (!unloadAllPAKInDirectory(pathSmokeLight, staticPackedSmokeLightPuff)) {
+        throw Exception("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeLight);
+    }
+
+    char pathSmokeDark[] = "pics/particles/puff/smokeDark/pak/";
+
+    if (!unloadAllPAKInDirectory(pathSmokeDark, staticPackedSmokeDarkPuff)) {
+        throw Exception("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeDark);
+    }
+
+    char pathDirt[] = "pics/particles/puff/dirt/pak/";
+
+    if (!unloadAllPAKInDirectory(pathDirt, staticPackedDirtPuff)) {
+        throw Exception("ERROR: Unable to load any dirt puff particle images in %s", pathDirt);
+    }
+}
+
+
 
 //---------------------------------------------------------------------------
 void PuffParticle2D::loadTILFiles()

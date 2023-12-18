@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NTIMER_HPP_
 #define _NTIMER_HPP_
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 class NTimer
 {

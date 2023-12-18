@@ -59,7 +59,7 @@ void TileSet::computeTileConsts( void )
 
 void TileSet::loadTileSetInfo( const char *file_path )
 {
-    std::auto_ptr<filesystem::ReadFile> file (filesystem::openRead(file_path));
+    std::unique_ptr<filesystem::ReadFile> file (filesystem::openRead(file_path));
 
     delete[] tile_data;
     tile_data = 0;
@@ -81,7 +81,7 @@ void TileSet::loadTileSet( const char *file_path )
     unsigned long  tile_buffer_size;
 
     try {
-	std::auto_ptr<filesystem::ReadFile> file(
+	std::unique_ptr<filesystem::ReadFile> file(
                 filesystem::openRead(file_path));
 
         delete[] tile_data;
@@ -119,7 +119,7 @@ void TileSet::loadTileSet( const char *file_path, WadMapTable &mapping_table )
 	unsigned long  tile_buffer_size;
 	unsigned long  tile_size;
 
-	std::auto_ptr<filesystem::ReadFile> file(
+	std::unique_ptr<filesystem::ReadFile> file(
                 filesystem::openRead(file_path));
 
 	delete[] tile_data;
@@ -203,7 +203,7 @@ void TileSet::loadTileSet( const char *file_path, WadMapTable &mapping_table )
 void TileSet::loadTileSetInfo( const char *file_path, WadMapTable &mapping_table )
 {
     try {
-	std::auto_ptr<filesystem::ReadFile> file(
+	std::unique_ptr<filesystem::ReadFile> file(
                 filesystem::openRead(file_path));
 
 	delete[] tile_data;

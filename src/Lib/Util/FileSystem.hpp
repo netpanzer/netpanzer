@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __LIB_FILESYSTEM_HPP__
 
 #include <stdexcept>
-#include "SDL.h"
+#include <SDL2/SDL.h>
 #include <string>
 #include <stdlib.h>
 #include "physfs/physfs.h"
@@ -91,8 +91,8 @@ public:
     ReadFile(PHYSFS_file* file);
 
 private:
-    static int RWOps_Read(SDL_RWops* context, void* ptr, int size, int maxnum);
-    static int RWOps_Seek(SDL_RWops* context, int offset, int whence);
+    static size_t RWOps_Read(SDL_RWops* context, void* ptr, size_t size, size_t maxnum);
+    static Sint64 RWOps_Seek(SDL_RWops* context, Sint64 offset, int whence);
     static int RWOps_Close(SDL_RWops* context);
 };
 

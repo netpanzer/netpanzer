@@ -59,8 +59,8 @@ int ParticleInterface::gExplosionFlameFlashCullHitCount  = 1;
 int ParticleInterface::gMuzzleSystemCullMissCount        = 1;
 int ParticleInterface::gMuzzleSystemCullHitCount         = 1;
 
-vector<int> ParticleInterface::unitHitPointTable;
-vector<int> ParticleInterface::unitAttackFactorTable;
+std::vector<int> ParticleInterface::unitHitPointTable;
+std::vector<int> ParticleInterface::unitAttackFactorTable;
 
 
 //--------------------------------------------------------------------------
@@ -983,9 +983,10 @@ void ParticleInterface::getUnitParticleInfo()
     // Create the correct number of unit information slots.
     unitParticleInfo.resize(UnitProfileInterface::getNumUnitTypes());
 
-    for ( unsigned int i=0; i< UnitProfileInterface::getNumUnitTypes(); i++ )
+    for ( unsigned short i=0; i< UnitProfileInterface::getNumUnitTypes(); i++ )
     {
-        UnitProfile * uprofile = UnitProfileInterface::getUnitProfile(i);
+        unsigned short vector_index = i*GameManager::ststylesnum;
+        UnitProfileSprites * uprofile = UnitProfileSprites::getUnitProfileSprites(vector_index);
         getMuzzleTips(uprofile->turretSprite, unitParticleInfo[i].muzzleTip);
         getMinBounds(uprofile->bodySprite, unitParticleInfo[i].minBounds);
     }

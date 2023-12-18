@@ -124,7 +124,7 @@ void HostJoinTemplateView::loadBackgroundSurface()
 
 void HostJoinTemplateView::onComponentClicked(Component* c)
 {
-    string cname = c->getName();
+    std::string cname = c->getName();
     if ( !cname.compare("Button.PLAY") )
     {
         bPlay();

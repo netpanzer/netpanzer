@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Classes/Network/PlayerNetMessage.hpp"
 #include "Classes/Network/NetworkServer.hpp"
+#include "Classes/Network/NetworkClient.hpp"
 #include "Util/Log.hpp"
 
 #include "Classes/Network/NetworkState.hpp" // needed to flag server or client state
@@ -44,6 +45,7 @@ PlayerID  PlayerInterface::local_player_index = INVALID_PLAYER_ID;
 PlayerID PlayerInterface::respawn_rule_player_index = INVALID_PLAYER_ID;
 
 SDL_mutex* PlayerInterface::mutex = 0;
+
 
 static void setAlliance(PlayerID by_player, PlayerID with_player )
 {
@@ -122,9 +124,24 @@ static void handleAllianceMessage(const int type,
             }
             else
             {
+                if (player_state->getMute() == false) {
                 ConsoleInterface::postMessage(Color::yellow, false, 0,
                                               "%s request to ally with you.",
                                               player_state->getName().c_str());
+
+                // bot automatic ally reply mgmt
+                if ( NetworkState::status == _network_state_bot && GameConfig::bot_allied == true && GameConfig::game_allowallies == true )
+                {
+                if (player_state->getClientType() == 2)
+                {
+                PlayerAllianceRequest allie_request_back;
+                allie_request_back.set( local_player, player_state->getID(), _player_make_alliance);
+                CLIENT->sendMessage( &allie_request_back, sizeof(PlayerAllianceRequest));
+                }
+                }
+                //
+
+                }
             }
         }
     }
@@ -159,9 +176,11 @@ static void handleAllianceMessage(const int type,
             }
             else
             {
+                if (player_state->getMute() == false) {
                 ConsoleInterface::postMessage(Color::yellow, false, 0,
                                               "%s cancelled the alliance request with you.",
                                               player_state->getName().c_str());
+                }
             }
         }
 
@@ -461,7 +480,7 @@ bool PlayerInterface::testRulePlayerRespawn( bool *completed, PlayerState **play
 
 void PlayerInterface::netMessageConnectID(const NetMessage* message)
 {
-    if ( NetworkState::status == _network_state_client ) // client only (security fix)
+    if ( NetworkState::status == _network_state_client || NetworkState::status == _network_state_bot) // client only (security fix)
     {
     const PlayerConnectID *connect_mesg
         = (const PlayerConnectID *) message;
@@ -481,7 +500,7 @@ void PlayerInterface::netMessageConnectID(const NetMessage* message)
 
 void PlayerInterface::netMessageSyncState(const NetMessage* message)
 {
-    if ( NetworkState::status == _network_state_client ) // client only (security fix)
+    if ( NetworkState::status != _network_state_server ) // client or bot only (security fix)
     {
     const PlayerStateSync *sync_mesg
         = (const PlayerStateSync *) message;
@@ -501,6 +520,7 @@ void PlayerInterface::netMessageSyncState(const NetMessage* message)
         }
         if ( player_id == local_player_index && player_lists[player_id].isSelectingFlag() )
         {
+            //Desktop::setVisibility("UStyleSelectionView", true);
             Desktop::setVisibility("GFlagSelectionView", true);
         }
     SDL_mutexV(mutex);
@@ -509,7 +529,7 @@ void PlayerInterface::netMessageSyncState(const NetMessage* message)
 
 void PlayerInterface::netMessageScoreUpdate(const NetMessage *message)
 {
-    if ( NetworkState::status == _network_state_client ) // client only (security fix)
+    if ( NetworkState::status == _network_state_client || NetworkState::status == _network_state_bot ) // client only (security fix)
     {
     const PlayerScoreUpdate* score_update
         = (const PlayerScoreUpdate *) message;
@@ -586,6 +606,41 @@ void PlayerInterface::netMessageAllianceUpdate(const NetMessage* message)
     SDL_mutexV(mutex);
 }
 
+void PlayerInterface::netMessageStyleUpdate(const NetMessage* message, PlayerID playid)
+{
+
+    const UpdatePlayerUnitStyle* upus = (const UpdatePlayerUnitStyle*)message;
+
+    unsigned char nustyle = upus->player_unit_style;
+
+    player_lists[playid].setPlayerStyle((unsigned char)nustyle);
+
+    UnitStyleSync uss;
+
+    uss.player_id = playid;
+
+    uss.player_unit_style = nustyle;
+
+    SERVER->broadcastMessage(&uss, sizeof(uss));
+
+}
+
+void PlayerInterface::netMessageStyleSync(const NetMessage* message)
+{
+    if ( NetworkState::status == _network_state_client || NetworkState::status == _network_state_bot )
+    {
+    const UnitStyleSync* uss = (const UnitStyleSync*)message;
+
+    unsigned char nustyle = uss->player_unit_style;
+
+    if (player_lists[uss->player_id].isSelectingFlag()) {
+    player_lists[uss->player_id].setPlayerStyle((unsigned char)nustyle);
+    } //no tricks!
+    } //no cheat!
+}
+
+
+
 void PlayerInterface::processNetMessage(const NetPacket* packet)
 {
     const NetMessage* message = packet->getNetMessage();
@@ -638,10 +693,19 @@ void PlayerInterface::processNetMessage(const NetPacket* packet)
             netMessageAllianceUpdate(message);
             break;
 
+        case _net_message_id_player_unit_style_update :
+            netMessageStyleUpdate(message, packet->fromPlayer);
+            break;
+
+        case _net_message_id_player_unit_style_sync :
+            netMessageStyleSync(message);
+            break;
+
         case _net_message_id_player_flagtimer_update :
                 const PlayerFlagTimerUpdate* pftu = (const PlayerFlagTimerUpdate*)message;
                 gameconfig->game_changeflagtime = pftu->getflagtimer();
             break;
+
     }
 }
 

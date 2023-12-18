@@ -31,8 +31,7 @@ ServerConsole::ServerConsole(DedicatedGameManager* newmanager)
 ServerConsole::~ServerConsole()
 {
     if(thread && running) {
-        // TODO avoid KillThread here...
-        SDL_KillThread(thread);
+        running = false;
     } else {
         SDL_WaitThread(thread, 0);
     }
@@ -66,7 +65,7 @@ void ServerConsole::executeCommand(const std::string& commandline)
     ++i;
     for( ; i < commandline.size(); ++i)
         argument += commandline[i];
-            
+
     if(command == "help") {
         std::cout << "Commands:\n";
         for(size_t i = 0; commands[i].name != 0; ++i) {
@@ -108,7 +107,7 @@ void ServerConsole::commandQuit()
 void ServerConsole::startThread()
 {
     typedef int (*threadfunc) (void*);
-    thread = SDL_CreateThread( (threadfunc) _run, this);
+    thread = SDL_CreateThread( (threadfunc) _run, "np-console-thread", this);
 
     if(!thread)
         throw Exception("Couldn't start console thread.");
@@ -125,13 +124,15 @@ void ServerConsole::run()
     running = true;
     while(running) {
         char buf[256];
-       
-        std::cout << "netpanzer-server: ";
-        fgets(buf, sizeof(buf), stdin);
-        // eleminated \n at the end
-        buf[strlen(buf)-1] = '\0';
 
-        executeCommand(buf);
+        std::cout << "netpanzer-server: ";
+
+        if (fgets(buf, sizeof(buf), stdin) != NULL) {
+            // eliminated \n at the end
+            buf[strlen(buf)-1] = '\0';
+
+            executeCommand(buf);
+        }
     }
 }
 

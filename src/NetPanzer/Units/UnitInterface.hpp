@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -43,11 +43,11 @@ class UnitInterface
 public:
     typedef std::map<UnitID, UnitBase*> Units;
     typedef std::vector<UnitBase*> PlayerUnitList;
-    
+
 private:
     static Units units;
     static PlayerUnitList* playerUnitLists;
-        
+
     static UnitBucketArray unit_bucket_array;
     static PlayerID max_players;
     static size_t units_per_player;
@@ -141,9 +141,17 @@ public:
                                       iXY &loc,
                                       PlayerID player_index);
 
+    static bool queryClosestEnemyUnitInRange(UnitBase **closest_unit_ptr,
+                                      iXY &loc, unsigned long wrange,
+                                      PlayerID player_index);
+
     static bool queryUnitAtMapLoc( iXY map_loc, UnitID *query_unit_id );
 
     static unsigned char queryUnitLocationStatus( iXY loc );
+
+
+
+
 
 protected:
     // Unit Message Handler Methods
@@ -152,7 +160,7 @@ protected:
 
 protected:
     friend class Vehicle;
-    
+
     // Network Message Handler Variables
     static Timer message_timer;
     static Timer no_guarantee_message_timer;
@@ -169,6 +177,19 @@ protected:
     static void unitDestroyMessage(const NetMessage *net_message );
     static void unitCreateMessage(const NetMessage *net_message );
     static void unitSyncIntegrityCheckMessage(const NetMessage *net_message );
+    static void unitModSpeedMessage(const NetMessage *net_message );
+    static void unitModReloadMessage(const NetMessage* net_message);
+    static void unitModFireMessage(const NetMessage* net_message);
+    static void unitModWRangeMessage(const NetMessage* net_message);
+    static void unitModHPMessage(const NetMessage* net_message);
+    static void unitModMHPMessage(const NetMessage* net_message);
+    static void unitModGRMessage(const NetMessage* net_message);
+    static void unitModSuperunitMessage(const NetMessage* net_message);
+    static void unitCreateMessageFull(const NetMessage *net_message );
+
+    static void unitModGSpeedMessage(const NetMessage* net_message);
+    static void unitModGReloadMessage(const NetMessage* net_message);
+    static void unitModGFireMessage(const NetMessage* net_message);
 
 protected:
     static unsigned long  sync_units_iterator;
@@ -180,6 +201,10 @@ protected:
     static unsigned long  sync_units_total_units;
 
 public:
+    static void sendOpcodeP(const UnitOpcode* opcode)
+    {
+        opcode_encoder.encode(opcode);
+    }
     static void processNetMessage(const NetMessage *net_message, size_t size);
     static void destroyPlayerUnits(PlayerID player_id);
 };

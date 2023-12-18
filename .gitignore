@@ -1,0 +1,8 @@
+.idea
+.sconsign.dblite
+build
+netpanzer
+pak2bmp
+bmp2pak
+# For some IDEs
+cmake-build-debug

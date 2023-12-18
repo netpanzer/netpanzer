@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __SERVERCONSOLE_HPP__
 
 #include <string>
-#include <SDL_thread.h>
+#include <SDL2/SDL_thread.h>
 #include "DedicatedGameManager.hpp"
 
 class DedicatedGameManager;

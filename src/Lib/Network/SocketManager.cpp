@@ -38,7 +38,7 @@ SocketManager::handleEvents()
 
     if (!newSockets.empty()) {
         for (i = newSockets.begin(); i!=newSockets.end(); i++) {
-            LOGGER.debug("SocketManager:: Adding socket [%d,%08lx]",(*i)->sockfd, (unsigned long)(*i));
+            LOGGER.debug("SocketManager:: Adding socket [%lld]", (*i)->sockfd);
             socketList.insert(*i);
         }
         newSockets.clear();
@@ -80,7 +80,7 @@ SocketManager::handleEvents()
             case SocketBase::DESTROYING :
                 if ( sb->disconnectTimer.isTimeOut() )
                 {
-                    LOGGER.debug("SocketManager:: Removing socket [%d,%08lx]",sb->sockfd, (unsigned long)sb);
+                    LOGGER.debug("SocketManager:: Removing socket [%lld]", sb->sockfd);
                     delete sb;
                     socketList.erase(i);
                 }
@@ -120,7 +120,7 @@ SocketManager::handleEvents()
                 case SocketBase::DESTROYING :
                     if ( sb->disconnectTimer.isTimeOut() )
                     {
-                        LOGGER.debug("SocketManager:: Removing socket2 [%d,%08lx]",sb->sockfd, (unsigned long)sb);
+                        LOGGER.debug("SocketManager:: Removing socket2 [%lld]", sb->sockfd);
                         delete sb;
                         socketList.erase(i);
                     }

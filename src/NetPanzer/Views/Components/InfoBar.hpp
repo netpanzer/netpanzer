@@ -31,14 +31,16 @@ public:
         position.x = x;
         position.y = y;
     }
-    
+
     void draw(Surface &dest);
-    
+
+    static bool bar_on;
+
     virtual void render()
     {
         // nothing
     }
-    
+
     void actionPerformed(const mMouseEvent &me)
     {
         // nothing

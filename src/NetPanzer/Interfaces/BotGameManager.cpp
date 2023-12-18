@@ -15,21 +15,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
+
+
 #include "BotGameManager.hpp"
 
-//#include "Bot/Bot.hpp"
-#include "Bot/BotPlayer.hpp"
-
-//#include "Interfaces/GameManager.hpp"
-//#include "Interfaces/GameConfig.hpp"
-
-//#include "Classes/Network/NetworkState.hpp"
-//#include "Classes/Network/NetworkClient.hpp"
-//#include "Classes/Network/ClientConnectDaemon.hpp"
-
-
 #include "Util/Exception.hpp"
-
+#include <ctype.h>
 /*
 ###
 */
@@ -148,7 +140,7 @@ void BotGameManager::initializeInputDevices()
 //-----------------------------------------------------------------
 void BotGameManager::shutdownInputDevices()
 {
-    //Bot::shutdown();
+    Bot::shutdown();
 }
 //-----------------------------------------------------------------
 
@@ -159,15 +151,56 @@ void BotGameManager::shutdownInputDevices()
 //-----------------------------------------------------------------
 
 
+void BotGameManager::inputLoop()
+{
+    if (GameConfig::bot_class < 1 || GameConfig::bot_class > 9) {
+        GameConfig::bot_class = 1;
+    }
 
+    switch (GameConfig::bot_class) {
 
+    case 1: {
+            Bot::bot()->processEvents();
+        }
+        break;
+    case 2: {
+            Bot::bot()->processEvents2();
+        }
+        break;
+    case 3: {
+            Bot::bot()->processEvents3();
+        }
+        break;
+    case 4: {
+            Bot::bot()->processEvents4();
+        }
+        break;
+    case 5: {
+            Bot::bot()->processEvents5();
+        }
+        break;
+    case 6: {
+            Bot::bot()->processEvents6();
+        }
+        break;
+    case 7: {
+            Bot::bot()->processEvents7();
+        }
+        break;
+    case 8: {
+            Bot::bot()->processEvents8();
+        }
+        break;
+    case 9: {
+            Bot::bot()->processEvents9();
+        }
+        break;
 
+    }
 
-
-
-
-
-
+     //return true;
+     BaseGameManager::inputLoop();
+}
 
 
 //-----------------------------------------------------------------
@@ -185,35 +218,39 @@ bool BotGameManager::launchNetPanzerGame()
        // CLIENT->joinServer(gameconfig->serverConnect, "");
        // ClientConnectDaemon::startConnectionProcess();
 
-       if (!CLIENT->joinServer(m_serverHost.c_str(), "")) {
+    if (!CLIENT->joinServer(m_serverHost.c_str(), "")) {
         return false;
     }
+/*
+//LOGGER.info("serverhost = %s", m_serverHost.c_str());
+NPString::size_type the_end = m_serverHost.find_first_of(":", 0);
+NPString nh = m_serverHost.substr(0, the_end);
+//LOGGER.info("serverhost = %s", nh.c_str());
+
+    if (nh != "127.0.0.1") {
+        return false;
+    }
+*/
 
     ClientConnectDaemon::startConnectionProcess();
 
 
     //Bot::bot()->processEvents();
-    BotGameManager::botinputLoop();
+    //BotPlayer::processEvents();
+    //BotGameManager::botinputLoop();
 
 
+
+
+    //ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
 
     return true;
-    //ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
 }
 
 
 //-----------------------------------------------------------------
 
-bool BotGameManager::botinputLoop()
-{
 
-
-
-     //Bot::bot()->processEvents();
-
-     return true;
-
-}
 
 
 

@@ -43,10 +43,13 @@ building it. Here's a list of them:
 * SCons build tool
   http://www.scons.org/
 
-* SDL 1.2.5 or later
+* SDL 2
   http://www.libsdl.org
 
-* SDL_mixer 1.2.4 or later
+* SDL 2 TTF
+  https://wiki.libsdl.org/SDL2_ttf/FrontPage
+
+* SDL_mixer 2
   http://www.libsdl.org/projects/SDL_mixer/
 
 * Git (to fetch the source from repository)
@@ -320,17 +323,20 @@ Note: not ALL the entries in server.cfg are related to the server, only those ta
 
 	
 
-	server.masterservers = "masterserver.netpanzer.org, masterserver2.netpanzer.org, masterserver.netpanzer.info"
+	server.masterservers = "masterserver.netpanzer.info, netpanzer.io"
 
 	don't change these addresses unless you've been told to do so in our forum
 
-	
+	server.interactive_console = true
+
+	you may want to set this to false to disable the interactive console, to run the server as a daemon.
+	Otherwise the server will create excessive logs.
 
 	server.name = "NetPanzer Server"
 
 	your gameserver name which will be displayed in server browser etc
 
-	
+
 
 	game.enable_bases = true
 
@@ -498,7 +504,7 @@ netpanzer -b [gameserver host:port]
 6. Contact
 
 Bugs should be reported to the netPanzer forum:
-    https://sourceforge.net/projects/netpanzer/
+    https://github.com/netpanzer/netpanzer/issues
 
 
 

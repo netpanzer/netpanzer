@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 #include <iostream>
-using namespace std;
 
 #include <sstream>
 #include <string.h>
@@ -50,14 +49,17 @@ const char * SocketBase::state_str[] =
 
 SocketBase::SocketBase()
 {
+    lastError = 0;
+    sockfd = NULL_SOCKET;
     state = UNINITIALIZED;
     disconnectTimer.setTimeOut(500);
 }
 
 SocketBase::SocketBase(const Address &a, bool isTcp)
-    throw(NetworkException)
     : addr(a)
 {
+    lastError = 0;
+    sockfd = NULL_SOCKET;
     state = RESOLVED;
     create();
     setNonBlocking();
@@ -66,9 +68,9 @@ SocketBase::SocketBase(const Address &a, bool isTcp)
 }
 
 SocketBase::SocketBase(SOCKET fd, const Address &a)
-    throw(NetworkException)
     : sockfd(fd), addr(a)
 {
+    lastError = 0;
     state = CONNECTED;
     SocketManager::addSocket(this);
     setNonBlocking();
@@ -80,8 +82,10 @@ SocketBase::~SocketBase()
     // XXX this might be needed if sockets doesn't close nicely
 //    int tmp;
 //    while ( recv(sockfd, (char*)&tmp, sizeof(tmp), RECV_FLAGS) > 0 ) ; // read until there is no more.
-    shutdown(sockfd, SHUTDOWN_BOTH);
-    closesocket(sockfd);
+    if (sockfd > -1) {
+        shutdown(sockfd, SHUTDOWN_BOTH);
+        closesocket(sockfd);
+    }
 }
 
 void
@@ -93,13 +97,13 @@ SocketBase::setAddress(const Address &a)
 }
 
 void
-SocketBase::create () throw(NetworkException)
+SocketBase::create ()
 {
     if ( state == RESOLVED )
     {
         sockfd = socket(PF_INET, addr.socktype, addr.protocol);
 
-        LOGGER.debug("SocketBase:: Create [%s:%d] socket", (addr.socktype == SOCK_STREAM)?"tcp":"udp",sockfd);
+        LOGGER.debug("SocketBase:: Create [%s:%lld] socket", (addr.socktype == SOCK_STREAM)?"tcp":"udp",sockfd);
 
         if(sockfd == INVALID_SOCKET)
         {
@@ -117,12 +121,12 @@ SocketBase::create () throw(NetworkException)
 }
 
 void
-SocketBase::setNonBlocking() throw(NetworkException)
+SocketBase::setNonBlocking()
 {
     if ( state >= CREATED )
     {
         int res;
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
         unsigned long mode = 1;
         res = ioctlsocket(sockfd, FIONBIO, &mode);
 #else
@@ -143,7 +147,7 @@ SocketBase::setNonBlocking() throw(NetworkException)
 }
 
 void
-SocketBase::bindSocketTo(const Address& toaddr) throw(NetworkException)
+SocketBase::bindSocketTo(const Address& toaddr)
 {
     if ( state == CONFIGURED )
     {
@@ -167,7 +171,7 @@ SocketBase::bindSocketTo(const Address& toaddr) throw(NetworkException)
 }
 
 void
-SocketBase::setReuseAddr() throw(NetworkException)
+SocketBase::setReuseAddr()
 {
     if ( state == CONFIGURED )
     {
@@ -188,9 +192,9 @@ SocketBase::setReuseAddr() throw(NetworkException)
 }
 
 void
-SocketBase::setNoDelay() throw(NetworkException)
+SocketBase::setNoDelay()
 {
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
     if ( state >= CONFIGURED ) //  && state < LISTENING
 #else
     if ( state >= CONFIGURED )
@@ -214,7 +218,7 @@ SocketBase::setNoDelay() throw(NetworkException)
 }
 
 void
-SocketBase::doListen() throw(NetworkException)
+SocketBase::doListen()
 {
     if ( state == BOUND )
     {
@@ -235,7 +239,7 @@ SocketBase::doListen() throw(NetworkException)
 }
 
 void
-SocketBase::doConnect() throw(NetworkException)
+SocketBase::doConnect()
 {
     if ( state == CONFIGURED )
     {
@@ -262,7 +266,7 @@ SocketBase::doConnect() throw(NetworkException)
 }
 
 int
-SocketBase::doSend(const void* data, size_t len) throw(NetworkException)
+SocketBase::doSend(const void* data, size_t len)
 {
     if ( state == CONNECTED )
     {
@@ -292,7 +296,7 @@ SocketBase::doSend(const void* data, size_t len) throw(NetworkException)
 }
 
 int
-SocketBase::doReceive(void* buffer, size_t len) throw(NetworkException)
+SocketBase::doReceive(void* buffer, size_t len)
 {
     if ( state == CONNECTED )
     {
@@ -327,7 +331,7 @@ SocketBase::doReceive(void* buffer, size_t len) throw(NetworkException)
 }
 
 int
-SocketBase::doSendTo(const Address& toaddr, const void* data, size_t len) throw(NetworkException)
+SocketBase::doSendTo(const Address& toaddr, const void* data, size_t len)
 {
     if ( state == BOUND )
     {
@@ -353,7 +357,7 @@ SocketBase::doSendTo(const Address& toaddr, const void* data, size_t len) throw(
 }
 
 size_t
-SocketBase::doReceiveFrom(Address& fromaddr, void* buffer, size_t len) throw(NetworkException)
+SocketBase::doReceiveFrom(Address& fromaddr, void* buffer, size_t len)
 {
     if ( state == BOUND || state == CONNECTED )
     {
@@ -381,7 +385,7 @@ SocketBase::doReceiveFrom(Address& fromaddr, void* buffer, size_t len) throw(Net
 }
 
 SOCKET
-SocketBase::doAccept(Address& fromaddr) throw(NetworkException)
+SocketBase::doAccept(Address& fromaddr)
 {
     if ( state == LISTENING )
     {
@@ -409,7 +413,7 @@ SocketBase::doAccept(Address& fromaddr) throw(NetworkException)
 void
 SocketBase::doClose()
 {
-    LOGGER.debug("SocketBase:: Closing [%d] socket", sockfd);
+    LOGGER.debug("SocketBase:: Closing [%lld] socket", (long long unsigned int) sockfd);
     SocketManager::removeSocket(this);
 }
 

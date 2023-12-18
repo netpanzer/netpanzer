@@ -80,8 +80,6 @@ cInputField::cInputField()
 cInputField::cInputField(const cInputField& other)
     : pos(other.pos), maxCharCount(other.maxCharCount),
     strDisplayStart(other.strDisplayStart), maxWidth(other.maxWidth),
-    depressedKey(other.depressedKey),
-    depressedKeyTimeNext(other.depressedKeyTimeNext),
     insertMode(other.insertMode), destString(other.destString),
     bounds(other.bounds),
     cursorPos(other.cursorPos), textaction(other.textaction)
@@ -106,8 +104,6 @@ void cInputField::operator= (const cInputField& other)
     maxCharCount = other.maxCharCount;
     strDisplayStart = other.strDisplayStart;
     maxWidth = other.maxWidth;
-    depressedKey = other.depressedKey;
-    depressedKeyTimeNext = other.depressedKeyTimeNext;
     insertMode = other.insertMode;
     destString = other.destString;
     if(other.excludedCharacters) {
@@ -134,8 +130,6 @@ void cInputField::reset()
     excludedCharacters = 0;
     textaction         = 0;
     strDisplayStart    = 0;
-    depressedKey       = 0;
-    depressedKeyTimeNext = 0;
     insertMode         = true;
 } // end reset
 
@@ -167,8 +161,8 @@ void cInputField::setInputFieldString(cInputFieldString *string)
     this->maxWidth = string->maxWidth;
 
     iXY size;
-    // XXX (8 is hardcoded here...)
-    size.x = (string->maxWidth+1) * 8 + 8;
+    int charWidth = Surface::getTextWidth(" ");
+    size.x = ((string->maxWidth - 1) * charWidth) + charWidth;
     size.y = Surface::getFontHeight() + 4;
 
     bounds.max = bounds.min + size;
@@ -198,7 +192,6 @@ void cInputField::setExcludedCharacters(const char *exChars)
 //--------------------------------------------------------------------------
 void cInputField::addChar(int newChar)
 {
-    pressKey(newChar);
     // Check if the character should be excluded.
     if (strchr(excludedCharacters, newChar) == 0) {
 
@@ -238,7 +231,6 @@ void cInputField::setTextAction(ACTION_FUNC_PTR action)
 //--------------------------------------------------------------------------
 void cInputField::addExtendedChar(int newExtendedChar)
 {
-    pressKey(newExtendedChar);
     // Process the extendedChar accordingly.
     switch (newExtendedChar) {
     case SDLK_HOME: {
@@ -258,6 +250,7 @@ void cInputField::addExtendedChar(int newExtendedChar)
             if ( cursorPos >= maxCharCount ) {
                 cursorPos = maxCharCount - 1;
             } else if ( cursorPos > length ) {
+                // this is not an off by one error. we want cursor to be at the end.
                 cursorPos = length;
             }
         }
@@ -318,7 +311,6 @@ void cInputField::addExtendedChar(int newExtendedChar)
 void cInputField::draw(Surface &dest)
 {
     checkCursor();
-    checkRepeat();
 
     inputFieldSurface.fill(componentTextColor);
     inputFieldSurface.drawButtonBorder(topLeftBorderColor, Color::gray64);
@@ -331,7 +323,6 @@ void cInputField::draw(Surface &dest)
 void cInputField::drawHighlighted(Surface &dest)
 {
     checkCursor();
-    checkRepeat();
 
     inputFieldSurface.fill(Color::black);
     inputFieldSurface.drawButtonBorder(Color::darkGray, Color::white);
@@ -346,14 +337,9 @@ void cInputField::drawHighlighted(Surface &dest)
             timeForBlink = 0.0f;
         }
     } else {
-        int cursorPos=cInputField::cursorPos-strDisplayStart;
-        if ((size_t)cursorPos >= maxCharCount) {
-            // XXX hardcoded CHAR_PIXX (8)
-            inputFieldSurface.bltString(((cursorPos - 1) * 8) + 4, 2, "_", Color::red);
-        } else {
-            // XXX hardcoded CHAR_PIXX(8)
-            inputFieldSurface.bltString(cursorPos * 8 + 4, 2, "_", Color::red);
-        }
+        int cursorPos = std::max(std::min(cInputField::cursorPos-strDisplayStart, maxCharCount - 1), (size_t) 0);
+        int charWidth = Surface::getTextWidth(" ");
+        inputFieldSurface.bltString(cursorPos * charWidth + (charWidth / 2), 2, "_", Color::red);
     }
 
     inputFieldSurface.blt(dest, pos.x, pos.y);
@@ -376,32 +362,3 @@ void cInputField::checkCursor()
         strDisplayStart=cursorPos-maxWidth;
     }
 } // end checkCursor
-
-void cInputField::pressKey(int ch)
-{
-    depressedKey=ch;
-    depressedKeyTimeNext=SDL_GetTicks()+250;
-}
-
-// check repeat and insert characters as needed
-void cInputField::checkRepeat()
-{
-    if(depressedKey==0) { return; }
-    Uint32 ticks=SDL_GetTicks();
-    if(depressedKeyTimeNext>ticks) {
-        return;
-    }
-    if(KeyboardInterface::getKeyState(depressedKey)!=true) {
-        // we've let go of this key.
-        depressedKey=0;
-        return;
-    }
-
-    if(isprint(depressedKey)) {
-        addChar(depressedKey);
-    }
-    else { addExtendedChar(depressedKey); }
-
-    depressedKeyTimeNext=ticks+50;
-}
-

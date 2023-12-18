@@ -46,13 +46,13 @@ public:
      */
 //    UDPSocket(bool blocking = true);
 //    UDPSocket(const Address& bindaddr, bool blocking = true);
-    UDPSocket(UDPSocketObserver *o) throw(NetworkException);
-    UDPSocket(const Address& bindaddr, UDPSocketObserver *o) throw(NetworkException);
+    UDPSocket(UDPSocketObserver *o);
+    UDPSocket(const Address& bindaddr, UDPSocketObserver *o);
 
     void destroy();
 
     /** send data to the specified address */
-    void send(const Address& toaddr, const void* data, size_t datasize) throw(NetworkException);
+    void send(const Address& toaddr, const void* data, size_t datasize);
 
 protected:
     ~UDPSocket();

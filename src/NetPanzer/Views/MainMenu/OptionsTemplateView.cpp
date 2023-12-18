@@ -27,17 +27,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "System/Sound.hpp"
 #include "System/SDLSound.hpp"
 #include "System/DummySound.hpp"
+#include "Util/Exception.hpp"
 
 class Separator:public Component
 {
 public:
-    Separator(int x, int y, int endx, string t, PIX color)
+    Separator(int x, int y, int endx, std::string t, PIX color)
     {
         text = t;
         foreground = color;
         position.x = x;
         position.y = y;
         xend = endx;
+        text_y = y - (Surface::getFontHeight() / 3);
     }
 
     void draw(Surface &dest);
@@ -53,15 +55,16 @@ public:
     }
 
 private:
-    string text;
+    std::string text;
     int xend;
+    int text_y;
 };
 
 void Separator::draw(Surface &dest)
 {
     dest.drawLine(position.x, position.y+3, position.x+20, position.y+3, foreground);
     //dest.drawLine(position.x, position.y+2, position.x+20, position.y+2, Color::gray);
-    dest.bltStringShadowed(position.x+25,position.y, text.c_str(),  foreground, Color::gray);
+    dest.bltStringShadowed(position.x+25, text_y, text.c_str(),  foreground, Color::gray);
     int lentxt = 30+dest.getTextLength(text);
     dest.drawLine(position.x+lentxt, position.y+3, xend, position.y+3, foreground);
     //dest.drawLine(position.x+lentxt, position.y+2, xend, position.y+2, Color::gray);
@@ -147,6 +150,44 @@ OptionsTemplateView::OptionsTemplateView() : MenuTemplateView()
 
 } // end OptionsTemplateView::OptionsTemplateView
 
+bool hasSize(const std::vector<SDL_DisplayMode>& modes, int w, int h) {
+    for (const SDL_DisplayMode& existingMode : modes) {
+        if (existingMode.w == w && existingMode.h == h) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::vector<SDL_DisplayMode> OptionsTemplateView::getUsableDisplayModes()
+{
+    if (!usableDisplayModes.empty()) {
+        return usableDisplayModes;
+    }
+    static int display_id = 0;
+    int display_mode_count = SDL_GetNumDisplayModes(display_id);
+    if (display_mode_count < 1) {
+        throw Exception("SDL_GetNumDisplayModes failed: %s", SDL_GetError());
+    }
+    for (int i = 0; i < display_mode_count; i++) {
+        SDL_DisplayMode mode;
+        if (SDL_GetDisplayMode(display_id, i, &mode) != 0) {
+            throw Exception("SDL_GetDisplayMode failed: %s", SDL_GetError());
+        }
+
+        if (mode.w > 799 && mode.h > 599) {
+            if (!hasSize(usableDisplayModes, mode.w, mode.h)) {
+                usableDisplayModes.push_back(mode);
+            }
+        }
+
+//        SDL_Log("Mode %i\tbpp %i\t%s\t%i x %i",
+//                i, SDL_BITSPERPIXEL(mode.format),
+//                SDL_GetPixelFormatName(mode.format),
+//                mode.w, mode.h);
+    }
+    return usableDisplayModes;
+}
 
 // initButtons
 //---------------------------------------------------------------------------
@@ -185,24 +226,14 @@ void OptionsTemplateView::initButtons()
     add(checkBoxDrawAllShadows);
 
     x = xTextStart;
-    char res_str[20];
     choiceResolution = new Choice();
     choiceResolution->setName("Resolution");
     choiceResolution->addItem("current");
-    SDL_Rect** modes = SDL_ListModes(0, SDL_FULLSCREEN);
-    int cur_mode = 0;
-    if ( modes && modes != (SDL_Rect**)-1 )
-    {
-        while ( modes[cur_mode] )
-        {
-            if ((modes[cur_mode]->w > 799) && (modes[cur_mode]->h > 599) )
-            {
-                snprintf(res_str,sizeof(res_str),"%dx%d", modes[cur_mode]->w, modes[cur_mode]->h);
-                res_str[sizeof(res_str)-1] = 0;
-                choiceResolution->addItem(res_str);
-            }
-            ++cur_mode;
-        }
+
+    std::vector<SDL_DisplayMode> displayModes = getUsableDisplayModes();
+    for (SDL_DisplayMode mode : displayModes) {
+        std::string optionName = std::to_string(mode.w) + "x" + std::to_string(mode.h);
+        choiceResolution->addItem(optionName);
     }
 
     choiceResolution->setLocation(x, y-3);
@@ -223,7 +254,7 @@ void OptionsTemplateView::initButtons()
     add(checkBoxBlendSmoke);
     y += yOffset;
 
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
     x = xTextStart;
     checkBoxUseDirectX = new CheckBox();
     checkBoxUseDirectX->setLabel("Use DirectX");
@@ -312,7 +343,7 @@ void OptionsTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 
     MenuTemplateView::doDraw(viewArea, clientArea);
 
-    Surface tempSurface(optionsMeterWidth, 14, 1);
+    Surface tempSurface(optionsMeterWidth, Surface::getFontHeight(), 1);
 
     // Scroll Rate
     tempSurface.fill(meterColor);
@@ -380,26 +411,22 @@ void OptionsTemplateView::stateChanged(Component* source)
             return;
         }
 
-        SDL_Rect** modes = SDL_ListModes(0, SDL_FULLSCREEN);
-        SDL_Rect* mode = 0;
-        if ( modes && modes != (SDL_Rect**)-1 )
-        {
-            mode = modes[sel_index];
-        }
+        std::vector<SDL_DisplayMode> displayModes = getUsableDisplayModes();
+        SDL_DisplayMode mode = displayModes[sel_index];
 
-        if ( mode )
-        {
-            GameConfig::video_width = mode->w;
-            GameConfig::video_height = mode->h;
-        }
+        GameConfig::video_width = mode.w;
+        GameConfig::video_height = mode.h;
 
+#ifdef __APPLE__
         if ( sel_index == 0 && ! GameConfig::video_fullscreen )
         {
             // on Mac crash if we are in window and we select the biggest
             // resolution (the first one in theory), we make it smaller so it
             // wont crash, it is a SDL error.
+            // TODO test w/ SDL2
             GameConfig::video_height -= 50;
         }
+#endif
 
         GameManager::setVideoMode();
     }
@@ -445,7 +472,7 @@ void OptionsTemplateView::stateChanged(Component* source)
             checkBoxSoundEnabled->setLabel("Disabled");
         }
     }
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
     else if ( source == checkBoxUseDirectX )
     {
         GameConfig::video_usedirectx = checkBoxUseDirectX->getState();
@@ -457,14 +484,14 @@ void OptionsTemplateView::stateChanged(Component* source)
 //---------------------------------------------------------------------------
 void OptionsTemplateView::loadBackgroundSurface()
 {
-   MenuTemplateView::loadBackgroundSurface();
+   //MenuTemplateView::loadBackgroundSurface();
 } // end OptionsTemplateView::loadBackgroundSurface
 
 // loadTitleSurface
 //---------------------------------------------------------------------------
 void OptionsTemplateView::loadTitleSurface()
 {
-    doLoadTitleSurface("optionsTitle");
+    //doLoadTitleSurface("optionsTitle");
 
 } // end ControlsView::loadTitleSurface
 

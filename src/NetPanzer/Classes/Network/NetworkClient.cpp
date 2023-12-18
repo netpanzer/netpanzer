@@ -56,10 +56,11 @@ NetworkClient::onClientConnected(ClientSocket *s)
 {
     (void)s;
     ClientConnectJoinRequest join_request;
-
+    unsigned char nms;
     connection_status = _connection_status_connected;
-
+    nms = NetworkState::status;
     join_request.setProtocolVersion(NETPANZER_PROTOCOL_VERSION);
+    join_request.setNMode(nms);
     join_request.setPassword(password);
 
     sendMessage( &join_request, sizeof(ClientConnectJoinRequest));

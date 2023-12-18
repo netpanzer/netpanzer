@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 #include "Network/Address.hpp"
 
 namespace masterserver
@@ -37,10 +37,10 @@ public:
         QUERYING,
         TIMEOUT
     };
-    
+
     ServerInfo();
     ~ServerInfo();
-    
+
     std::string name;
     std::string address;
     int port;
@@ -52,10 +52,11 @@ public:
     int ping;
     int protocol;
     bool needs_password;
+    bool auth_on;
 
     network::Address ipaddress;
     Uint32 querystartticks;
-    
+
     int tryNum;
 };
 

@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -38,7 +38,7 @@ int   ExplosionSystem::flameLayer = 5;
 int   ExplosionSystem::flashLayer = 4;
 /*
 	Particle Layers
-	
+
 		0 - in the ground
 		1 - particle shadows
 		2 - particles
@@ -72,7 +72,7 @@ float speedAbsoluteMin     = 15;
 //--------------------------------------------------------------------------
 int   baseTileCountPerCloud        = 500;
 float randomDivisorOfBase          = 2.0f;
-float clearPercentOfBase           = 0.05f;
+float clearPercentOfBase           = 0.0f; //0.05f
 float brokenPercentOfBase          = 0.2f;
 float partlyCloudyPercentOfBase    = 0.45f;
 float overcastPercentOfBase        = 0.75f;

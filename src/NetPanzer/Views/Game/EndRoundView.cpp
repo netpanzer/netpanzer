@@ -124,7 +124,21 @@ public:
     }
 };
 
+class StatesSortByGoals
+    : public std::binary_function<const PlayerState*, const PlayerState*, bool>
+{
+public:
+    bool operator() (const PlayerState* state1, const PlayerState* state2) {
+        int p1 = state1->getObjectivesHeld();
+        int p2 = state2->getObjectivesHeld();
 
+        float ratio = (float) GameConfig::game_occupationpercentage / 100.0;
+        bool b1 = ( ( state1->getTotal() >= GameConfig::game_fraglimit ) && ( state1->getObjectivesHeld() >= ratio ) );
+        bool b2 = ( ( state2->getTotal() >= GameConfig::game_fraglimit ) && ( state2->getObjectivesHeld() >= ratio ) );
+
+        return b1 > b2 || (b1 == b2 && p1 > p2) || (b1 = b2 && p1 == p2 && state1->getTotal() > state2->getTotal() );
+    }
+};
 // drawPlayerStats
 //---------------------------------------------------------------------------
 // Purpose:
@@ -151,6 +165,12 @@ void EndRoundView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
             break;
         case _gametype_timelimit:
         case _gametype_fraglimit:
+            std::sort(states.begin(), states.end(), StatesSortByPoints());
+            break;
+        case _gametype_objectiveANDfraglimit:
+            std::sort(states.begin(), states.end(), StatesSortByGoals());
+            break;
+        case _gametype_fraglimitORtimelimit:
             std::sort(states.begin(), states.end(), StatesSortByPoints());
             break;
     }

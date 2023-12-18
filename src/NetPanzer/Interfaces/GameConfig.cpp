@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Core/NetworkGlobals.hpp"
 #include "Views/Game/MiniMapView.hpp"
+#include "Views/Game/MiniMapViewAlt.hpp"
 #include "Views/GameViewGlobals.hpp"
 
 #include "Scripts/ScriptManager.hpp"
@@ -40,7 +41,7 @@ bool         GameConfig::video_hardwaresurface = false;
 bool         GameConfig::video_doublebuffer = false;
 bool         GameConfig::video_shadows = true;
 bool         GameConfig::video_blendsmoke = true;
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
 bool         GameConfig::video_usedirectx = false;
 #endif
 
@@ -69,11 +70,16 @@ bool      GameConfig::game_allowallies = true;
 int       GameConfig::game_cloudcoverage = 0;
 int       GameConfig::game_respawntype = 0;
 int       GameConfig::game_windspeed = 30;
-int       GameConfig::game_lowscorelimit = -25;
+int       GameConfig::game_lowscorelimit = -45;
 int       GameConfig::game_anticheat = 3;
+//bool      GameConfig::game_authentication = false;
+//bool      GameConfig::game_bots_allowed = false;
+//bool      GameConfig::game_scrambler = true;
 //int       GameConfig::game_maxchatlines = 7;
 NPString* GameConfig::game_map = 0;
 NPString* GameConfig::game_mapcycle = 0;
+NPString* GameConfig::game_mapstyle = 0;
+NPString* GameConfig::game_units_styles = 0;
 
 bool      GameConfig::sound_enable = true;
 bool      GameConfig::sound_music = true;
@@ -105,12 +111,18 @@ bool      GameConfig::server_logging = false;
 bool      GameConfig::server_public = true;
 NPString* GameConfig::server_masterservers = 0;
 NPString* GameConfig::server_name = 0;
+bool      GameConfig::server_interactive_console = true;
+NPString* GameConfig::server_authserver = 0;
+bool      GameConfig::server_authentication = false;
+
+int       GameConfig::bot_class = 1;
+bool      GameConfig::bot_allied = true;
+int       GameConfig::bot_action_speed = 1;
+
 
 NPString* GameConfig::player_name = 0;
 
 Uint8 GameConfig::player_flag_data[FLAG_WIDTH*FLAG_HEIGHT] = {0};
-
-Uint8 GameConfig::bot_flag_data[FLAG_WIDTH*FLAG_HEIGHT] = {51};
 
 #define WRITE_BOOL(v) ((v)?"true":"false")
 
@@ -124,7 +136,7 @@ static const ScriptVarBindRecord video_getters[] =
     { "doublebuffer",    GETSVTYPE_BOOLEAN, &GameConfig::video_doublebuffer },
     { "shadows",         GETSVTYPE_BOOLEAN, &GameConfig::video_shadows },
     { "blendsmoke",      GETSVTYPE_BOOLEAN, &GameConfig::video_blendsmoke },
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
     { "usedirectx",      GETSVTYPE_BOOLEAN, &GameConfig::video_usedirectx },
 #endif
     {0,0}
@@ -139,7 +151,7 @@ static const ScriptVarBindRecord video_setters[] =
     { "doublebuffer",    SETSVTYPE_BOOLEAN, &GameConfig::video_doublebuffer },
     { "shadows",         SETSVTYPE_BOOLEAN, &GameConfig::video_shadows },
     { "blendsmoke",      SETSVTYPE_BOOLEAN, &GameConfig::video_blendsmoke },
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
     { "usedirectx",      SETSVTYPE_BOOLEAN, &GameConfig::video_usedirectx },
 #endif
     {0,0}
@@ -203,9 +215,14 @@ static const ScriptVarBindRecord game_getters[] =
     { "windspeed",          GETSVTYPE_INT,     &GameConfig::game_windspeed },
     { "lowscorelimit",      GETSVTYPE_INT,     &GameConfig::game_lowscorelimit },
     { "anticheat",          GETSVTYPE_INT,     &GameConfig::game_anticheat },
+    //{ "authentication",     GETSVTYPE_BOOLEAN, &GameConfig::game_authentication },
+    //{ "bots_allowed",       GETSVTYPE_BOOLEAN, &GameConfig::game_bots_allowed },
+    //{ "scrambler",          GETSVTYPE_BOOLEAN, &GameConfig::game_scrambler },
     //{ "maxchatlines",       GETSVTYPE_INT,     &GameConfig::game_maxchatlines },
     { "map",                GETSVTYPE_STRING,  &GameConfig::game_map },
     { "mapcycle",           GETSVTYPE_STRING,  &GameConfig::game_mapcycle },
+    { "mapstyle",           GETSVTYPE_STRING,  &GameConfig::game_mapstyle },
+    { "units_styles",       GETSVTYPE_STRING,  &GameConfig::game_units_styles },
     {0,0}
 };
 
@@ -234,9 +251,14 @@ static const ScriptVarBindRecord game_setters[] =
     { "windspeed",          SETSVTYPE_INT,     &GameConfig::game_windspeed },
     { "lowscorelimit",      SETSVTYPE_INT,     &GameConfig::game_lowscorelimit },
     { "anticheat",          SETSVTYPE_INT,     &GameConfig::game_anticheat },
+    //{ "authentication",     SETSVTYPE_BOOLEAN, &GameConfig::game_authentication },
+    //{ "bots_allowed",       SETSVTYPE_BOOLEAN, &GameConfig::game_bots_allowed },
+    //{ "scrambler",          SETSVTYPE_BOOLEAN, &GameConfig::game_scrambler },
     //{ "maxchatlines",       SETSVTYPE_INT,     &GameConfig::game_maxchatlines },
     { "map",                SETSVTYPE_STRING,  &GameConfig::game_map },
     { "mapcycle",           SETSVTYPE_STRING,  &GameConfig::game_mapcycle },
+    { "mapstyle",           SETSVTYPE_STRING,  &GameConfig::game_mapstyle },
+    { "units_styles",       SETSVTYPE_STRING,  &GameConfig::game_units_styles },
     {0,0}
 };
 
@@ -286,25 +308,31 @@ static const ScriptVarBindRecord radar_setters[] =
 
 static const ScriptVarBindRecord server_getters[] =
 {
-    { "port",           GETSVTYPE_INT,     &GameConfig::server_port },
-    { "bindaddress",    GETSVTYPE_STRING,  &GameConfig::server_bindaddress },
-    { "motd",           GETSVTYPE_STRING,  &GameConfig::server_motd },
-    { "logging",        GETSVTYPE_BOOLEAN, &GameConfig::server_logging },
-    { "public",         GETSVTYPE_BOOLEAN, &GameConfig::server_public },
-    { "masterservers",  GETSVTYPE_STRING,  &GameConfig::server_masterservers },
-    { "name",           GETSVTYPE_STRING,  &GameConfig::server_name },
+    { "port",                       GETSVTYPE_INT,     &GameConfig::server_port },
+    { "bindaddress",                GETSVTYPE_STRING,  &GameConfig::server_bindaddress },
+    { "motd",                       GETSVTYPE_STRING,  &GameConfig::server_motd },
+    { "logging",                    GETSVTYPE_BOOLEAN, &GameConfig::server_logging },
+    { "public",                     GETSVTYPE_BOOLEAN, &GameConfig::server_public },
+    { "masterservers",              GETSVTYPE_STRING,  &GameConfig::server_masterservers },
+    { "name",                       GETSVTYPE_STRING,  &GameConfig::server_name },
+    { "interactive_console",        GETSVTYPE_BOOLEAN, &GameConfig::server_interactive_console },
+    { "authserver",                 GETSVTYPE_STRING,  &GameConfig::server_authserver },
+    { "authentication",             GETSVTYPE_BOOLEAN, &GameConfig::server_authentication },
     {0,0}
 };
 
 static const ScriptVarBindRecord server_setters[] =
 {
-    { "port",           SETSVTYPE_INT,     &GameConfig::server_port },
-    { "bindaddress",    SETSVTYPE_STRING,  &GameConfig::server_bindaddress },
-    { "motd",           SETSVTYPE_STRING,  &GameConfig::server_motd },
-    { "logging",        SETSVTYPE_BOOLEAN, &GameConfig::server_logging },
-    { "public",         SETSVTYPE_BOOLEAN, &GameConfig::server_public },
-    { "masterservers",  SETSVTYPE_STRING,  &GameConfig::server_masterservers },
-    { "name",           SETSVTYPE_STRING,  &GameConfig::server_name },
+    { "port",                SETSVTYPE_INT,     &GameConfig::server_port },
+    { "bindaddress",         SETSVTYPE_STRING,  &GameConfig::server_bindaddress },
+    { "motd",                SETSVTYPE_STRING,  &GameConfig::server_motd },
+    { "logging",             SETSVTYPE_BOOLEAN, &GameConfig::server_logging },
+    { "public",              SETSVTYPE_BOOLEAN, &GameConfig::server_public },
+    { "masterservers",       SETSVTYPE_STRING,  &GameConfig::server_masterservers },
+    { "name",                SETSVTYPE_STRING,  &GameConfig::server_name },
+    { "interactive_console", SETSVTYPE_BOOLEAN, &GameConfig::server_interactive_console },
+    { "authserver",          SETSVTYPE_STRING,  &GameConfig::server_authserver },
+    { "authentication",      SETSVTYPE_BOOLEAN, &GameConfig::server_authentication },
     {0,0}
 };
 
@@ -319,6 +347,25 @@ static const ScriptVarBindRecord player_setters[] =
     { "name",           SETSVTYPE_STRING,  &GameConfig::player_name },
     {0,0}
 };
+
+static const ScriptVarBindRecord bot_getters[] =
+{
+    { "class",           GETSVTYPE_INT,  &GameConfig::bot_class },
+    { "allied",          GETSVTYPE_BOOLEAN,  &GameConfig::bot_allied },
+    { "action_speed",    GETSVTYPE_INT,  &GameConfig::bot_action_speed },
+    {0,0}
+};
+
+static const ScriptVarBindRecord bot_setters[] =
+{
+    { "class",           SETSVTYPE_INT,  &GameConfig::bot_class },
+    { "allied",          SETSVTYPE_BOOLEAN,  &GameConfig::bot_allied },
+    { "action_speed",    SETSVTYPE_INT,  &GameConfig::bot_action_speed },
+    {0,0}
+};
+
+
+
 
 void GameConfig::registerScript(const NPString& table_name)
 {
@@ -352,6 +399,16 @@ void GameConfig::registerScript(const NPString& table_name)
         game_mapcycle = new NPString("Two clans, Bullet Hole");
     }
 
+    if ( ! game_mapstyle )
+    {
+        game_mapstyle = new NPString("SummerDay");
+    }
+
+    if ( ! game_units_styles )
+    {
+        game_units_styles = new NPString(DEFAULT_UNITS_STYLES);
+    }
+
     if ( ! server_bindaddress )
     {
         server_bindaddress = new NPString("");
@@ -364,12 +421,17 @@ void GameConfig::registerScript(const NPString& table_name)
 
     if ( ! server_masterservers )
     {
-        server_masterservers = new NPString("masterserver.netpanzer.org, masterserver2.netpanzer.org, masterserver.netpanzer.info");
+        server_masterservers = new NPString("netpanzer.io");
     }
 
     if ( ! server_name )
     {
         server_name = new NPString("NetPanzer Server");
+    }
+
+    if ( ! server_authserver )
+    {
+        server_authserver = new NPString("authserver.netpanzer.info");
     }
 
     if ( ! player_name )
@@ -408,6 +470,11 @@ void GameConfig::registerScript(const NPString& table_name)
     ScriptManager::bindStaticVariables(table_name + ".player",
                                        "ConfigPlayerMetaTable",
                                        player_getters, player_setters);
+
+    ScriptManager::bindStaticVariables(table_name + ".bot",
+                                       "ConfigBotMetaTable",
+                                       bot_getters, bot_setters);
+
 }
 
 GameConfig::GameConfig(const std::string& luaconfigfile,bool usePhysFS)
@@ -479,6 +546,8 @@ void GameConfig::loadConfig()
     {
         game_mapcycle->assign("Two clans");
     }
+
+    // TODO throw if max_players > 255 players (player id is int8)
 }
 
 void GameConfig::saveConfig()
@@ -488,7 +557,7 @@ void GameConfig::saveConfig()
     lua_getglobal(L,"config");
     if ( ! lua_istable(L, -1) )
     {
-        LOGGER.warning("ERROR: Can't save configuration, config doesn't exits.");
+        LOGGER.warning("ERROR: Can't save configuration, config doesn't exist.");
         return;
     }
 
@@ -496,7 +565,7 @@ void GameConfig::saveConfig()
     lua_rawget(L, -2);
     if ( ! lua_isfunction(L, -1) )
     {
-        LOGGER.warning("ERROR: Can't save configuration, config.dump function doesn't exits.");
+        LOGGER.warning("ERROR: Can't save configuration, config.dump function doesn't exist.");
         lua_pop(L, 2);
         return;
     }

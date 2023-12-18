@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -41,7 +41,8 @@ class MapInterface : protected TileInterface
 private:
     typedef std::list<MapEventListener *> MapListenerList;
     static MapListenerList listenerList;
-    
+
+
 protected:
     static WorldMap main_map;
     static SpawnList spawn_list;
@@ -50,20 +51,29 @@ protected:
     static const int TILE_WIDTH = 32;
     static const int TILE_HEIGHT = 32;
 
+
+
 protected:
     static void generateMappingTable();
 
+
+
 public:
+    static unsigned char craters_lifetime;
+    static unsigned char craters_fading;
+    static unsigned char units_shadow_blending;
+    static unsigned char chat_color_scheme;
+
     static void addMapEventListener(MapEventListener *lis)
     {
         listenerList.push_back(lis);
     }
-    
+
     static void removeMapEventListener(MapEventListener *lis)
     {
         listenerList.remove(lis);
     }
-    
+
     static void getMapPointSize(iXY *map_size)
     {
         map_size->x = main_map.getWidth() * tile_set.getTileXsize();
@@ -138,7 +148,7 @@ public:
     static bool inside(const iXY& map_loc)
     {
         if(map_loc.x < 0 || map_loc.y < 0
-                || map_loc.x >= (int) getWidth() 
+                || map_loc.x >= (int) getWidth()
                 || map_loc.y >= (int) getHeight())
             return false;
 
@@ -149,7 +159,7 @@ protected:
     static void finishMapLoad();
 
 public:
-    static bool startMapLoad(const char *file_path, bool load_tiles, size_t partitions);
+    static bool startMapLoad(const char *file_path, const char *mapstyle_path, bool load_tiles, size_t partitions);
     static bool loadMap( int *percent_complete );
 
     static bool isMapLoaded()

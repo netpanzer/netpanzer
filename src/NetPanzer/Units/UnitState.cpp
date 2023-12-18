@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -24,7 +24,7 @@ UnitState::UnitState()
     body_angle.set( 0, 10 );
     turret_angle.set( 0, 10 );
 
-    // ** NOTE: TEMPORARY UNTIL UNIT PROPERITIES CODED
+    // ** NOTE: TEMPORARY UNTIL UNIT PROPERTIES CODED
 
     bbox.setBounds( iXY( -25, -15 ), iXY( 25, 35 ) );
 
@@ -38,6 +38,9 @@ UnitState::UnitState()
     weapon_range = 409600;
     defend_range = 100;
     reload_time = 45;
+
+    unit_style = 0;
+    moving = false;
 
     threat_level = _threat_level_all_clear;
 }
@@ -77,14 +80,17 @@ NetworkUnitState UnitState::getNetworkUnitState() const
     state.orientation = htol16(orientation);
     state.speed_rate = htol16(speed_rate);
     state.speed_factor = htol16(speed_factor);
-    
+
     state.reload_time = htol16(reload_time);
     state.max_hit_points = htol16(max_hit_points);
     state.hit_points = htol16(hit_points);
     state.damage_factor = htol16(damage_factor);
     state.weapon_range = htol32(weapon_range);
     state.defend_range = htol32(defend_range);
-    
+
+    state.unit_style = unit_style;
+    state.moving = moving;
+
     state.threat_level = threat_level;
     state.lifecycle_state = lifecycle_state;
 
@@ -109,13 +115,16 @@ void UnitState::setFromNetworkUnitState(const NetworkUnitState& state)
     orientation = ltoh16(state.orientation);
     speed_rate = ltoh16(state.speed_rate);
     speed_factor = ltoh16(state.speed_factor);
-    
+
     reload_time = ltoh16(state.reload_time);
     max_hit_points = ltoh16(state.max_hit_points);
     hit_points = ltoh16(state.hit_points);
     damage_factor = ltoh16(state.damage_factor);
     weapon_range = ltoh32(state.weapon_range);
     defend_range = ltoh32(state.defend_range);
+
+    unit_style = state.unit_style;
+    moving = state.moving;
 
     threat_level = state.threat_level;
     lifecycle_state = state.lifecycle_state;

@@ -108,7 +108,6 @@ Address::setPort(unsigned short port)
 
 Address
 Address::resolve(const std::string& name, unsigned short port, bool isTcp, bool forBinding)
-    throw(NetworkException)
 {
     LOGGER.debug("Address:: Resolving '%s':%u", name.c_str(), port);
     Address result(isTcp, forBinding);
@@ -169,7 +168,7 @@ Address::resolve(const std::string& name, unsigned short port, bool isTcp, bool 
     if(!hentry) {
         std::stringstream msg;
         msg << "Couldn't resolve address '" << name;
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
         msg << "' (code " << WSAGetLastError() << ")";
 #else
         msg << "': " << hstrerror(h_errno);

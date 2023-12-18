@@ -340,7 +340,7 @@ SDL_RWops* ReadFile::getSDLRWOps()
     return rwops;
 }
 
-int ReadFile::RWOps_Read(SDL_RWops* context, void* ptr, int size, int maxnum)
+size_t ReadFile::RWOps_Read(SDL_RWops* context, void* ptr, size_t size, size_t maxnum)
 {
     ReadFile* file = (ReadFile*) context->hidden.unknown.data1;
     try {
@@ -354,7 +354,7 @@ int ReadFile::RWOps_Read(SDL_RWops* context, void* ptr, int size, int maxnum)
     return maxnum;
 }
 
-int ReadFile::RWOps_Seek(SDL_RWops* context, int offset, int whence)
+Sint64 ReadFile::RWOps_Seek(SDL_RWops* context, Sint64 offset, int whence)
 {
     ReadFile* file = (ReadFile*) context->hidden.unknown.data1;
     try { // catch exceptions

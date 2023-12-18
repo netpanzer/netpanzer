@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -26,13 +26,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <ctype.h>
 #include <memory>
 #include <string.h>
-
+#include <algorithm>
 #include <vector>
 
 #include "Classes/Network/NetMessage.hpp"
 #include "Classes/Network/NetPacket.hpp"
 
 #include "Util/StringUtil.hpp"
+
+#include <iostream>
+
+
+unsigned short UnitProfileInterface::tsu_speed_rate;
+unsigned short UnitProfileInterface::tsu_speed_factor;
+unsigned short UnitProfileInterface::tsu_speed;
+short UnitProfileInterface::tsu_hit_points;
+short UnitProfileInterface::tsu_damage_factor;
+unsigned short UnitProfileInterface::tsu_reload_time;
+unsigned long UnitProfileInterface::tsu_weapon_range;
+
+std::vector<UnitProfile *> UnitProfileInterface::profiles;
+
+std::vector<UnitProfileSprites *> UnitProfileSprites::profiles_sprites;
 
 enum
 {
@@ -195,7 +210,9 @@ bool read_vehicle_profile(const NPString& unitName, UnitProfile *profile)
     file_path += unitName;
     file_path += ".upf";
 
+
     profile->unitname = unitName;
+
 
     bool isok = ScriptManager::loadSimpleConfig(file_path);
     if ( isok )
@@ -228,12 +245,21 @@ bool read_vehicle_profile(const NPString& unitName, UnitProfile *profile)
         temp_int = profile->cfg_defend_range << 5;
         profile->defend_range = temp_int * temp_int;
 
+        // just a check here, but it's  just the server
+
+        int style_index = 0;
+        while ( style_index < GameConfig::getUnitStylesNum() )
+        {
+        UnitProfileSprites * ups = new UnitProfileSprites();
+        NPString spath = GameConfig::getUnitStyle(style_index);
+        NPString ustylepath = "units/pics/pak/" + spath + "/";
+
         try
         {
-            profile->bodySprite.load(profile->bodySprite_name);
-            profile->bodyShadow.load(profile->bodyShadow_name);
-            profile->turretSprite.load(profile->turretSprite_name);
-            profile->turretShadow.load(profile->turretShadow_name);
+            ups->bodySprite.load(ustylepath+profile->bodySprite_name);
+            ups->bodyShadow.load(ustylepath+profile->bodyShadow_name);
+            ups->turretSprite.load(ustylepath+profile->turretSprite_name);
+            ups->turretShadow.load(ustylepath+profile->turretShadow_name);
 
         }
         catch (std::exception& e)
@@ -242,6 +268,9 @@ bool read_vehicle_profile(const NPString& unitName, UnitProfile *profile)
                            file_path.c_str(), e.what() );
 
             isok = false;
+        }
+        UnitProfileSprites::profiles_sprites.push_back(ups);
+        style_index++;
         }
 
     }
@@ -254,18 +283,43 @@ bool read_vehicle_profile(const NPString& unitName, UnitProfile *profile)
     return isok;
 } // function
 
-vector<UnitProfile *> UnitProfileInterface::profiles;
+
+//------------------------------------------------
+// Units Profiles Mgmt
+
+
+
+std::vector<unsigned short> UnitProfileInterface::su_speed_rate;
+std::vector<unsigned short> UnitProfileInterface::su_speed_factor;
+std::vector<unsigned short> UnitProfileInterface::su_speed;
+std::vector<short> UnitProfileInterface::su_hit_points;
+std::vector<short> UnitProfileInterface::su_damage_factor;
+std::vector<unsigned short> UnitProfileInterface::su_reload_time;
+std::vector<unsigned long> UnitProfileInterface::su_weapon_range;
+
 
 void
 UnitProfileInterface::clearProfiles()
 {
-    vector<UnitProfile *>::iterator i = profiles.begin();
+    std::vector<UnitProfile *>::iterator i = profiles.begin();
     while ( i != profiles.end() )
     {
         delete *i;
         i++;
     }
     profiles.clear();
+}
+
+void
+UnitProfileSprites::clearProfiles()
+{
+    std::vector<UnitProfileSprites *>::iterator i = profiles_sprites.begin();
+    while ( i != profiles_sprites.end() )
+    {
+        delete *i;
+        i++;
+    }
+    profiles_sprites.clear();
 }
 
 void UnitProfileInterface::doLoadUnitProfiles()
@@ -275,7 +329,9 @@ void UnitProfileInterface::doLoadUnitProfiles()
 
     string_to_params(pl, plist);
 
-    for ( unsigned int n = 0; n < plist.size(); ++n )
+    unsigned int maxprofsnum = plist.size();
+
+    for ( unsigned int n = 0; n < maxprofsnum; ++n )
     {
         addLocalProfile(plist[n]);
     }
@@ -283,10 +339,36 @@ void UnitProfileInterface::doLoadUnitProfiles()
 
 void UnitProfileInterface::loadUnitProfiles( void )
 {
-    clearProfiles();
 
+    UnitProfileSprites::clearProfiles();
+    clearProfiles();
     doLoadUnitProfiles();
 
+    //superunit calculation
+
+    sort(su_speed_rate.begin(),su_speed_rate.end());
+    sort(su_speed_factor.begin(),su_speed_factor.end());
+    sort(su_speed.begin(),su_speed.end());
+    sort(su_hit_points.begin(),su_hit_points.end());
+    sort(su_damage_factor.begin(),su_damage_factor.end());
+    sort(su_reload_time.begin(),su_reload_time.end());
+    sort(su_weapon_range.begin(),su_weapon_range.end());
+
+    UnitProfileInterface::tsu_speed_rate = su_speed_rate[su_speed_rate.size()-1];
+    UnitProfileInterface::tsu_speed_factor = su_speed_factor[su_speed_factor.size()-1];
+    UnitProfileInterface::tsu_speed = su_speed[su_speed.size()-1];
+    UnitProfileInterface::tsu_hit_points = su_hit_points[su_hit_points.size()-1];
+    UnitProfileInterface::tsu_damage_factor = su_damage_factor[su_damage_factor.size()-1];
+    UnitProfileInterface::tsu_reload_time = su_reload_time[0];
+    UnitProfileInterface::tsu_weapon_range = su_weapon_range[su_weapon_range.size()-1];
+/*
+    LOGGER.info("best speed_rate = %hu", UnitProfileInterface::tsu_speed_rate);
+    LOGGER.info("best speed_factor = %hu", UnitProfileInterface::tsu_speed_factor);
+    LOGGER.info("best hit_points = %d", UnitProfileInterface::tsu_hit_points);
+    LOGGER.info("best damage_factor = %d", UnitProfileInterface::tsu_damage_factor);
+    LOGGER.info("best reload_time = %hu", UnitProfileInterface::tsu_reload_time);
+    LOGGER.info("best weapon_range = %lu", UnitProfileInterface::tsu_weapon_range);
+*/
     if ( profiles.size() == 0 )
     {
         LOGGER.warning("Error loading profiles provided by user, trying defaults");
@@ -313,17 +395,55 @@ void UnitProfileInterface::loadUnitProfiles( void )
 
 bool UnitProfileInterface::addLocalProfile(const NPString& name)
 {
+
+
+    //while (unitstyle < GameConfig::getUnitStylesNum()) {
     UnitProfile * p = new UnitProfile();
+
 
     bool isok = read_vehicle_profile(name, p);
     if ( isok )
     {
+
         p->unit_type = profiles.size();
         profiles.push_back(p);
+
+        //collecting superunit data
+        //if (unitstyle == 1) {
+
+            su_speed_rate.push_back(p->speed_rate);
+            su_speed_factor.push_back(p->speed_factor);
+            su_speed.push_back(p->speed_factor*p->speed_rate);
+            su_hit_points.push_back(p->hit_points);
+            su_damage_factor.push_back(p->attack_factor);
+            su_reload_time.push_back(p->reload_time);
+            su_weapon_range.push_back(p->attack_range);
+
+        //}
+
+
+
     }
 
-    return isok;
+
+    //if (isok == false) {return false;}
+
+    //}
+
+    return true;
 }
+
+
+UnitProfileSprites * UnitProfileSprites::getUnitProfileSprites( unsigned short vector_index )
+{
+    if ( vector_index < profiles_sprites.size() )
+        return profiles_sprites[vector_index];
+    return 0;
+}
+
+
+
+
 
 UnitProfile * UnitProfileInterface::getUnitProfile( unsigned short unit_type )
 {
@@ -335,7 +455,7 @@ UnitProfile * UnitProfileInterface::getUnitProfile( unsigned short unit_type )
 UnitProfile *
 UnitProfileInterface::getProfileByName( const NPString& name )
 {
-    vector<UnitProfile *>::iterator i = profiles.begin();
+    std::vector<UnitProfile *>::iterator i = profiles.begin();
     while ( i != profiles.end() )
     {
         if ( name.length() != (*i)->unitname.length() )
@@ -350,10 +470,10 @@ UnitProfileInterface::getProfileByName( const NPString& name )
         {
             s++;
         }
-        
+
         if ( s == name.length() )
             return *i;
-        
+
         i++;
     }
     return 0; // null pointer warning
@@ -369,6 +489,7 @@ UnitProfileInterface::fillProfileSyncMessage(NetMessage* message, int profile_id
     bb.writeInt8( _profile_msg_profile_desc );
 
     bb.writeString( p->unitname );
+    bb.writeInt16(  p->unit_type );
     bb.writeInt16(  p->hit_points );
     bb.writeInt16(  p->attack_factor );
     bb.writeInt16(  p->cfg_attack_range );
@@ -382,9 +503,9 @@ UnitProfileInterface::fillProfileSyncMessage(NetMessage* message, int profile_id
     bb.writeString( p->bodyShadow_name );
     bb.writeString( p->turretSprite_name );
     bb.writeString( p->turretShadow_name );
-    bb.writeString( p->soundSelected);
-    bb.writeString( p->fireSound);
-    bb.writeString( p->weaponType);
+    bb.writeString( p->soundSelected );
+    bb.writeString( p->fireSound );
+    bb.writeString( p->weaponType );
     bb.writeInt16(  p->boundBox );
 
     return bb.writedBytesCount();
@@ -413,6 +534,7 @@ UnitProfileInterface::loadProfileFromMessage(const NetMessage *message, size_t s
     br.readInt8( &unused );
 
     br.readString( p->unitname );
+    br.readInt16( &p->unit_type );
     br.readInt16( &p->hit_points );
     br.readInt16( &p->attack_factor );
     br.readInt16( &p->cfg_attack_range );
@@ -431,10 +553,25 @@ UnitProfileInterface::loadProfileFromMessage(const NetMessage *message, size_t s
     br.readString (p->weaponType);
     br.readInt16( &p->boundBox );
 
-    p->bodySprite.load(p->bodySprite_name);
-    p->bodyShadow.load(p->bodyShadow_name);
-    p->turretSprite.load(p->turretSprite_name);
-    p->turretShadow.load(p->turretShadow_name);
+
+    int style_index = 0;
+    while ( style_index < GameManager::ststylesnum )
+    {
+        UnitProfileSprites * ups = new UnitProfileSprites();
+        NPString spath = GameManager::stlist[style_index];
+        NPString ustylepath = "units/pics/pak/" + spath + "/";
+
+            ups->bodySprite.load(ustylepath+p->bodySprite_name);
+            ups->bodyShadow.load(ustylepath+p->bodyShadow_name);
+            ups->turretSprite.load(ustylepath+p->turretSprite_name);
+            ups->turretShadow.load(ustylepath+p->turretShadow_name);
+
+        UnitProfileSprites::profiles_sprites.push_back(ups);
+
+
+        style_index++;
+    }
+
 
     Uint32 i = p->cfg_attack_range * 32;
     p->attack_range = i*i;
@@ -455,6 +592,7 @@ UnitProfileInterface::processNetMessage(const NetMessage* net_message, size_t si
             break;
 
         case _profile_msg_reset:
+            UnitProfileSprites::clearProfiles();
             clearProfiles();
             break;
 
@@ -474,3 +612,23 @@ UnitProfileInterface::handleProfileDescMessage(const NetMessage *net_message, si
         profiles.push_back(p);
     }
 }
+
+void
+UnitProfileInterface::cleaning()
+{
+    //UnitProfileSprites::profiles_sprites.clear();
+    //profiles.clear();
+    su_speed_rate.clear();
+    su_speed_factor.clear();
+    su_speed.clear();
+    su_hit_points.clear();
+    su_damage_factor.clear();
+    su_reload_time.clear();
+    su_weapon_range.clear();
+}
+
+
+
+
+
+

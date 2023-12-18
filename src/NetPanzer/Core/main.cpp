@@ -35,10 +35,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <time.h>
 #include <ctype.h>
 #include <signal.h>
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 #include <optionmm/command_line.hpp>
-
+#include "Util/Exception.hpp"
 #include "Util/Log.hpp"
 //#include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
@@ -52,6 +52,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Core/NetworkGlobals.hpp"
 #include "Scripts/ScriptManager.hpp"
 #include "2D/Palette.hpp"
+
+#include "Weapons/Weapon.hpp"
+#include "PowerUps/PowerUpInterface.hpp"
+#include "Particles/PuffParticle2D.hpp"
+#include "Particles/CloudParticle2D.hpp"
+#include "Particles/FlameParticle2D.hpp"
+#include "Particles/FlashParticle2D.hpp"
+#include "Particles/ChunkTrajectoryParticle2D.hpp"
+#include "Particles/CraterParticle2D.hpp"
+#include "Units/UnitProfileInterface.hpp"
+
 
 #ifndef PACKAGE_VERSION
 	#define PACKAGE_VERSION "testing"
@@ -68,6 +79,21 @@ void shutdown()
         unlink(pidfile.c_str());
     }
 #endif
+
+// final cleaning
+Weapon::uninit();
+PowerUpInterface::uninitialize();
+PuffParticle2D::unloadPAKFiles();
+CloudParticle2D::uninit();
+FlameParticle2D::uninit();
+FlashParticle2D::uninit();
+ChunkTrajectoryParticle2D::uninit();
+CraterParticle2D::uninit();
+//
+UnitProfileSprites::clearProfiles();
+UnitProfileInterface::clearProfiles();
+//
+
 
     SDL_Quit();
     if(gameconfig)
@@ -127,7 +153,7 @@ BaseGameManager *initialise(int argc, char** argv)
     // Parse commandline
     using namespace optionmm;
     command_line commandline("NetPanzer", PACKAGE_VERSION,
-            "Copyright(c) 1998 Pyrosoft Inc. and nepanzer-devel team", "",
+            "Copyright(c) 1998 Pyrosoft Inc. & NetPanzer Development Team", "",
             argc, argv);
 
     option<std::string, true, false> connect_option('c', "connect",
@@ -135,7 +161,7 @@ BaseGameManager *initialise(int argc, char** argv)
     commandline.add(&connect_option);
     bool_option dedicated_option('d', "dedicated", "Run as dedicated server", false);
     commandline.add(&dedicated_option);
-    option<std::string, true, false> bot_option('b', "bot", "Connect as bot to specific server", "");
+    option<std::string, true, false> bot_option('b', "bot", "Connect as bot to specific server (dedicated server accepts only localhost)", "");
     commandline.add(&bot_option);
 
     bool_option need_password(0, "password", "Ask for password when connecting, only useful on quick connect", false);
@@ -148,7 +174,7 @@ BaseGameManager *initialise(int argc, char** argv)
     option<std::string, true, false> master_server_option('\0', "master_server", "Use 'none' if you dont want to use the master server", "");
     commandline.add(&master_server_option);
     option<std::string, true, false> game_config_option(0, "game_config",
-        "Which config file should be used (only files inside config directory)",
+        "Which config file should be used (example '/config/[name].cfg')",
         "");
     commandline.add(&game_config_option);
     option<bool, false, false> protocol_option('\0', "protocol",
@@ -173,14 +199,11 @@ BaseGameManager *initialise(int argc, char** argv)
         LOGGER.setLogLevel(Logger::LEVEL_INFO);
     }
 
-    // Initialize SDL (we have to start the video subsystem as well so that
-    // the eventloop is started, otherwise we'll have problems in dedicated
-    // server)
-    if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {
-        fprintf(stderr, "SDL_Init error: %s.\n", SDL_GetError());
+    // Initialize SDL (don't initialize video or audio for dedicated servers)
+    if (dedicated_option.value() && SDL_Init(SDL_INIT_TIMER | SDL_INIT_EVENTS) < 0) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize SDL: %s", SDL_GetError());
         exit(1);
     }
-    SDL_EnableUNICODE(1);
 
     // Initialize libphysfs
     try {
@@ -260,7 +283,7 @@ BaseGameManager *initialise(int argc, char** argv)
         if (dedicated_option.value()) {
             manager = new DedicatedGameManager();
         }
-        else if (bot_option.value().size() > 0) {
+        else if (!bot_option.value().empty()) {
             manager = new BotGameManager(bot_option.value());
         } else {
             manager = new PlayerGameManager();
@@ -269,11 +292,11 @@ BaseGameManager *initialise(int argc, char** argv)
         manager->initialize(game_config_option.value());
 
         // gameconfig exists now...
-        if(connect_option.value() != "") {
+        if(!connect_option.value().empty()) {
             std::string connecthost = connect_option.value();
             if(connecthost.find("netpanzer://") == 0) {
                 connecthost = connecthost.substr(12, connecthost.size()-12);
-                std::string::size_type p = connecthost.find("/");
+                std::string::size_type p = connecthost.find('/');
                 if(p != std::string::npos) {
                     if ( connecthost[p+1] == 'p' )
                     {
@@ -291,7 +314,7 @@ BaseGameManager *initialise(int argc, char** argv)
             gameconfig->serverConnect = connecthost;
             gameconfig->quickConnect = true;
         }
-        if (master_server_option.value().size() > 0) {
+        if (!master_server_option.value().empty()) {
             if (master_server_option.value() == "none") {
                 *GameConfig::server_masterservers = "";
             }
@@ -324,6 +347,8 @@ int netpanzer_main(int argc, char** argv)
 
     ScriptManager::runFile("unused","scripts/initialize.lua");
 
+
+
     // we'll catch every exception here, to be sure the user gets at least
     // a usefull error message and SDL has a chance to shutdown...
     try {
@@ -334,19 +359,19 @@ int netpanzer_main(int argc, char** argv)
 
         manager->shutdown();
         delete manager;
-        LOGGER.info("successfull shutdown.");
+        LOGGER.info("successful shutdown.");
         shutdown();
     }
 // in debug mode we want the exception to abort, so that we have the original
 // stack backtrace
 #if !defined(DEBUG) || defined(WIN32)
     catch(std::exception& e) {
-        LOGGER.warning("An unexpected exception occured: '%s'\nShutdown needed.",
+        LOGGER.warning("An unexpected exception occurred: '%s'\nShutdown needed.",
                 e.what());
         shutdown();
         return 1;
     } catch(...) {
-        LOGGER.warning("An unexpected exception occured.\nShutdown needed.");
+        LOGGER.warning("An unexpected exception occurred.\nShutdown needed.");
         shutdown();
         return 1;
     }
@@ -367,4 +392,3 @@ extern "C" {
         return netpanzer_main(argc, argv);
     }
 }
-

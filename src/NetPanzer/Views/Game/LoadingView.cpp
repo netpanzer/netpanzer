@@ -22,7 +22,7 @@
 
 #include "Particles/ParticleInterface.hpp"
 
-list<string> LoadingView::lines;
+std::list<std::string> LoadingView::lines;
 bool LoadingView::dirty = true;
 
 static void bAbort()
@@ -54,12 +54,12 @@ LoadingView::init()
 
     resize(800, 600);
 
-    addButtonCenterText(iXY(340, 260), 100, "Abort", "Cancel the joining of this game.", bAbort);
+    addButtonCenterText(iXY(348, 260), 101, "Abort", "Cancel the joining of this game.", bAbort);
 
 
-    okButton = Button::createTextButton("OK", "Enter", iXY(340,105), 100);
+    okButton = Button::createTextButton("OK", "Enter", iXY(348,105), 100);
     okButton->setTextColors(Color::black,Color::red,Color::darkGray);
-    passwordLabel = new Label(340, 60, "Game Password", Color::lightGray);
+    passwordLabel = new Label(348, 60, "Game Password", Color::lightGray);
 
 }
 
@@ -72,8 +72,8 @@ LoadingView::doDraw(Surface &viewArea, Surface &clientArea)
 
     screen->fill(Color::black);
     backgroundSurface.blt(clientArea, 0, 0);
-    clientArea.FillRoundRect(iRect(165, 40, 635, 225), 10, Color::black);
-    clientArea.RoundRect(iRect(165, 40, 635, 225), 10, Color::yellow);
+    clientArea.FillRoundRect(iRect(166, 40, 628, 225), 10, Color::black);
+    clientArea.RoundRect(iRect(166, 40, 628, 225), 10, Color::lightGray);
     surface.blt(clientArea, 172, 45);
 
     View::doDraw(viewArea, clientArea);
@@ -89,7 +89,7 @@ LoadingView::render()
     int ypos = surface.getHeight() - Surface::getFontHeight();
     int fontHeight = Surface::getFontHeight();
 
-    list<string>::reverse_iterator i = lines.rbegin();
+    std::list<std::string>::reverse_iterator i = lines.rbegin();
     while ( i != lines.rend() && ypos > -fontHeight )
     {
         surface.bltString( 0, ypos, (*i).c_str(), Color::white);
@@ -138,7 +138,7 @@ LoadingView::setNeedPassword(bool need_password)
 void
 LoadingView::onComponentClicked(Component* c)
 {
-    string cname = c->getName();
+    std::string cname = c->getName();
     if ( !cname.compare("Button.OK") )
     {
         CLIENT->joinServer(gameconfig->serverConnect, NPString(password_str.getString()));
@@ -194,11 +194,15 @@ LoadingView::loadFinish()
 
     GameManager::setNetPanzerGameOptions();
     Desktop::setVisibility("MiniMapView", true);
+    Desktop::setVisibility("MiniMapViewAlt", false);
     Desktop::setVisibility("GameView", true);
     if ( PlayerInterface::getLocalPlayer()->isSelectingFlag() )
     {
-        Desktop::setVisibility("GFlagSelectionView", true);
-        Desktop::setActiveView("GFlagSelectionView");
+        Desktop::setVisibility("UStyleSelectionView", true);
+        Desktop::setActiveView("UStyleSelectionView");
+
+        //Desktop::setVisibility("GFlagSelectionView", true);
+        //Desktop::setActiveView("GFlagSelectionView");
     }
 }
 

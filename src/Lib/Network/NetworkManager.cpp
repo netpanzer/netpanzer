@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <list>
 
 #include <map>
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 namespace network
 {
@@ -87,7 +87,7 @@ int NetworkManager::resolver_worker(void *data)
 
 bool NetworkManager::initialize()
 {
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
     WSADATA wsaData;
     WORD wVers = MAKEWORD(2, 0);
     int rc = WSAStartup(wVers, &wsaData);
@@ -99,7 +99,7 @@ bool NetworkManager::initialize()
 
     network_running = true;
     semaphore = SDL_CreateSemaphore(0);
-    resolverThread = SDL_CreateThread(resolver_worker, 0);
+    resolverThread = SDL_CreateThread(resolver_worker, "np-resolver", 0);
 
     return true;
 }
@@ -118,7 +118,7 @@ void NetworkManager::cleanUp()
 
     rqueue.clear();
 
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
     WSACleanup();
 #endif
 }

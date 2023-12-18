@@ -89,15 +89,16 @@ HelpScrollViewAlt::HelpScrollViewAlt() : SpecialButtonView()
     insert("View Related");
     insert("");
     insert("  F1                               Help View");
-    insert("  'B'                              Toggle flag selection window");
+    insert("  'U'                              Toggles Unit selection window");
+    insert("  'B'                              Toggles Flag selection window");
     insert("  'D'                              Damage View");
     insert("  'F'                              Flag View");
-    insert("  'M'                              Mini Map View");
+    insert("  'M'                              Toggles Map View");
+    insert("  Shift + 'M'                      Toggles a Bigger Map View");
     insert("  'N'                              Name View");
     insert("  TAB                              Rank View");
     insert("  RMH + mouse movement             Moves any view on the screen");
     insert("  RMH + [1 - 5]                    Sets the background drawing mode");
-    insert(" ");
     insert(" ");
     insert("Mini Map View Related");
     insert("");
@@ -108,7 +109,7 @@ HelpScrollViewAlt::HelpScrollViewAlt() : SpecialButtonView()
     insert(" ");
     insert("System Related");
     insert("");
-    insert("  ALT + Enter                      Toggle Fullscreen/Windowed mode");
+    insert("  ALT + Enter                      Toggles Fullscreen/Windowed mode");
     insert("  F9                               BMP screen shot");
     insert(" ");
     insert(" ");
@@ -188,7 +189,7 @@ void HelpScrollViewAlt::doDraw(Surface &viewArea, Surface &clientArea)
 
     clientArea.bltString(   4,
                             clientArea.getHeight() - Surface::getFontHeight(),
-                            "Note: Use the right mouse button to accomplish fast mouse clicking.",
+                            "Note: Use the right mouse button to scroll quickly.",
                             Color::lightGray);
     //char strBuf[256];
     //sprintf(strBuf, "%d", scrollBar->getValue());

@@ -15,7 +15,38 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#ifdef WIN32
+#include <windows.h>
+#endif
 
+#include <sstream>
+
+
+#include "Interfaces/WorldViewInterface.hpp"
+#include "Interfaces/MapInterface.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/ChatInterface.hpp"
+
+#include "Units/UnitInterface.hpp"
+
+#include "Classes/UnitMessageTypes.hpp"
+#include "Classes/Network/TerminalNetMesg.hpp"
+#include "Classes/Network/PlayerNetMessage.hpp"
+
+#include "Classes/Network/NetMessageEncoder.hpp"
+#include "Classes/PlacementMatrix.hpp"
+#include "Classes/ScreenSurface.hpp"
+
+#include "Util/NTimer.hpp"
+
+#include "Interfaces/GameConfig.hpp"
+
+#include "Units/Vehicle.hpp"
+
+#include "Scripts/ScriptManager.hpp"
+
+
+//-------------------
 
 #include <iostream>
 
@@ -63,7 +94,7 @@ Bot::moveUnit(UnitBase *unit, iXY map_pos)
     CLIENT->sendMessage(&comm_mesg, sizeof(TerminalUnitCmdRequest));
     m_tasks.setUnitTask(unit, BotTaskList::TASK_MOVE);
 
-    LOGGER.debug("bot: moveUnit %d to %dx%d", unit->id, map_pos.x, map_pos.y);
+    //LOGGER.debug("bot: moveUnit %d to %dx%d", unit->id, map_pos.x, map_pos.y);
 }
 //-----------------------------------------------------------------
 void
@@ -79,7 +110,7 @@ Bot::attackUnit(UnitBase *unit, UnitBase *enemyUnit)
     CLIENT->sendMessage(&comm_mesg, sizeof(TerminalUnitCmdRequest));
     m_tasks.setUnitTask(unit, BotTaskList::TASK_ATTACK);
 
-    LOGGER.debug("bot: attackUnit %d to %d", unit->id, enemyUnit->id);
+    //LOGGER.debug("bot: attackUnit %d to %d", unit->id, enemyUnit->id);
 }
 //-----------------------------------------------------------------
 void
@@ -104,4 +135,64 @@ Bot::produceUnit(ObjectiveID outpostID, int selectedProduce)
 
     ObjectiveInterface::sendChangeGeneratingUnit(outpostID, selectedProduce, true);
  }
+
+
+
+ void
+Bot::sendMoveCommand(const iXY& world_pos)
+{
+
+    iXY map_pos;
+    PlacementMatrix matrix;
+
+
+    UnitBase *unit_ptr;
+
+    TerminalUnitCmdRequest msg;
+
+    MapInterface::pointXYtoMapXY( world_pos, map_pos );
+    matrix.reset( map_pos );
+
+    NetMessageEncoder encoder;
+
+
+
+        const std::vector<UnitBase*>& uc = UnitInterface::getPlayerUnits(PlayerInterface::getLocalPlayerIndex());
+
+        for ( Uint8 id_list_index = 0; id_list_index < uc.size(); ++id_list_index)
+        {
+
+
+        unit_ptr = uc[ id_list_index ];
+
+        if ( unit_ptr != 0 )
+        {
+
+                matrix.getNextEmptyLoc( &map_pos );
+                msg.comm_request.setHeader( unit_ptr->id,
+                                            _umesg_flag_unique );
+
+                msg.comm_request.setMoveToLoc( map_pos );
+
+                if ( !encoder.encodeMessage(&msg, sizeof(msg)) )
+                {
+                    CLIENT->sendMessage(encoder.getEncodedMessage(),
+                                        encoder.getEncodedLen());
+                    encoder.resetEncoder();
+                    encoder.encodeMessage(&msg, sizeof(msg));
+                }
+
+        }
+    }
+
+    if ( ! encoder.isEmpty() )
+    {
+        CLIENT->sendMessage(encoder.getEncodedMessage(),
+                            encoder.getEncodedLen());
+    }
+
+
+}
+
+
 

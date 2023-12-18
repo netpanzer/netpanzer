@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/View.hpp"
 #include "Views/Components/StateChangedCallback.hpp"
 #include "ViewGlobals.hpp"
+#include "CLasses/ScreenSurface.hpp"
 
 //---------------------------------------------------------------------------
 void Choice::reset()
@@ -29,10 +30,11 @@ void Choice::reset()
     index     = 0;
     minWidth  = 0;
     size.x    = 10;
-    size.y    = ChoiceItemHeight;
+    size.y    = Surface::getFontHeight();
     isOpen    = 0;
     mouseover = 0;
     adjustedY = 0;
+    choiceItemHeight = Surface::getFontHeight();
 }
 
 //---------------------------------------------------------------------------
@@ -42,8 +44,8 @@ void Choice::addItem(const std::string& item)
 
     int borderSpace = borderSize * 2;
 
-    size.x = std::max((Surface::getTextLength(item) + borderSpace), size.y);
-    size.y = ChoiceItemHeight;
+    size.x = std::max((((int) Surface::getTextLength(item)) + borderSpace), size.y);
+    size.y = choiceItemHeight;
 }
 
 //---------------------------------------------------------------------------
@@ -86,15 +88,15 @@ void Choice::actionPerformed(const mMouseEvent &me)
         //assert(isOpen == false);
         isOpen = true;
 
-        // Set the size to accomodate all items.
-        size.y = choiceList.size() * ChoiceItemHeight;
+        // Set the size to accommodate all items.
+        size.y = std::min((int) choiceList.size() * choiceItemHeight, (int) screen->getHeight());
 
         // Make sure the choice fits on the screen.
         if (position.y + size.y >= parentDimensions.y) {
             // Check to see if it will fit above the base position.
-            if ((position.y + ChoiceItemHeight) - size.y > 0) {
+            if ((position.y + choiceItemHeight) - size.y > 0) {
                 // Since it fits above, put it there.
-                adjustedY =  size.y - ChoiceItemHeight;
+                adjustedY =  size.y - choiceItemHeight;
                 position.y     -= adjustedY;
 
             } else {
@@ -103,16 +105,18 @@ void Choice::actionPerformed(const mMouseEvent &me)
                 position.y     -= adjustedY + 1;
             }
 
-
-            // Make sure the choice is still on the screen.
-            assert (position.y >= 0);
+            if (position.y < 0) {
+                // Make sure the choice is still on the screen.
+                printf("position out of bounds? size.y=[%d] parentDimensions.y=[%d] choiceItemHeight=[%d] numChoices=[%d] \n", size.y, parentDimensions.y, choiceItemHeight, choiceList.size());
+                position.y = 0;
+            }
         }
     } else if (me.getID() == mMouseEvent::MOUSE_EVENT_DRAGGED &&
                 (me.getModifiers() & InputEvent::BUTTON1_MASK)) {
         isOpen = true;
-        size.y = choiceList.size() * ChoiceItemHeight;
+        size.y = std::min((int) choiceList.size() * choiceItemHeight, (int) screen->getHeight());
 
-        iRect r(position.x, position.y, position.x + size.x, position.y + ChoiceItemHeight);
+        iRect r(position.x, position.y, position.x + size.x, position.y + choiceItemHeight);
 
         for (size_t i = 0; i < choiceList.size(); i++) {
             // Find the selected item.
@@ -121,7 +125,7 @@ void Choice::actionPerformed(const mMouseEvent &me)
                 break;
             }
 
-            r.translate(iXY(0, ChoiceItemHeight));
+            r.translate(iXY(0, choiceItemHeight));
         }
     } else if (	me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED &&
                 (me.getModifiers() & InputEvent::BUTTON1_MASK)) {
@@ -129,7 +133,7 @@ void Choice::actionPerformed(const mMouseEvent &me)
         isOpen = false;
 
         // Set the size back down to a single item.
-        size.y = ChoiceItemHeight;
+        size.y = choiceItemHeight;
 
         // Move the choice back to its original location.
         position.y += adjustedY;
@@ -149,7 +153,7 @@ void Choice::actionPerformed(const mMouseEvent &me)
         isOpen = false;
 
         // Set the size back down to a single item.
-        size.y = ChoiceItemHeight;
+        size.y = choiceItemHeight;
 
         // Move the choice back to its original location.
         position.y += adjustedY;
@@ -180,7 +184,7 @@ void Choice::draw(Surface &dest)
     //dest.bltStringShadowed( position.x, pos.y + adjustedY,
                             //componentName.c_str(), componentActiveTextColor, Color::black);
 
-    dest.bltString( position.x, pos.y + adjustedY,
+    dest.bltString( position.x, pos.y + adjustedY + (choiceItemHeight / 3),
                             componentName.c_str(), Color::black);
 
     getBounds(r);
@@ -196,15 +200,18 @@ void Choice::draw(Surface &dest)
         //s.bltStringShadowedCenter(choiceList[index].c_str(), componentActiveTextColor, Color::black);
         s.bltStringCenter(choiceList[index].c_str(), Color::black);
     } else {
-        r = iRect(position.x, position.y, position.x + size.x, position.y + ChoiceItemHeight);
+        r = iRect(position.x, position.y, position.x + size.x, position.y + choiceItemHeight);
 
         size_t count = choiceList.size();
 
         for (size_t i = 0; i < count; i++) {
+            if (!dest.isInBounds(r.min.x, r.min.y) || !dest.isInBounds(r.max.x, r.max.y)) {
+                continue;
+            }
             s.setTo(dest, r);
 
             if (i == mouseover) {
-                // Higlight the selected item.
+                // Highlight the selected item.
                 s.fill(componentActiveTextColor);
                 s.bltStringCenter(choiceList[i].c_str(), Color::black);
 
@@ -213,7 +220,7 @@ void Choice::draw(Surface &dest)
                 s.bltStringCenter(choiceList[i].c_str(), Color::black);
             }
 
-            r.translate(iXY(0, ChoiceItemHeight));
+            r.translate(iXY(0, choiceItemHeight));
         }
     }
     //isOpen = 0;
@@ -227,7 +234,7 @@ void Choice::add(const std::string& item)
 
     int borderSpace = borderSize * 2;
 
-    size.x = std::max(Surface::getTextLength(item) + borderSpace, size.y);
+    size.x = std::max(((int) Surface::getTextLength(item)) + borderSpace, size.y);
     size.x = std::max(minWidth, size.x);
 } // end Choice::add
 

@@ -100,6 +100,7 @@ static int npmodule_listPlayers (lua_State *L)
     int tindex = 0; // will push ++tindex
     lua_newtable(L);
 
+
     for ( int n = 0; n < PlayerInterface::getMaxPlayers(); n++)
     {
         PlayerState *p = PlayerInterface::getPlayer(n);
@@ -114,6 +115,12 @@ static int npmodule_listPlayers (lua_State *L)
 
             lua_pushstring(L, PlayerInterface::isLocalPlayer(n) ? "local" : SERVER->getIP(n).c_str());
             lua_setfield(L, -2, "ip");
+
+
+            char str_buffer [16];
+            sprintf (str_buffer, "%.1f", p->getDownAvgPing());
+            lua_pushstring(L, p->getDownAvgPing() != 0 ? str_buffer : "n/a");
+            lua_setfield(L, -2, "s_ping");
 
             lua_rawseti(L, -2, ++tindex);
         }

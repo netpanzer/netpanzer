@@ -72,8 +72,14 @@ UnitState timer ticks 10 times per second, so reload times are:
 
 enum{ _rotate_and_move, _rotate_stop_move };
 
-Vehicle::Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initial_loc)
-    : UnitBase(player, id)
+Vehicle::Vehicle(bool liveornot,
+                 PlayerState* player, unsigned char utype,
+                 UnitID id, unsigned char unit_style,  bool moving, iXY initial_loc,
+                 AngleInt body_angle, AngleInt turret_angle,
+                 unsigned short orientation, unsigned short speed_rate,
+                 unsigned short speed_factor, unsigned short reload_time,
+                 short max_hit_points, short hit_points, unsigned short damage_factor,
+                 unsigned long weapon_range, unsigned long defend_range) : UnitBase(player, id)
 {
     smolderWait    = 0.0f;
     smolderWaitMin = 0.0f;
@@ -94,8 +100,20 @@ Vehicle::Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initia
 
     in_sync_flag = true;
 
+
+    if ( MapInterface::units_shadow_blending == 0 ) {
+
     body_anim_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
     turret_anim_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
+
+    } else {
+
+    body_anim_shadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
+    turret_anim_shadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
+
+    }
+    //body_anim_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
+    //turret_anim_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
 
     path_generated = false;
     critical_ai_section = false;
@@ -124,7 +142,161 @@ Vehicle::Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initia
     aiFsmDefendHold_state = 0;
 
     // from unit profiles
+    if (liveornot) {
+
+
+    UnitProfile *profile;
+
+    profile = UnitProfileInterface::getUnitProfile( utype );
+/*
+    unit_state.hit_points = profile->hit_points;
+    unit_state.max_hit_points = profile->hit_points;
+    unit_state.damage_factor = profile->attack_factor;
+    unit_state.defend_range = profile->defend_range;
+    unit_state.speed_factor = profile->speed_factor;
+    unit_state.speed_rate = profile->speed_rate;
+    unit_state.reload_time = profile->reload_time;
+    unit_state.weapon_range = profile->attack_range;
+    unit_state.unit_type = utype;
+*/
+    // perfect sync of existing units for a newly connected player
+    unit_state.hit_points = hit_points;
+    unit_state.max_hit_points = hit_points;
+    unit_state.damage_factor = damage_factor;
+    unit_state.defend_range = defend_range;
+    unit_state.speed_factor = speed_factor;
+    unit_state.speed_rate = speed_rate;
+    unit_state.reload_time = reload_time;
+    unit_state.weapon_range = weapon_range;
+    unit_state.unit_type = utype;
+
+    unit_state.body_angle = body_angle;
+    unit_state.turret_angle = turret_angle;
+
+    unit_state.unit_style = unit_style;
+
+    unit_state.moving = moving;
+
+
+
+
+
+
+
+    NPString unitName = profile->unitname;
+    NPString file_path = "units/profiles/";
+    file_path += unitName;
+    file_path += ".upf";
+
+
+    NPString spath;
+    unsigned char stylesnum;
+    if ( NetworkState::status == _network_state_server )
+    {
+    spath = GameConfig::getUnitStyle(unit_state.unit_style);
+    stylesnum = GameConfig::getUnitStylesNum();
+    } else {
+    spath = GameManager::stlist[unit_state.unit_style];
+    stylesnum = GameManager::ststylesnum;
+    }
+
+    NPString ustylepath = "units/pics/pak/" + spath + "/";
+
+
+    //LOGGER.info("live path: %s", (ustylepath+profile->bodySprite_name).c_str());
+
+/*
+    profile->bodySprite.load(ustylepath+profile->bodySprite_name);
+    profile->bodyShadow.load(ustylepath+profile->bodyShadow_name);
+    profile->turretSprite.load(ustylepath+profile->turretSprite_name);
+    profile->turretShadow.load(ustylepath+profile->turretShadow_name);
+*/
+
+
+
+
+    select_info_box.setHitBarAttributes( profile->hit_points, Color::yellow );
+
+
+
+    body_anim.setData( UnitProfileSprites::profiles_sprites[utype*stylesnum+unit_style]->bodySprite );
+    body_anim_shadow.setData( UnitProfileSprites::profiles_sprites[utype*stylesnum+unit_style]->bodyShadow );
+    turret_anim.setData( UnitProfileSprites::profiles_sprites[utype*stylesnum+unit_style]->turretSprite );
+    turret_anim_shadow.setData( UnitProfileSprites::profiles_sprites[utype*stylesnum+unit_style]->turretShadow );
+
+
+
+
+    soundSelect = profile->soundSelected;
+    fireSound = profile->fireSound;
+    if ( profile->weaponType == "QUADMISSILE" )
+    {
+        weaponType = Weapon::_quad_missile;
+    }
+    else if ( profile->weaponType == "BULLET" )
+    {
+        weaponType = Weapon::_bullet;
+    }
+    else if ( profile->weaponType == "SHELL" )
+    {
+        weaponType = Weapon::_shell;
+    }
+    else if ( profile->weaponType == "DOUBLEMISSILE" )
+    {
+        weaponType = Weapon::_double_missile;
+    }
+    else
+    {
+        weaponType = Weapon::_bullet;
+    }
+    int bsize = profile->boundBox / 2;
+    select_info_box.setBoxAttributes( BoundBox( -bsize, -bsize, bsize, bsize), Color::blue);
+
+
+    if ( NetworkState::status == _network_state_server )
+    {
+    if( unit_state_timer.count() ) {
+
+    //UnitBase* unitlive = UnitInterface::getUnit( id );
+    //UnitState& unit_state = unitlive->unit_state;
+
+    updateUnitStateProperties();
+
+    }
+
+    updateAIState();
+    checkPendingAICommStatus();
+    } else {
+    processOpcodeQueue();
+    }
+
+    if( unit_state.hit_points < unit_state.max_hit_points )
+    {
+        smolderWait += TimerInterface::getTimeSlice();
+
+        int intPercent = unit_state.percentDamageInt();
+
+        if (intPercent > 50 && (rand() % 100) < intPercent)
+        {
+            if (smolderWait > smolderWaitMin)
+            {
+                float percent = unit_state.percentDamageFloat();
+
+                smolderWaitMin  = (float(100 - percent) / 100.0) + (float(100 - percent) / 100.0) * 0.3;
+
+                ParticleInterface::addUnitDamagePuffParticle(unit_state);
+
+                smolderWait = 0.0f;
+            }
+        }
+    }
+
+
+    } else {
     setUnitProperties(utype);
+    }
+
+
     iXY zero;
     zero.zero();
     body_anim.setAttrib( zero, zero, unitLayer );
@@ -159,11 +331,58 @@ void Vehicle::setUnitProperties( unsigned char utype )
     unit_state.reload_time = profile->reload_time;
     unit_state.weapon_range = profile->attack_range;
     unit_state.unit_type = utype;
+
+    unit_state.unit_style = player->getPlayerStyle();
+    //unit_state.moving = moving;
+
+    // full path of sprites here
+
+    NPString unitName = profile->unitname;
+    NPString file_path = "units/profiles/";
+    file_path += unitName;
+    file_path += ".upf";
+
+    NPString spath;
+    unsigned char stylesnum;
+    if ( NetworkState::status == _network_state_server )
+    {
+    spath = GameConfig::getUnitStyle(unit_state.unit_style);
+    stylesnum = GameConfig::getUnitStylesNum();
+    } else {
+    spath = GameManager::stlist[unit_state.unit_style];
+    stylesnum = GameManager::ststylesnum;
+    }
+
+
+    NPString ustylepath = "units/pics/pak/" + spath + "/";
+
+    //LOGGER.info("create path: %s", (ustylepath+profile->bodySprite_name).c_str());
+
+/*
+    profile->bodySprite.load(ustylepath+profile->bodySprite_name);
+    profile->bodyShadow.load(ustylepath+profile->bodyShadow_name);
+    profile->turretSprite.load(ustylepath+profile->turretSprite_name);
+    profile->turretShadow.load(ustylepath+profile->turretShadow_name);
+*/
+
+
+
     select_info_box.setHitBarAttributes( profile->hit_points, Color::yellow );
+
+
+
+    body_anim.setData( UnitProfileSprites::profiles_sprites[utype*stylesnum+unit_state.unit_style]->bodySprite );
+    body_anim_shadow.setData( UnitProfileSprites::profiles_sprites[utype*stylesnum+unit_state.unit_style]->bodyShadow );
+    turret_anim.setData( UnitProfileSprites::profiles_sprites[utype*stylesnum+unit_state.unit_style]->turretSprite );
+    turret_anim_shadow.setData( UnitProfileSprites::profiles_sprites[utype*stylesnum+unit_state.unit_style]->turretShadow );
+
+    /*
     body_anim.setData( profile->bodySprite );
     body_anim_shadow.setData( profile->bodyShadow );
     turret_anim.setData( profile->turretSprite );
     turret_anim_shadow.setData( profile->turretShadow );
+    */
+
     soundSelect = profile->soundSelected;
     fireSound = profile->fireSound;
     if ( profile->weaponType == "QUADMISSILE" )
@@ -188,7 +407,8 @@ void Vehicle::setUnitProperties( unsigned char utype )
     }
     int bsize = profile->boundBox / 2;
     select_info_box.setBoxAttributes( BoundBox( -bsize, -bsize, bsize, bsize), Color::blue);
-}
+
+ }
 
 
 void Vehicle::updateUnitStateProperties()
@@ -220,7 +440,30 @@ void Vehicle::updateUnitStateProperties()
         }
     }
 }
+/*
+void Vehicle::updateLiveUnitState(UnitID id, unsigned short orientation, unsigned short speed_rate, unsigned short speed_factor,
+                                      unsigned short reload_time, short max_hit_points,
+                                      short hit_points, unsigned short damage_factor,
+                                      unsigned long weapon_range, unsigned long defend_range)
+{
+    //if( unit_state_timer.count() ) {
 
+        UnitBase* unitx = UnitInterface::getUnit(id);
+        UnitState& unit_state = unitx->unit_state;
+
+        unit_state.orientation = orientation;
+        unit_state.speed_rate = speed_rate;
+        unit_state.speed_factor = speed_factor;
+        unit_state.reload_time = reload_time;
+        unit_state.max_hit_points = max_hit_points;
+        unit_state.hit_points = hit_points;
+        unit_state.damage_factor = damage_factor;
+        unit_state.weapon_range = weapon_range;
+        unit_state.defend_range = defend_range;
+
+    //}
+}
+*/
 void Vehicle::orientationToOffset( unsigned short orientation, signed char *offset_x, signed char *offset_y )
 {
     switch ( orientation )
@@ -418,6 +661,8 @@ void Vehicle::setFsmMove( unsigned short orientation )
      { interpolation_speed += 2; }
     fsmMove_first_stamp = true;
     */
+    //Server here!
+    //LOGGER.info("Unit speed rate=%d | speed_factor=%d", (unsigned short)unit_state.speed_rate, (unsigned short)unit_state.speed_factor);
 }
 
 bool Vehicle::fsmMove()
@@ -457,13 +702,17 @@ bool Vehicle::fsmMove()
 
         unit_state.location.y = unit_state.location.y + ( unit_state.speed_factor * fsmMove_offset_y );
 
+        if ( NetworkState::status == _network_state_client ) {
         ParticleInterface::addMoveDirtPuff(unit_state);
+        }
         //start_move_stamp = now();
+        unit_state.moving = true;
     }
-
+    //LOGGER.info("moves_counter=%d | moves_per_square=%d", (unsigned short)fsmMove_moves_counter, (unsigned short)fsmMove_moves_per_square);
     if( fsmMove_moves_counter >= fsmMove_moves_per_square)
     {
         //fsmMove_first_stamp = true;
+        unit_state.moving = false;
         fsm_timer.changeRate( 10 );
         return( true );
     }
@@ -749,7 +998,7 @@ void Vehicle::fsmGunneryLocation()
     iXY range_vector;
 
     range_vector = fsmGunneryLocation_target - unit_state.location;
-
+    //LOGGER.info("Unit reload=%d | Unit reload_time=%d", (unsigned short)reload_counter, (unsigned short)unit_state.reload_time);
     if ( (range_vector.mag2() < unit_state.weapon_range) &&
             (fsmTurretTrackPoint_on_target == true) &&
             (reload_counter >= unit_state.reload_time)
@@ -888,6 +1137,8 @@ void Vehicle::aiFsmMoveToLoc()
                 }
                 else
                 {
+                    //LOGGER.info("Vehicle. Stop querying for path!");
+
                     end_cycle = true;
                     return;
                 }
@@ -1845,6 +2096,8 @@ void Vehicle::setCommandMoveToLoc(const UMesgAICommand* message)
     //LOG( ("UnitID %d, %d : Start %d, %d : Goal %d, %d", id.getPlayer(), id.getIndex(),
     //                                                    start.x, start.y,
     //                                                    aiFsmMoveToLoc_goal.x, aiFsmMoveToLoc_goal.y ) );
+    //LOGGER.info("Unit speed rate=%d | speed_factor=%d", (unsigned short)unit_state.speed_rate, (unsigned short)unit_state.speed_factor);
+
 
     PathRequest path_request;
     path_request.set( id, start, aiFsmMoveToLoc_goal, 0, &path, _path_request_full );
@@ -2001,6 +2254,7 @@ void Vehicle::messageSelfDestruct(const UnitMessage* )
     MapInterface::pointXYtoMapXY( unit_state.location, current_map_loc );
     UnitBlackBoard::unmarkUnitLoc( current_map_loc );
 }
+
 
 void Vehicle::processMessage(const UnitMessage* message)
 {

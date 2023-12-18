@@ -18,29 +18,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __SDLVideo_hpp__
 #define __SDLVideo_hpp__
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 // DirectDraw class declarations
 //---------------------------------------------------------------------------
 class SDLVideo
 {
 private:
-    SDL_Surface* frontBuffer;
-    SDL_Surface* backBuffer;
+    SDL_Window* window;
+    SDL_Renderer* renderer;
+    SDL_Surface* surface;
+    SDL_Texture* texture;
 
 public:
     SDLVideo();
     virtual ~SDLVideo();
 
-    void setVideoMode(int width, int height, int bpp, Uint32 flags);
-    bool isDisplayModeAvailable(int width, int height, int bpp, Uint32 flags);
-    void lockDoubleBuffer(unsigned char **DoubleBuffer);
-    void unlockDoubleBuffer();
-    void copyDoubleBufferandFlip();
+    void setVideoMode(int width, int height, int bpp, bool fullscreen);
     void setPalette(SDL_Color *color);
-    void doScreenshoot();
-
     SDL_Surface* getSurface();
+    void render();
+    void doScreenshot();
 }; // end DirectDraw
 
 extern SDLVideo* Screen;

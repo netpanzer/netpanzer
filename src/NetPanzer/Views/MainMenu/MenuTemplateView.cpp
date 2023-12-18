@@ -16,6 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include <vector>
 
 #include "Views/MainMenu/MenuTemplateView.hpp"
 #include "2D/Palette.hpp"
@@ -143,21 +144,24 @@ MenuTemplateView::MenuTemplateView() : RMouseHackView()
 
     initButtons();
 
-    curTitleFlashTime  = 0.0f;
-    titleFlashTimeHalf = 0.5;
+    //curTitleFlashTime  = 0.0f;
+    //titleFlashTimeHalf = 0.5;
 } // end MenuTemplateView constructor
 
 //---------------------------------------------------------------------------
 // initPreGameOptionButtons
 void MenuTemplateView::initPreGameOptionButtons()
 {
-    add( new newButton( "MAIN", "Main", mainPos, 0) );
-    add( new newButton( "JOIN", "Join", joinPos, 0) );
-    add( new newButton( "HOST", "Host", hostPos, 0) );
-    add( new newButton( "OPTIONS", "Options", optionsPos, 0) );
-    add( new newButton( "CREDITS", "Credits", creditsPos, 0) );
-    add( new newButton( "HELP", "Help", helpPos, 0) );
-    add( new newButton( "EXITNP", "Exit netPanzer", exitPos, 0) );
+    iXY emptyPos;
+    addHorizontal(mainTopButtonsStartPos, 5, std::vector<Component*> {
+            new newButton( "MAIN", "Main", emptyPos, 0),
+            new newButton( "JOIN", "Join", emptyPos, 0),
+            new newButton( "HOST", "Host", emptyPos, 0),
+            new newButton( "OPTIONS", "Options", emptyPos, 0),
+            new newButton( "CREDITS", "Credits", emptyPos, 0),
+            new newButton( "HELP", "Help", emptyPos, 0),
+    });
+    add(new newButton( "EXITNP", "Exit netPanzer", exitPos, 0));
 } // end MenuTemplateView::initPreGameOptionButtons
 
 // initInGameOptionButtons
@@ -168,7 +172,7 @@ void MenuTemplateView::initInGameOptionButtons()
         add( new newButton( "RESIGN", "Resign", resignPos, 0) );
         add( new newButton( "EXITNETNP", "Exit netPanzer", exitPos, 0) );
     } else {
-        add( new newButton( "RESIGN", "Resign", exitPos, 1) );
+        add( new newButton( "EXITNETNP", "Exit netPanzer", exitPos, 0) );
     }
 
     add( new newButton( "CLOSEOPT", "Close Options", returnToGamePos, 0) );
@@ -214,7 +218,7 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 
         static char text[] =
         "NetPanzer " PACKAGE_VERSION;
-        clientArea.bltString(10, 590, text, Color::gray);
+        clientArea.bltString(10, 580, text, Color::gray);
         // I don't like them so I delete them!
         //titlePackedSurface.blt(clientArea, bodyTextRect.min.x, 390);
         //titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x, bodyTextRect.max.y-50, Palette::colorTable6040);
@@ -224,6 +228,7 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
         "netPanzer " PACKAGE_VERSION;
         clientArea.bltString(10, 590, text, Color::gray);
 */
+    //LOGGER.info("View is %s", currentView);
     View::doDraw(viewArea, clientArea);
 } // end doDraw
 
@@ -234,8 +239,8 @@ void MenuTemplateView::doDrawM(Surface &viewArea, Surface &clientArea)  // start
     if (Desktop::getVisible("GameView")) {
 	// When ingame, tint the game into gray
 
-        clientArea.BltRoundRect(getClientRect(), 10, Palette::gray256.getColorArray());
-        clientArea.FillRoundRect(getClientRect(), 10, Color::white); // esc in game
+        clientArea.BltRoundRect(getClientRect(), 10, Palette::red256.getColorArray());
+        clientArea.FillRoundRect(getClientRect(), 10, Color::red); // esc in game
         //clientArea.RoundRect(MenuRect, 10, Color::gray);
         clientArea.drawWindowsBorder();
 
@@ -248,8 +253,8 @@ void MenuTemplateView::doDrawM(Surface &viewArea, Surface &clientArea)  // start
         } else {
             throw Exception("Where is the background surface?");
         }
-        clientArea.BltRoundRect(MenuRect, 10, Palette::gray256.getColorArray());
-        clientArea.FillRoundRect(MenuRectStart, 3, Color::white);
+        clientArea.BltRoundRect(MenuRect, 10, Palette::red256.getColorArray());
+        clientArea.FillRoundRect(MenuRectStart, 3, Color::red);
         clientArea.RoundRect(MenuRectStart, 3, Color::gray);
 
         // I don't like them so I delete them!
@@ -259,7 +264,7 @@ void MenuTemplateView::doDrawM(Surface &viewArea, Surface &clientArea)  // start
 
     static char text[] =
         "NetPanzer " PACKAGE_VERSION;
-        clientArea.bltString(10, 590, text, Color::gray);
+        clientArea.bltString(10, 580, text, Color::gray);
 
     View::doDraw(viewArea, clientArea);
 } // end doDrawM
@@ -311,9 +316,9 @@ void MenuTemplateView::doActivate()
     sprintf(currentView, "%s", searchName);
     Desktop::setActiveView(searchName);
 
-    loadBackgroundSurface();
-    loadTitleSurface();
-    loadNetPanzerLogo();
+    //loadBackgroundSurface();
+    //loadTitleSurface();
+    //loadNetPanzerLogo();
 } // end doActivate
 
 // loadBackgroundSurface
@@ -337,13 +342,14 @@ void MenuTemplateView::doLoadBackgroundSurface(const std::string& string)
 //---------------------------------------------------------------------------
 void MenuTemplateView::loadTitleSurface()
 {
-    doLoadTitleSurface("mainTitle");
+    //doLoadTitleSurface("mainTitle");
 } // end MenuTemplateView::loadTitleSurface
 
-// doLoadBackgroundSurface
+// doLoadTitleSurface
 //---------------------------------------------------------------------------
 void MenuTemplateView::doLoadTitleSurface(const std::string& string)
 {
+    /*
     curTitleFlashTime  = 0.0f;
     titleFlashTimeHalf = 2.5;
 
@@ -352,6 +358,7 @@ void MenuTemplateView::doLoadTitleSurface(const std::string& string)
     pakString += ".pak";
 
     titlePackedSurface.load(pakString);
+    */
 } // end MenuTemplateView::doLoadTitleSurface
 
 // doDeactivate
@@ -372,7 +379,7 @@ void MenuTemplateView::processEvents()
 
 void MenuTemplateView::onComponentClicked(Component* c)
 {
-    string cname = c->getName();
+    std::string cname = c->getName();
     if ( !cname.compare("Button.MAIN") )
     {
         bMain();

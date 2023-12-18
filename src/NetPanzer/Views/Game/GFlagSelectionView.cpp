@@ -111,7 +111,7 @@ void GFlagSelectionView::init()
     //add( new Label(tx, ty, "Current:", windowTextColor, windowTextColorShadow, true) );
     add( new Label(tx, ty, "Current:", Color::lightGray, Color::lightGray, false) );
 
-    loc_player_flag.x = tx + Surface::getTextLength("Current:") + BORDER_SPACE;
+    loc_player_flag.x = tx + Surface::getTextWidth("Current:") + BORDER_SPACE;
     loc_player_flag.y = rect.min.y + 14;
 
     iXY flagStartOffset(rect.min.x + 14, rect.min.y + 14*3);
@@ -122,7 +122,7 @@ void GFlagSelectionView::init()
     int y = flagStartOffset.y;
 
     Surface game_flags;
-    std::vector<string> flag_names;
+    std::vector<std::string> flag_names;
 
     ResourceManager::loadAllFlags(game_flags, flag_names);
 

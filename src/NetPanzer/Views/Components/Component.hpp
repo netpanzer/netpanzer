@@ -111,6 +111,11 @@ public:
         dirty=true;
     }
 
+    virtual iXY getSize()
+    {
+        return size;
+    }
+
 //    void setEnabled(bool _enabled) { enabled = _enabled; }
 //    void setForeground(PIX _foreground) { foreground = _foreground; }
     void setLocation(int x, int y);

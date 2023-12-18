@@ -189,7 +189,7 @@ void GetSessionView::loadTitleSurface()
 
 void GetSessionView::onComponentClicked(Component* c)
 {
-    string cname = c->getName();
+    std::string cname = c->getName();
     if ( !cname.compare("Button.JOIN") )
     {
         bJoin();

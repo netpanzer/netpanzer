@@ -50,11 +50,12 @@ ServerListView::ServerListView()
     addButtonCenterText(iXY(getClientRect().getSizeX()-80,
                 getClientRect().getSizeY() - Surface::getFontHeight() * 2),
             80, "Refresh", "", buttonRefresh);
-    
+
     // XXX ugly
     serverlistview = this;
 
     lock_image.loadBMP("pics/default/lock.bmp");
+    auth_image.loadBMP("pics/default/auth.bmp");
 }
 
 ServerListView::~ServerListView()
@@ -66,14 +67,14 @@ ServerListView::~ServerListView()
 void
 ServerListView::refresh()
 {
-    if ( queryThread ) { 
+    if ( queryThread ) {
         if (queryThread->isRunning())
             return;
         else
             delete queryThread;
     }
     queryThread = 0;
-    
+
     // don't clear before the delete or after the new, as the thread contains
     // pointers to the serverlist
     for(std::vector<masterserver::ServerInfo*>::iterator i = serverlist.begin();
@@ -87,11 +88,11 @@ ServerListView::refresh()
         mylock = true;
     }
     Desktop::draw(*screen); // XXX ultrahack
-    if ( mylock )
+    if (mylock) {
         screen->unlock();
-    screen->copyToVideoFlip(); // XXX uberhack
-
-    queryThread = new masterserver::ServerQueryThread(&serverlist);   
+    }
+    screen->render();
+    queryThread = new masterserver::ServerQueryThread(&serverlist);
 }
 
 void
@@ -109,16 +110,35 @@ ServerListView::buttonRefresh()
     serverlistview->refresh();
 }
 
+masterserver::ServerList
+ServerListView::getViewModel()
+{
+    masterserver::ServerList filteredList;
+    for (masterserver::ServerInfo* serverInfoPtr : serverlist) {
+        if (serverInfoPtr->protocol < NETPANZER_PROTOCOL_VERSION) {
+            // skipped
+            // We want to incentivize players to upgrade.
+            // But we don't want to punish players for running a newer version by cluttering the server list.
+            // So if server is too old - just ignore it.
+        } else {
+            filteredList.push_back(serverInfoPtr);
+        }
+    }
+    return filteredList;
+}
+
 void
 ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
 {
     clientArea.fill(Color::black);
-    
+
     if(queryThread && queryThread->isRunning()) {
         queryThread->checkTimeOuts();
     }
-    
-    if(serverlist.empty()) {
+
+    masterserver::ServerList viewModel = getViewModel();
+
+    if(viewModel.empty()) {
         const char* msg;
         if ( queryThread ) {
             msg = queryThread->getStateMessage();
@@ -131,9 +151,8 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
     }
 
     unsigned int y = 0;
-    for(std::vector<masterserver::ServerInfo*>::iterator i = serverlist.begin();
-            i != serverlist.end(); ++i) {
-        const masterserver::ServerInfo& server = *(*i);
+    for(masterserver::ServerInfo* serverPtr : viewModel) {
+        const masterserver::ServerInfo& server = *serverPtr;
 
         if(server.status == masterserver::ServerInfo::QUERYING) {
             clientArea.bltString(0,   y, server.address.c_str(), Color::gray);
@@ -150,12 +169,12 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
 
             std::stringstream pingstr;
             pingstr << server.ping;
-            
+
             std::stringstream servaddr;
             servaddr << server.address << ':' << server.port;
-            
+
             Uint8 textcolor = Color::white;
-            
+
             if (servaddr.str()==IPAddressView::szServer.getString()) {
                 textcolor = Color::yellow;
                 clientArea.fillRect(
@@ -165,10 +184,17 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
 
             char ssn[44];
             SDL_strlcpy(ssn, server.name.c_str(), sizeof(ssn));
-            if ( server.needs_password )
+
+            if ( server.auth_on )
+            {
+                auth_image.blt(clientArea, 0, y);
+            }
+
+            if ( server.needs_password && (server.auth_on == false) )
             {
                 lock_image.blt(clientArea, 0, y);
             }
+
             clientArea.bltString(8,   y, ssn, textcolor);
             clientArea.bltString(350, y, playerstr.str().c_str(), textcolor);
             clientArea.bltString(400, y, server.map.c_str(), textcolor);
@@ -178,7 +204,7 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
 
         y += Surface::getFontHeight();
         if(y >= clientArea.getHeight())
-            break;                             
+            break;
     }
 
     View::doDraw(windowArea, clientArea);
@@ -187,15 +213,18 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
 int
 ServerListView::lMouseUp(const iXY& down_pos, const iXY& up_pos)
 {
-    if(down_pos.x < 0 || down_pos.y < 0 || up_pos.x < 0 || up_pos.y < 0)
+    if(down_pos.x < 0 || down_pos.y < 0 || up_pos.x < 0 || up_pos.y < 0) {
         return View::lMouseUp(down_pos, up_pos);
+    }
 
     int listpos = down_pos.y / Surface::getFontHeight();
-    if(listpos >= int(serverlist.size()) || 
-            serverlist[listpos]->status != masterserver::ServerInfo::RUNNING)
+    masterserver::ServerList viewModel = getViewModel();
+    if(listpos >= int(viewModel.size()) ||
+            viewModel[listpos]->status != masterserver::ServerInfo::RUNNING) {
         return View::lMouseUp(down_pos, up_pos);
+    }
 
-    const masterserver::ServerInfo& server = *(serverlist[listpos]);
+    const masterserver::ServerInfo& server = *(viewModel[listpos]);
     std::stringstream addr;
     addr << server.address << ':' << server.port;
     IPAddressView::szServer.setString(addr.str());
@@ -205,7 +234,7 @@ ServerListView::lMouseUp(const iXY& down_pos, const iXY& up_pos)
     {
         lv->setNeedPassword(server.needs_password);
     }
-    
+
     return View::lMouseUp(down_pos, up_pos);
 }
 

@@ -68,6 +68,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/OptionsTemplateView.hpp"
 #include "Views/MainMenu/OrderingView.hpp"
 #include "Views/MainMenu/SkirmishView.hpp"
+#include "Views/MainMenu/CreditsView.hpp"
 #include "Views/MainMenu/HelpView.hpp"
 #include "Views/MainMenu/Multi/JoinView.hpp"
 #include "Views/MainMenu/Multi/HostView.hpp"
@@ -91,7 +92,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Game/AreYouSureExitView.hpp"
 #include "Views/Game/GameView.hpp"
 #include "Views/Game/MiniMapView.hpp"
-
+#include "Views/Game/MiniMapViewAlt.hpp"
 #include "Particles/Particle2D.hpp"
 #include "Particles/ParticleSystem2D.hpp"
 #include "Particles/ParticleInterface.hpp"
@@ -116,6 +117,12 @@ bool GameManager::display_frame_rate_flag = false;
 bool GameManager::display_network_info_flag;
 
 std::string GameManager::map_path;
+std::string GameManager::mapstyle_path;
+
+std::string GameManager::stmapstyle;
+//std::string GameManager::ststyles;
+unsigned char GameManager::ststylesnum;
+std::vector<NPString> GameManager::stlist;
 
 static Surface hostLoadSurface;
 
@@ -123,17 +130,17 @@ static Surface hostLoadSurface;
 
 void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
 {
-        Surface text;
-        text.renderText(string, color, 0);
-        screen->lock();
+    Surface text;
+    text.renderText(string, color, 0);
+    screen->lock();
 
-        screen->fill(0);
-        int x = (screen->getWidth() / 2) - (text.getWidth() / 2);
-        int y = (screen->getHeight() / 2) - (text.getHeight() / 2);
-        text.blt(*screen,x,y);
+    screen->fill(0);
+    int x = (screen->getWidth() / 2) - (text.getWidth() / 2);
+    int y = (screen->getHeight() / 2) - (text.getHeight() / 2);
+    text.blt(*screen,x,y);
 
-        screen->unlock();
-        screen->copyToVideoFlip();
+    screen->unlock();
+    screen->render();
 }
 
 // ******************************************************************
@@ -150,17 +157,8 @@ void GameManager::loadPalette(const std::string& palette_name)
 
 void GameManager::setVideoMode()
 {
-    // construct flags
     iXY mode_res;
     iXY old_res = screen ? iXY(screen->getWidth(), screen->getHeight()): iXY(0,0);
-    Uint32 flags = GameConfig::video_fullscreen ? SDL_FULLSCREEN : 0;
-//    flags |= GameConfig::video_hardwaresurface ? SDL_HWSURFACE : 0;
-//    flags |= GameConfig::video_doublebuffer ? SDL_DOUBLEBUF : 0;
-
-    if ( ! GameConfig::video_fullscreen )
-    {
-        flags |= SDL_RESIZABLE;
-    }
 
     if ( GameConfig::video_width < 800 )
     {
@@ -175,11 +173,7 @@ void GameManager::setVideoMode()
     mode_res.x = GameConfig::video_width;
     mode_res.y = GameConfig::video_height;
 
-    Screen->setVideoMode(mode_res.x, mode_res.y, 8, flags);
-
-    SDL_Surface* vs = Screen->getSurface();
-    mode_res.x = vs->w;
-    mode_res.y = vs->h;
+    Screen->setVideoMode(mode_res.x, mode_res.y, 8, GameConfig::video_fullscreen);
 
     WorldViewInterface::setCameraSize( mode_res.x, mode_res.y);
     delete screen;
@@ -229,6 +223,19 @@ bool GameManager::resetGameLogic()
 }
 
 // ******************************************************************
+bool GameManager::resetGameLogicAlt()
+{
+    PlayerInterface::reset();
+    UnitInterface::reset();
+    UnitBlackBoard::initializeBlackBoard();
+    PathScheduler::initialize();
+    //PowerUpInterface::resetLogic();
+    ProjectileInterface::resetLogic();
+    startGameTimer();
+    return true;
+}
+
+// ******************************************************************
 void GameManager::shutdownGameLogic()
 {
     PlayerInterface::cleanUp();
@@ -244,13 +251,15 @@ void GameManager::shutdownParticleSystems()
 }
 
 // ******************************************************************
-void GameManager::startGameMapLoad(const char *map_file_path,
+void GameManager::startGameMapLoad(const char *map_file_path, const char *mapstyle_name,
                                    unsigned long partitions)
 {
     map_path = "maps/";
     map_path.append(map_file_path);
+    mapstyle_path = "/";
+    mapstyle_path.append(mapstyle_name);
 
-    if (!MapInterface::startMapLoad( map_path.c_str(), true, partitions))
+    if (!MapInterface::startMapLoad( map_path.c_str(), mapstyle_path.c_str(), true, partitions))
         throw Exception("map format error.");
 }
 
@@ -280,23 +289,25 @@ void GameManager::finishGameMapLoad()
 
 // ******************************************************************
 
-void GameManager::dedicatedLoadGameMap(const char *map_name )
+void GameManager::dedicatedLoadGameMap(const char *map_name, const char *mapstyle_name )
 {
 
     Console::mapSwitch(map_name);
     *Console::server        << "Server Settings:\n"
-        << "Map: "          << *GameConfig::game_map << "\n"
         << "MaxPlayers: "   << GameConfig::game_maxplayers << "\n"
         << "MaxUnits: "     << GameConfig::game_maxunits << "\n"
         << "AutoKick: "     << GameConfig::game_autokicktime << "\n"
         << "FlagTimer: "    << GameConfig::game_changeflagtime << "\n"
-        << "Gametype: "     << gameconfig->getGameTypeString() << "\n"
+        << "GameType: "     << gameconfig->getGameTypeString() << "\n"
         << "ObjectivePercentage: " <<
             GameConfig::game_occupationpercentage << "\n"
         << "TimeLimit: "    << GameConfig::game_timelimit << "\n"
         << "FragLimit: "    << GameConfig::game_fraglimit << "\n"
         << "RespawnType: "  << gameconfig->getRespawnTypeString() << "\n"
-        << "Mapcycle: "     << *GameConfig::game_mapcycle << "\n"
+        << "Map: "          << *GameConfig::game_map << "\n"
+        << "MapCycle: "     << *GameConfig::game_mapcycle << "\n"
+        << "MapStyle: "     << *GameConfig::game_mapstyle << "\n"
+        << "UnitsStyles: "  << *GameConfig::game_units_styles << "\n"
         << "Powerups: "     << (GameConfig::game_powerups ? "yes" : "no") << "\n"
         << "AllowAllies: "  << (GameConfig::game_allowallies ? "yes" : "no") << "\n"
         << "CloudCoverage: " << GameConfig::game_cloudcoverage << " (Windspeed " << GameConfig::game_windspeed << ")" << std::endl;
@@ -304,12 +315,16 @@ void GameManager::dedicatedLoadGameMap(const char *map_name )
     map_path = "maps/";
     map_path.append(map_name);
 
-    MapInterface::startMapLoad( map_path.c_str(), false, 0 );
+
+    mapstyle_path = "/";
+    mapstyle_path.append(mapstyle_name);
+
+    MapInterface::startMapLoad( map_path.c_str(), mapstyle_path.c_str(), false, 0 );
 
     map_path.append(".opt");
     ObjectiveInterface::loadObjectiveList( map_path.c_str() );
 
-    ParticleInterface::initParticleSystems();
+    //ParticleInterface::initParticleSystems(); // Warning repetition! breaks surfaces load sequence and causes memory leaks
     Particle2D::setCreateParticles(false);
 }
 
@@ -386,28 +401,48 @@ void GameManager::netMessageConnectAlert(const NetMessage* message)
 
     switch (connect_alert->alert_enum) {
         case _connect_alert_mesg_connect:
+            if (MapInterface::chat_color_scheme == 0) {
             ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
                                           "%s has joined the game.",
+                    player_state->getName().c_str()); } else {
+                    ConsoleInterface::postMessage(Color::darkBlue, true, player_state->getFlag(),
+                                          "%s has joined the game.",
                     player_state->getName().c_str());
+                    }
 
             break;
 
         case _connect_alert_mesg_disconnect:
+            if (MapInterface::chat_color_scheme == 0) {
             ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
                                           "%s has left the game.",
+                    player_state->getName().c_str()); } else {
+                    ConsoleInterface::postMessage(Color::darkBlue, true, player_state->getFlag(),
+                                          "%s has left the game.",
                     player_state->getName().c_str());
+                    }
             break;
 
         case _connect_alert_mesg_client_drop:
+            if (MapInterface::chat_color_scheme == 0) {
             ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
                     "Connection to %s has been unexpectedly broken.",
+                    player_state->getName().c_str()); } else {
+                    ConsoleInterface::postMessage(Color::darkBlue, true, player_state->getFlag(),
+                    "Connection to %s has been unexpectedly broken.",
                     player_state->getName().c_str());
+                    }
             break;
 
         case _connect_alert_mesg_client_kicked:
+            if (MapInterface::chat_color_scheme == 0) {
             ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
                 "Player %s was kicked.",
+                player_state->getName().c_str()); } else {
+                ConsoleInterface::postMessage(Color::darkBlue, true, player_state->getFlag(),
+                "Player %s was kicked.",
                 player_state->getName().c_str());
+                }
             break;
 
         default:
@@ -432,6 +467,8 @@ ConnectMesgServerGameSettings* GameManager::getServerGameSetup()
     game_setup->setMaxPlayers(GameConfig::game_maxplayers);
     game_setup->setMaxUnits(GameConfig::game_maxunits);
     snprintf(game_setup->map_name, 32, "%s", GameConfig::game_map->c_str());
+    snprintf(game_setup->map_style, 17, "%s", GameConfig::game_mapstyle->c_str());
+    snprintf(game_setup->tank_styles, 176, "%s", GameConfig::game_units_styles->c_str());
     game_setup->setCloudCoverage(GameConfig::game_cloudcoverage);
     game_setup->setWindSpeed(GameConfig::game_windspeed);
     game_setup->setGameType(GameConfig::game_gametype);
@@ -440,6 +477,14 @@ ConnectMesgServerGameSettings* GameManager::getServerGameSetup()
     game_setup->setTimeLimit(GameConfig::game_timelimit);
     game_setup->setElapsedTime(getGameTime());
     game_setup->setFlagTime(GameConfig::game_changeflagtime);
+    game_setup->occupation_percentage = GameConfig::game_occupationpercentage;
+    game_setup->enable_bases = GameConfig::game_enable_bases;
+    game_setup->base_capture_mode = GameConfig::game_base_capture_mode;
+    game_setup->base_limit = GameConfig::game_base_limit;
+    game_setup->allowmultiip = GameConfig::game_allowmultiip;
+    game_setup->allowallies = GameConfig::game_allowallies;
+    game_setup->respawntype = GameConfig::game_respawntype;
+    game_setup->setLowScoreLimit(GameConfig::game_lowscorelimit);
 
     return game_setup;
 }
@@ -447,7 +492,7 @@ ConnectMesgServerGameSettings* GameManager::getServerGameSetup()
 // ******************************************************************
 
 void GameManager::netMessagePingRequest(const NetMessage* message)
-{
+{ /*
     const SystemPingRequest *ping_request
         = (const SystemPingRequest*) message;
 
@@ -462,21 +507,128 @@ void GameManager::netMessagePingRequest(const NetMessage* message)
 
     SystemPingAcknowledge ping_ack;
 
-    if ( player->isActive()
-         && ping_request->getClientPlayerIndex() != MIN_PLAYER_ID
-       )
+    if ( player->isActive() )
     {
         SERVER->sendMessage(player->getID(), &ping_ack, sizeof(SystemPingAcknowledge));
     }
+    */
+}
+
+
+// ******************************************************************
+
+void GameManager::sendAckEnckeychange(const NetMessage* message)
+{
+        if ( NetworkState::status != _network_state_server ) // clients only
+        {
+        const SystemEnckeychange *enc_key = (const SystemEnckeychange*) message;
+        unsigned short r_key = enc_key->getEncKey();
+
+        SystemEnckeychangeAck sea(r_key,PlayerInterface::getLocalPlayerIndex());
+        //LOGGER.info("Got key %d and sending it back!", r_key);
+        NetworkState::ping_time_stamp = now();
+        CLIENT->sendMessage( &sea, sizeof(SystemEnckeychangeAck) );
+        //requestNetworkPing(); // switch on up_ping
+        }
 }
 
 // ******************************************************************
 
-void GameManager::netMessagePingAcknowledge(const NetMessage*)
+void GameManager::netMessagePingAcknowledge(const NetMessage* message)
 {
-    //NetworkState::ping_time = (now() - NetworkState::ping_time_stamp) * 1000;
+    /*
+    NetworkState::ping_time = (now() - NetworkState::ping_time_stamp)*1000;
+    //LOGGER.info("Ping is %.3f ms", NetworkState::ping_time);
+    PlayerState* player_state;
+    player_state = PlayerInterface::getPlayer( PlayerInterface::getLocalPlayerIndex() );
+
+    player_state->setUpLastPing(NetworkState::ping_time);
+    if (player_state->getUpAvgPing() > 0) {
+    player_state->setUpAvgPing((NetworkState::ping_time+player_state->getUpAvgPing())/2);
+    } else {
+    player_state->setUpAvgPing(NetworkState::ping_time);
+    }
+    //LOGGER.info("Player %s last up-ping is %.3f ms", player_state->getName().c_str(), player_state->getUpLastPing());
+    //LOGGER.info("Player %s avg up-ping is %.3f ms", player_state->getName().c_str(), player_state->getUpAvgPing());
+    */
+}
+// ******************************************************************
+
+void GameManager::recvAckEnckeychange(const NetMessage* message)
+{
+        if ( NetworkState::status == _network_state_server ) // server only
+        {
+        const SystemEnckeychangeAck *ack_enc_key = (const SystemEnckeychangeAck*) message;
+        unsigned short r_key = ack_enc_key->getEncKey();
+        PlayerID p_id = ack_enc_key->getPlayerID();
+        PlayerState * player = 0;
+        player = PlayerInterface::getPlayer(p_id);
+
+        if ( p_id < PlayerInterface::getMaxPlayers() && r_key == player->getLastEncKey() ) {
+
+        float downping = (now() - player->getTempTime())*1000;
+        player->setDownLastPing(downping);
+
+        if (player->getDownAvgPing() > 0) {
+        player->setDownAvgPing( (player->getDownAvgPing()+downping)/2 );
+        } else {
+        player->setDownAvgPing(downping);
+        }
+
+        SystemReEnckeychangeAck srea(downping);
+        if ( player->isActive() )
+        {
+        SERVER->sendMessage(player->getID(), &srea, sizeof(SystemReEnckeychangeAck)); // final reply to allow client to get his own ping and (included in mesg) the server one too
+        }
+        //LOGGER.info("Player %s last down-ping is %.3f ms", player->getName().c_str(), downping);
+        //LOGGER.info("Player %s avg down-ping is %.3f ms", player->getName().c_str(), player->getDownAvgPing());
+
+        } else {
+        // network cheating
+        unsigned char p_hits = player->getCheatHits();
+        if (p_hits < 255) {
+        player->setCheatHits(p_hits++);
+        }
+
+        }
+
+        }
 }
 
+// ******************************************************************
+
+void GameManager::recvReAckEnckeychange(const NetMessage* message)
+{
+        if ( NetworkState::status != _network_state_server ) // client only
+        {
+        const SystemReEnckeychangeAck *final_reply = (const SystemReEnckeychangeAck*) message;
+        float d_ping = final_reply->getDownPing();
+
+        NetworkState::ping_time = (now() - NetworkState::ping_time_stamp)*1000;
+
+        PlayerState* player_state;
+        player_state = PlayerInterface::getPlayer( PlayerInterface::getLocalPlayerIndex() );
+
+        player_state->setUpLastPing(NetworkState::ping_time);
+        if (player_state->getUpAvgPing() > 0) {
+        player_state->setUpAvgPing((NetworkState::ping_time+player_state->getUpAvgPing())/2);
+        } else {
+        player_state->setUpAvgPing(NetworkState::ping_time);
+        }
+
+        player_state->setDownLastPing(d_ping);
+        if (player_state->getDownAvgPing() > 0) {
+        player_state->setDownAvgPing( (player_state->getDownAvgPing()+d_ping)/2 );
+        } else {
+        player_state->setDownAvgPing(d_ping);
+        }
+        //LOGGER.info("Player %s last up-ping is %.3f ms", player_state->getName().c_str(), player_state->getUpLastPing());
+        //LOGGER.info("Player %s avg up-ping is %.3f ms", player_state->getName().c_str(), player_state->getUpAvgPing());
+        //LOGGER.info("Player %s last down-ping is %.3f ms", player_state->getName().c_str(), player_state->getDownLastPing());
+        //LOGGER.info("Player %s avg down-ping is %.3f ms", player_state->getName().c_str(), player_state->getDownAvgPing());
+
+        }
+}
 // ******************************************************************
 
 bool GameManager::startClientGameSetup(const NetMessage* message, int *result_code)
@@ -493,11 +645,31 @@ bool GameManager::startClientGameSetup(const NetMessage* message, int *result_co
     GameConfig::game_fraglimit = game_setup->getFragLimit();
     GameConfig::game_timelimit = game_setup->getTimeLimit();
     GameConfig::game_changeflagtime = game_setup->getFlagTime();
+    GameConfig::game_occupationpercentage = game_setup->occupation_percentage;
+
+    // ready to use in client if needed:
+    GameConfig::game_enable_bases = game_setup->enable_bases;
+    GameConfig::game_base_capture_mode = game_setup->base_capture_mode;
+    GameConfig::game_base_limit = game_setup->base_limit;
+    //GameConfig::game_allowmultiip = game_setup->allowmultiip;
+    GameConfig::game_allowallies = game_setup->allowallies;
+    GameConfig::game_respawntype = game_setup->respawntype;
+    GameConfig::game_lowscorelimit = game_setup->getLowScoreLimit();
+
+
+    stmapstyle = game_setup->map_style;
+
+
+    NPString stl = game_setup->tank_styles;
+    string_to_params(stl, stlist);
+    ststylesnum = stlist.size();
+    //LOGGER.info("Unit styles received = %d", ststylesnum);
+
     startGameTimer();
     game_elapsed_time_offset = game_setup->getElapsedTime();
 
     try {
-        startGameMapLoad( game_setup->map_name, 20);
+        startGameMapLoad( game_setup->map_name, game_setup->map_style, 20);
     } catch(std::exception& e) {
         LOGGER.warning("Error while loading map '%s': %s",
                 game_setup->map_name, e.what());
@@ -508,6 +680,7 @@ bool GameManager::startClientGameSetup(const NetMessage* message, int *result_co
     *result_code = _mapload_result_success;
     return true;
 }
+
 
 // ******************************************************************
 
@@ -549,6 +722,18 @@ void GameManager::processSystemMessage(const NetMessage* message)
             netMessageConnectAlert( message );
             break;
 
+        case _net_message_id_system_enckeychange:
+            sendAckEnckeychange( message );
+            break;
+
+        case _net_message_id_system_enckeychange_ack:
+            recvAckEnckeychange( message );
+            break;
+
+        case _net_message_id_system_re_enckeychange_ack:
+            recvReAckEnckeychange( message );
+            break;
+
         default:
             LOGGER.warning("Found unknown SystemNetworkPacket (id %d)",
                     message->message_id);
@@ -558,10 +743,12 @@ void GameManager::processSystemMessage(const NetMessage* message)
 // ******************************************************************
 void GameManager::requestNetworkPing()
 {
+    /*
     SystemPingRequest ping_request(PlayerInterface::getLocalPlayerIndex());
 
     NetworkState::ping_time_stamp = now();
     CLIENT->sendMessage( &ping_request, sizeof(SystemPingRequest));
+    */
 }
 
 void GameManager::setNetPanzerGameOptions()
@@ -615,5 +802,11 @@ time_t GameManager::getGameTime()
     time( &current_time );
 
     return( (current_time - game_start_time) + game_elapsed_time_offset );
+}
+
+void
+GameManager::cleaning()
+{
+stlist.clear();
 }
 

@@ -25,6 +25,30 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Resources/ResourceManager.hpp"
 #include <sstream>
 
+// for trim function
+#include <iostream>
+#include <string>
+
+std::string trim(const std::string& str)
+{
+    size_t first = str.find_first_not_of(' ');
+    if (std::string::npos == first)
+    {
+        return str;
+    }
+    size_t last = str.find_last_not_of(' ');
+    return str.substr(first, (last - first + 1));
+}
+//
+
+
+
+
+
+
+
+
+
 
 PlayerID NetworkPlayerState::getPlayerIndex() const
 {
@@ -105,8 +129,11 @@ PlayerState::getColor() const
 
 PlayerState::PlayerState()
     : status(0), kills(0), kill_points(0), losses(0),
-      loss_points(0), total(0), objectives_held(0), stats_locked(false),
-      admin_flag(false)
+      loss_points(0), total(0), objectives_held(0), units_style(0),
+      stats_locked(false), admin_flag(false),
+      cheating(0), cheating_hits(0), client_type(0), lastenckey(0),
+      up_last_ping(0), up_avg_ping(0),
+      down_last_ping(0), down_avg_ping(0), temp_time(0)
 {
     autokick.reset();
 }
@@ -115,8 +142,12 @@ PlayerState::PlayerState(const PlayerState& other)
     :  id(other.id), name(other.name),
       status(other.status), kills(other.kills), kill_points(other.kill_points),
       losses(other.losses), loss_points(other.loss_points),
-      total(other.total), objectives_held(other.objectives_held),
-      stats_locked(other.stats_locked), unit_config(other.unit_config)
+      total(other.total), objectives_held(other.objectives_held), units_style(other.units_style),
+      stats_locked(other.stats_locked),
+      cheating(other.cheating), cheating_hits(other.cheating_hits), client_type(other.client_type), lastenckey(other.lastenckey),
+      up_last_ping(other.up_last_ping), up_avg_ping(other.up_avg_ping),
+      down_last_ping(other.down_last_ping), down_avg_ping(other.down_avg_ping), temp_time(other.temp_time),
+      unit_config(other.unit_config)
 {
     // nothing
 }
@@ -132,28 +163,92 @@ void PlayerState::operator= (const PlayerState& other)
     loss_points = other.loss_points;
     total = other.total;
     objectives_held = other.objectives_held;
+    units_style = other.units_style;
     stats_locked = other.stats_locked;
     unit_config = other.unit_config;
     admin_flag = other.admin_flag;
     autokick.reset();
+    muted = other.muted;
+    cheating = other.cheating;
+    cheating_hits = other.cheating_hits;
+    client_type = other.client_type;
+    lastenckey = other.lastenckey;
+    up_last_ping = other.up_last_ping;
+    up_avg_ping = other.up_avg_ping;
+    down_last_ping = other.down_last_ping;
+    down_avg_ping = other.down_avg_ping;
+    temp_time = other.temp_time;
 }
 
 
 
 void PlayerState::setName(const std::string& newname)
 {
-    if ( newname.length() > 24 )
+    if ( newname.length() > 20 )
     {
-        name = newname.substr(0,24); //was 63
+        name = newname.substr(0,20); //was 63
     }
     else
     {
         name = newname;
     }
 
+    nameb = name;
+
     //
-    // todo strip & trim
-    //
+    // strip & trim
+
+    // replacing non printable chars
+
+    std::stringstream nodbname;
+
+    for ( int ac=0; ac < (int)name.length(); ac++ ) {
+
+        if ((int)name[ac] == 32) {
+        nodbname << name[ac];
+        }
+
+        if (!( (int)name[ac] == 34 || (int)name[ac] == 35 || (int)name[ac] == 37 || (int)name[ac] == 39
+        || (int)name[ac] == 44 || (int)name[ac] == 94 || (int)name[ac] == 96 || (int)name[ac] == 126
+        || (int)name[ac] == 47 || (int)name[ac] == 92 || (int)name[ac] == 124 || (int)name[ac] < 32
+        || (int)name[ac] > 126 )) {
+        nodbname << name[ac];
+        }
+
+     }
+
+    name = nodbname.str();
+
+    // trimming
+    name = trim(name);
+
+    // stripping multiple spaces
+    std::stringstream nodbname2;
+
+    for ( int ac2=0; ac2 < (int)name.length(); ac2++ ) {
+
+        if (name[ac2] != 32) {
+            nodbname2 << name[ac2];
+        }
+
+        if (ac2 > 0 && name[ac2] == 32 && name[ac2-1] != 32) {
+            nodbname2 << name[ac2];
+        }
+
+    }
+
+    name = nodbname2.str();
+
+    // blank string?
+    if ((int)name.length()==0) {
+        std::stringstream default_player;
+        default_player << "Player" << (rand()%1000);
+        name = default_player.str();
+    }
+
+    nameb = name;
+
+    // end
 
     int namenum=1;
     bool recheck;
@@ -175,13 +270,13 @@ void PlayerState::setName(const std::string& newname)
                 ssnamenum << "(" << namenum++ << ")";
                 std::string strnum=ssnamenum.str();
 
-                std::string::size_type newlen = newname.length();
-                if ( newlen+strnum.length() > 24 )
+                std::string::size_type newlen = nameb.length();
+                if ( newlen+strnum.length() > 20 )
                 {
-                    newlen -= strnum.length() - (24 - newlen);
+                    newlen -= strnum.length() - (20 - newlen);
                 }
 
-                name = newname.substr(0,newlen)+strnum;
+                name = nameb.substr(0,newlen)+strnum;
                 recheck=true;
                 break;
             }
@@ -199,6 +294,7 @@ void PlayerState::resetStats(bool keepAdmin)
     objectives_held = 0;
     stats_locked = false;
     if ( ! keepAdmin ) admin_flag = false;
+    muted = false;
 }
 
 void PlayerState::resetAutokick()
@@ -310,6 +406,67 @@ short PlayerState::getTotal() const
     return kills - (losses/2);
 }
 
+void PlayerState::setPlayerStyle(unsigned char nustyle)
+{
+    units_style = nustyle;
+}
+
+unsigned char PlayerState::getPlayerStyle()
+{
+    return units_style;
+}
+
+void PlayerState::setMute(bool mute)
+{
+    muted = mute;
+}
+
+bool PlayerState::getMute() const
+{
+    return muted;
+}
+
+void PlayerState::setCheat(unsigned char cheat_type)
+{
+    cheating = cheat_type;
+}
+
+unsigned char PlayerState::getCheat() const
+{
+    return cheating;
+}
+
+void PlayerState::setCheatHits(unsigned char cheat_hits)
+{
+    cheating_hits = cheat_hits;
+}
+
+unsigned char PlayerState::getCheatHits() const
+{
+    return cheating_hits;
+}
+
+void PlayerState::setClientType(unsigned char cl_type)
+{
+    client_type = cl_type;
+}
+
+unsigned char PlayerState::getClientType() const
+{
+    return client_type;
+}
+
+void PlayerState::setLastEncKey(unsigned char enc_key)
+{
+    lastenckey = enc_key;
+}
+
+unsigned char PlayerState::getLastEncKey() const
+{
+    return lastenckey;
+}
+
+
 NetworkPlayerState PlayerState::getNetworkPlayerState() const
 {
     NetworkPlayerState state;
@@ -324,6 +481,9 @@ NetworkPlayerState PlayerState::getNetworkPlayerState() const
     state.loss_points = htol16(loss_points);
     state.total = htol16(total);
     state.objectives_held = htol16(objectives_held);
+    state.units_style = units_style;
+    state.client_type = client_type;
+
 
     return state;
 }
@@ -340,13 +500,15 @@ void PlayerState::getNetworkPlayerState(NetworkPlayerState& state) const
     state.loss_points = htol16(loss_points);
     state.total = htol16(total);
     state.objectives_held = htol16(objectives_held);
+    state.units_style = units_style;
+    state.client_type = client_type;
 }
 
 void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
 {
-    char tmp[64];
-    memcpy(tmp, state->name, 64);
-    tmp[63] = 0;
+    char tmp[21];
+    memcpy(tmp, state->name, 21);
+    tmp[20] = 0;
     name = tmp;
     id = state->id;
     status = state->status;
@@ -356,4 +518,6 @@ void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
     loss_points = ltoh16(state->loss_points);
     total = ltoh16(state->total);
     objectives_held = ltoh16(state->objectives_held);
+    units_style = state->units_style;
+    client_type = state->client_type;
 }

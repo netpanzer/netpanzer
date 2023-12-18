@@ -23,9 +23,9 @@
 #include <errno.h>
 #include <algorithm>
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 #define USE_RWOPS // we want Mix_LOadMUS_RW
-#include "SDL_mixer.h"
+#include <SDL2/SDL_mixer.h>
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
@@ -349,7 +349,7 @@ void SDLSound::nextSong()
          */
         try {
             filesystem::ReadFile *file = filesystem::openRead(toplay);
-            music = Mix_LoadMUS_RW(file->getSDLRWOps());
+            music = Mix_LoadMUS_RW(file->getSDLRWOps(), 1);
             if (music) {
                 if (Mix_PlayMusic(music, 1) == 0) {
                     LOG (("Start playing song '%s'", toplay));

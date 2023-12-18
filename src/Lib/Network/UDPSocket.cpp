@@ -26,14 +26,12 @@ namespace network
 {
 
 UDPSocket::UDPSocket(UDPSocketObserver *o)
-    throw(NetworkException) 
     : SocketBase(Address::ANY, false), observer(o)
 {
     bindSocket();
 }
 
 UDPSocket::UDPSocket(const Address& bindaddr, UDPSocketObserver *o)
-    throw(NetworkException)
     : SocketBase(bindaddr,false), observer(o)
 {
     bindSocket();
@@ -59,7 +57,6 @@ UDPSocket::onSocketError()
 
 void
 UDPSocket::send(const Address& toaddr, const void* data, size_t datasize)
-    throw(NetworkException)
 {
     int res = doSendTo(toaddr,data,datasize);
     if(res != (int) datasize)

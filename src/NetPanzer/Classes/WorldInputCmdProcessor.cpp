@@ -60,6 +60,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Scripts/ScriptManager.hpp"
 
+#include "Views/Components/InfoBar.hpp"
+
 WorldInputCmdProcessor COMMAND_PROCESSOR;
 
 enum { _cursor_regular,
@@ -93,7 +95,8 @@ WorldInputCmdProcessor::WorldInputCmdProcessor()
     right_mouse_scroll_moved = false;
 
     lastSelectTimer.setTimeOut(400);
-    actionTimer.setTimeOut(100);
+    //actionTimer.setTimeOut(100);
+    //moveBetterTimer.setTimeOut(100);
     Flagtimer.reset();
 
     last_selected_group = -1;
@@ -153,7 +156,8 @@ WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos)
             // we're holding down the right mouse button, and mouse has moved
             int x_move=mouse_pos.x-right_mouse_scroll_pos.x;
             int y_move=mouse_pos.y-right_mouse_scroll_pos.y;
-            SDL_WarpMouse(right_mouse_scroll_pos.x,right_mouse_scroll_pos.y);
+            // TODO Is null okay here?
+            SDL_WarpMouseInWindow(NULL, right_mouse_scroll_pos.x,right_mouse_scroll_pos.y);
 
             WorldViewInterface::scroll_right(x_move*4);
             WorldViewInterface::scroll_down(y_move*4);
@@ -328,7 +332,8 @@ void
 WorldInputCmdProcessor::evaluateKeyCommands()
 {
     if (KeyboardInterface::getKeyPressed(SDLK_b)
-       && ! Desktop::getVisible("HelpScrollViewAlt") )
+       && ! Desktop::getVisible("HelpScrollViewAlt")
+       && ! Desktop::getVisible("UStyleSelectionView") )
     {
         if ( PlayerInterface::getLocalPlayer()->isSelectingFlag()
             || GameConfig::game_changeflagtime == 0
@@ -339,9 +344,28 @@ WorldInputCmdProcessor::evaluateKeyCommands()
         }
     }
 
-    if ( KeyboardInterface::getKeyPressed(SDLK_m) )
+    if ( ((KeyboardInterface::getKeyState(SDLK_LSHIFT) == false) && (KeyboardInterface::getKeyState(SDLK_RSHIFT) == false)) && KeyboardInterface::getKeyPressed(SDLK_m) )// &&
+          //(KeyboardInterface::getKeyState( SDLK_LALT ) == true || KeyboardInterface::getKeyState( SDLK_RALT ) == true) )
     {
+        //if (KeyboardInterface::getKeyState( SDLK_LALT ) == true || KeyboardInterface::getKeyState( SDLK_RALT ) == true) {
+        Desktop::setVisibility( "MiniMapViewAlt", 0 );
         Desktop::toggleVisibility( "MiniMapView" );
+        //Desktop::setVisibility( "MiniMapView", 0 );
+        //} else {
+        //Desktop::toggleVisibility( "MiniMapView" );
+        //}
+    }
+
+    if ( ((KeyboardInterface::getKeyState(SDLK_LSHIFT)) || (KeyboardInterface::getKeyState(SDLK_RSHIFT))) && KeyboardInterface::getKeyPressed(SDLK_m) )// &&
+          //(KeyboardInterface::getKeyState( SDLK_LALT ) == true || KeyboardInterface::getKeyState( SDLK_RALT ) == true) )
+    {
+        //if (KeyboardInterface::getKeyState( SDLK_LALT ) == true || KeyboardInterface::getKeyState( SDLK_RALT ) == true) {
+        Desktop::setVisibility( "MiniMapView", 0 );
+        Desktop::toggleVisibility( "MiniMapViewAlt" );
+
+        //} else {
+        //Desktop::toggleVisibility( "MiniMapView" );
+        //}
     }
 
     if ( KeyboardInterface::getKeyPressed(SDLK_o) )
@@ -380,7 +404,9 @@ WorldInputCmdProcessor::evaluateKeyCommands()
     }
 
     if ( KeyboardInterface::getKeyPressed(SDLK_F1)
-       && ! Desktop::getVisible("GFlagSelectionView") ) {
+       && ! Desktop::getVisible("GFlagSelectionView")
+       && ! Desktop::getVisible("UStyleSelectionView") )
+    {
         Desktop::toggleVisibility( "HelpScrollViewAlt" );
     }
 
@@ -399,6 +425,22 @@ WorldInputCmdProcessor::evaluateKeyCommands()
     if (KeyboardInterface::getKeyPressed( SDLK_F5 )) {
         //  DEBUG VIEW
         Desktop::toggleVisibility( "LibView" );
+    }
+
+    if (KeyboardInterface::getKeyPressed( SDLK_F7 )) {
+    if (InfoBar::bar_on == true) {
+            InfoBar::bar_on = false; } else {
+            InfoBar::bar_on = true;
+            }
+    }
+
+    if (KeyboardInterface::getKeyPressed(SDLK_u)
+        && ! Desktop::getVisible("HelpScrollViewAlt")
+        && ! Desktop::getVisible("GFlagSelectionView") )
+        {
+        if (PlayerInterface::getLocalPlayer()->isSelectingFlag()) {
+        Desktop::toggleVisibility( "UStyleSelectionView" );
+        }
     }
 
     if ( (KeyboardInterface::getKeyPressed( SDLK_RETURN ) == true)
@@ -847,12 +889,17 @@ void WorldInputCmdProcessor::evalRightMButtonEvents(const MouseEvent& event)
 void
 WorldInputCmdProcessor::sendMoveCommand(const iXY& world_pos)
 {
+    /*
     if ( !actionTimer.isTimeOut() )
     {
         return;
     }
 
     actionTimer.reset();
+    */
+
+    //moveBetterTimer.reset();
+
 
     iXY map_pos;
     PlacementMatrix matrix;
@@ -1018,12 +1065,20 @@ WorldInputCmdProcessor::sendManualMoveCommand(unsigned char orientation,
 void
 WorldInputCmdProcessor::sendManualFireCommand(const iXY &world_pos)
 {
-    if ( !actionTimer.isTimeOut() )
-    {
-       return;
-    }
+    //if ( !actionTimer.isTimeOut() )
+    //{
+    //   return;
+    //}
 
-    actionTimer.reset();
+    //actionTimer.reset();
+
+    //if ( !moveBetterTimer.isTimeOut() )
+    //{
+    //   return;
+    //}
+
+    //actionTimer.reset();
+
 
     TerminalUnitCmdRequest msg;
 
