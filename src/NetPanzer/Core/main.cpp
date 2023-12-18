@@ -359,7 +359,7 @@ int netpanzer_main(int argc, char** argv)
 
         manager->shutdown();
         delete manager;
-        LOGGER.info("successfull shutdown.");
+        LOGGER.info("successful shutdown.");
         shutdown();
     }
 // in debug mode we want the exception to abort, so that we have the original
