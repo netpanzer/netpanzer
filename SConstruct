@@ -201,6 +201,7 @@ elif thisplatform == 'win32':
     env.Tool('mingw', toolpath = ['.']) # we assume gcc
     luaenv.Tool('mingw', toolpath = ['.']) # we assume gcc
     networkenv.Tool('mingw', toolpath = ['.']) # we assume gcc
+    physfsenv.Tool('mingw', toolpath = ['.']) # we assume gcc
     env.Append( CPPPATH = [ 'C:/MinGW/include/SDL2' ] )
     networkenv.Append( CPPPATH = [ 'C:/MinGW/include/SDL2' ] )
     #env.Append( LIBPATH = [ 'C:/MinGW/lib' ] )
@@ -208,6 +209,7 @@ elif thisplatform == 'win32':
     env.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
     luaenv.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
     networkenv.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
+    physfsenv.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
     env.Append( _LIBFLAGS = [ '-mwindows' ] )
 #     env.Prepend( _LIBFLAGS = [ 'C:/MinGW/lib/SDL2_mixer' ] )
     env['WINICON'] = env.RES( 'support/icon/npicon.rc' )
