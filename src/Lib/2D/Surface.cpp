@@ -1388,8 +1388,14 @@ Surface::getFontHeight()
 
 unsigned int Surface::getTextWidth(const char* text)
 {
+    if (!text) {
+        return 0;
+    }
     // TODO cache
     SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, text, Palette::color[0]);
+    if (!font_surface) {
+        return 0;
+    }
     unsigned int width = font_surface->w;
     SDL_FreeSurface(font_surface);
     return width;
