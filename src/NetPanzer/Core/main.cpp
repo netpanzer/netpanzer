@@ -392,4 +392,3 @@ extern "C" {
         return netpanzer_main(argc, argv);
     }
 }
-
