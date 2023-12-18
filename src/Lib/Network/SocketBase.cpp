@@ -413,7 +413,7 @@ SocketBase::doAccept(Address& fromaddr)
 void
 SocketBase::doClose()
 {
-    LOGGER.debug("SocketBase:: Closing [%d] socket", sockfd);
+    LOGGER.debug("SocketBase:: Closing [%lld] socket", (long long unsigned int) sockfd);
     SocketManager::removeSocket(this);
 }
 

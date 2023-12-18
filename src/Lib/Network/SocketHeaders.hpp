@@ -45,6 +45,8 @@
 
 #define SETMAXFD(d,o)
 
+#define NULL_SOCKET (SOCKET)(0)
+
 #else
 #include <unistd.h>
 #include <errno.h>
