@@ -9,7 +9,7 @@ import subprocess
 ################################################################
 
 NPVERSION = '0.9.0-RC4'
-SVERSION = ''
+GITVERSION = ''
 
 try:
     FILE = open('RELEASE_VERSION', 'r')
@@ -19,15 +19,14 @@ except:
     pass
 
 try:
-    SVERSION = os.popen('svnversion').read()[:-1]
-    SVERSION = SVERSION.split(':')[-1]
+    GITVERSION = os.popen('git rev-parse --short HEAD').read()
 except:
     pass
 
 print("NPVERSION = " + NPVERSION)
-print("SVERSION = " + SVERSION)
-if NPVERSION == '' and SVERSION != '':
-    NPVERSION = 'svn-' + SVERSION;
+print("GITVERSION = " + GITVERSION)
+if NPVERSION == '' and GITVERSION != '':
+    NPVERSION = 'git-' + GITVERSION;
 
 thisplatform = sys.platform;
 print('Building version ' + NPVERSION + ' in ' + thisplatform)
@@ -205,11 +204,8 @@ elif thisplatform == 'win32':
     env.Append( CPPPATH = [ 'C:/MinGW/include/SDL2' ] )
     networkenv.Append( CPPPATH = [ 'C:/MinGW/include/SDL2' ] )
     env.Append( LIBPATH = [ 'C:/MinGW/lib' ] )
-    env.Append( LIBS = [ 'ws2_32', 'mingw32', 'SDL2', 'SDL2_mixer', 'SDL2_ttf' ] )
+    env.Append( LIBS = [ 'ws2_32', 'mingw32', 'SDL2main', 'SDL2', 'SDL2_mixer', 'SDL2_ttf' ] )
     env.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
-    luaenv.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
-    networkenv.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
-    physfsenv.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
     env.Append( _LIBFLAGS = [ '-mwindows' ] )
 #     env.Prepend( _LIBFLAGS = [ 'C:/MinGW/lib/SDL2_mixer' ] )
     env['WINICON'] = env.RES( 'support/icon/npicon.rc' )
