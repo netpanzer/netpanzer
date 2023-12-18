@@ -18,7 +18,7 @@
 #ifndef __SOCKETHEADERS_HPP__
 #define __SOCKETHEADERS_HPP__
 
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
 //#//include <winsock2.h>
 #include <ws2tcpip.h>
 

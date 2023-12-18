@@ -38,7 +38,7 @@ private:
     CheckBox * checkBoxSoundEnabled;
     CheckBox * checkBoxMusicEnabled;
     std::vector<SDL_DisplayMode> usableDisplayModes;
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
     CheckBox * checkBoxUseDirectX;
 #endif
     //CheckBox drawUnitReload;

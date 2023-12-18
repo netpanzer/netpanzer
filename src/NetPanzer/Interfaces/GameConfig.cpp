@@ -41,7 +41,7 @@ bool         GameConfig::video_hardwaresurface = false;
 bool         GameConfig::video_doublebuffer = false;
 bool         GameConfig::video_shadows = true;
 bool         GameConfig::video_blendsmoke = true;
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
 bool         GameConfig::video_usedirectx = false;
 #endif
 
@@ -136,7 +136,7 @@ static const ScriptVarBindRecord video_getters[] =
     { "doublebuffer",    GETSVTYPE_BOOLEAN, &GameConfig::video_doublebuffer },
     { "shadows",         GETSVTYPE_BOOLEAN, &GameConfig::video_shadows },
     { "blendsmoke",      GETSVTYPE_BOOLEAN, &GameConfig::video_blendsmoke },
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
     { "usedirectx",      GETSVTYPE_BOOLEAN, &GameConfig::video_usedirectx },
 #endif
     {0,0}
@@ -151,7 +151,7 @@ static const ScriptVarBindRecord video_setters[] =
     { "doublebuffer",    SETSVTYPE_BOOLEAN, &GameConfig::video_doublebuffer },
     { "shadows",         SETSVTYPE_BOOLEAN, &GameConfig::video_shadows },
     { "blendsmoke",      SETSVTYPE_BOOLEAN, &GameConfig::video_blendsmoke },
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
     { "usedirectx",      SETSVTYPE_BOOLEAN, &GameConfig::video_usedirectx },
 #endif
     {0,0}

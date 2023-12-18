@@ -243,7 +243,7 @@ void OptionsTemplateView::initButtons()
     add(checkBoxBlendSmoke);
     y += yOffset;
 
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
     x = xTextStart;
     checkBoxUseDirectX = new CheckBox();
     checkBoxUseDirectX->setLabel("Use DirectX");
@@ -459,7 +459,7 @@ void OptionsTemplateView::stateChanged(Component* source)
             checkBoxSoundEnabled->setLabel("Disabled");
         }
     }
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
     else if ( source == checkBoxUseDirectX )
     {
         GameConfig::video_usedirectx = checkBoxUseDirectX->getState();

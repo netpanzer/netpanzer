@@ -128,7 +128,7 @@ public:
     static bool         video_doublebuffer;
     static bool         video_shadows;
     static bool         video_blendsmoke;
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
     static bool         video_usedirectx;
 #endif
 

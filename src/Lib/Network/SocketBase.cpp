@@ -126,7 +126,7 @@ SocketBase::setNonBlocking()
     if ( state >= CREATED )
     {
         int res;
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
         unsigned long mode = 1;
         res = ioctlsocket(sockfd, FIONBIO, &mode);
 #else
@@ -194,7 +194,7 @@ SocketBase::setReuseAddr()
 void
 SocketBase::setNoDelay()
 {
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
     if ( state >= CONFIGURED ) //  && state < LISTENING
 #else
     if ( state >= CONFIGURED )

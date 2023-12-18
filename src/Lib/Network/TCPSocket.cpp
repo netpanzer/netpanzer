@@ -46,7 +46,7 @@ TCPSocket::TCPSocket(const std::string &host, const std::string &port, TCPSocket
 TCPSocket::TCPSocket(const Address& address, TCPSocketObserver *o)
     : SocketBase(address,true), observer(o)
 {
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
     setNoDelay();
     doConnect();
 #else
@@ -66,7 +66,7 @@ TCPSocket::onResolved()
     create();
     setNonBlocking();
     setConfigured();
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
     setNoDelay();
     doConnect();
 #else

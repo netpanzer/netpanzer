@@ -87,7 +87,7 @@ int NetworkManager::resolver_worker(void *data)
 
 bool NetworkManager::initialize()
 {
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
     WSADATA wsaData;
     WORD wVers = MAKEWORD(2, 0);
     int rc = WSAStartup(wVers, &wsaData);
@@ -118,7 +118,7 @@ void NetworkManager::cleanUp()
 
     rqueue.clear();
 
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
     WSACleanup();
 #endif
 }

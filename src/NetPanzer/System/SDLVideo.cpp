@@ -32,7 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/ConsoleInterface.hpp"
 #include "2D/Color.hpp"
 
-#ifdef _WIN32
+#if defined _WIN32 || defined __MINGW32__
 #include "Interfaces/GameConfig.hpp"
 #endif
 
@@ -44,10 +44,12 @@ SDLVideo *Screen; // get rid of this later...
 
 SDLVideo::SDLVideo()
         : window(0) {
-#ifdef _WIN32
+#if defined _WIN32
+#if not defined __MINGW32__
     if ( GameConfig::video_usedirectx ) {
         putenv("SDL_VIDEODRIVER=directx");
     }
+#endif
 #endif
     if (SDL_InitSubSystem(SDL_INIT_VIDEO)) {
         throw Exception("Couldn't initialize SDL_video subsystem: %s",
