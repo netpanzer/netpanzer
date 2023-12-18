@@ -273,12 +273,12 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(const NetMessage *mess
                 ResourceManager::loadAllFlags(game_flags, flag_names);
                 game_flags.setFrame(rand() % flag_names.size());
                 UpdatePlayerFlag upf;
-                memcpy(&upf.player_flag, game_flags.getMem(), FLAG_WIDTH*FLAG_HEIGHT);
+                memcpy(&upf.player_flag, game_flags.getMem(), FLAG_WIDTH * FLAG_HEIGHT);
                 CLIENT->sendMessage(&upf, sizeof(upf));
             }
 
         }
-        break;
+            break;
     }
 }
 
