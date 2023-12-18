@@ -206,8 +206,7 @@ elif thisplatform == 'win32':
     env.Append( LIBPATH = [ 'C:/MinGW/lib' ] )
     env.Append( LIBS = [ 'ws2_32', 'mingw32', 'SDL2main', 'SDL2', 'SDL2_mixer', 'SDL2_ttf' ] )
     env.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0601' ] )
-    env.Append( _LIBFLAGS = [ '-mwindows' ] )
-#     env.Prepend( _LIBFLAGS = [ 'C:/MinGW/lib/SDL2_mixer' ] )
+    env.Append( _LIBFLAGS = [ '-mwindows' ] ) # Comment out to get console logs on Windows
     env['WINICON'] = env.RES( 'support/icon/npicon.rc' )
     SetupSpawn(env)
 else:
