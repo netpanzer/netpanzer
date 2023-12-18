@@ -150,6 +150,15 @@ OptionsTemplateView::OptionsTemplateView() : MenuTemplateView()
 
 } // end OptionsTemplateView::OptionsTemplateView
 
+bool hasSize(const std::vector<SDL_DisplayMode>& modes, int w, int h) {
+    for (const SDL_DisplayMode& existingMode : modes) {
+        if (existingMode.w == w && existingMode.h == h) {
+            return true;
+        }
+    }
+    return false;
+}
+
 std::vector<SDL_DisplayMode> OptionsTemplateView::getUsableDisplayModes()
 {
     if (!usableDisplayModes.empty()) {
@@ -167,7 +176,9 @@ std::vector<SDL_DisplayMode> OptionsTemplateView::getUsableDisplayModes()
         }
 
         if (mode.w > 799 && mode.h > 599) {
-            usableDisplayModes.push_back(mode);
+            if (!hasSize(usableDisplayModes, mode.w, mode.h)) {
+                usableDisplayModes.push_back(mode);
+            }
         }
 
 //        SDL_Log("Mode %i\tbpp %i\t%s\t%i x %i",
@@ -406,6 +417,7 @@ void OptionsTemplateView::stateChanged(Component* source)
         GameConfig::video_width = mode.w;
         GameConfig::video_height = mode.h;
 
+#ifdef __APPLE__
         if ( sel_index == 0 && ! GameConfig::video_fullscreen )
         {
             // on Mac crash if we are in window and we select the biggest
@@ -414,6 +426,7 @@ void OptionsTemplateView::stateChanged(Component* source)
             // TODO test w/ SDL2
             GameConfig::video_height -= 50;
         }
+#endif
 
         GameManager::setVideoMode();
     }
