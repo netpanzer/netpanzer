@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/View.hpp"
 #include "Views/Components/StateChangedCallback.hpp"
 #include "ViewGlobals.hpp"
+#include "CLasses/ScreenSurface.hpp"
 
 //---------------------------------------------------------------------------
 void Choice::reset()
@@ -87,8 +88,8 @@ void Choice::actionPerformed(const mMouseEvent &me)
         //assert(isOpen == false);
         isOpen = true;
 
-        // Set the size to accomodate all items.
-        size.y = choiceList.size() * choiceItemHeight;
+        // Set the size to accommodate all items.
+        size.y = std::min((int) choiceList.size() * choiceItemHeight, (int) screen->getHeight());
 
         // Make sure the choice fits on the screen.
         if (position.y + size.y >= parentDimensions.y) {
@@ -104,14 +105,16 @@ void Choice::actionPerformed(const mMouseEvent &me)
                 position.y     -= adjustedY + 1;
             }
 
-
-            // Make sure the choice is still on the screen.
-            assert (position.y >= 0);
+            if (position.y < 0) {
+                // Make sure the choice is still on the screen.
+                printf("position out of bounds? size.y=[%d] parentDimensions.y=[%d] choiceItemHeight=[%d] numChoices=[%d] \n", size.y, parentDimensions.y, choiceItemHeight, choiceList.size());
+                position.y = 0;
+            }
         }
     } else if (me.getID() == mMouseEvent::MOUSE_EVENT_DRAGGED &&
                 (me.getModifiers() & InputEvent::BUTTON1_MASK)) {
         isOpen = true;
-        size.y = choiceList.size() * choiceItemHeight;
+        size.y = std::min((int) choiceList.size() * choiceItemHeight, (int) screen->getHeight());
 
         iRect r(position.x, position.y, position.x + size.x, position.y + choiceItemHeight);
 
@@ -202,6 +205,9 @@ void Choice::draw(Surface &dest)
         size_t count = choiceList.size();
 
         for (size_t i = 0; i < count; i++) {
+            if (!dest.isInBounds(r.min.x, r.min.y) || !dest.isInBounds(r.max.x, r.max.y)) {
+                continue;
+            }
             s.setTo(dest, r);
 
             if (i == mouseover) {

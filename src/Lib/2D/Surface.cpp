@@ -359,9 +359,18 @@ bool Surface::grab(const Surface &source,
 //---------------------------------------------------------------------------
 PIX *Surface::pixPtr(unsigned int x, unsigned int y) const
 {
-    assert((y * getPitch() + x) < getPitch() * getHeight());
+    assert(isInBounds(x, y));
     return mem + (y * getPitch()) + x;
 } // end Surface::pixPtr
+
+// isInBounds
+//---------------------------------------------------------------------------
+// Purpose: Determines if the given position is within the surface.
+//---------------------------------------------------------------------------
+bool Surface::isInBounds(unsigned int x, unsigned int y) const
+{
+    return (y * getPitch() + x) < getPitch() * getHeight();
+} // end Surface::isInBounds
 
 // blt
 //---------------------------------------------------------------------------

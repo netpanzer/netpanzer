@@ -246,6 +246,7 @@ public:
         size_t frame_len = getPitch()*getHeight();
         memcpy(mem, src, std::min(frame_len, src_len));
     }
+    bool isInBounds(unsigned int x, unsigned int y) const;
 
 }; // end Surface
 
