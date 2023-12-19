@@ -201,11 +201,11 @@ elif thisplatform == 'win32':
     luaenv.Tool('mingw', toolpath = ['.']) # we assume gcc
     networkenv.Tool('mingw', toolpath = ['.']) # we assume gcc
     physfsenv.Tool('mingw', toolpath = ['.']) # we assume gcc
-    env.Append( CPPPATH = [ 'C:/MinGW/include/SDL2' ] )
-    networkenv.Append( CPPPATH = [ 'C:/MinGW/include/SDL2' ] )
-    env.Append( LIBPATH = [ 'C:/MinGW/lib' ] )
-    env.Append( LIBS = [ 'ws2_32', 'mingw32', 'SDL2main', 'SDL2', 'SDL2_mixer', 'SDL2_ttf' ] )
-    env.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0601', '-static' ] )
+    env.Append(CPPPATH = [ 'C:/MinGW/include/SDL2' ] )
+    networkenv.Append(CPPPATH = [ 'C:/MinGW/include/SDL2' ] )
+    env.Append(LIBPATH=[ 'C:/MinGW/lib' ] )
+    env.Append(LIBS=[ 'ws2_32', 'mingw32', 'SDL2main', 'SDL2', 'SDL2_mixer', 'SDL2_ttf' ] )
+    env.Append(CCFLAGS=['-D_WIN32_WINNT=0x0601', '-static'])
     env.Append( _LIBFLAGS = [ '-mwindows' ] ) # Comment out to get console logs on Windows
     env['WINICON'] = env.RES( 'support/icon/npicon.rc' )
     SetupSpawn(env)
