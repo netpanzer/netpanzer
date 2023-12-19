@@ -117,7 +117,9 @@ void SDLVideo::setVideoMode(int new_width, int new_height, int bpp, bool fullscr
         throw Exception("Couldn't create texture %s", SDL_GetError());
     }
 
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");  // make the scaled rendering look smoother.
+    // make the scaled rendering look smoother.
+    // Note: "linear" made game look blurry when game resolution did not match monitor resolution.
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
     SDL_RenderSetLogicalSize(renderer, new_width, new_height);
 
     SDL_ShowWindow(window);
