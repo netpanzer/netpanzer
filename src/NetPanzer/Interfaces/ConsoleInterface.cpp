@@ -215,8 +215,7 @@ void ConsoleInterface::update_overlap( Surface &surface )
             {
                 flagextrax = 0;
             }
-            // XXX some values by hand
-            surface.bltStringShadowed(current_line.x + flagextrax, current_line.y+4, line_list[ index ].str, line_list[ index ].color, Color::black );
+            surface.bltStringShadowed(current_line.x + flagextrax, current_line.y, line_list[ index ].str, line_list[ index ].color, Color::black );
 
             current_line.y = current_line.y - line_offset.y;
         }
@@ -237,7 +236,7 @@ void ConsoleInterface::update_overlap( Surface &surface )
         surface.bltStringShadowed(current_line.x, current_line.y, inputPrompt, Color::white,
                 Color::black );
 
-        int CHAR_XPIX = 8; // XXX hardcoded
+        int CHAR_XPIX = Surface::getTextWidth(" "); // still depends on monospace fonts
         input_offset.x = current_line.x + ( (long) strlen( inputPrompt ) ) * CHAR_XPIX;
         input_offset.y = current_line.y;
 

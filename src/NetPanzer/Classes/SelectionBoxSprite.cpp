@@ -143,15 +143,15 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
     {
         //unit_flag.blt( *surface, iXY( min_abs.x, min_abs.y - unit_flag.getPix().y ) );
         //surface->bltString(min_abs.x + 2, min_abs.y - 6, "Panther1", Color::white);
-        unit_flag->blt( *surface, min_abs.x, min_abs.y - FLAG_HEIGHT - 1 );
+        unit_flag->blt( *surface, min_abs.x, min_abs.y - FLAG_HEIGHT );
     }
 
     if ( GameConfig::interface_show_names == true )
     {
         if ( playerName.length() > 0 )
         {   // XXX dirty trick, I don't center the text, just "by hand"
-            surface->bltString( min_abs.x + FLAG_WIDTH  + 2,
-                                min_abs.y - FLAG_HEIGHT + 2,
+            surface->bltString( min_abs.x + FLAG_WIDTH + 2,
+                                min_abs.y - FLAG_HEIGHT,
                                 playerName.c_str(), Color::gray224);
         }
     }
