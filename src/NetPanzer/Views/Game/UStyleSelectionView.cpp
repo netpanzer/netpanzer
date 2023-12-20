@@ -104,7 +104,7 @@ void UStyleSelectionView::init()
     add( new Label(x+18, y+16, varBuf, Color::lightGray, Color::lightGray, false) );
 
 
-    const NPString b_arrow = ">>                    <<";
+    const NPString b_arrow = ">>                       <<";
 
     if ( NetworkState::status == _network_state_server )  // server only
     {
@@ -114,7 +114,7 @@ void UStyleSelectionView::init()
         NPString sstyle = GameConfig::getUnitStyle(i);
         add( Button::createSpecialButton( sstyle, sstyle, iXY(x, y+32+28*(i+1))) );
         if (i == rstyle_mem ) {
-        add( new Label(x-20, y+40+28*(i+1), b_arrow, Color::lightGray, Color::lightGray, false) );
+        add( new Label(x-20, y+36+28*(i+1), b_arrow, Color::lightGray, Color::lightGray, false) );
         }
     }
 
@@ -125,7 +125,7 @@ void UStyleSelectionView::init()
         NPString sstyle = GameManager::stlist[i];
         add( Button::createSpecialButton( sstyle, sstyle, iXY(x, y+32+28*(i+1))) );
         if (i == rstyle_mem ) {
-        add( new Label(x-20, y+40+28*(i+1), b_arrow, Color::lightGray, Color::lightGray, false) );
+        add( new Label(x-20, y+36+28*(i+1), b_arrow, Color::lightGray, Color::lightGray, false) );
         }
     }
 
