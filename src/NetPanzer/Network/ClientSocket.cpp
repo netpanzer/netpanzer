@@ -81,7 +81,7 @@ ClientSocket::ClientSocket(ClientSocketObserver *o, const std::string &whole_ser
 }
 
 ClientSocket::ClientSocket(ClientSocketObserver *o)
-        : observer(o), socket(0), sendpos(0), tempoffset(0), player_id(INVALID_PLAYER_ID) {
+        : observer(o), socket(nullptr), sendpos(0), tempoffset(0), player_id(INVALID_PLAYER_ID) {
     initId();
 }
 
@@ -107,28 +107,25 @@ ClientSocket::initId() {
         commandBurst = 0;
         burstTime = 0;
         burstTime0 = 0;
-        commandBurstLimit = 13;//slowdown = 0;
-
-
-
+        commandBurstLimit = 15;//slowdown = 0;
 
         if (GameConfig::game_anticheat < 1 || GameConfig::game_anticheat > 5) {
+            LOGGER.warning("game.anticheat=[%d] out of range, setting to default [3]!", GameConfig::game_anticheat);
             GameConfig::game_anticheat = 3; // default
         }
 
         if (GameConfig::game_anticheat == 1) {
-            commandBurstLimit = 11; // very strict
+            commandBurstLimit = 13; // very strict
         } else if (GameConfig::game_anticheat == 2) {
-            commandBurstLimit = 12; // strict
+            commandBurstLimit = 14; // strict
         } else if (GameConfig::game_anticheat == 3) {
-            commandBurstLimit = 13; // normal
+            commandBurstLimit = 15; // normal
         } else if (GameConfig::game_anticheat == 4) {
-            commandBurstLimit = 14; // permissive
+            commandBurstLimit = 20; // permissive
         } else {
-            commandBurstLimit = 15; // pretty null
+            commandBurstLimit = 25; // pretty null
         }
-
-
+        LOGGER.info("AntiCheat burst limit is now [%d]", commandBurstLimit);
     }
 }
 
