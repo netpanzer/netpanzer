@@ -305,20 +305,12 @@ ClientSocket::onDataReceived(network::TCPSocket *so, const char *data, const int
 
                 }
 
-
-
-
-
-
-
                 //XXX// start of anti-spam device
 
-                //LOGGER.info("Packet %d", packetsize);
+                LOGGER.info("Packet %d", packetsize);
 
                 if (packetsize > 2) {
-
                     currentPActTime = SDL_GetTicks(); // current time
-
                     packetDelta = currentPActTime - lastPActTime0;
 
 
