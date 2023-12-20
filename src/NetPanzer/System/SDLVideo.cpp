@@ -77,6 +77,8 @@ SDLVideo::~SDLVideo() {
 }
 
 void SDLVideo::setVideoMode(int new_width, int new_height, int bpp, bool fullscreen) {
+    const bool was_fullscreen = this->is_fullscreen;
+    this->is_fullscreen = fullscreen;
     if (window) {
         SDL_DestroyWindow(window);
     }
@@ -125,7 +127,9 @@ void SDLVideo::setVideoMode(int new_width, int new_height, int bpp, bool fullscr
 
     SDL_ShowWindow(window); // has to happen before fullscreen switch to fix cursor stuck in region issue
 
-    if (fullscreen) {
+    if (fullscreen
+    // reset window when changing mode and already fullscreen, but not if already fullscreen! causes freeze.
+    && was_fullscreen) {
         // Switch from fullscreen and back again to fix mouse stuck issue.
         SDL_SetWindowFullscreen(window, 0);
         SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
