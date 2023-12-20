@@ -36,6 +36,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/WorldInputCmdProcessor.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Views/Components/Label.hpp"
+#include "2D/Surface.cpp"
 
 #define HEADER_HEIGHT 24
 #define ENTRY_HEIGHT 20
@@ -49,12 +50,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // characters * character width
 #define NAME_START (6*8)
 
-#define TABLE_HEADER_PIX_LEN (52*8)
+#define TABLE_HEADER_PIX_LEN (52*12)
 
+// TODO proper table rendering with a layout engine and not hard coded numbers :)
 #define WINDOW_WIDTH (TABLE_HEADER_PIX_LEN + ((DEFAULT_BORDER_SIZE+TABLE_BORDER) * 2 ) + 14+2+28+14)
 
 static const char * table_header =
-        "      Name                 Frags Deaths Points Objs.";
+        "       Name                   Frags Deaths Points Objs.";
 
 static const char * stats_format = "%-20s%6i%7i%7i%6i";
 
@@ -116,7 +118,7 @@ void RankView::doDraw(Surface &viewArea, Surface &clientArea)
             iRect(0, TABLE_BORDER_START, clientArea.getWidth()-1, clientArea.getHeight()-1),
             Color::gray64, Color::white);
 
-    clientArea.bltStringShadowed(0, 16, table_header, Color::red, Color::gray64);
+    clientArea.bltStringShadowed(0, 8, table_header, Color::red, Color::gray64);
     drawPlayerStats(clientArea, flagHeight);
 
     View::doDraw(viewArea, clientArea);
