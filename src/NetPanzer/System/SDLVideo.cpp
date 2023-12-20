@@ -53,6 +53,11 @@ SDLVideo::SDLVideo()
     }
 #endif
 #endif
+    this->window = nullptr;
+    this->renderer = nullptr;
+    this->surface = nullptr;
+    this->texture = nullptr;
+    this->is_fullscreen = false;
     if (SDL_InitSubSystem(SDL_INIT_VIDEO)) {
         throw Exception("Couldn't initialize SDL_video subsystem: %s",
                         SDL_GetError());
@@ -60,16 +65,16 @@ SDLVideo::SDLVideo()
 }
 
 SDLVideo::~SDLVideo() {
-    if (texture != NULL) {
+    if (texture != nullptr) {
         SDL_DestroyTexture(texture);
     }
-    if (surface != NULL) {
+    if (surface != nullptr) {
         SDL_FreeSurface(surface);
     }
-    if (renderer != NULL) {
+    if (renderer != nullptr) {
         SDL_DestroyRenderer(renderer);
     }
-    if (window != NULL) {
+    if (window != nullptr) {
         SDL_DestroyWindow(window);
     }
 
@@ -79,44 +84,63 @@ SDLVideo::~SDLVideo() {
 void SDLVideo::setVideoMode(int new_width, int new_height, int bpp, bool fullscreen) {
     const bool was_fullscreen = this->is_fullscreen;
     this->is_fullscreen = fullscreen;
-    if (window) {
-        SDL_DestroyWindow(window);
-    }
 
-    if (fullscreen) {
-        // use the native desktop resolution, and scale linearly later using renderer
-        window = SDL_CreateWindow("NetPanzer " PACKAGE_VERSION,
-                                  SDL_WINDOWPOS_UNDEFINED,
-                                  SDL_WINDOWPOS_UNDEFINED,
-                                  0, 0,
-                                  SDL_WINDOW_FULLSCREEN_DESKTOP);
+    if (window == nullptr) {
+        if (fullscreen) {
+            // use the native desktop resolution, and scale linearly later using renderer
+            window = SDL_CreateWindow("NetPanzer " PACKAGE_VERSION,
+                                      SDL_WINDOWPOS_UNDEFINED,
+                                      SDL_WINDOWPOS_UNDEFINED,
+                                      0, 0,
+                                      SDL_WINDOW_FULLSCREEN_DESKTOP);
+        } else {
+            window = SDL_CreateWindow("NetPanzer " PACKAGE_VERSION,
+                                      SDL_WINDOWPOS_UNDEFINED,
+                                      SDL_WINDOWPOS_UNDEFINED,
+                                      new_width, new_height,
+                                      SDL_WINDOW_RESIZABLE);
+        }
+        if (window == nullptr) {
+            throw Exception("Couldn't create a window %s", SDL_GetError());
+        }
+
+        renderer = SDL_CreateRenderer(window, -1, 0);
+
+        if (renderer == nullptr) {
+            throw Exception("Couldn't create renderer %s", SDL_GetError());
+        }
     } else {
-        window = SDL_CreateWindow("NetPanzer " PACKAGE_VERSION,
-                                  SDL_WINDOWPOS_UNDEFINED,
-                                  SDL_WINDOWPOS_UNDEFINED,
-                                  new_width, new_height,
-                                  SDL_WINDOW_RESIZABLE);
+        if (fullscreen) {
+            if (was_fullscreen) {
+                // no change
+            } else {
+                SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+            }
+        } else {
+            if (was_fullscreen) {
+                SDL_SetWindowFullscreen(window, 0);
+            }
+            SDL_SetWindowSize(window, new_width, new_height);
+        }
     }
 
-    if (window == NULL) {
-        throw Exception("Couldn't create a window %s", SDL_GetError());
-    }
-
-    renderer = SDL_CreateRenderer(window, -1, 0);
-
-    if (renderer == NULL) {
-        throw Exception("Couldn't create renderer %s", SDL_GetError());
+    if (surface != nullptr) {
+        SDL_FreeSurface(surface);
     }
 
     surface = SDL_CreateRGBSurfaceWithFormat(0, new_width, new_height, 8, SDL_PIXELFORMAT_INDEX8);
 
-    if (surface == NULL) {
+    if (surface == nullptr) {
         throw Exception("Couldn't create surface %s", SDL_GetError());
+    }
+
+    if (texture != nullptr) {
+        SDL_DestroyTexture(texture);
     }
 
     texture = SDL_CreateTextureFromSurface(renderer, surface);
 
-    if (texture == NULL) {
+    if (texture == nullptr) {
         throw Exception("Couldn't create texture %s", SDL_GetError());
     }
 
@@ -126,14 +150,6 @@ void SDLVideo::setVideoMode(int new_width, int new_height, int bpp, bool fullscr
     SDL_RenderSetLogicalSize(renderer, new_width, new_height);
 
     SDL_ShowWindow(window); // has to happen before fullscreen switch to fix cursor stuck in region issue
-
-    if (fullscreen
-    // reset window when changing mode and already fullscreen, but not if already fullscreen! causes freeze.
-    && was_fullscreen) {
-        // Switch from fullscreen and back again to fix mouse stuck issue.
-        SDL_SetWindowFullscreen(window, 0);
-        SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
-    }
 
     // let's scare the mouse :)
     // this fixes the mouse cursor stuck to a small region after resolution change
@@ -159,12 +175,12 @@ SDL_Surface *SDLVideo::getSurface() {
 void SDLVideo::render() {
     // This mechanism is only about 5-10% slower than SDL_BlitSurface && SDL_UpdateWindowSurface.
     // But, it gets us a lot (simpler code, much nicer rendering and scaling).
-    if (texture) {
+    if (texture != nullptr) {
         SDL_DestroyTexture(texture);
     }
     texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    SDL_RenderCopy(renderer, texture, nullptr, nullptr);
     SDL_RenderPresent(renderer);
 }
 
