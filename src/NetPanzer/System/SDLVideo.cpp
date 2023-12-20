@@ -33,7 +33,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Color.hpp"
 
 #if defined _WIN32 || defined __MINGW32__
+
 #include "Interfaces/GameConfig.hpp"
+
 #endif
 
 #ifndef PACKAGE_VERSION
@@ -46,7 +48,7 @@ SDLVideo::SDLVideo()
         : window(0) {
 #if defined _WIN32
 #if not defined __MINGW32__
-    if ( GameConfig::video_usedirectx ) {
+    if (GameConfig::video_usedirectx) {
         putenv("SDL_VIDEODRIVER=directx");
     }
 #endif
@@ -73,7 +75,6 @@ SDLVideo::~SDLVideo() {
 
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
-
 
 void SDLVideo::setVideoMode(int new_width, int new_height, int bpp, bool fullscreen) {
     if (window) {
@@ -122,13 +123,25 @@ void SDLVideo::setVideoMode(int new_width, int new_height, int bpp, bool fullscr
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
     SDL_RenderSetLogicalSize(renderer, new_width, new_height);
 
-    SDL_ShowWindow(window);
+    SDL_ShowWindow(window); // has to happen before fullscreen switch to fix cursor stuck in region issue
+
+    if (fullscreen) {
+        // Switch from fullscreen and back again to fix mouse stuck issue.
+        SDL_SetWindowFullscreen(window, 0);
+        SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+    }
 
     // let's scare the mouse :)
+    // this fixes the mouse cursor stuck to a small region after resolution change
     int showCursorResult = SDL_ShowCursor(SDL_DISABLE);
     if (showCursorResult < 0) {
         printf("Could not show cursor! %s\n", SDL_GetError());
     }
+
+    // Center the mouse after changing the resolution - also helps mouse cursor from getting stuck in old region
+    int centerX = new_width / 2;
+    int centerY = new_height / 2;
+    SDL_WarpMouseInWindow(window, centerX, centerY);
 }
 
 void SDLVideo::setPalette(SDL_Color *color) {
