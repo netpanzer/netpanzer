@@ -29,6 +29,7 @@ private:
     SDL_Renderer* renderer;
     SDL_Surface* surface;
     SDL_Texture* texture;
+    bool is_fullscreen;
 
 public:
     SDLVideo();
