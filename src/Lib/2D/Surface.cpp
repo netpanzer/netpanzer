@@ -1381,7 +1381,7 @@ void initFont()
     // Quantico-Regular looked good too but some issues with some characters.
     font = TTF_OpenFont("fonts/GNUUnifont9FullHintInstrUCSUR.ttf", FONT_SIZE);
     TTF_SetFontStyle(font, TTF_STYLE_BOLD);
-    TTF_SetFontHinting(font, TTF_HINTING_NORMAL);
+    TTF_SetFontHinting(font, TTF_HINTING_MONO);
 } // Surface::initFont
 
 unsigned int
