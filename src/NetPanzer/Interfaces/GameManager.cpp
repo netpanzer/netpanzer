@@ -294,6 +294,7 @@ void GameManager::dedicatedLoadGameMap(const char *map_name, const char *mapstyl
 
     Console::mapSwitch(map_name);
     *Console::server        << "Server Settings:\n"
+        << "AntiCheat: "    << GameConfig::game_anticheat << "\n"
         << "MaxPlayers: "   << GameConfig::game_maxplayers << "\n"
         << "MaxUnits: "     << GameConfig::game_maxunits << "\n"
         << "AutoKick: "     << GameConfig::game_autokicktime << "\n"

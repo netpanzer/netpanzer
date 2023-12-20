@@ -307,11 +307,12 @@ ClientSocket::onDataReceived(network::TCPSocket *so, const char *data, const int
 
                 //XXX// start of anti-spam device
 
-                LOGGER.info("Packet %d", packetsize);
+//                LOGGER.info("Packet size=[%d]", packetsize);
 
                 if (packetsize > 2) {
                     currentPActTime = SDL_GetTicks(); // current time
                     packetDelta = currentPActTime - lastPActTime0;
+                    //LOGGER.info("Packet delta=[%d]", packetDelta);
 
 
                     // anti pre-spawn chat string attack (multiple temporary patches)
@@ -389,7 +390,9 @@ ClientSocket::onDataReceived(network::TCPSocket *so, const char *data, const int
                     }
 
 
-                    if (packetDelta < 125 && packetDelta > 115 && packetsize > 27) {
+                    if (packetDelta < 125
+                                    // moving a unit is size 30
+                                    && packetsize > 27) {
 
                         commandBurst++;
 
@@ -409,10 +412,9 @@ ClientSocket::onDataReceived(network::TCPSocket *so, const char *data, const int
                             {
                                 commandBurst = 0;
                                 LOGGER.debug("Suspect cheater terminated! [IP = %s]", cipstring);
-                                ChatInterface::serversay("Suspect cheater terminated (packet flooding)!");
+                                ChatInterface::serversay("Suspected cheater kicked (too many commands)!");
                                 observer->onClientDisconected(this, "Anti-cheating striked!");
-
-                                //hardClose();
+//                                hardClose();
                                 break;
                             }
 
