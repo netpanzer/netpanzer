@@ -158,7 +158,6 @@ public:
     static int       game_respawntype;
     static int       game_windspeed;
     static int       game_lowscorelimit;
-    static int       game_anticheat;
     //static bool      game_authentication;
     //static bool      game_bots_allowed;
     //static bool      game_scrambler;
@@ -190,6 +189,7 @@ public:
     static bool      server_interactive_console;
     static NPString* server_authserver;
     static bool      server_authentication;
+    static int       server_command_burst_limit;
 
     static bool      sound_enable;
     static bool      sound_music;

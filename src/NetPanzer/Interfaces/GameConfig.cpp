@@ -71,7 +71,6 @@ int       GameConfig::game_cloudcoverage = 0;
 int       GameConfig::game_respawntype = 0;
 int       GameConfig::game_windspeed = 30;
 int       GameConfig::game_lowscorelimit = -45;
-int       GameConfig::game_anticheat = 3;
 //bool      GameConfig::game_authentication = false;
 //bool      GameConfig::game_bots_allowed = false;
 //bool      GameConfig::game_scrambler = true;
@@ -114,6 +113,7 @@ NPString* GameConfig::server_name = 0;
 bool      GameConfig::server_interactive_console = true;
 NPString* GameConfig::server_authserver = 0;
 bool      GameConfig::server_authentication = false;
+int       GameConfig::server_command_burst_limit = 18;
 
 int       GameConfig::bot_class = 1;
 bool      GameConfig::bot_allied = true;
@@ -214,7 +214,6 @@ static const ScriptVarBindRecord game_getters[] =
     { "respawntype",        GETSVTYPE_INT,     &GameConfig::game_respawntype },
     { "windspeed",          GETSVTYPE_INT,     &GameConfig::game_windspeed },
     { "lowscorelimit",      GETSVTYPE_INT,     &GameConfig::game_lowscorelimit },
-    { "anticheat",          GETSVTYPE_INT,     &GameConfig::game_anticheat },
     //{ "authentication",     GETSVTYPE_BOOLEAN, &GameConfig::game_authentication },
     //{ "bots_allowed",       GETSVTYPE_BOOLEAN, &GameConfig::game_bots_allowed },
     //{ "scrambler",          GETSVTYPE_BOOLEAN, &GameConfig::game_scrambler },
@@ -250,7 +249,6 @@ static const ScriptVarBindRecord game_setters[] =
     { "respawntype",        SETSVTYPE_INT,     &GameConfig::game_respawntype },
     { "windspeed",          SETSVTYPE_INT,     &GameConfig::game_windspeed },
     { "lowscorelimit",      SETSVTYPE_INT,     &GameConfig::game_lowscorelimit },
-    { "anticheat",          SETSVTYPE_INT,     &GameConfig::game_anticheat },
     //{ "authentication",     SETSVTYPE_BOOLEAN, &GameConfig::game_authentication },
     //{ "bots_allowed",       SETSVTYPE_BOOLEAN, &GameConfig::game_bots_allowed },
     //{ "scrambler",          SETSVTYPE_BOOLEAN, &GameConfig::game_scrambler },
@@ -318,6 +316,7 @@ static const ScriptVarBindRecord server_getters[] =
     { "interactive_console",        GETSVTYPE_BOOLEAN, &GameConfig::server_interactive_console },
     { "authserver",                 GETSVTYPE_STRING,  &GameConfig::server_authserver },
     { "authentication",             GETSVTYPE_BOOLEAN, &GameConfig::server_authentication },
+    { "command_burst_limit",        GETSVTYPE_INT,     &GameConfig::server_command_burst_limit },
     {0,0}
 };
 
@@ -333,6 +332,7 @@ static const ScriptVarBindRecord server_setters[] =
     { "interactive_console", SETSVTYPE_BOOLEAN, &GameConfig::server_interactive_console },
     { "authserver",          SETSVTYPE_STRING,  &GameConfig::server_authserver },
     { "authentication",      SETSVTYPE_BOOLEAN, &GameConfig::server_authentication },
+    { "command_burst_limit", SETSVTYPE_INT,     &GameConfig::server_command_burst_limit },
     {0,0}
 };
 
@@ -432,6 +432,11 @@ void GameConfig::registerScript(const NPString& table_name)
     if ( ! server_authserver )
     {
         server_authserver = new NPString("authserver.netpanzer.info");
+    }
+
+    if ( ! server_command_burst_limit )
+    {
+        server_command_burst_limit = 18;
     }
 
     if ( ! player_name )

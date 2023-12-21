@@ -107,25 +107,11 @@ ClientSocket::initId() {
         commandBurst = 0;
         burstTime = 0;
         burstTime0 = 0;
-        commandBurstLimit = 15;//slowdown = 0;
 
-        if (GameConfig::game_anticheat < 1 || GameConfig::game_anticheat > 5) {
-            LOGGER.warning("game.anticheat=[%d] out of range, setting to default [3]!", GameConfig::game_anticheat);
-            GameConfig::game_anticheat = 3; // default
+        if (GameConfig::server_command_burst_limit < 0) {
+            LOGGER.warning("server.server_command_burst_limit=[%d] out of range, setting to default [18]!", GameConfig::server_command_burst_limit);
+            GameConfig::server_command_burst_limit = 18; // default
         }
-
-        if (GameConfig::game_anticheat == 1) {
-            commandBurstLimit = 13; // very strict
-        } else if (GameConfig::game_anticheat == 2) {
-            commandBurstLimit = 14; // strict
-        } else if (GameConfig::game_anticheat == 3) {
-            commandBurstLimit = 15; // normal
-        } else if (GameConfig::game_anticheat == 4) {
-            commandBurstLimit = 20; // permissive
-        } else {
-            commandBurstLimit = 25; // pretty null
-        }
-        LOGGER.info("AntiCheat burst limit is now [%d]", commandBurstLimit);
     }
 }
 
@@ -405,10 +391,10 @@ ClientSocket::onDataReceived(network::TCPSocket *so, const char *data, const int
                         if (burstDelta < 800) // Does it depend on tanks number? It seems not.
                         {
 
-                            if (commandBurst > commandBurstLimit) // too many consecutive bursts - player is cheating!
+                            if (commandBurst > GameConfig::server_command_burst_limit) // too many consecutive bursts - player is cheating!
                             {
+                                LOGGER.info("Suspect cheater terminated! Burst=[%d] Limit=[%d] IP=[%s]", commandBurst, GameConfig::server_command_burst_limit, cipstring);
                                 commandBurst = 0;
-                                LOGGER.debug("Suspect cheater terminated! [IP = %s]", cipstring);
                                 ChatInterface::serversay("Suspected cheater kicked (too many commands)!");
                                 observer->onClientDisconected(this, "Anti-cheating striked!");
 //                                hardClose();

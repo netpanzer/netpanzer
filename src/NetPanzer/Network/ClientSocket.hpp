@@ -103,7 +103,6 @@ public:    PlayerID player_id;
     unsigned int burstTime0;
     unsigned int burstDelta;
     unsigned int commandBurst;
-    unsigned int commandBurstLimit;
     int mydatastrc;
     unsigned short int conn_end;
     unsigned short int pre_conn_end;

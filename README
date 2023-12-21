@@ -336,19 +336,22 @@ Note: not ALL the entries in server.cfg are related to the server, only those ta
 
 	your gameserver name which will be displayed in server browser etc
 
+	server.command_burst_limit = 18
+
+	The max consecutive number of "burst" packets from the client (packets within 125ms of each other).
+	This is to prevent people from using auto-clickers.
+
 
 
 	game.enable_bases = true
 
 	by setting this to 'false' you disable all bases in the map
 
-	
 
 	game.base_capture_mode = 1
 
 	the kind of base capture, no capture, helipad capture, full base capture
 
-	
 
 	game.base_limit = 0
 
@@ -445,16 +448,9 @@ Note: not ALL the entries in server.cfg are related to the server, only those ta
 	enables (or disable) ally
 
 
+    game.lowscorelimit = -25
 
-        game.anticheat = 3 
-
-        sets the anticheat level (too fast clicking - or rather packet sending) - default is 3 (values allowed are 1 [strict] to 5 [very permissive])
-	
-
-
-        game.lowscorelimit = -25
-
-        players get kicked if their score is less than this value - allowed range is -15 to -100
+    players get kicked if their score is less than this value - allowed range is -15 to -100
 
 
 
