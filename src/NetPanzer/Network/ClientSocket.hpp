@@ -90,18 +90,11 @@ private:
     Uint16 tempoffset;
     int id;
 public:    PlayerID player_id;
-    // fu added
-    unsigned int lastPActTime2;
-    unsigned int lastPActTime1;
     unsigned int lastPActTime0;
-    unsigned int packetDelta0;
     unsigned int packetDelta;
     unsigned int currentPActTime;
     unsigned int mydatastrtime;
     unsigned int mydatastrtime0;
-    unsigned int burstTime;
-    unsigned int burstTime0;
-    unsigned int burstDelta;
     unsigned int commandBurst;
     int mydatastrc;
     unsigned short int conn_end;

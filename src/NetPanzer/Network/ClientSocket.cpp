@@ -105,11 +105,10 @@ ClientSocket::initId() {
         packets_count = 0;
         lastPActTime0 = 0;
         commandBurst = 0;
-        burstTime = 0;
-        burstTime0 = 0;
 
         if (GameConfig::server_command_burst_limit < 0) {
-            LOGGER.warning("server.server_command_burst_limit=[%d] out of range, setting to default [18]!", GameConfig::server_command_burst_limit);
+            LOGGER.warning("server.server_command_burst_limit=[%d] out of range, setting to default [18]!",
+                           GameConfig::server_command_burst_limit);
             GameConfig::server_command_burst_limit = 18; // default
         }
     }
@@ -295,7 +294,7 @@ ClientSocket::onDataReceived(network::TCPSocket *so, const char *data, const int
                 if (packetsize > 2) {
                     currentPActTime = SDL_GetTicks(); // current time
                     packetDelta = currentPActTime - lastPActTime0;
-                    //LOGGER.info("Packet delta=[%d]", packetDelta);
+                    LOGGER.debug("Packet delta=[%d]", packetDelta);
 
 
                     // anti pre-spawn chat string attack (multiple temporary patches)
@@ -372,63 +371,39 @@ ClientSocket::onDataReceived(network::TCPSocket *so, const char *data, const int
                         //LOGGER.debug("Match!");
                     }
 
+                    if (packetDelta < 125) {
+                        // moving a unit is size 30
+                        if (packetsize > 27) {
+                            commandBurst++;
 
-                    if (packetDelta < 125
-                                    // moving a unit is size 30
-                                    && packetsize > 27) {
-
-                        commandBurst++;
-
-                        burstTime0 = burstTime;
-                        burstTime = currentPActTime;
-                        burstDelta = burstTime - burstTime0;
-
-                        //LOGGER.debug("Burst from [%s] - pDelta = %u - bCount = %u - bDelta = %u", cipstring, packetDelta, commandBurst, burstDelta);
-                        LOGGER.debug("Burst from [%s] - bCount = %u - bDelta = %u", cipstring, commandBurst,
-                                     burstDelta);
-
-
-                        if (burstDelta < 800) // Does it depend on tanks number? It seems not.
-                        {
-
-                            if (commandBurst > GameConfig::server_command_burst_limit) // too many consecutive bursts - player is cheating!
+                            if (commandBurst >
+                                GameConfig::server_command_burst_limit) // too many consecutive bursts - player is cheating!
                             {
-                                LOGGER.info("Suspect cheater terminated! Burst=[%d] Limit=[%d] IP=[%s]", commandBurst, GameConfig::server_command_burst_limit, cipstring);
+                                LOGGER.info("Suspect cheater terminated! Burst=[%d] Limit=[%d] IP=[%s]",
+                                            commandBurst, GameConfig::server_command_burst_limit, cipstring);
                                 commandBurst = 0;
                                 ChatInterface::serversay("Suspected cheater kicked (too many commands)!");
                                 observer->onClientDisconected(this, "Anti-cheating striked!");
 //                                hardClose();
                                 break;
                             }
-
                         } else {
-                            commandBurst = 0;
+                            // don't reset command burst here! might be unrelated package to hacking.
                         }
-
-
+                    } else {
+                        commandBurst = 0; // sent packet slowly, reset burst.
                     }
 
-
-                    //lastPActTime2 = lastPActTime1;
-                    lastPActTime1 = lastPActTime0;
                     lastPActTime0 = currentPActTime;
-
                 }
 
                 // end of anti-spam device
-
-
-
-
-
             }
 
 
             EnqueueIncomingPacket(tempbuffer + sizeof(Uint16), packetsize, player_id, this);
             tempoffset = 0;
         }
-
-
     } // while
 }
 
