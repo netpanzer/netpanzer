@@ -72,7 +72,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 static std::string pidfile;
 
-void shutdown()
+void shutdown(bool save_config)
 {
 #ifndef WIN32
     if(pidfile != "") {
@@ -96,8 +96,9 @@ UnitProfileInterface::clearProfiles();
 
 
     SDL_Quit();
-    if(gameconfig)
+    if(save_config && gameconfig) {
         gameconfig->saveConfig();
+    }
     LOGGER.closeLogFile();
     filesystem::shutdown();
 }
@@ -125,7 +126,7 @@ void signalhandler(int signum)
 
     std::cerr << "Received signal " << sigtype << "(" << signum << ")"
         << std::endl << "aborting and trying to shutdown." << std::endl;
-    shutdown();
+    shutdown(false);
     raise(signum);
 }
 #endif
@@ -210,7 +211,7 @@ BaseGameManager *initialise(int argc, char** argv)
         filesystem::initialize(argv[0], "netpanzer", "netpanzer");
     } catch(std::exception& e) {
         fprintf(stderr, "%s", e.what());
-        shutdown();
+        shutdown(false);
         exit(1);
     }
 
@@ -265,7 +266,7 @@ BaseGameManager *initialise(int argc, char** argv)
         std::ofstream out(pidfile.c_str());
         if(!out.good()) {
             fprintf(stderr, "Couldn't create pidfile '%s'.\n", pidfile.c_str());
-            shutdown();
+            shutdown(false);
             exit(1);
         }
         out << getpid() << std::endl;
@@ -330,7 +331,7 @@ BaseGameManager *initialise(int argc, char** argv)
         return manager;
     } catch(std::exception& e) {
         LOGGER.warning("Couldn't initialize the game: %s", e.what());
-        shutdown();
+        shutdown(false);
         exit(1);
     }
 }
@@ -360,7 +361,7 @@ int netpanzer_main(int argc, char** argv)
         manager->shutdown();
         delete manager;
         LOGGER.info("successful shutdown.");
-        shutdown();
+        shutdown(true);
     }
 // in debug mode we want the exception to abort, so that we have the original
 // stack backtrace
@@ -368,11 +369,11 @@ int netpanzer_main(int argc, char** argv)
     catch(std::exception& e) {
         LOGGER.warning("An unexpected exception occurred: '%s'\nShutdown needed.",
                 e.what());
-        shutdown();
+        shutdown(false);
         return 1;
     } catch(...) {
         LOGGER.warning("An unexpected exception occurred.\nShutdown needed.");
-        shutdown();
+        shutdown(false);
         return 1;
     }
 #else
