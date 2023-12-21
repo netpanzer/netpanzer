@@ -62,20 +62,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Scripts/ScriptManager.hpp"
 
-BaseGameManager* gamemanager = 0;
+BaseGameManager* gamemanager = nullptr;
 
 //------------------------------------------------------------------
 BaseGameManager::BaseGameManager()
     : running(true)
 {
-    assert(gamemanager == 0);
+    assert(gamemanager == nullptr);
     gamemanager = this;
 }
 
 //------------------------------------------------------------------
 BaseGameManager::~BaseGameManager()
 {
-    gamemanager = 0;
+    gamemanager = nullptr;
 }
 
 //-----------------------------------------------------------------
@@ -88,13 +88,13 @@ void BaseGameManager::shutdownSoundSubSystem()
 {
     if(sound) {
         delete sound;
-        sound = 0;
+        sound = nullptr;
     }
 }
 //-----------------------------------------------------------------
 void BaseGameManager::initializeGameConfig(const std::string& configfile)
 {
-    if(configfile == "")
+    if(configfile.empty())
         gameconfig = new GameConfig("/config/client.cfg");
     else
         gameconfig = new GameConfig(configfile, false);
@@ -104,7 +104,7 @@ void BaseGameManager::shutdownGameConfig()
 {
     if (gameconfig) {
         delete gameconfig;
-        gameconfig = 0;
+        gameconfig = nullptr;
     }
 }
 //-----------------------------------------------------------------
@@ -155,13 +155,13 @@ void BaseGameManager::shutdownNetworkSubSystem()
         SERVER->closeSession();
         ServerMessageRouter::cleanUp();
         delete SERVER;
-        SERVER = 0;
+        SERVER = nullptr;
     }
     if(CLIENT) {
         CLIENT->partServer();
         ClientMessageRouter::cleanUp();
         delete CLIENT;
-        CLIENT = 0;
+        CLIENT = nullptr;
     }
 }
 //-----------------------------------------------------------------

@@ -515,20 +515,11 @@ GameConfig::GameConfig(const std::string& luaconfigfile,bool usePhysFS)
 }
 
 GameConfig::~GameConfig()
-{
-    try
-    {
-        saveConfig();
-    }
-    catch(std::exception& e)
-    {
-        LOG(("couldn't save game configuration: %s", e.what()));
-    }
-}
+= default;
 
 void GameConfig::loadConfig()
 {
-    ScriptManager::loadConfigFile(luaconfigfile.c_str(), "config");
+    ScriptManager::loadConfigFile(luaconfigfile, "config");
 
 // these lines might be usefull infuture? 2012-01-18
 //    if(usePhysFS)
@@ -598,4 +589,4 @@ void GameConfig::saveConfig()
 
 }
 
-GameConfig* gameconfig = 0;
+GameConfig* gameconfig = nullptr;
