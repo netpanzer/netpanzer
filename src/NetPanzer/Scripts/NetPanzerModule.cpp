@@ -140,7 +140,7 @@ static int npmodule_map (lua_State *L)
 
         if ( !MapsManager::existsMap(map_name) )
         {
-            ss << "Map '" << map_name << "' doesn't exists";
+            ss << "Map '" << map_name << "' doesn't exist.";
         }
         else
         {

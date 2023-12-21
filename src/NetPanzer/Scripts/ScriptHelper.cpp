@@ -32,7 +32,7 @@ static void notExistsError(lua_State *L )
     lua_Debug ar;
     lua_getstack(L,1,&ar);
     lua_getinfo(L, "Sl", &ar);
-    LOGGER.warning("ERROR in '%s':%d: member '%s' doesn't exists.",
+    LOGGER.warning("ERROR in '%s':%d: config '%s' is invalid.",
                    ar.source,
                    ar.currentline,
                    lua_tostring(L,2));
