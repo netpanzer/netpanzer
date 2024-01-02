@@ -1,3 +1,4 @@
+[![.github/workflows/c-cpp.yml](https://github.com/netpanzer/netpanzer/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/netpanzer/netpanzer/actions/workflows/c-cpp.yml)
 # NetPanzer
 ### Open Source RTS
 
@@ -38,7 +39,7 @@ The same list is available while in game too - just press F1 key.
 
 Here's a series of commands to setup a dedicated server that will survive server restarts and crashes.
 
-First, we'll download the game server and start it, to test: 
+First, we'll download the game server and start it, to test:
 
     cd
     mkdir netpanzer && cd netpanzer
@@ -53,7 +54,7 @@ Now your server should be visible in the server browser. If not, figure our your
 Once that is done, hit ctrl+c to kill the server. Now we will make it a reliable server.
 
 Create a new `netpanzer.service` file:
-    
+
     sudo nano /etc/systemd/system/netpanzer.service
 
 Put this in it:
@@ -62,14 +63,14 @@ Put this in it:
     Description=netpanzer server
     After=network.target
     StartLimitIntervalSec=1
-    
+
     [Service]
     Type=simple
     Restart=always
     RestartSec=1
     User=winrid
     ExecStart=/home/yourusername/netpanzer/netpanzer -d -p 3031
-    
+
     [Install]
     WantedBy=multi-user.target
 
@@ -399,7 +400,7 @@ directories should be copied on the "datadir" destination:
 If you want to copy some documentation, the "docs" folder has it. There is also the COPYING
  and the README (this file).
 
-Inside "support" folder there are many useful scripts and resources. 
+Inside "support" folder there are many useful scripts and resources.
 
 "netpanzer.png" and "netpanzer.xpm" are some sample icons to be used with the game.
 
