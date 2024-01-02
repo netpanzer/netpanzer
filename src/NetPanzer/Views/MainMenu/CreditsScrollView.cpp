@@ -41,7 +41,7 @@ CreditsScrollView::CreditsScrollView() : SpecialButtonView()
 
 
     insert("");
-    insert("  This is NetPanzer v. "PACKAGE_VERSION", a massively multiplayer");
+    insert("  This is NetPanzer v. " PACKAGE_VERSION ", a massively multiplayer");
     insert("  tank battle game.");
     insert("");
     insert("  This application is free software under the terms of the");

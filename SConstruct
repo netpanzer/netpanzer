@@ -94,6 +94,9 @@ opts.AddVariables(
 )
 
 env = Environment(ENV = os.environ, options = opts)
+env['CXX']=os.environ['CXX']
+env['CC']=os.environ['CC']
+
 Help(opts.GenerateHelpText(env))
 
 env.Append( CCFLAGS = [ '-DPACKAGE_VERSION=\\"' + NPVERSION + '\\"' ] )
