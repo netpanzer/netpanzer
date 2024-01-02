@@ -1,0 +1,62 @@
+name: C/C++ CI
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: master
+  pull_request:
+    branches: master
+
+jobs:
+  build:
+    name: ${{ matrix.build.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        build:
+          - name: ubuntu-22.04-gcc
+            os: ubuntu-22.04
+            cc: gcc
+          - name: ubuntu-22.04-clang
+            os: ubuntu-22.04
+            cc: clang
+
+    runs-on: ${{ matrix.build.os }}
+    container: ${{ matrix.build.container }}
+    env:
+      CC: '${{ matrix.build.cc }}'
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: false
+
+    - if: ${{ env.CC }}
+      run: |
+        if [ "$CC" = "gcc" ]; then
+          CXX=g++
+        else
+          CXX=clang++
+        fi
+        echo "CXX=${CXX}" >> $GITHUB_ENV
+
+    - name: Show info
+      run: |
+        export -p
+        echo '${{ toJSON(matrix) }}'
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get install -y \
+          $CC \
+          $CXX \
+          libsdl2-dev \
+          libsdl2-mixer-dev \
+          libsdl2-ttf-dev \
+          python3 \
+          python3-setuptools \
+          scons
+
+    - name: Scons
+      run: scons
