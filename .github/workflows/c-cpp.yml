@@ -6,8 +6,12 @@ concurrency:
 on:
   push:
     branches: master
+    - '**'
+    - '!**.md'
   pull_request:
     branches: master
+    - '**'
+    - '!**.md'
 
 jobs:
   build:
