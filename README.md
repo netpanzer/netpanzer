@@ -49,7 +49,7 @@ First, we'll download the game server and start it, to test:
     echo "server.interactive_console = false" > ~/.netpanzer/config/server.cfg
     ./netpanzer -d
 
-Now your server should be visible in the server browser. If not, figure our your networking issues.
+Now your server should be visible in the server browser. If not, figure out your networking issues.
 
 Once that is done, hit ctrl+c to kill the server. Now we will make it a reliable server.
 
