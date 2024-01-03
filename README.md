@@ -313,8 +313,6 @@ Generally this can be done in your modem/router control panel (look for the 'NAT
 
 Also check that Windows Firewall - and/or other antivirus software which may act as firewall - are not interfering.
 
-## Game Server Configuration
-
 ## To Contribute
 
 ### Compiling
