@@ -94,8 +94,10 @@ opts.AddVariables(
 )
 
 env = Environment(ENV = os.environ, options = opts)
-env['CXX']=os.environ['CXX']
-env['CC']=os.environ['CC']
+if 'CXX' in os.environ:
+    env['CXX']=os.environ['CXX']
+if 'CC' in os.environ:
+    env['CC']=os.environ['CC']
 
 Help(opts.GenerateHelpText(env))
 
@@ -171,6 +173,7 @@ env.Append(CCFLAGS = ['-Wall'])
 env.VariantDir(buildpath,'.',duplicate=0)
 
 luaenv = env.Clone()
+luaenv['CCFLAGS'].remove('-std=c++17')
 physfsenv = env.Clone()
 networkenv = env.Clone()
 
