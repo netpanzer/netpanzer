@@ -99,7 +99,7 @@ Currently, to run bots you have to run more instances of the server. So create a
 
 to:
 
-    ExecStart=/home/yourusername/netpanzer/netpanzer -d localhost:3031 --game_config='/home/yourusername/.netpanzer/config/bot1.cfg'
+    ExecStart=/home/yourusername/netpanzer/netpanzer -b localhost:3031 --game_config='/home/yourusername/.netpanzer/config/bot1.cfg'
 
 and of course, change `yourusername` to your username.
 
