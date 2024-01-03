@@ -45,8 +45,10 @@ foreach file : src_basename
     src += [join_paths('Classes/Network', file)]
 endforeach
 
-dep_sdl2 = dependency('sdl2')
-dep_sdl2_ttf = dependency('sdl2_ttf')
+dep_sdl2 = dependency('SDL2')
+
+# SDL2 is case sensitive for the ttf library
+dep_sdl2_ttf = dependency('SDL2_ttf', required: false)
 
 inc_shared_lib_misc_basename = [
   'Bot',
