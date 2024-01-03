@@ -175,6 +175,7 @@ env.VariantDir(buildpath,'.',duplicate=0)
 luaenv = env.Clone()
 luaenv['CCFLAGS'].remove('-std=c++17')
 physfsenv = env.Clone()
+physfsenv['CCFLAGS'].remove('-std=c++17')
 networkenv = env.Clone()
 
 ################################################################
