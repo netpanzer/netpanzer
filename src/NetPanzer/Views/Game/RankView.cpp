@@ -36,7 +36,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/WorldInputCmdProcessor.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Views/Components/Label.hpp"
-#include "2D/Surface.cpp"
+#include "2D/Surface.hpp"
 
 #define HEADER_HEIGHT 24
 #define ENTRY_HEIGHT 20
