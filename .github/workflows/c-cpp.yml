@@ -8,12 +8,16 @@ on:
     branches: master
     paths:
     - '**'
+    - '!**.yml'
     - '!**.md'
+    - '**/c-cpp.yml'
   pull_request:
     branches: master
     paths:
     - '**'
+    - '!**.yml'
     - '!**.md'
+    - '**/c-cpp.yml'
 
 jobs:
   build:
