@@ -26,6 +26,8 @@
 #include <SDL2/SDL.h>
 #define USE_RWOPS // we want Mix_LOadMUS_RW
 #include <SDL2/SDL_mixer.h>
+#include <random>
+#include <chrono>
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
@@ -335,7 +337,8 @@ void SDLSound::nextSong()
 
     if(currentsong == musicfiles.end()) {
         // create a new random playlist
-        std::random_shuffle(musicfiles.begin(), musicfiles.end());
+        std::mt19937 rng(std::chrono::steady_clock::now().time_since_epoch().count());
+        std::shuffle(musicfiles.begin(), musicfiles.end(), rng);
         currentsong = musicfiles.begin();
     }
 
