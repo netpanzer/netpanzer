@@ -340,6 +340,10 @@ To build the game and run as normal user do the following:
 
     scons
 
+Optionally, if you have multiple cores, you can speed up the build:
+
+    scons -j n  (Where 'n' is the number of cores you would like to specify)
+
 When scons finish without errors the game is ready to play, simply run the binary:
 
     ./netpanzer
