@@ -254,14 +254,6 @@ foreach file : src_basename
 endforeach
 
 src_basename = [
-  'NetworkGlobals.cpp',
-  'main.cpp',
-]
-foreach file : src_basename
-  src += [join_paths('Core', file)]
-endforeach
-
-src_basename = [
   'ResourceManager.cpp',
 ]
 foreach file : src_basename
@@ -372,15 +364,7 @@ foreach file : src_basename
   src += [join_paths('../Lib/Types', file)]
 endforeach
 
-deps = [
-  dependency('SDL2'),
-# SDL2 is case sensitive for the ttf library
-  dependency('SDL2_ttf'),
-  dependency('SDL2_mixer'),
-  dependency('physfs')
-]
-
-exe = executable(
+lib_netpanzer = static_library(
   'netpanzer',
   src,
   include_directories : [
@@ -390,3 +374,5 @@ exe = executable(
     deps,
   ]
 )
+
+dep_netpanzer = declare_dependency(link_with: lib_netpanzer)
