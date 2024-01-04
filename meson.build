@@ -15,7 +15,6 @@ cc = meson.get_compiler('c')
 
 extra_flags = [
   '-fno-common',
-  '-DPACKAGE_VERSION="@0@"'.format(meson.project_version()),
 #  '-fstack-protector-strong',
 #  '-Wformat-security',
 #  '-Wformat-overflow=2',
@@ -27,6 +26,10 @@ extra_flags = [
 add_project_arguments(cc.get_supported_arguments(extra_flags), language: 'c')
 add_project_arguments(cxx.get_supported_arguments(extra_flags), language: 'cpp')
 
+conf = configuration_data()
+conf.set_quoted('PACKAGE_VERSION', meson.project_version())
+config_h = configure_file(output : 'config.h', configuration : conf)
+
 deps = [
   dependency('SDL2'),
 # SDL2 is case sensitive for the ttf library
@@ -34,6 +37,8 @@ deps = [
   dependency('SDL2_mixer'),
   dependency('physfs')
 ]
+
+inc_dirs = [include_directories('.')]
 
 subdir('src')
 
