@@ -4,8 +4,8 @@ project(
   version: '0.9.0.06',
   meson_version : '>= 0.56.2',
   default_options: [
-    'warning_level=1',
-    'cpp_std=c++17'
+    'warning_level=2',
+    # 'cpp_std=c++17'
     ]
   )
 
