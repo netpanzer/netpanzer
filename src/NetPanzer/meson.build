@@ -127,42 +127,6 @@ foreach file : src_basename
 endforeach
 
 src_basename = [
-  'print.c',
-  'lstring.c',
-  'ltablib.c',
-  'loadlib.c',
-  'lmathlib.c',
-  'lstate.c',
-  'ldump.c',
-  'loslib.c',
-  'liolib.c',
-  'ldblib.c',
-  'lbaselib.c',
-  'lapi.c',
-  'llex.c',
-  'lopcodes.c',
-  'lvm.c',
-  'ltable.c',
-  'linit.c',
-  'lobject.c',
-  'lstrlib.c',
-  'lcode.c',
-  'ldebug.c',
-  'lauxlib.c',
-  'ldo.c',
-  'lfunc.c',
-  'lzio.c',
-  'ltm.c',
-  'lgc.c',
-  'lmem.c',
-  'lparser.c',
-  'lundump.c'
-]
-foreach file : src_basename
-  src += [join_paths('../Lib/lua', file)]
-endforeach
-
-src_basename = [
   'TimerInterface.cpp',
   'Math.cpp',
   'UtilInterface.cpp',
@@ -372,6 +336,7 @@ lib_netpanzer = static_library(
   ],
   dependencies: [
     deps,
+    dep_embedded_lua
   ]
 )
 
