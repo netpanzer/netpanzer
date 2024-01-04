@@ -95,7 +95,7 @@ public:    PlayerID player_id;
     unsigned int currentPActTime;
     unsigned int mydatastrtime;
     unsigned int mydatastrtime0;
-    unsigned int commandBurst;
+    int commandBurst;
     int mydatastrc;
     unsigned short int conn_end;
     unsigned short int pre_conn_end;

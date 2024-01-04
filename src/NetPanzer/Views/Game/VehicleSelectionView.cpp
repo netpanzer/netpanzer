@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
+Copyright (C) 1998-2024 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue, Et al.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -130,8 +130,6 @@ iRect   VehicleSelectionView::miniProductionRect(0, 0, 0, 0);
 Surface VehicleSelectionView::unitImages;
 bool    VehicleSelectionView::displayMiniProductionStatus = true;
 bool    VehicleSelectionView::displayOutpostNames = true;
-
-
 
 void activateVehicleSelectionView(ObjectiveID outpost_id)
 {
@@ -552,9 +550,9 @@ void VehicleSelectionView::mouseMove(const iXY &prevPos, const iXY &newPos)
 //---------------------------------------------------------------------------
 void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
 {
-    char strBuf[256];
-    char outpostNameBuf[256];
-    char outpostUserNameBuf[256];
+    std::string strBuf;
+    std::string outpostNameBuf;
+    std::string outpostUserNameBuf;
     char productionUnitBuf[256];
     char timeLeftBuf[256];
 
@@ -585,37 +583,25 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
         if ( obj->occupying_player )
         {
             miniProductionRect.min.y-=16;
-            int length = strlen( obj->occupying_player->getName().c_str() );
-            if (length > 20)
-            {
-                strncpy(strBuf, obj->occupying_player->getName().c_str() , 17);
-                strBuf[17] = 0; // fix runners
-                sprintf(outpostUserNameBuf, "Owner: %s...", strBuf);
-            }
-            else
-            {
-                sprintf(outpostUserNameBuf, "Owner: %s", obj->occupying_player->getName().c_str() );
-                //outpostUserNameBuf[26] = 0;
-            }
+            strBuf = obj->occupying_player->getName();
+            size_t max_len = 20;
+            if (strBuf.length() > max_len)
+                strBuf = obj->occupying_player->getName().substr(0, max_len) + "...";
+            outpostUserNameBuf = std::string("Owner: ") + strBuf;
         }
         iXY pos(miniProductionRect.min);
         pos.x += 4;
         pos.y += 4;
 
-        // Make sure the name will fit reasonably in the area.
-        int length = strlen( obj->name );
-        if (length > 18) // was 10
-        {
-            strncpy(strBuf, (const char *) obj->name , 15);
-            strBuf[15] = 0; // fix runners (was 7)
-            sprintf(outpostNameBuf, "%s...",  strBuf);
-        }
-        else
-        {
-            sprintf(outpostNameBuf, "%s", (const char *) obj->name );
-        }
+        strBuf = obj->name;
+        size_t max_len = 18;
+        if (strBuf.length() > max_len)
+            strBuf = std::string(obj->name).substr(0, max_len) + "...";
+        outpostNameBuf = strBuf;
         checkMiniProductionRect(outpostNameBuf);
 
+        const char *c_str_outpostUserNameBuf = outpostUserNameBuf.c_str();
+        const char *c_str_outpostNameBuf = outpostNameBuf.c_str();
         if ( owned )
         {
             if ( ! obj->unit_generation_on_flag )
@@ -623,9 +609,9 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                 // Objective is off.
                 checkMiniProductionRect2(outpostUserNameBuf, outpostNameBuf);
                 dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
-                dest.bltString(pos.x, pos.y, outpostUserNameBuf, Color::cyan);
+                dest.bltString(pos.x, pos.y, c_str_outpostUserNameBuf, Color::cyan);
                 pos.y += 16;
-                dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
+                dest.bltString(pos.x, pos.y, c_str_outpostNameBuf, Color::white);
                 pos.y += 16;
                 dest.bltString(pos.x, pos.y, "Production Off", Color::white);
             }
@@ -643,10 +629,10 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                 checkMiniProductionRect3(outpostUserNameBuf, outpostNameBuf, productionUnitBuf);
                 dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
 
-                dest.bltString(pos.x, pos.y, outpostUserNameBuf, Color::cyan);
+                dest.bltString(pos.x, pos.y, c_str_outpostUserNameBuf, Color::cyan);
                 pos.x += unitImages.getWidth();
                 pos.y += 16;
-                dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
+                dest.bltString(pos.x, pos.y, c_str_outpostNameBuf, Color::white);
                 pos.y += 16;
                 dest.bltString(pos.x, pos.y, productionUnitBuf, Color::white);
                 pos.y += 16;
@@ -663,10 +649,10 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
             dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
             if ( obj->occupying_player)
             {
-                dest.bltString(pos.x, pos.y, outpostUserNameBuf, Color::cyan);
+                dest.bltString(pos.x, pos.y, c_str_outpostUserNameBuf, Color::cyan);
                 pos.y += 16;
             }
-            dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
+            dest.bltString(pos.x, pos.y, c_str_outpostNameBuf, Color::white);
         }
     }
 
