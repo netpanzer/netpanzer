@@ -22,15 +22,9 @@
 #ifndef OPTIONMM_option
 #define OPTIONMM_option
 
-#ifndef __VECTOR__
 #include <vector>
-#endif
-#ifndef __STRING__
 #include <string>
-#endif
-#ifndef __IOSTREAM__
 #include <iostream>
-#endif
 
 /** @file   option.hh
     @author Christian Holm

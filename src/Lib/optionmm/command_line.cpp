@@ -25,15 +25,9 @@
     @brief  Command line parser */
 
 
-#ifndef OPTIONMM_command_line
 #include "command_line.hpp"
-#endif
-#ifndef __CSTDLIB__
 #include <cstdlib>
-#endif
-#ifndef __IOSTREAM__
 #include <iostream>
-#endif
 
 //____________________________________________________________________
 optionmm::command_line::command_line(const std::string title,

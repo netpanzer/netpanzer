@@ -25,15 +25,9 @@
     @brief  Command line option  */
 
 
-#ifndef OPTIONMM_option
 #include "option.hpp"
-#endif
-#ifndef __IOSTREAM__
 #include <iostream>
-#endif
-#ifndef __IOMANIP__
 #include <iomanip>
-#endif
 #if defined(__GNUC__) && __GNUC__ <= 2
 #define CMP_ARG(s,x) x, size_t(s), x.size()
 #else

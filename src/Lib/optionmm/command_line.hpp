@@ -21,18 +21,10 @@
 //
 #ifndef OPTIONMM_command_line
 #define OPTIONMM_command_line
-#ifndef OPTIONMM_optionmm
 #include <optionmm/option.hpp>
-#endif
-#ifndef __VECTOR__
 #include <vector>
-#endif
-#ifndef __STRING__
 #include <string>
-#endif
-#ifndef __IOSTREAM__
 #include <iostream>
-#endif
 
 /** @file   command_line.hh
     @author Christian Holm
