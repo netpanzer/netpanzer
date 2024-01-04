@@ -204,12 +204,6 @@ struct toggle_value<bool>
     {
         x = !x;
     }
-#if defined(__GNUC__) && __GNUC__ >= 2
-    inline void operator()(std::_Bit_reference x)
-    {
-        x.flip();
-    }
-#endif
 };
 
 /// Explit specialisatation as a typedef
