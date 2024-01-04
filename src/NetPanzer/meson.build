@@ -372,13 +372,13 @@ foreach file : src_basename
   src += [join_paths('../Lib/Types', file)]
 endforeach
 
-
-dep_sdl2 = dependency('SDL2')
-
+deps = [
+  dependency('SDL2'),
 # SDL2 is case sensitive for the ttf library
-dep_sdl2_ttf = dependency('SDL2_ttf')
-dep_sdl2_mixer = dependency('SDL2_mixer')
-dep_physfs = dependency('physfs')
+  dependency('SDL2_ttf'),
+  dependency('SDL2_mixer'),
+  dependency('physfs')
+]
 
 exe = executable(
   'netpanzer',
@@ -387,9 +387,6 @@ exe = executable(
     inc_dirs
   ],
   dependencies: [
-    dep_sdl2,
-    dep_sdl2_ttf,
-    dep_sdl2_mixer,
-    dep_physfs
+    deps,
   ]
 )
