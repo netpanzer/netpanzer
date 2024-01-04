@@ -26,4 +26,33 @@ extra_flags = [
 
 add_project_arguments(cc.get_supported_arguments(extra_flags), language: 'c')
 add_project_arguments(cxx.get_supported_arguments(extra_flags), language: 'cpp')
+
+deps = [
+  dependency('SDL2'),
+# SDL2 is case sensitive for the ttf library
+  dependency('SDL2_ttf'),
+  dependency('SDL2_mixer'),
+  dependency('physfs')
+]
+
 subdir('src')
+
+src = []
+core_src = [
+  'NetworkGlobals.cpp',
+  'main.cpp',
+]
+foreach file : core_src
+  src += [join_paths('src/NetPanzer/Core', file)]
+endforeach
+
+exe = executable(
+  'netpanzer',
+  src,
+  include_directories : [
+    inc_dirs
+  ],
+  dependencies: [
+    dep_netpanzer,
+  ]
+)
