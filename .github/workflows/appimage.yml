@@ -1,0 +1,36 @@
+name: Build AppImage
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'version number'
+        required: true
+        type: string
+
+env:
+  VERSION: ${{ inputs.version }}
+
+jobs:
+  build-appimage:
+    runs-on: ubuntu-20.04
+    container: andy5995/netpanzer-build-env:focal
+    env:
+      ARCH: x86_64
+      WORKSPACE: ${{ github.workspace }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: Prepare AppImage
+      run: |
+        support/scripts/prep-appimage.sh
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: netpanzer_appimage
+        path: ${{ github.workspace }}/support/NetPanz*.AppImage*
+
