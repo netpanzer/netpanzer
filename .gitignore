@@ -1,5 +1,6 @@
 .idea
 .sconsign.dblite
+AppDir
 build
 netpanzer
 pak2bmp
