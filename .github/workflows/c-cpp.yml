@@ -1,6 +1,6 @@
-name: C/C++ CI
+name: Linux
 concurrency:
-  group: build-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
   cancel-in-progress: true
 
 on:
@@ -41,10 +41,6 @@ jobs:
           - name: ubuntu-22.04-clang-scons
             os: ubuntu-22.04
             cc: clang
-          - name: macos-meson
-            os: macos-latest
-            cc: clang
-            install_packages: physfs
 
     runs-on: ${{ matrix.build.os }}
     container: ${{ matrix.build.container }}
@@ -69,21 +65,7 @@ jobs:
         export -p
         echo '${{ toJSON(matrix) }}'
 
-    - if: ${{ matrix.build.name == 'macos-meson' }}
-      run: |
-        pip3 install meson ninja
-
-    - if: ${{ contains(matrix.build.os, 'macos') }}
-      name: Install dependencies
-      run: |
-        brew install \
-          pkg-config \
-          sdl2_ttf \
-          sdl2_mixer \
-          ${{ matrix.build.install_packages }}
-
-    - if: ${{ contains(matrix.build.os, 'ubuntu') }}
-      name: Install dependencies
+    - name: Install dependencies
       run: |
         sudo apt install -y \
           libsdl2-dev \
@@ -92,7 +74,7 @@ jobs:
           python3 \
           python3-setuptools
 
-    - if: ${{ contains(matrix.build.os, 'ubuntu') && contains(matrix.build.name, 'meson') }}
+    - if: ${{ contains(matrix.build.name, 'meson') }}
       name: Install dependencies
       run: |
         sudo apt install -y \
@@ -101,7 +83,7 @@ jobs:
           ninja-build
         # sudo -H python3 -m pip install meson ninja
 
-    - if: ${{ contains(matrix.build.os, 'ubuntu') && contains(matrix.build.name, 'scons') }}
+    - if: ${{ contains(matrix.build.name, 'scons') }}
       name: Install dependencies
       run: |
         sudo apt install -y scons
@@ -125,4 +107,4 @@ jobs:
 
     - if: ${{ contains(matrix.build.name, 'scons') }}
       name: Scons build
-      run: scons -j 3
+      run: scons -j $(nproc)
