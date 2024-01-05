@@ -26,7 +26,7 @@ jobs:
       fail-fast: false
       matrix:
         build:
-          - name: ubuntu-22.04-gcc-meson
+          - name: ubuntu-22.04-gcc-meson-dist
             os: ubuntu-22.04
             cc: gcc
           - name: ubuntu-22.04-gcc-scons
@@ -79,11 +79,26 @@ jobs:
       run: |
         sudo apt install -y scons
 
-    - if: ${{ contains(matrix.build.name, 'meson') }}
+    - if: ${{ contains(matrix.build.name, 'meson') && ! contains(matrix.build.name, 'dist') }}
       name: Meson build
       run: |
         meson setup _build
         ninja -v -C _build
+
+    - if: ${{ contains(matrix.build.name, 'meson-dist') }}
+      name: Test dist and install
+      run: |
+        meson setup _build
+        cd _build
+        meson dist
+        DESTDIR=$PWD/test_install ninja install
+        count=$(find $PWD/test_install | wc -l)
+        echo "Files installed: $count"
+        n_goal=1000
+        if [ $count -lt $n_goal ]; then
+                echo "Error: Number of Files installed is less than $n_goal"
+                exit 1
+        fi
 
     - if: ${{ contains(matrix.build.name, 'scons') }}
       name: Scons build
