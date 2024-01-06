@@ -26,7 +26,7 @@ jobs:
     - name: Prepare AppImage
       run: |
         export -p
-        support/scripts/prep-appimage.sh
+        support/scripts/make-appimage.sh
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
