@@ -23,8 +23,6 @@ jobs:
       WORKSPACE: ${{ github.workspace }}
     steps:
     - uses: actions/checkout@v4
-      with:
-        submodules: true
     - name: Prepare AppImage
       run: |
         support/scripts/prep-appimage.sh
