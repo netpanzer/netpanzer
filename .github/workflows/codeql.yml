@@ -1,0 +1,53 @@
+name: CodeQL
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: master
+    paths:
+    - '**.cpp'
+    - '**.c'
+    - '**.h'
+    - '**.hpp'
+    - '**/codeql.yml'
+  pull_request:
+    branches: master
+    paths:
+    - '**.cpp'
+    - '**.c'
+    - '**.h'
+    - '**.hpp'
+    - '**/codeql.yml'
+
+jobs:
+  codeql:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: false
+
+    - name: Install dependencies
+      run: |
+        .github/scripts/install-linux-deps.sh
+        sudo apt install -y \
+          libphysfs-dev \
+          meson \
+          ninja-build
+        # sudo -H python3 -m pip install meson ninja
+
+    # Initializes the CodeQL tools for scanning.
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: 'cpp'
+
+    - name: Meson build
+      run: |
+        meson setup _build
+        ninja -v -C _build
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
