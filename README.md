@@ -1,5 +1,6 @@
 [![Linux](https://github.com/netpanzer/netpanzer/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/netpanzer/netpanzer/actions/workflows/c-cpp.yml)
 [![MacOS](https://github.com/netpanzer/netpanzer/actions/workflows/macos.yml/badge.svg)](https://github.com/netpanzer/netpanzer/actions/workflows/macos.yml)
+[![CodeQL](https://github.com/netpanzer/netpanzer/actions/workflows/codeql.yml/badge.svg)](https://github.com/netpanzer/netpanzer/actions/workflows/codeql.yml)
 # NetPanzer
 ### Open Source RTS
 
