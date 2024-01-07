@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <time.h>
 
+#include "globals.hpp"
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
@@ -36,10 +37,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Interfaces/GameConfig.hpp"
 
-#endif
-
-#ifndef PACKAGE_VERSION
-#include "config.h"
 #endif
 
 SDLVideo *Screen; // get rid of this later...
@@ -88,13 +85,13 @@ void SDLVideo::setVideoMode(int new_width, int new_height, int bpp, bool fullscr
     if (window == nullptr) {
         if (fullscreen) {
             // use the native desktop resolution, and scale linearly later using renderer
-            window = SDL_CreateWindow("NetPanzer " PACKAGE_VERSION,
+            window = SDL_CreateWindow(GetNameVersion().c_str(),
                                       SDL_WINDOWPOS_UNDEFINED,
                                       SDL_WINDOWPOS_UNDEFINED,
                                       0, 0,
                                       SDL_WINDOW_FULLSCREEN_DESKTOP);
         } else {
-            window = SDL_CreateWindow("NetPanzer " PACKAGE_VERSION,
+            window = SDL_CreateWindow(GetNameVersion().c_str(),
                                       SDL_WINDOWPOS_UNDEFINED,
                                       SDL_WINDOWPOS_UNDEFINED,
                                       new_width, new_height,

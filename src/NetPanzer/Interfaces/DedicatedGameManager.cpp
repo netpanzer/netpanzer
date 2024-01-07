@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <iomanip>
 #include <SDL2/SDL.h>
 
+#include "globals.hpp"
 #include "Interfaces/ChatInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/Console.hpp"
@@ -50,10 +51,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 
 #include "Scripts/ScriptManager.hpp"
-
-#ifndef PACKAGE_VERSION
-	#include "config.h"
-#endif
 
 DedicatedGameManager::DedicatedGameManager()
     : commandqueue_mutex(0), console(0), heartbeat(0), infosocket(0)
@@ -124,7 +121,7 @@ void DedicatedGameManager::inputLoop()
                 //*Console::server
                 std::cout
                     << "Server " << *GameConfig::server_name
-                    << " version " << PACKAGE_VERSION << " port "
+                    << " version " << GetVersion() << " port "
                     << GameConfig::server_port << "\n"
                     << "Map: " << *GameConfig::game_map << "\n"
                     << std::setw(3) << "ID" << " "

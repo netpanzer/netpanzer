@@ -26,10 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/Multi/GetSessionView.hpp"
 #include "Interfaces/GameConfig.hpp"
 
-#ifndef PACKAGE_VERSION
-	#include "config.h"
-#endif
-
 // MainMenuView
 //---------------------------------------------------------------------------
 MainMenuView::MainMenuView() : MenuTemplateView()

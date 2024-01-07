@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 #include "Scripts/ScriptManager.hpp"
-
+#include "globals.hpp"
 #include "lua/lua.hpp"
 
 #ifdef WIN32
@@ -62,11 +62,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/ChunkTrajectoryParticle2D.hpp"
 #include "Particles/CraterParticle2D.hpp"
 #include "Units/UnitProfileInterface.hpp"
-
-
-#ifndef PACKAGE_VERSION
-	#include "config.h"
-#endif
 
 //---------------------------------------------------------------------------
 
@@ -153,7 +148,7 @@ BaseGameManager *initialise(int argc, char** argv)
 
     // Parse commandline
     using namespace optionmm;
-    command_line commandline("NetPanzer", PACKAGE_VERSION,
+    command_line commandline("NetPanzer", GetVersion().c_str(),
             "Copyright(c) 1998 Pyrosoft Inc. & NetPanzer Development Team", "",
             argc, argv);
 
