@@ -1,5 +1,6 @@
 /*
-Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
+Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue, Et al.
+Copyright (C) 2023-2024 NetPanzer (https://github.com/netpanzer/), Devon, Et al.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <vector>
 
+#include "globals.hpp"
 #include "Views/MainMenu/MenuTemplateView.hpp"
 #include "2D/Palette.hpp"
 #include "Views/Components/Desktop.hpp"
@@ -35,10 +37,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "Multi/ServerListView.hpp"
-
-#ifndef PACKAGE_VERSION
-	#include "config.h"
-#endif
 
 Surface       MenuTemplateView::backgroundSurface;
 PackedSurface MenuTemplateView::titlePackedSurface;
@@ -216,16 +214,15 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
         clientArea.FillRoundRect(MenuRect, 10, Color::white);
         clientArea.RoundRect(MenuRect, 10, Color::gray);
 
-        static char text[] =
-        "NetPanzer " PACKAGE_VERSION;
-        clientArea.bltString(10, 580, text, Color::gray);
+        static std::string text = GetNameVersion();
+        clientArea.bltString(10, 580, text.c_str(), Color::gray);
         // I don't like them so I delete them!
         //titlePackedSurface.blt(clientArea, bodyTextRect.min.x, 390);
         //titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x, bodyTextRect.max.y-50, Palette::colorTable6040);
     }
 /*
     static char text[] =
-        "netPanzer " PACKAGE_VERSION;
+        "netPanzer " GetVersion();
         clientArea.bltString(10, 590, text, Color::gray);
 */
     //LOGGER.info("View is %s", currentView);
@@ -262,9 +259,8 @@ void MenuTemplateView::doDrawM(Surface &viewArea, Surface &clientArea)  // start
         //titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x, bodyTextRect.max.y-50, Palette::colorTable6040);
     }
 
-    static char text[] =
-        "NetPanzer " PACKAGE_VERSION;
-        clientArea.bltString(10, 580, text, Color::gray);
+    static std::string text = GetNameVersion();
+    clientArea.bltString(10, 580, text.c_str(), Color::gray);
 
     View::doDraw(viewArea, clientArea);
 } // end doDrawM
@@ -296,9 +292,8 @@ void MenuTemplateView::doDrawAlt(Surface &viewArea, Surface &clientArea) //help 
 
         }
 
-    static char text[] =
-        "NetPanzer " PACKAGE_VERSION;
-        clientArea.bltString(10, 590, text, Color::gray);
+    static std::string text = GetNameVersion();
+    clientArea.bltString(10, 590, text.c_str(), Color::gray);
 
     View::doDraw(viewArea, clientArea);
 } // end doDraw

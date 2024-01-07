@@ -260,6 +260,7 @@ npdirs = """
 """
 
 env.Append( NPSOURCES = globSources(env, 'src/NetPanzer', npdirs, "*.cpp") )
+env.Append( NPSOURCES = 'src/Lib/globals.cpp' )
 if 'WINICON' in env:
     env.Append( NPSOURCES = env['WINICON'] )
 

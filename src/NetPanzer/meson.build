@@ -1,4 +1,4 @@
-src = []
+src = ['../Lib/globals.cpp']
 
 src_basename = [
   'Bot.cpp',
