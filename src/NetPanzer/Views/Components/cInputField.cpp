@@ -284,7 +284,7 @@ void cInputField::addExtendedChar(int newExtendedChar)
 
                 // Only do this if we are not at the end of the string.
                 if (byteCount > 0) {
-                    memcpy(destString + cursorPos - 1, destString + cursorPos, byteCount);
+                    memmove(destString + cursorPos - 1, destString + cursorPos, byteCount);
                 }
 
                 cursorPos--;
