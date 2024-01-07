@@ -274,8 +274,7 @@ void cInputField::addExtendedChar(int newExtendedChar)
             if (cursorPos == strlen(destString)) {
                 break;
             }
-
-            memcpy(destString + cursorPos, destString + cursorPos + 1, strlen(destString + cursorPos + 1) + 1);
+            memmove(destString + cursorPos, destString + cursorPos + 1, strlen(destString + cursorPos + 1) + 1);
         }
         break;
 
