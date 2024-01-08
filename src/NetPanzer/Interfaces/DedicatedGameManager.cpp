@@ -118,11 +118,10 @@ void DedicatedGameManager::inputLoop()
             }
             case ServerCommand::STATUS:
             {
-                Package pkg;
                 //*Console::server
                 std::cout
                     << "Server " << *GameConfig::server_name
-                    << " version " << pkg.GetVersion() << " port "
+                    << " version " << Package::GetVersion() << " port "
                     << GameConfig::server_port << "\n"
                     << "Map: " << *GameConfig::game_map << "\n"
                     << std::setw(3) << "ID" << " "

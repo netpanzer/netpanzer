@@ -214,8 +214,7 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
         clientArea.FillRoundRect(MenuRect, 10, Color::white);
         clientArea.RoundRect(MenuRect, 10, Color::gray);
 
-        Package pkg;
-        static std::string text = pkg.GetFullyQualifiedName();
+        static std::string text = Package::GetFullyQualifiedName();
         clientArea.bltString(10, 580, text.c_str(), Color::gray);
         // I don't like them so I delete them!
         //titlePackedSurface.blt(clientArea, bodyTextRect.min.x, 390);
@@ -260,8 +259,7 @@ void MenuTemplateView::doDrawM(Surface &viewArea, Surface &clientArea)  // start
         //titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x, bodyTextRect.max.y-50, Palette::colorTable6040);
     }
 
-    Package pkg;
-    static std::string text = pkg.GetFullyQualifiedName();
+    static std::string text = Package::GetFullyQualifiedName();
     clientArea.bltString(10, 580, text.c_str(), Color::gray);
 
     View::doDraw(viewArea, clientArea);
@@ -294,8 +292,7 @@ void MenuTemplateView::doDrawAlt(Surface &viewArea, Surface &clientArea) //help 
 
         }
 
-    Package pkg;
-    static std::string text = pkg.GetFullyQualifiedName();
+    static std::string text = Package::GetFullyQualifiedName();
     clientArea.bltString(10, 590, text.c_str(), Color::gray);
 
     View::doDraw(viewArea, clientArea);

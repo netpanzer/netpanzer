@@ -83,16 +83,15 @@ void SDLVideo::setVideoMode(int new_width, int new_height, int bpp, bool fullscr
     this->is_fullscreen = fullscreen;
 
     if (window == nullptr) {
-        Package pkg;
         if (fullscreen) {
             // use the native desktop resolution, and scale linearly later using renderer
-            window = SDL_CreateWindow(pkg.GetFullyQualifiedName().c_str(),
+            window = SDL_CreateWindow(Package::GetFullyQualifiedName().c_str(),
                                       SDL_WINDOWPOS_UNDEFINED,
                                       SDL_WINDOWPOS_UNDEFINED,
                                       0, 0,
                                       SDL_WINDOW_FULLSCREEN_DESKTOP);
         } else {
-            window = SDL_CreateWindow(pkg.GetFullyQualifiedName().c_str(),
+            window = SDL_CreateWindow(Package::GetFullyQualifiedName().c_str(),
                                       SDL_WINDOWPOS_UNDEFINED,
                                       SDL_WINDOWPOS_UNDEFINED,
                                       new_width, new_height,

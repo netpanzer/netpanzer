@@ -36,14 +36,13 @@ InfoSocket::InfoSocket(int p) : socket(nullptr)
 {
     Address addr = Address::resolve( *GameConfig::server_bindaddress, p, false, true);
     socket = new network::UDPSocket(addr,this);
-    Package pkg;
 
     // These parameters are fixed always
     // others I plan to be modifiable while game is running.
     std::stringstream s;
     s << "gamename\\netpanzer\\protocol\\" << NETPANZER_PROTOCOL_VERSION
       << "\\hostname\\" << *GameConfig::player_name
-      << "\\gameversion\\" << pkg.GetVersion();
+      << "\\gameversion\\" << Package::GetVersion();
     statusHead = s.str();
 }
 

@@ -148,8 +148,7 @@ BaseGameManager *initialise(int argc, char** argv)
 
     // Parse commandline
     using namespace optionmm;
-    Package pkg;
-    command_line commandline("NetPanzer", pkg.GetVersion().c_str(),
+    command_line commandline("NetPanzer", Package::GetVersion().c_str(),
             "Copyright(c) 1998 Pyrosoft Inc. & NetPanzer Development Team", "",
             argc, argv);
 
