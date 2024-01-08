@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <iomanip>
 #include <SDL2/SDL.h>
 
-#include "globals.hpp"
+#include "package.hpp"
 #include "Interfaces/ChatInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/Console.hpp"
