@@ -1,11 +1,17 @@
 src = []
 
 src_basename = [
+  'package.cpp'
+]
+foreach file : src_basename
+  src += [join_paths('../Lib', file)]
+endforeach
+
+src_basename = [
   'Bot.cpp',
   'BotPlayer.cpp',
   'BotTaskList.cpp'
 ]
-
 foreach file : src_basename
   src += [join_paths('Bot', file)]
 endforeach

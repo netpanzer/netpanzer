@@ -16,20 +16,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-// This condition should be removed after migration from Scons
-// to Meson is completed
-#ifndef PACKAGE_VERSION
-    #include "config.h"
-#endif
-
+#include "package.hpp"
 #include "CreditsScrollView.hpp"
 
 #include "Views/GameViewGlobals.hpp"
 #include "Views/Components/Desktop.hpp"
 //#include "Classes/WorldInputCmdProcessor.hpp"
-//#ifndef PACKAGE_VERSION
-//	#define PACKAGE_VERSION "testing"
-//#endif
 //---------------------------------------------------------------------------
 CreditsScrollView::CreditsScrollView() : SpecialButtonView()
 {
@@ -45,9 +37,12 @@ CreditsScrollView::CreditsScrollView() : SpecialButtonView()
     //moveTo(iXY(0, 0));
     //resize(iXY(800, 600));
 
-
+    // Is having the game description here really necessary? And isn't
+    // the version info already available at the main menu?
+    char line[512];
     insert("");
-    insert("  This is NetPanzer v. " PACKAGE_VERSION ", a massively multiplayer");
+    snprintf (line, sizeof line, "  This is %s v. %s, a massively multiplayer", Package::GetName().c_str(), Package::GetVersion().c_str());
+    insert(line);
     insert("  tank battle game.");
     insert("");
     insert("  This application is free software under the terms of the");

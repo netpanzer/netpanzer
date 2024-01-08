@@ -16,6 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "package.hpp"
 #include "InfoSocket.hpp"
 #include "Util/StringTokenizer.hpp"
 
@@ -31,10 +32,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string>
 #include <sstream>
 
-#ifndef PACKAGE_VERSION
-	#define PACKAGE_VERSION "testing"
-#endif
-
 InfoSocket::InfoSocket(int p) : socket(nullptr)
 {
     Address addr = Address::resolve( *GameConfig::server_bindaddress, p, false, true);
@@ -45,7 +42,7 @@ InfoSocket::InfoSocket(int p) : socket(nullptr)
     std::stringstream s;
     s << "gamename\\netpanzer\\protocol\\" << NETPANZER_PROTOCOL_VERSION
       << "\\hostname\\" << *GameConfig::player_name
-      << "\\gameversion\\" << PACKAGE_VERSION;
+      << "\\gameversion\\" << Package::GetVersion();
     statusHead = s.str();
 }
 
