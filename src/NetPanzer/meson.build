@@ -104,12 +104,10 @@ foreach file : src_basename
 endforeach
 
 src_basename = [
-  'RGBColor.cpp',
   'Palette.cpp',
   'Span.cpp',
   'PackedSurface.cpp',
   'ColorTable.cpp',
-  'DigitText.cpp',
   'Surface.cpp',
   'Color.cpp'
 ]
