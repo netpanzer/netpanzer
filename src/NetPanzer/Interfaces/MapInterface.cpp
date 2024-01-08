@@ -55,11 +55,11 @@ bool MapInterface::startMapLoad( const char *file_path, const char *mapstyle_mpa
     NPString stpath = mapstyle_mpath;
     NPString tsname = main_map.getAssocTileSet();
 
-    char subbuff[24];
-    memcpy( subbuff, &tsname[0], 23); // max 23 chars for tileset name
-    char * pch;
-    pch = strstr (subbuff,".tls");
-    strncpy (pch,"\0",1);
+    const int max_len_tsname = 23;
+    std::string subbuff = tsname.substr(0, max_len_tsname);
+    size_t found = subbuff.find(".tls");
+    if (found != std::string::npos)
+        subbuff = subbuff.substr(0, found);
 
     NPString tsnamesub = subbuff;
 
