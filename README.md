@@ -23,6 +23,10 @@ another 2 weeks polishing for the first release. Since then development has pick
 down, with various different teams and maintainers. The current maintainer of the game and masterserver
 is "winrid" on GitHub.
 
+## Contributing and Reporting Bugs
+
+See [CONTRIBUTING.md](https://github.com/netpanzer/netpanzer/blob/master/CONTRIBUTING.md)
+
 ## To Play
 
 Go to the Releases tab in GitHub and download the version for your OS. The version in Linux repos as of 2024
@@ -415,9 +419,3 @@ And of course, the file "netpanzer" is the main binary that should be on the PAT
 Netpanzer doesn't come with own musicfiles yet. However, you can place your
 favourite .mp3, .ogg or .mod files into the sound/music directory and netpanzer
 will play these in random order while you play.
-
-## Reporting Issues
-
-Bugs should be reported here: https://github.com/netpanzer/netpanzer/issues
-
-Also feel free to ask in the Support channels in Discord.
