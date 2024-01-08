@@ -37,9 +37,12 @@ CreditsScrollView::CreditsScrollView() : SpecialButtonView()
     //moveTo(iXY(0, 0));
     //resize(iXY(800, 600));
 
+    // Is having the game description here really necessary? And isn't
+    // the version info already available at the main menu?
+    Package pkg;
     char line[512];
     insert("");
-    snprintf (line, sizeof line, "  This is %s v. %s, a massively multiplayer", GetName().c_str(), GetVersion().c_str());
+    snprintf (line, sizeof line, "  This is %s v. %s, a massively multiplayer", pkg.GetName().c_str(), pkg.GetVersion().c_str());
     insert(line);
     insert("  tank battle game.");
     insert("");

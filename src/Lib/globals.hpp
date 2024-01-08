@@ -18,8 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 
-std::string GetVersion(void);
-
-std::string GetName(void);
-
-std::string GetNameVersion(void);
+class Package {
+public:
+    const std::string GetVersion(void);
+    const std::string GetName(void);
+    const std::string GetFullyQualifiedName(void);
+};
