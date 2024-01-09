@@ -36,7 +36,6 @@ protected:
     virtual void shutdownSoundSubSystem();
 
     virtual void initializeGameConfig(const std::string& configfile);
-    virtual void shutdownGameConfig();
 
     // initialize all static objects / interfaces;
     virtual void initializeGameObjects();

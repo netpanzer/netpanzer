@@ -98,14 +98,7 @@ void BaseGameManager::initializeGameConfig(const std::string& configfile)
         gameconfig = new GameConfig("/config/client.cfg");
     else
         gameconfig = new GameConfig(configfile, false);
-}
-//-----------------------------------------------------------------
-void BaseGameManager::shutdownGameConfig()
-{
-    if (gameconfig) {
-        delete gameconfig;
-        gameconfig = nullptr;
-    }
+    // cleanup/saving of game config is done in main and depends on shutdown process
 }
 //-----------------------------------------------------------------
 void BaseGameManager::initializeInputDevices()
@@ -199,7 +192,6 @@ void BaseGameManager::shutdownSubSystems()
     shutdownVideoSubSystem();
     shutdownInputDevices();
     ResourceManager::finalize();
-    shutdownGameConfig();
 }
 //-----------------------------------------------------------------
 bool BaseGameManager::mainLoop()

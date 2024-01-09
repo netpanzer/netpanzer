@@ -92,7 +92,10 @@ UnitProfileInterface::clearProfiles();
 
     SDL_Quit();
     if(save_config && gameconfig) {
+        LOGGER.info("Saving game config.");
         gameconfig->saveConfig();
+    } else if (!gameconfig) {
+        LOGGER.warning("No game config to save.");
     }
     LOGGER.closeLogFile();
     filesystem::shutdown();
