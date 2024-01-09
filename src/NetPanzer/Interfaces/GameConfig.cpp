@@ -586,7 +586,7 @@ void GameConfig::saveConfig()
     OFileStream out(luaconfigfile.c_str());
     out << lua_tostring(L, -1) << std::endl;
     lua_pop(L, 1);
-    LOGGER.warning("Config saved.");
+    LOGGER.info("Config saved.");
 }
 
 GameConfig* gameconfig = nullptr;
