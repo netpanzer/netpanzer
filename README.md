@@ -23,14 +23,22 @@ another 2 weeks polishing for the first release. Since then development has pick
 down, with various different teams and maintainers. The current maintainer of the game and masterserver
 is "winrid" on GitHub.
 
-## Contributing and Reporting Bugs
-
-See [CONTRIBUTING.md](https://github.com/netpanzer/netpanzer/blob/master/CONTRIBUTING.md)
-
 ## To Play
 
 Go to the Releases tab in GitHub and download the version for your OS. The version in Linux repos as of 2024
 is very (8+yrs) old, so we suggest simply downloading the latest release directly.
+
+### Latest Download
+
+[You can download the latest version here.](https://github.com/netpanzer/netpanzer/releases/tag/0.9.0-RC-6)
+
+Note that the current RC version is considered unstable, however we are quickly approaching the `0.9.0` release and
+need your feedback and testing! All current servers (as of 2024) are running this version, so this is what you want
+if you want to play on a public server.
+
+## Contributing and Reporting Bugs
+
+See [CONTRIBUTING.md](https://github.com/netpanzer/netpanzer/blob/master/CONTRIBUTING.md)
 
 ## Gameplay
 
