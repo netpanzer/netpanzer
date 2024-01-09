@@ -43,7 +43,7 @@ jobs:
         artifactErrorsFailBuild: true
         name: NetPanzer Weekly AppImage (Unstable)
         prerelease: true
-        draft: true
+        draft: false
         artifacts: "${{ env.WORKSPACE }}/support/NetPanz*.AppImage*"
         token: ${{ secrets.GITHUB_TOKEN }}
         omitBody: true
