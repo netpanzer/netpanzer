@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  netpanzer-server:
+    image: andy5995/netpanzer:latest
+    container_name: netpanzer-server
+    ports:
+      - "3031:3031/tcp"
+      - "3031:3031/udp"
+    command: su - npserver -c "cd /netpanzer && ./netpanzer -d"
+    volumes:
+      - ./opt:/home/npserver/.netpanzer
+    restart: unless-stopped
