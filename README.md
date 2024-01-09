@@ -32,6 +32,8 @@ is very (8+yrs) old, so we suggest simply downloading the latest release directl
 
 [You can download the latest version here.](https://github.com/netpanzer/netpanzer/releases/tag/0.9.0-RC-6)
 
+[Weekly Linux AppImage is available here.](https://github.com/netpanzer/netpanzer/releases/tag/appimage-weekly)
+
 Note that the current RC version is considered unstable, however we are quickly approaching the `0.9.0` release and
 need your feedback and testing! All current servers (as of 2024) are running this version, so this is what you want
 if you want to play on a public server.
