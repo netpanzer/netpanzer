@@ -4,6 +4,7 @@ RUN apt update &&   \
     apt -y upgrade && \
     apt install -y  \
         build-essential \
+        git \
         libphysfs-dev \
         libsdl2-dev \
         libsdl2-mixer-dev \
