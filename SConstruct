@@ -64,7 +64,7 @@ def globSources(localenv, sourcePrefix, sourceDirs, pattern):
     sources = []
     sourceDirs = Split(sourceDirs)
     for d in sourceDirs:
-        sources.append(glob.glob( sourcePrefix + '/' + d + '/' + pattern))
+        sources.append(sorted(glob.glob( sourcePrefix + '/' + d + '/' + pattern)))
     sources = Flatten(sources)
     targetsources = []
     for s in sources:
