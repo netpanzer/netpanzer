@@ -36,7 +36,7 @@ public:
         setLocation(loc);
         setSize(Surface::getTextLength(Title)+20, 25);
         label = Title;
-        setTextColors(Color::white, Color::black, Color::darkGray);
+        setTextColors(Color::white, Color::lightYellow, Color::darkGray);
         setExtraBorder();
         borders[0][0] = Color::gray;
         borders[0][1] = Color::black;
@@ -45,7 +45,7 @@ public:
         borders[2][0] = Color::gray;
         borders[2][1] = Color::darkGray;
         Surface bnormal;
-        bnormal.loadBMP("pics/backgrounds/menus/buttons/default/page.bmp");
+        bnormal.loadBMP("pics/backgrounds/menus/buttons/default/page_green.bmp");
         Surface spbutton(Surface::getTextLength(Title)+20, 25, 1);
         //spbutton.setFrame(0);
         if (down) bnormal.flipVertical();

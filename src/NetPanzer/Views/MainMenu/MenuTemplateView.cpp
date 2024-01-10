@@ -196,7 +196,7 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 	// When ingame, tint the game into gray
 
         //clientArea.BltRoundRect(getClientRect(), 10, Palette::darkGray256.getColorArray());
-        //clientArea.FillRoundRect(getClientRect(), 10, Color::white); // esc in game
+        clientArea.FillRoundRect(getClientRect(), 10, Color::white); // esc in game
         clientArea.RoundRect(MenuRect, 10, Color::gray);
         clientArea.FillRoundRect(MenuRect, 10, Color::white);
         //clientArea.drawWindowsBorder();
@@ -210,7 +210,7 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
         } else {
             throw Exception("Where is the background surface?");
         }
-        clientArea.BltRoundRect(MenuRect, 10, Palette::gray256.getColorArray());
+//        clientArea.BltRoundRect(MenuRect, 10, Palette::gray256.getColorArray());
         clientArea.FillRoundRect(MenuRect, 10, Color::white);
         clientArea.RoundRect(MenuRect, 10, Color::gray);
 
@@ -236,9 +236,9 @@ void MenuTemplateView::doDrawM(Surface &viewArea, Surface &clientArea)  // start
     if (Desktop::getVisible("GameView")) {
 	// When ingame, tint the game into gray
 
-        clientArea.BltRoundRect(getClientRect(), 10, Palette::red256.getColorArray());
-        clientArea.FillRoundRect(getClientRect(), 10, Color::red); // esc in game
-        //clientArea.RoundRect(MenuRect, 10, Color::gray);
+//        clientArea.BltRoundRect(getClientRect(), 10, Palette::gray256.getColorArray());
+        clientArea.FillRoundRect(getClientRect(), 10, Color::white); // esc in game
+        clientArea.RoundRect(MenuRect, 10, Color::gray);
         clientArea.drawWindowsBorder();
 
     } else {
@@ -250,8 +250,8 @@ void MenuTemplateView::doDrawM(Surface &viewArea, Surface &clientArea)  // start
         } else {
             throw Exception("Where is the background surface?");
         }
-        clientArea.BltRoundRect(MenuRect, 10, Palette::red256.getColorArray());
-        clientArea.FillRoundRect(MenuRectStart, 3, Color::red);
+//        clientArea.BltRoundRect(MenuRect, 10, Palette::gray256.getColorArray());
+        clientArea.FillRoundRect(MenuRectStart, 3, Color::white);
         clientArea.RoundRect(MenuRectStart, 3, Color::gray);
 
         // I don't like them so I delete them!
@@ -273,8 +273,8 @@ void MenuTemplateView::doDrawAlt(Surface &viewArea, Surface &clientArea) //help 
 	// When ingame, tint the game into gray
 
         //clientArea.BltRoundRect(getClientRect(), 10, Palette::gray256.getColorArray());
-        //clientArea.FillRoundRect(getClientRect(), 10, Color::white); // esc in game
-             //clientArea.RoundRect(MenuRect, 10, Color::gray);
+        clientArea.FillRoundRect(getClientRect(), 10, Color::white); // esc in game
+             clientArea.RoundRect(MenuRect, 10, Color::gray);
         //clientArea.drawWindowsBorder();
 
     } else {
@@ -286,7 +286,7 @@ void MenuTemplateView::doDrawAlt(Surface &viewArea, Surface &clientArea) //help 
         } else {
             throw Exception("Where is the background surface?");
         }
-        clientArea.BltRoundRect(MenuRect, 10, Palette::gray256.getColorArray());
+//        clientArea.BltRoundRect(MenuRect, 10, Palette::gray256.getColorArray());
         clientArea.FillRoundRect(MenuRect, 10, Color::white); // gray
         clientArea.RoundRect(MenuRect, 10, Color::gray);
 
