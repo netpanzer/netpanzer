@@ -24,23 +24,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string>
 #include <algorithm>
 
-#include "Util/Log.hpp"
 #include "Util/FileSystem.hpp"
-#include "Util/UtilInterface.hpp"
-#include "Types/fXY.hpp"
 #include "Util/TimerInterface.hpp"
 #include "Util/Exception.hpp"
 #include "Palette.hpp"
 #include "Surface.hpp"
-#include "Span.hpp"
+#include "2D/CachedFontRenderer.hpp"
 
 using std::swap;
 using std::min;
 using std::max;
-
-static TTF_Font* font;
-#define FONT_SIZE 14
-#define FONT_WIDTH 14
 
 // orderCoords
 //---------------------------------------------------------------------------
@@ -1368,30 +1361,12 @@ PIX Surface::getAverageColor()
     return Palette::findNearestColor(avgR, avgG, avgB);
 } // end Surface::getAverageColor
 
-// initFont
-//---------------------------------------------------------------------------
-// Purpose: Load the TTF font.
-//---------------------------------------------------------------------------
-void initFont()
-{
-    if (TTF_Init() < 0) {
-        printf("Couldn't initialize SDL TTF: %s\n", SDL_GetError());
-        exit(1);
-    }
-    // Quantico-Regular looked good too but some issues with some characters.
-    font = TTF_OpenFont("fonts/GNUUnifont9FullHintInstrUCSUR.ttf", FONT_SIZE);
-    TTF_SetFontStyle(font, TTF_STYLE_BOLD);
-    TTF_SetFontHinting(font, TTF_HINTING_MONO);
-} // Surface::initFont
-
 unsigned int
 Surface::getFontHeight()
 {
     // TODO pass in string? some characters are taller than others
-    // TODO cache
-    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, ".", Palette::color[0]);
+    SDL_Surface* font_surface = CachedFontRenderer::render(".", Palette::color[0]);
     unsigned int height = font_surface->h + 3; // magic number works with GNUUnifont9FullHintInstrUCSUR font
-    SDL_FreeSurface(font_surface);
     return height;
 }
 
@@ -1400,13 +1375,11 @@ unsigned int Surface::getTextWidth(const char* text)
     if (!text) {
         return 0;
     }
-    // TODO cache
-    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, text, Palette::color[0]);
+    SDL_Surface* font_surface = CachedFontRenderer::render(text, Palette::color[0]);
     if (!font_surface) {
         return 0;
     }
     unsigned int width = font_surface->w;
-    SDL_FreeSurface(font_surface);
     return width;
 }
 
@@ -1431,8 +1404,7 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
     if ( !len )
         return;
 
-    printf("rendering text %s\n", str);
-    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, Palette::color[color]);
+    SDL_Surface* font_surface = CachedFontRenderer::render(str, Palette::color[color]);
     if (!font_surface) {
         printf("Could not renderText() %s %s\n", str, SDL_GetError());
         return;
@@ -1451,8 +1423,6 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
 
     drawRect(iRect(0, 0, getWidth(), getHeight()), bgcolor);
     bltTransColorFromSDLSurface(font_surface, 0, 0, color);
-
-    SDL_FreeSurface(font_surface); // todo optimize
 }
 
 // bltString
@@ -1467,13 +1437,12 @@ void Surface::bltString(int x, int y, const char * str, const Uint8 &color)
     if ( !len ) {
         return;
     }
-    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, Palette::color[color]);
+    SDL_Surface* font_surface = CachedFontRenderer::render(str, Palette::color[color]);
     if (!font_surface) {
         printf("Could not bltString() %s %s\n", str, SDL_GetError());
         return;
     }
     bltTransColorFromSDLSurface(font_surface, x, y, color);
-    SDL_FreeSurface(font_surface);
 } // end Surface::bltString
 
 // bltStringShadowed
@@ -1483,20 +1452,18 @@ void Surface::bltStringShadowed(int x, int y, char const *str, const Uint8 &text
     int len = strlen(str);
     if ( !len )
         return;
-    SDL_Surface* font_surface_back = TTF_RenderUTF8_Solid(font, str, Palette::color[shadowColor]);
+    SDL_Surface* font_surface_back = CachedFontRenderer::render(str, Palette::color[shadowColor]);
     if (!font_surface_back) {
         printf("Could not bltStringShadowed() %s %s\n", str, SDL_GetError());
         return;
     }
     bltTransColorFromSDLSurface(font_surface_back, x + 1, y + 1, shadowColor);
-    SDL_FreeSurface(font_surface_back);
-    SDL_Surface* font_surface_front = TTF_RenderUTF8_Solid(font, str, Palette::color[textColor]);
+    SDL_Surface* font_surface_front = CachedFontRenderer::render(str, Palette::color[textColor]);
     if (!font_surface_front) {
         printf("Could not bltStringShadowed() %s %s\n", str, SDL_GetError());
         return;
     }
     bltTransColorFromSDLSurface(font_surface_front, x, y, textColor);
-    SDL_FreeSurface(font_surface_front);
 } // end Surface::bltStringShadowed
 
 // bltStringCenter
@@ -1509,13 +1476,12 @@ void Surface::bltStringCenter(const char *str, PIX color)
     int len = strlen(str);
     if ( !len )
         return;
-    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, Palette::color[color]);
+    SDL_Surface* font_surface = CachedFontRenderer::render(str, Palette::color[color]);
     if (!font_surface) {
         return;
     }
     bltTransColorFromSDLSurface(font_surface, (getWidth() - std::min(font_surface->w, ((int) getWidth()))) / 2,
                                 (getHeight() - std::min(font_surface->h, ((int) getHeight()))) / 2, color);
-    SDL_FreeSurface(font_surface);
 } // end Surface::bltStringCenter
 
 void Surface::bltStringCenterMin30(const char *str, PIX color)
@@ -1523,14 +1489,13 @@ void Surface::bltStringCenterMin30(const char *str, PIX color)
     int len = strlen(str);
     if ( !len )
         return;
-    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, Palette::color[color]);
+    SDL_Surface* font_surface = CachedFontRenderer::render(str, Palette::color[color]);
     if (!font_surface) {
         printf("Could not bltStringCenterMin30() %s %s\n", str, SDL_GetError());
         return;
     }
     bltTransColorFromSDLSurface(font_surface, (getWidth() - (font_surface->w)) / 2,
                                 (getHeight() - font_surface->h) / 2 - 30, color);
-    SDL_FreeSurface(font_surface);
 } // end Surface::bltStringCenter
 
 // bltStringShadowedCenter
@@ -1543,8 +1508,7 @@ void Surface::bltStringShadowedCenter(const char *str, PIX textColor, PIX shadow
     int len = strlen(str);
     if ( !len )
         return;
-    // TODO OPTIMIZE
-    SDL_Surface* font_surface_back = TTF_RenderUTF8_Solid(font, str, Palette::color[shadowColor]);
+    SDL_Surface* font_surface_back = CachedFontRenderer::render(str, Palette::color[shadowColor]);
     if (!font_surface_back) {
         printf("Could not bltStringShadowedCenter() %s %s\n", str, SDL_GetError());
         return;
@@ -1552,15 +1516,12 @@ void Surface::bltStringShadowedCenter(const char *str, PIX textColor, PIX shadow
     int x = (getWidth() - font_surface_back->w) / 2;
     int y = (getHeight() - font_surface_back->h) / 2;
     bltTransColorFromSDLSurface(font_surface_back, x + 1, y + 1, shadowColor);
-    SDL_FreeSurface(font_surface_back);
-    SDL_Surface* font_surface_front = TTF_RenderUTF8_Solid(font, str, Palette::color[textColor]);
+    SDL_Surface* font_surface_front = CachedFontRenderer::render(str, Palette::color[textColor]);
     if (!font_surface_front) {
         printf("Could not bltStringShadowedCenter() %s %s\n", str, SDL_GetError());
         return;
     }
     bltTransColorFromSDLSurface(font_surface_front, x, y, textColor);
-    SDL_FreeSurface(font_surface_front);
-
 } // end Surface::bltStringShadowedCenter
 
 // bltStringCenteredInRect
@@ -1572,7 +1533,7 @@ void Surface::bltStringCenteredInRect(const iRect &rect, const char *str, const 
     int len = strlen(str);
     if ( !len )
         return;
-    SDL_Surface* font_surface = TTF_RenderUTF8_Solid(font, str, Palette::color[color]);
+    SDL_Surface* font_surface = CachedFontRenderer::render(str, Palette::color[color]);
     if (!font_surface) {
         printf("Could not bltStringCenteredInRect() %s %s\n", str, SDL_GetError());
         return;
@@ -1580,7 +1541,6 @@ void Surface::bltStringCenteredInRect(const iRect &rect, const char *str, const 
     int x = rect.min.x + (rect.getSizeX() - font_surface->w) / 2;
     int y = rect.min.y + (rect.getSizeY() - font_surface->h) / 2;
     bltTransColorFromSDLSurface(font_surface, x,y, color);
-    SDL_FreeSurface(font_surface);
 } // end Surface::bltStringCenteredInRect
 
 // create

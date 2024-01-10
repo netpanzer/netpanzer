@@ -55,6 +55,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/ConnectNetMessage.hpp"
 #include "Units/UnitGlobals.hpp"
 
+#include "2D/CachedFontRenderer.hpp"
 #include "2D/Palette.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Views/Components/ViewGlobals.hpp"
@@ -133,7 +134,7 @@ void PlayerGameManager::initializeVideoSubSystem()
     LOGGER.info("Initializing video mode");
     sdlVideo = new SDLVideo();
     Screen = sdlVideo;
-    initFont();
+    CachedFontRenderer::initFont();
     GameManager::setVideoMode();
 }
 
@@ -255,6 +256,7 @@ void PlayerGameManager::graphicsLoop()
 
     screen->unlock();
     screen->render();
+    CachedFontRenderer::cleanup();
 }
 //-----------------------------------------------------------------
 bool PlayerGameManager::launchNetPanzerGame()

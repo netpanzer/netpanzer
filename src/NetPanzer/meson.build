@@ -110,12 +110,13 @@ foreach file : src_basename
 endforeach
 
 src_basename = [
+  'CachedFontRenderer.cpp',
+  'Color.cpp',
+  'ColorTable.cpp',
+  'PackedSurface.cpp',
   'Palette.cpp',
   'Span.cpp',
-  'PackedSurface.cpp',
-  'ColorTable.cpp',
-  'Surface.cpp',
-  'Color.cpp'
+  'Surface.cpp'
 ]
 foreach file : src_basename
   src += [join_paths('../Lib/2D', file)]
