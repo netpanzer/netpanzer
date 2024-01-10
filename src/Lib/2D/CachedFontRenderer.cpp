@@ -19,8 +19,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string>
 
 #include "CachedFontRenderer.hpp"
+#include "Util/Log.hpp"
 
 TTF_Font* CachedFontRenderer::font = nullptr;
+Uint32 CachedFontRenderer::lastCleanedTick = 0;
 std::unordered_map<std::string, RenderedText> CachedFontRenderer::rendered_surfaces = {};
 
 void CachedFontRenderer::initFont() {
@@ -61,7 +63,13 @@ SDL_Surface *CachedFontRenderer::render(const char *text, SDL_Color color) {
 
 void CachedFontRenderer::cleanup() {
     const Uint32 currentTick = SDL_GetTicks();
-    const Uint32 cleanupThreshold = 10000;
+    const Uint32 cleanupThreshold = 20000;
+
+    if (currentTick - lastCleanedTick < cleanupThreshold) {
+        return;
+    }
+
+    LOGGER.debug("Cached font cleanup: Begin.");
 
     // Iterate through the map to remove old RenderedText objects
     for (auto it = rendered_surfaces.begin(); it != rendered_surfaces.end();) {
@@ -73,4 +81,6 @@ void CachedFontRenderer::cleanup() {
             ++it;
         }
     }
+    lastCleanedTick = currentTick;
+    LOGGER.debug("Cached font cleanup: Done.");
 }
