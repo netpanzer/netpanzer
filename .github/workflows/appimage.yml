@@ -10,10 +10,8 @@ on:
   pull_request:
     branches: master
     paths:
-    - '**'
-    - '!**.yml'
-    - '!**.md'
     - '**/appimage.yml'
+    - '**/*appimage*'
 
 jobs:
   build-appimage:
