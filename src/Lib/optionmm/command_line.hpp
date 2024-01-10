@@ -42,26 +42,26 @@
 namespace optionmm
 {
 /** @brief Command line parser.
-    The command line option manager is straight forward to use. 
-    First, one declares on instance of the manager, parsing it 
-    the proper arguments 
-    
-    @dontinclude demo.cc 
+    The command line option manager is straight forward to use.
+    First, one declares on instance of the manager, parsing it
+    the proper arguments
+
+    @dontinclude demo.cc
     @skip int
     @until ""
 
-    Then, one creates option objects and add them to the manager. 
-    @until if 
+    Then, one creates option objects and add them to the manager.
+    @until if
 
-    After that, the manager should process the command line. 
-    @until if 
+    After that, the manager should process the command line.
+    @until if
 
     If the application should exit if the help option was given,
-    then it may do so, and similar for the version option. 
-    @until for 
+    then it may do so, and similar for the version option.
+    @until for
 
     After processing, the option objects hold the value(s) of the
-    command line options given. 
+    command line options given.
     @until return
  */
 class command_line
@@ -104,9 +104,9 @@ public:
     /** Constructor.
     @param argc reference to the number of command line options
     from @c main
-    @param argv the command line options from main 
+    @param argv the command line options from main
     @param title the title of the application.
-    @param version the version of the application 
+    @param version the version of the application
     @param copy The copyright of the application.
     @param usage What to print as syntax (may be empty)
     @param fail Whether to fail on unknown options */
@@ -123,25 +123,25 @@ public:
     }
     /** Print a help message
     If the manager saw the @c --help option, then print the
-    help message to stream @a o, and return true. 
+    help message to stream @a o, and return true.
     One can use the return value to jump out of the main program
-    if the @c --help option was given, like 
-    @code 
-    int main(int argc, char** argv) { 
-     using namespace optionmm; 
+    if the @c --help option was given, like
+    @code
+    int main(int argc, char** argv) {
+     using namespace optionmm;
      option_manager om("foo", "1.0", "bar", "", argc, argv);
      ...
      if (!om.process()) return 1;
      if (om.help()) return 0;
      ...
           }
-        @endcode 
+        @endcode
     @return true if the help option was given. */
     bool help(std::ostream& o=std::cout);
     /** Print version information.
     If the manager saw the @c --version option, then print the
-    version information to stream @a o, and return true. 
-    @param o The stream to write information to. 
+    version information to stream @a o, and return true.
+    @param o The stream to write information to.
     @return true if version option was given. */
     bool version(std::ostream& o=std::cout);
     /** Process the command line
@@ -213,7 +213,7 @@ struct toggle_value<bool>
         x = !x;
     }
 #if defined(__GNUC__) && __GNUC__ >= 2
-    inline void operator()(std::_Bit_reference x)
+    inline void operator()(std::vector<bool>::reference x)
     {
         x.flip();
     }
