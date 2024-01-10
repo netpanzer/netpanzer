@@ -22,20 +22,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <SDL2/SDL.h>
 
 #include "Types/iXY.hpp"
 #include "Types/iRect.hpp"
 #include "Util/NoCopy.hpp"
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
-
 class ColorTable;
 class Palette;
 typedef Uint8 PIX;
-
-// This must be called before any of the string blitting functions are used.
-void initFont();
 
 /////////////////////////////////////////////////////////////////////////////
 // class Surface
