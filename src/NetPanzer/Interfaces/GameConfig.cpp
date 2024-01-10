@@ -139,7 +139,7 @@ static const ScriptVarBindRecord video_getters[] =
 #if defined _WIN32 || defined __MINGW32__
     { "usedirectx",      GETSVTYPE_BOOLEAN, &GameConfig::video_usedirectx },
 #endif
-    {0,0}
+    {0,0,0}
 };
 
 static const ScriptVarBindRecord video_setters[] =
@@ -154,7 +154,7 @@ static const ScriptVarBindRecord video_setters[] =
 #if defined _WIN32 || defined __MINGW32__
     { "usedirectx",      SETSVTYPE_BOOLEAN, &GameConfig::video_usedirectx },
 #endif
-    {0,0}
+    {0,0,0}
 };
 
 
@@ -171,7 +171,7 @@ static const ScriptVarBindRecord interface_getters[] =
     { "rankposition_x",         GETSVTYPE_INT,     &GameConfig::interface_rankposition_x},
     { "rankposition_y",         GETSVTYPE_INT,     &GameConfig::interface_rankposition_y},
     { "viewdrawbackgroundmode", GETSVTYPE_INT,     &GameConfig::interface_viewdrawbackgroundmode},
-    {0,0}
+    {0,0,0}
 };
 
 static const ScriptVarBindRecord interface_setters[] =
@@ -187,7 +187,7 @@ static const ScriptVarBindRecord interface_setters[] =
     { "rankposition_x",         SETSVTYPE_INT,     &GameConfig::interface_rankposition_x},
     { "rankposition_y",         SETSVTYPE_INT,     &GameConfig::interface_rankposition_y},
     { "viewdrawbackgroundmode", SETSVTYPE_INT,     &GameConfig::interface_viewdrawbackgroundmode},
-    {0,0}
+    {0,0,0}
 };
 
 static const ScriptVarBindRecord game_getters[] =
@@ -222,7 +222,7 @@ static const ScriptVarBindRecord game_getters[] =
     { "mapcycle",           GETSVTYPE_STRING,  &GameConfig::game_mapcycle },
     { "mapstyle",           GETSVTYPE_STRING,  &GameConfig::game_mapstyle },
     { "units_styles",       GETSVTYPE_STRING,  &GameConfig::game_units_styles },
-    {0,0}
+    {0,0,0}
 };
 
 static const ScriptVarBindRecord game_setters[] =
@@ -257,7 +257,7 @@ static const ScriptVarBindRecord game_setters[] =
     { "mapcycle",           SETSVTYPE_STRING,  &GameConfig::game_mapcycle },
     { "mapstyle",           SETSVTYPE_STRING,  &GameConfig::game_mapstyle },
     { "units_styles",       SETSVTYPE_STRING,  &GameConfig::game_units_styles },
-    {0,0}
+    {0,0,0}
 };
 
 static const ScriptVarBindRecord sound_getters[] =
@@ -267,7 +267,7 @@ static const ScriptVarBindRecord sound_getters[] =
     { "musicvol",           GETSVTYPE_INT,     &GameConfig::sound_musicvol},
     { "effects",            GETSVTYPE_BOOLEAN, &GameConfig::sound_effects},
     { "effectsvol",         GETSVTYPE_INT,     &GameConfig::sound_effectsvol},
-    {0,0}
+    {0,0,0}
 };
 
 static const ScriptVarBindRecord sound_setters[] =
@@ -277,7 +277,7 @@ static const ScriptVarBindRecord sound_setters[] =
     { "musicvol",           SETSVTYPE_INT,     &GameConfig::sound_musicvol},
     { "effects",            SETSVTYPE_BOOLEAN, &GameConfig::sound_effects},
     { "effectsvol",         SETSVTYPE_INT,     &GameConfig::sound_effectsvol},
-    {0,0}
+    {0,0,0}
 };
 
 static const ScriptVarBindRecord radar_getters[] =
@@ -289,7 +289,7 @@ static const ScriptVarBindRecord radar_getters[] =
     { "alliedoutpostcolor", GETSVTYPE_INT,     &GameConfig::radar_alliedoutpostcolor},
     { "enemyoutpostcolor",  GETSVTYPE_INT,     &GameConfig::radar_enemyoutpostcolor},
     { "unitsize",           GETSVTYPE_INT,     &GameConfig::radar_unitsize},
-    {0,0}
+    {0,0,0}
 };
 
 static const ScriptVarBindRecord radar_setters[] =
@@ -301,7 +301,7 @@ static const ScriptVarBindRecord radar_setters[] =
     { "alliedoutpostcolor", SETSVTYPE_INT,     &GameConfig::radar_alliedoutpostcolor},
     { "enemyoutpostcolor",  SETSVTYPE_INT,     &GameConfig::radar_enemyoutpostcolor},
     { "unitsize",           SETSVTYPE_INT,     &GameConfig::radar_unitsize},
-    {0,0}
+    {0,0,0}
 };
 
 static const ScriptVarBindRecord server_getters[] =
@@ -317,7 +317,7 @@ static const ScriptVarBindRecord server_getters[] =
     { "authserver",                 GETSVTYPE_STRING,  &GameConfig::server_authserver },
     { "authentication",             GETSVTYPE_BOOLEAN, &GameConfig::server_authentication },
     { "command_burst_limit",        GETSVTYPE_INT,     &GameConfig::server_command_burst_limit },
-    {0,0}
+    {0,0,0}
 };
 
 static const ScriptVarBindRecord server_setters[] =
@@ -333,19 +333,19 @@ static const ScriptVarBindRecord server_setters[] =
     { "authserver",          SETSVTYPE_STRING,  &GameConfig::server_authserver },
     { "authentication",      SETSVTYPE_BOOLEAN, &GameConfig::server_authentication },
     { "command_burst_limit", SETSVTYPE_INT,     &GameConfig::server_command_burst_limit },
-    {0,0}
+    {0,0,0}
 };
 
 static const ScriptVarBindRecord player_getters[] =
 {
     { "name",           GETSVTYPE_STRING,  &GameConfig::player_name },
-    {0,0}
+    {0,0,0}
 };
 
 static const ScriptVarBindRecord player_setters[] =
 {
     { "name",           SETSVTYPE_STRING,  &GameConfig::player_name },
-    {0,0}
+    {0,0,0}
 };
 
 static const ScriptVarBindRecord bot_getters[] =
@@ -353,7 +353,7 @@ static const ScriptVarBindRecord bot_getters[] =
     { "class",           GETSVTYPE_INT,  &GameConfig::bot_class },
     { "allied",          GETSVTYPE_BOOLEAN,  &GameConfig::bot_allied },
     { "action_speed",    GETSVTYPE_INT,  &GameConfig::bot_action_speed },
-    {0,0}
+    {0,0,0}
 };
 
 static const ScriptVarBindRecord bot_setters[] =
@@ -361,7 +361,7 @@ static const ScriptVarBindRecord bot_setters[] =
     { "class",           SETSVTYPE_INT,  &GameConfig::bot_class },
     { "allied",          SETSVTYPE_BOOLEAN,  &GameConfig::bot_allied },
     { "action_speed",    SETSVTYPE_INT,  &GameConfig::bot_action_speed },
-    {0,0}
+    {0,0,0}
 };
 
 

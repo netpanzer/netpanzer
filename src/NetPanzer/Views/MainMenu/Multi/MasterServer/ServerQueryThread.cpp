@@ -31,7 +31,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "Util/StringUtil.hpp"
 
-static const size_t MAX_QUERIES = 4;
 static const Uint32 QUERY_TIMEOUT = 3 * 1000;
 static const Uint32 MS_TIMEOUT = 12 * 1000;
 
