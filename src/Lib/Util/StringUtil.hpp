@@ -18,11 +18,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __STRINGUTIL_HPP__
 #define __STRINGUTIL_HPP__
 
-#include "Core/CoreTypes.hpp"
 #include <vector>
 
+#include "Core/CoreTypes.hpp"
+
 NPString removeSurroundingSpaces(const NPString& str);
-void string_to_params( const NPString& str, std::vector<NPString>& parameters );
+void string_to_params(const NPString& str, std::vector<NPString>& parameters);
 
 #endif
-
