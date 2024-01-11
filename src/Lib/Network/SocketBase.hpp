@@ -20,97 +20,86 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <iostream>
 #include <stdexcept>
+
+#include "Address.hpp"
 #include "NetworkException.hpp"
 #include "SocketHeaders.hpp"
-#include "Address.hpp"
-#include "Util/NoCopy.hpp"
 #include "Util/NTimer.hpp"
+#include "Util/NoCopy.hpp"
 
-namespace network
-{
+namespace network {
 
 /** Base class for sockets, this is intended for internal use only */
-class SocketBase : public NoCopy
-{
-public:
-    const Address& getAddress() const
-    {
-        return addr;
-    }
+class SocketBase : public NoCopy {
+ public:
+  const Address& getAddress() const { return addr; }
 
-protected:
-    friend class SocketSet;
-    friend class SocketManager;
+ protected:
+  friend class SocketSet;
+  friend class SocketManager;
 
-    virtual ~SocketBase();
-    
-    SocketBase();
-    SocketBase(const Address &a, bool isTcp);
-    SocketBase(SOCKET fd, const Address &a);
-        
-    virtual void onDataReady() = 0;
-    virtual void onDisconected() {}
-    virtual void onConnected() { state = CONNECTED; }
-    virtual void onResolved() { state = RESOLVED; }
-    virtual void onSocketError() = 0;
-    virtual void destroy() = 0;
-    
-    void setAddress(const Address &a);
+  virtual ~SocketBase();
 
-    void setReuseAddr();
-    void setNoDelay();
-    void doClose();
-    
-    void bindSocketTo(const Address& toaddr);
-    void bindSocket() { bindSocketTo(addr); };
-    void doListen();
-    void doConnect();
-    int  doSend(const void* data, size_t len);
-    int  doReceive(void* buffer, size_t len);
-    int  doSendTo(const Address& toaddr, const void* data, size_t len);
-    size_t  doReceiveFrom(Address& fromaddr, void* buffer, size_t len);
-    SOCKET doAccept(Address& fromaddr);
-    
-    void setConfigured() { state = CONFIGURED; }
+  SocketBase();
+  SocketBase(const Address& a, bool isTcp);
+  SocketBase(SOCKET fd, const Address& a);
 
-    void create();
-    void setNonBlocking();
-private:
+  virtual void onDataReady() = 0;
+  virtual void onDisconected() {}
+  virtual void onConnected() { state = CONNECTED; }
+  virtual void onResolved() { state = RESOLVED; }
+  virtual void onSocketError() = 0;
+  virtual void destroy() = 0;
 
-    enum {
-        ST_ERROR,
-        UNINITIALIZED,
-        RESOLVING,
-        RESOLVED,
-        CREATED,
-        CONFIGURED,
-        BOUND,
-        LISTENING,
-        CONNECTING,
-        CONNECTED,
-        DESTROYING
-    };
+  void setAddress(const Address& a);
 
-    static const char *state_str[];
-    const char * getStateString() { return state_str[state]; }
+  void setReuseAddr();
+  void setNoDelay();
+  void doClose();
 
-    
-    void connectionFinished()
-    {
-        onConnected();
-    };
-    
-    int state;
-    SOCKET sockfd;
-    Address addr;
-    int lastError;
+  void bindSocketTo(const Address& toaddr);
+  void bindSocket() { bindSocketTo(addr); };
+  void doListen();
+  void doConnect();
+  int doSend(const void* data, size_t len);
+  int doReceive(void* buffer, size_t len);
+  int doSendTo(const Address& toaddr, const void* data, size_t len);
+  size_t doReceiveFrom(Address& fromaddr, void* buffer, size_t len);
+  SOCKET doAccept(Address& fromaddr);
 
+  void setConfigured() { state = CONFIGURED; }
 
+  void create();
+  void setNonBlocking();
 
-    NTimer disconnectTimer;
+ private:
+  enum {
+    ST_ERROR,
+    UNINITIALIZED,
+    RESOLVING,
+    RESOLVED,
+    CREATED,
+    CONFIGURED,
+    BOUND,
+    LISTENING,
+    CONNECTING,
+    CONNECTED,
+    DESTROYING
+  };
+
+  static const char* state_str[];
+  const char* getStateString() { return state_str[state]; }
+
+  void connectionFinished() { onConnected(); };
+
+  int state;
+  SOCKET sockfd;
+  Address addr;
+  int lastError;
+
+  NTimer disconnectTimer;
 };
 
-}
+}  // namespace network
 
 #endif
-

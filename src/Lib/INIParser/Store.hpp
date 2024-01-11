@@ -18,29 +18,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __INI_STORE_HPP__
 #define __INI_STORE_HPP__
 
+#include <iostream>
 #include <map>
 #include <string>
-#include <iostream>
+
 #include "Section.hpp"
 
-namespace INI
-{
+namespace INI {
 
-class Store
-{
-public:
-    Store();
-    ~Store();
+class Store {
+ public:
+  Store();
+  ~Store();
 
-    void load(std::istream& in);
-    void save(std::ostream& out) const;
+  void load(std::istream& in);
+  void save(std::ostream& out) const;
 
-    Section& getSection(const std::string& name);
-        
-private:
-    std::map<std::string, Section*> sections;
+  Section& getSection(const std::string& name);
+
+ private:
+  std::map<std::string, Section*> sections;
 };
 
-} // end of namespace INI
+}  // end of namespace INI
 
 #endif

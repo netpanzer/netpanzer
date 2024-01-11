@@ -1,5 +1,6 @@
 /*
-Copyright (C) 2024 NetPanzer (https://github.com/netpanzer/), Devon Winrick, Et al.
+Copyright (C) 2024 NetPanzer (https://github.com/netpanzer/), Devon Winrick, Et
+al.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,31 +22,34 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+
+#include <string>
 #include <unordered_map>
 
 #define FONT_SIZE 14
 #define FONT_WIDTH 14
 
 class RenderedText {
-public:
-    SDL_Surface* sdlSurface;
-    Uint32 lastUsedTick;
+ public:
+  SDL_Surface* sdlSurface;
+  Uint32 lastUsedTick;
 
-    RenderedText() : sdlSurface(nullptr), lastUsedTick(0) {}
-    RenderedText(SDL_Surface* surface, Uint32 tick) : sdlSurface(surface), lastUsedTick(tick) {}
+  RenderedText() : sdlSurface(nullptr), lastUsedTick(0) {}
+  RenderedText(SDL_Surface* surface, Uint32 tick)
+      : sdlSurface(surface), lastUsedTick(tick) {}
 };
 
 class CachedFontRenderer {
-private:
-    static Uint32 lastCleanedTick;
-    static std::unordered_map<std::string, RenderedText> rendered_surfaces;
-    static std::string create_cache_key(const char *text, SDL_Color color);
-    static TTF_Font* font;
-public:
-    static void initFont();
-    static SDL_Surface* render(const char *text, SDL_Color color);
-    static void cleanup();
+ private:
+  static Uint32 lastCleanedTick;
+  static std::unordered_map<std::string, RenderedText> rendered_surfaces;
+  static std::string create_cache_key(const char* text, SDL_Color color);
+  static TTF_Font* font;
+
+ public:
+  static void initFont();
+  static SDL_Surface* render(const char* text, SDL_Color color);
+  static void cleanup();
 };
 
-
-#endif //NETPANZER_FONTPOOL_HPP
+#endif  // NETPANZER_FONTPOOL_HPP
