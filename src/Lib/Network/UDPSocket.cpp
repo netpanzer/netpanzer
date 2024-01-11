@@ -16,66 +16,50 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-
 #include "UDPSocket.hpp"
+
 #include <sstream>
+
 #include "Util/Log.hpp"
 
-namespace network
-{
+namespace network {
 
-UDPSocket::UDPSocket(UDPSocketObserver *o)
-    : SocketBase(Address::ANY, false), observer(o)
-{
-    bindSocket();
+UDPSocket::UDPSocket(UDPSocketObserver* o)
+    : SocketBase(Address::ANY, false), observer(o) {
+  bindSocket();
 }
 
-UDPSocket::UDPSocket(const Address& bindaddr, UDPSocketObserver *o)
-    : SocketBase(bindaddr,false), observer(o)
-{
-    bindSocket();
+UDPSocket::UDPSocket(const Address& bindaddr, UDPSocketObserver* o)
+    : SocketBase(bindaddr, false), observer(o) {
+  bindSocket();
 }
 
-UDPSocket::~UDPSocket()
-{
+UDPSocket::~UDPSocket() {}
+
+void UDPSocket::destroy() {
+  observer = 0;
+  doClose();
 }
 
-void
-UDPSocket::destroy()
-{
-    observer=0;
-    doClose();
+void UDPSocket::onSocketError() {
+  if (observer) observer->onSocketError(this);
 }
 
-void
-UDPSocket::onSocketError()
-{
-    if ( observer )
-        observer->onSocketError(this);
+void UDPSocket::send(const Address& toaddr, const void* data, size_t datasize) {
+  int res = doSendTo(toaddr, data, datasize);
+  if (res != (int)datasize) {
+    LOGGER.warning("Send error: not all data sent.");
+  }
 }
 
-void
-UDPSocket::send(const Address& toaddr, const void* data, size_t datasize)
-{
-    int res = doSendTo(toaddr,data,datasize);
-    if(res != (int) datasize)
-    {
-        LOGGER.warning("Send error: not all data sent.");
-    }
+void UDPSocket::onDataReady() {
+  Address a;
+  char buffer[4096];
+  int len;
+  do {
+    len = doReceiveFrom(a, buffer, sizeof(buffer));
+    if (len && observer) observer->onDataReceived(this, a, buffer, len);
+  } while (len && observer);
 }
 
-void
-UDPSocket::onDataReady()
-{
-    Address a;
-    char buffer[4096];
-    int len;
-    do {
-        len=doReceiveFrom(a,buffer,sizeof(buffer));
-        if (len && observer)
-            observer->onDataReceived(this,a,buffer,len);
-    } while (len && observer);
-}
-
-}
+}  // namespace network

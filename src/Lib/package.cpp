@@ -22,17 +22,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "config.h"
 #endif
 
-const std::string Package::GetVersion(void)
-{
-    return std::string(PACKAGE_VERSION);
+const std::string Package::GetVersion(void) {
+  return std::string(PACKAGE_VERSION);
 }
 
-const std::string Package::GetName(void)
-{
-    return std::string("NetPanzer");
-}
+const std::string Package::GetName(void) { return std::string("NetPanzer"); }
 
-const std::string Package::GetFullyQualifiedName(void)
-{
-    return Package::GetName() + " " + Package::GetVersion();
+const std::string Package::GetFullyQualifiedName(void) {
+  return Package::GetName() + " " + Package::GetVersion();
 }

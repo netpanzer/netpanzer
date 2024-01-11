@@ -18,44 +18,41 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __TCPLISTENSOCKET_HPP__
 #define __TCPLISTENSOCKET_HPP__
 
+#include "NetworkException.hpp"
 #include "SocketBase.hpp"
 #include "TCPSocket.hpp"
-#include "NetworkException.hpp"
 
-namespace network
-{
-    
-class TCPListenSocket;    
-    
+namespace network {
+
+class TCPListenSocket;
+
 class TCPListenSocketObserver {
-public:    
-    TCPListenSocketObserver() {};
-    virtual ~TCPListenSocketObserver() {};
-protected:
-    friend class TCPListenSocket;
-    virtual TCPSocketObserver * onNewConnection(TCPListenSocket *so, const Address &fromaddr) = 0;
-    virtual void onSocketError(TCPListenSocket *so) = 0;
-};
-    
+ public:
+  TCPListenSocketObserver(){};
+  virtual ~TCPListenSocketObserver(){};
 
-class TCPListenSocket : public SocketBase
-{
-public:
-    TCPListenSocket(const Address& bindaddr, TCPListenSocketObserver *o);
-    void destroy();
-    
-protected:
-    ~TCPListenSocket() {};
-    
-    void onDataReady();
-    void onSocketError();
-
-private:
-    TCPListenSocketObserver * observer;
-    
+ protected:
+  friend class TCPListenSocket;
+  virtual TCPSocketObserver *onNewConnection(TCPListenSocket *so,
+                                             const Address &fromaddr) = 0;
+  virtual void onSocketError(TCPListenSocket *so) = 0;
 };
 
-}
+class TCPListenSocket : public SocketBase {
+ public:
+  TCPListenSocket(const Address &bindaddr, TCPListenSocketObserver *o);
+  void destroy();
+
+ protected:
+  ~TCPListenSocket(){};
+
+  void onDataReady();
+  void onSocketError();
+
+ private:
+  TCPListenSocketObserver *observer;
+};
+
+}  // namespace network
 
 #endif
-
