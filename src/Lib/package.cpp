@@ -16,6 +16,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifndef TEST_LIB
+
 #include "package.hpp"
 
 #ifndef PACKAGE_VERSION
@@ -31,3 +33,19 @@ const std::string Package::GetName(void) { return std::string("NetPanzer"); }
 const std::string Package::GetFullyQualifiedName(void) {
   return Package::GetName() + " " + Package::GetVersion();
 }
+
+#else
+
+#include "package.hpp"
+#include "test.hpp"
+
+int main(void)
+{
+  int len = Package::GetVersion().length();
+  assert(len >= 5 && len < 10);
+  assert(Package::GetName().compare("NetPanzer") == 0);
+
+  return 0;
+}
+
+#endif

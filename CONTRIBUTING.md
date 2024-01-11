@@ -65,8 +65,13 @@ issue. This helps speed up the review and discussion process.
 
 Writing tests are encouraged when possible (patches related to the UI or
 graphics aren't currently supported by our test suite). Tests are not
-necessarily mandatory. See the 'tests' directory for examples on how to write
-a test. If you have any questions about tests, don't hesitate to ask the
+necessarily mandatory.
+
+See
+[tests/README.md](https://github.com/netpanzer/netpanzer/blob/master/tests/README.md)
+for detailed information.
+
+If you have any questions about tests, don't hesitate to ask the
 NetPanzer community.
 
 ### Commit Messages
