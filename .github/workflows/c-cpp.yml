@@ -85,6 +85,12 @@ jobs:
         meson setup _build
         ninja -v -C _build
 
+    - if: ${{ contains(matrix.build.name, 'meson') }}
+      name: Test
+      run: |
+        cd _build
+        meson test -v
+
     - if: ${{ contains(matrix.build.name, 'scons') }}
       name: Scons build
       run: scons -j $(nproc)

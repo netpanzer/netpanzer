@@ -61,6 +61,19 @@ repo](https://docs.github.com/en/github/collaborating-with-pull-requests/working
 Source code patches should only contain changes related to a single
 issue. This helps speed up the review and discussion process.
 
+## Tests
+
+Writing tests are encouraged when possible (patches related to the UI or
+graphics aren't currently supported by our test suite). Tests are not
+necessarily mandatory.
+
+See
+[tests/README.md](https://github.com/netpanzer/netpanzer/blob/master/tests/README.md)
+for detailed information.
+
+If you have any questions about tests, don't hesitate to ask the
+NetPanzer community.
+
 ### Commit Messages
 
 Different projects have different guidelines. If you're not sure what to write
