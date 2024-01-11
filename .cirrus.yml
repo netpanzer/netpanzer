@@ -1,0 +1,32 @@
+freebsd_task:
+  name: FreeBSD 13.2
+  freebsd_instance:
+    image_family: freebsd-13-2
+
+  env:
+    CIRRUS_CLONE_SUBMODULES: true
+
+  pkginstall_script:
+    - pkg update -f
+    - pkg install -y meson ninja physfs pkgconf SDL2 sdl2_mixer sdl2_ttf
+
+  setup_script:
+    - meson setup _build
+  build_script:
+    - cd _build && ninja
+
+macos_task:
+  name: macOS arm64
+  macos_instance:
+    image: ghcr.io/cirruslabs/macos-ventura-xcode:latest
+
+  env:
+    CIRRUS_CLONE_SUBMODULES: true
+
+  pkginstall_script:
+    - brew update
+    - brew install meson ninja physfs sdl2 sdl2_ttf sdl2_mixer
+  setup_script:
+    - meson setup _build
+  build_script:
+    - cd _build && ninja

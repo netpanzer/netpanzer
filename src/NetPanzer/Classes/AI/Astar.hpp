@@ -73,8 +73,7 @@ class AstarNode {
 
 enum { _path_merge_front, _path_merge_rear };
 
-class AstarNodePtrCompare
-    : public std::binary_function<const AstarNode *, const AstarNode *, bool> {
+class AstarNodePtrCompare {
  public:
   bool operator()(const AstarNode *node1, const AstarNode *node2) const {
     return *node1 < *node2;

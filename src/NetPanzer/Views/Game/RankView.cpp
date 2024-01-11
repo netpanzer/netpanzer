@@ -120,18 +120,14 @@ void RankView::doDraw(Surface& viewArea, Surface& clientArea) {
   View::doDraw(viewArea, clientArea);
 }  // end doDraw
 
-class StatesSortByPoints
-    : public std::binary_function<const PlayerState*, const PlayerState*,
-                                  bool> {
+class StatesSortByPoints {
  public:
   bool operator()(const PlayerState* state1, const PlayerState* state2) {
     return state1->getTotal() > state2->getTotal();
   }
 };
 
-class StatesSortByObjectives
-    : public std::binary_function<const PlayerState*, const PlayerState*,
-                                  bool> {
+class StatesSortByObjectives {
  public:
   bool operator()(const PlayerState* state1, const PlayerState* state2) {
     int p1 = state1->getObjectivesHeld();
