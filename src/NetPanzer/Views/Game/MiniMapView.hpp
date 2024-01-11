@@ -18,29 +18,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __MiniMapView_hpp__
 #define __MiniMapView_hpp__
 
-#include "Views/Components/View.hpp"
 #include "GameTemplateView.hpp"
+#include "Views/Components/View.hpp"
 
 //---------------------------------------------------------------------------
-class MiniMapView : public GameTemplateView
-{
-private:
-    int     minMapSize;
-    int     maxMapSize;
+class MiniMapView : public GameTemplateView {
+ private:
+  int minMapSize;
+  int maxMapSize;
 
-public:
-    MiniMapView();
+ public:
+  MiniMapView();
 
+  void init();
 
-    void init();
+  virtual void doDraw(Surface &windowArea, Surface &clientArea);
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+ protected:
+  void checkResolution(iXY oldResolution, iXY newResolution);
+  virtual void processEvents();
 
-protected:
-    void checkResolution(iXY oldResolution, iXY newResolution);
-    virtual void processEvents();
+ private:
+};  // end MiniMapView
 
-private:
-}; // end MiniMapView
-
-#endif // end __MiniMapView_hpp__
+#endif  // end __MiniMapView_hpp__

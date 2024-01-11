@@ -21,77 +21,50 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <vector>
 
-#include "WindParticle2D.hpp"
 #include "ParticleSystemGlobals.hpp"
+#include "WindParticle2D.hpp"
 
 // PuffParticle2D
 //--------------------------------------------------------------------------
-class PuffParticle2D : public WindParticle2D
-{
-protected:
-    // Lists of packed surfaces.
-    static PackedSurfaceList staticPackedSmokeLightPuff;
-    static PackedSurfaceList staticPackedSmokeDarkPuff;
-    static PackedSurfaceList staticPackedDirtPuff;
+class PuffParticle2D : public WindParticle2D {
+ protected:
+  // Lists of packed surfaces.
+  static PackedSurfaceList staticPackedSmokeLightPuff;
+  static PackedSurfaceList staticPackedSmokeDarkPuff;
+  static PackedSurfaceList staticPackedDirtPuff;
 
-    void create(	PUFF_TYPE particleType,
-                 float     scaleMin,
-                 float     scaleRand,
-                 int       FPSMin,
-                 int       FPSRand,
-                 int       layer,
-                 int       shadowLayer,
-                 int       isFarAway = 0);
+  void create(PUFF_TYPE particleType, float scaleMin, float scaleRand,
+              int FPSMin, int FPSRand, int layer, int shadowLayer,
+              int isFarAway = 0);
 
-    fXYZ shadowPos;
-    bool userDefinedShadowPos;
+  fXYZ shadowPos;
+  bool userDefinedShadowPos;
 
-public:
-    // A minSize of 1.0f would be the original size of the image.
-    // WindScale is how much the wind effects this particle.  1.0f is full.
-    PuffParticle2D(	const fXYZ &pos,
-                    const fXYZ &shadowPos,
-                    PUFF_TYPE   particleType,
-                    float       scaleMin,
-                    float       scaleRand,
-                    int         FPSMin,
-                    int         FPSRand,
-                    int         layer,
-                    int         shadowLayer,
-                    float       windScale = 1.0f,
-                    int         isFarAway = 0);
+ public:
+  // A minSize of 1.0f would be the original size of the image.
+  // WindScale is how much the wind effects this particle.  1.0f is full.
+  PuffParticle2D(const fXYZ &pos, const fXYZ &shadowPos, PUFF_TYPE particleType,
+                 float scaleMin, float scaleRand, int FPSMin, int FPSRand,
+                 int layer, int shadowLayer, float windScale = 1.0f,
+                 int isFarAway = 0);
 
-    PuffParticle2D(	const fXYZ &pos,
-                    PUFF_TYPE   particleType,
-                    float       scaleMin,
-                    float       scaleRand,
-                    int         FPSMin,
-                    int         FPSRand,
-                    int         layer,
-                    int         shadowLayer,
-                    float       windScale = 1.0f,
-                    int         isFarAway = 0) : WindParticle2D(pos, windScale)
-    {
-        userDefinedShadowPos = false;
-        shadowPos            = pos;
+  PuffParticle2D(const fXYZ &pos, PUFF_TYPE particleType, float scaleMin,
+                 float scaleRand, int FPSMin, int FPSRand, int layer,
+                 int shadowLayer, float windScale = 1.0f, int isFarAway = 0)
+      : WindParticle2D(pos, windScale) {
+    userDefinedShadowPos = false;
+    shadowPos = pos;
 
-        create( particleType,
-                scaleMin,
-                scaleRand,
-                FPSMin,
-                FPSRand,
-                layer,
-                shadowLayer,
-                isFarAway);
-    }
+    create(particleType, scaleMin, scaleRand, FPSMin, FPSRand, layer,
+           shadowLayer, isFarAway);
+  }
 
-    static  void init();
-    static  void loadPAKFiles();
-    static  void unloadPAKFiles();
-    static  void loadTILFiles();
-    virtual void draw(const Surface &dest, SpriteSorter &sorter);
+  static void init();
+  static void loadPAKFiles();
+  static void unloadPAKFiles();
+  static void loadTILFiles();
+  virtual void draw(const Surface &dest, SpriteSorter &sorter);
 
-}
-; // end PuffParticle2D
+};  // end PuffParticle2D
 
-#endif // __PuffParticle2D_hpp__
+#endif  // __PuffParticle2D_hpp__

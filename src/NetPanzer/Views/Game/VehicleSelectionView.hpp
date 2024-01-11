@@ -18,15 +18,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __VehicleSelectionView_hpp__
 #define __VehicleSelectionView_hpp__
 
-#include "Core/CoreTypes.hpp"
 #include "2D/Surface.hpp"
-#include "Views/Components/View.hpp"
+#include "Core/CoreTypes.hpp"
 #include "GameTemplateView.hpp"
-#include "Units/UnitProfileInterface.hpp"
-#include "Views/Components/Component.hpp"
-#include "Views/Components/Button.hpp"
 #include "Interfaces/GameManager.hpp"
-
+#include "Units/UnitProfileInterface.hpp"
+#include "Views/Components/Button.hpp"
+#include "Views/Components/Component.hpp"
+#include "Views/Components/View.hpp"
 
 // The following may be used some day.
 /*
@@ -52,75 +51,74 @@ public:
 }; // end UNIT
 */
 
-extern int vsvSelectedUnit;     // Vehicle Selection View Selected Unit
-extern int vsvTempSelectedUnit; // Vehicle Selection View Temp Selected Unit
+extern int vsvSelectedUnit;      // Vehicle Selection View Selected Unit
+extern int vsvTempSelectedUnit;  // Vehicle Selection View Temp Selected Unit
 
-void activateVehicleSelectionView( ObjectiveID outpost_id );
-void toggleDisplayOutpostNames( void );
+void activateVehicleSelectionView(ObjectiveID outpost_id);
+void toggleDisplayOutpostNames(void);
 
 //--------------------------------------------------------------------------
-class VehicleSelectionView : public GameTemplateView
-{
-private:
-    friend class UnitSelectionButton;
-    int highlightedUnitType;
+class VehicleSelectionView : public GameTemplateView {
+ private:
+  friend class UnitSelectionButton;
+  int highlightedUnitType;
 
-    static Button * buttonAbandonS;
-    static Button * buttonAbandonM;
-    static Button * buttonPower;
-    static Button * buttonOk;
+  static Button *buttonAbandonS;
+  static Button *buttonAbandonM;
+  static Button *buttonPower;
+  static Button *buttonOk;
 
-    int maxHitPoints;
-    int maxAttackFactor;
-    int maxAttackRange;
-    int maxDefendRange;
-    int maxTotalSpeed;
-    int maxReloadTime;
-    int maxRegenTime;
-    int unitProfileDataY;
+  int maxHitPoints;
+  int maxAttackFactor;
+  int maxAttackRange;
+  int maxDefendRange;
+  int maxTotalSpeed;
+  int maxReloadTime;
+  int maxRegenTime;
+  int unitProfileDataY;
 
-    iXY buttonSize;
+  iXY buttonSize;
 
-    int  getUnitRegenTime(unsigned short unitType);
-    void checkMaxValues(const UnitProfile &profile);
-    void getProfileData();
-    void drawBar(Surface &dest, const iXY &pos, int length, float percent);
-    void drawUnitProfileInfo(Surface &dest, const iXY &pos, short int unitType);
+  int getUnitRegenTime(unsigned short unitType);
+  void checkMaxValues(const UnitProfile &profile);
+  void getProfileData();
+  void drawBar(Surface &dest, const iXY &pos, int length, float percent);
+  void drawUnitProfileInfo(Surface &dest, const iXY &pos, short int unitType);
 
-    iXY            productionUnitPos;
-    iXY            timeRequiredPos;
-    iXY            timeRemainingPos;
-    iXY            unitsBuiltPos;
+  iXY productionUnitPos;
+  iXY timeRequiredPos;
+  iXY timeRemainingPos;
+  iXY unitsBuiltPos;
 
-    static Surface unitImages;
+  static Surface unitImages;
 
-    static void checkMiniProductionRect(const std::string& string);
-    static void checkMiniProductionRect2(const std::string& string1, const std::string& string2);
-    static void checkMiniProductionRect3(const std::string& string1, const std::string& string2, const std::string& string3);
+  static void checkMiniProductionRect(const std::string &string);
+  static void checkMiniProductionRect2(const std::string &string1,
+                                       const std::string &string2);
+  static void checkMiniProductionRect3(const std::string &string1,
+                                       const std::string &string2,
+                                       const std::string &string3);
 
+ public:
+  VehicleSelectionView();
+  virtual ~VehicleSelectionView() {}
 
+  virtual void doActivate();
+  virtual void doDraw(Surface &windowArea, Surface &clientArea);
+  virtual void mouseMove(const iXY &prevPos, const iXY &newPos);
+  static const char *getUnitName(int unitType);
+  static void drawMiniProductionStatus(Surface &dest);
+  static void drawUnitImage(Surface &dest, const iXY &pos, int unitType);
+  static bool displayMiniProductionStatus;
+  static bool displayOutpostNames;
+  static void setPowerOn();
+  static void setPowerOff();
+  virtual void doDeactivate();
 
-public:
-    VehicleSelectionView();
-    virtual ~VehicleSelectionView()
-    {}
+  static iRect miniProductionRect;
 
-    virtual void        doActivate();
-    virtual void        doDraw(Surface &windowArea, Surface &clientArea);
-    virtual void        mouseMove(const iXY &prevPos, const iXY &newPos);
-    static  const char *getUnitName(int unitType);
-    static  void        drawMiniProductionStatus(Surface &dest);
-    static  void        drawUnitImage(Surface &dest, const iXY &pos, int unitType);
-    static  bool        displayMiniProductionStatus;
-    static  bool        displayOutpostNames;
-    static  void        setPowerOn();
-    static  void        setPowerOff();
-    virtual void        doDeactivate();
+  virtual void actionPerformed(mMouseEvent me);
 
-    static iRect   miniProductionRect;
+};  // end VehicleSelectionView
 
-    virtual void actionPerformed(mMouseEvent me);
-
-}; // end VehicleSelectionView
-
-#endif // end __VehicleSelectionView_hpp__
+#endif  // end __VehicleSelectionView_hpp__

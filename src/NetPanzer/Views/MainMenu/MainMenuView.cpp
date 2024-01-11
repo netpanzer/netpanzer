@@ -16,43 +16,38 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #include "MainMenuView.hpp"
-#include "Views/Components/Desktop.hpp"
-#include "Interfaces/GameManager.hpp"
-#include "Views/GameViewGlobals.hpp"
 
-#include "Views/MainMenu/Multi/HostJoinTemplateView.hpp"
-#include "Views/MainMenu/Multi/GetSessionView.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/GameManager.hpp"
+#include "Views/Components/Desktop.hpp"
+#include "Views/GameViewGlobals.hpp"
+#include "Views/MainMenu/Multi/GetSessionView.hpp"
+#include "Views/MainMenu/Multi/HostJoinTemplateView.hpp"
 
 // MainMenuView
 //---------------------------------------------------------------------------
-MainMenuView::MainMenuView() : MenuTemplateView()
-{
-    setSearchName("MainView");
-    setTitle("Main");
-    setSubTitle("");
-    MenuTemplateView::loadMainBackgroundSurface();
-    setVisible(true);
-} // end MainMenuView::MainMenuView
+MainMenuView::MainMenuView() : MenuTemplateView() {
+  setSearchName("MainView");
+  setTitle("Main");
+  setSubTitle("");
+  MenuTemplateView::loadMainBackgroundSurface();
+  setVisible(true);
+}  // end MainMenuView::MainMenuView
 
 // doDraw
 //---------------------------------------------------------------------------
-void MainMenuView::doDraw(Surface &viewArea, Surface &clientArea)
-{
-    MenuTemplateView::doDrawM(viewArea, clientArea);
+void MainMenuView::doDraw(Surface &viewArea, Surface &clientArea) {
+  MenuTemplateView::doDrawM(viewArea, clientArea);
 
-    //static char text[] =
-    //    "";
+  // static char text[] =
+  //     "";
 
-    //viewArea.bltStringInBox(bodyTextRect, text, windowTextColor, 12);
-} // end MainMenuView::doDraw
+  // viewArea.bltStringInBox(bodyTextRect, text, windowTextColor, 12);
+}  // end MainMenuView::doDraw
 /*
 void MainMenuView::drawMBack()
 {
     MenuTemplateView::loadMainBackgroundSurface();
 }
 */
-
-

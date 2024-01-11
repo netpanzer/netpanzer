@@ -19,53 +19,44 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __CraterParticle2D_hpp__
 
 #include <vector>
+
 #include "Particles/Particle2D.hpp"
 
 class Surface;
 
-class CraterCacheInfo
-{
-public:
-    iRect     bounds;
-    iXY       pos;
+class CraterCacheInfo {
+ public:
+  iRect bounds;
+  iXY pos;
 };
 
 // CraterParticle2D
 //--------------------------------------------------------------------------
-class CraterParticle2D : public Particle2D
-{
-public:
-    CraterParticle2D(const fXYZ  &pos);
+class CraterParticle2D : public Particle2D {
+ public:
+  CraterParticle2D(const fXYZ &pos);
 
-    static void init();
-    static void uninit();
-    static PackedSurface staticPackedCrater;
+  static void init();
+  static void uninit();
+  static PackedSurface staticPackedCrater;
 
-    static int getCacheHitCount()
-    {
-        return cacheHitCount;
-    }
-    static int getCacheMissCount()
-    {
-        return cacheMissCount;
-    }
+  static int getCacheHitCount() { return cacheHitCount; }
+  static int getCacheMissCount() { return cacheMissCount; }
 
-protected:
+ protected:
+  virtual void draw(const Surface &dest, SpriteSorter &sorter);
+  virtual void sim();
 
-    virtual void draw(const Surface &dest, SpriteSorter &sorter);
-    virtual void sim();
+  // Statistic data.
+  static int cacheHitCount;
+  static int cacheMissCount;
+  static int halfBoundsSize;
 
-    // Statistic data.
-    static int cacheHitCount;
-    static int cacheMissCount;
-    static int halfBoundsSize;
+  static std::vector<CraterCacheInfo> craterCache;
+  static int curCraterIndex;
 
-    static std::vector<CraterCacheInfo> craterCache;
-    static int curCraterIndex;
+  int cacheIndex;  // Which cache slot I was in.
 
-    int cacheIndex;  // Which cache slot I was in.
+};  // end CraterParticle2D
 
-}
-; // end CraterParticle2D
-
-#endif // __CraterParticle2D_hpp__
+#endif  // __CraterParticle2D_hpp__

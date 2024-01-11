@@ -16,21 +16,21 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #include "ServerInfo.hpp"
 
-namespace masterserver
-{
+namespace masterserver {
 
 ServerInfo::ServerInfo()
-    : port(0), status(QUERYING), players(0), maxplayers(0), ping(0),
-      needs_password(false), auth_on(false),
-      querystartticks(0), tryNum(0)
-{
-}
+    : port(0),
+      status(QUERYING),
+      players(0),
+      maxplayers(0),
+      ping(0),
+      needs_password(false),
+      auth_on(false),
+      querystartticks(0),
+      tryNum(0) {}
 
-ServerInfo::~ServerInfo()
-{
-}
+ServerInfo::~ServerInfo() {}
 
-} // end of namespace masterserver
+}  // end of namespace masterserver

@@ -16,54 +16,48 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #include "MiniMapViewAlt.hpp"
+
 #include "Views/Components/MiniMap.hpp"
 
 // MiniMapView
 //---------------------------------------------------------------------------
-MiniMapViewAlt::MiniMapViewAlt() : GameTemplateView()
-{
-    assert(this != 0);
+MiniMapViewAlt::MiniMapViewAlt() : GameTemplateView() {
+  assert(this != 0);
 
-    setSearchName("MiniMapViewAlt");
-    setTitle("MiniMapViewAlt");
-    setSubTitle("");
-    setAllowResize(false);
-    setDisplayStatusBar(false);
-    setVisible(false);
-    setAllowMove(true);
+  setSearchName("MiniMapViewAlt");
+  setTitle("MiniMapViewAlt");
+  setSubTitle("");
+  setAllowResize(false);
+  setDisplayStatusBar(false);
+  setVisible(false);
+  setAllowMove(true);
 
-    setBordered(false);
+  setBordered(false);
 
-    resize(320, 320);
-    add(new MiniMap(1,1,318,318));
-    //resize(320, 320);
-    //add(new MiniMap(1,1,318,318));
-} // end MiniMapView::MiniMapView
-
-
+  resize(320, 320);
+  add(new MiniMap(1, 1, 318, 318));
+  // resize(320, 320);
+  // add(new MiniMap(1,1,318,318));
+}  // end MiniMapView::MiniMapView
 
 // init
 //---------------------------------------------------------------------------
-void MiniMapViewAlt::init()
-{
-    minMapSize =  64;
-    maxMapSize = 480;
-} // end MiniMapView::init
+void MiniMapViewAlt::init() {
+  minMapSize = 64;
+  maxMapSize = 480;
+}  // end MiniMapView::init
 
-void
-MiniMapViewAlt::checkResolution(iXY oldResolution, iXY newResolution)
-{
-    moveTo(iXY(0,newResolution.y-320)); //160
+void MiniMapViewAlt::checkResolution(iXY oldResolution, iXY newResolution) {
+  moveTo(iXY(0, newResolution.y - 320));  // 160
 }
 
 // doDraw
 //---------------------------------------------------------------------------
-void MiniMapViewAlt::doDraw(Surface &viewArea, Surface &clientArea)
-{
-    // border
-    viewArea.drawRect(iRect(0,0,viewArea.getWidth(), viewArea.getHeight()),Color::gray);
+void MiniMapViewAlt::doDraw(Surface &viewArea, Surface &clientArea) {
+  // border
+  viewArea.drawRect(iRect(0, 0, viewArea.getWidth(), viewArea.getHeight()),
+                    Color::gray);
 
-    GameTemplateView::doDraw(viewArea, clientArea);
-} // end doDraw
+  GameTemplateView::doDraw(viewArea, clientArea);
+}  // end doDraw

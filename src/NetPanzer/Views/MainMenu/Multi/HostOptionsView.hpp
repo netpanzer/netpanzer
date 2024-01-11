@@ -18,75 +18,58 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __HostOptionsView_hpp__
 #define __HostOptionsView_hpp__
 
-#include "Views/MainMenu/RMouseHackView.hpp"
 #include "2D/Surface.hpp"
-#include "Views/Components/Choice.hpp"
-
 #include "Views/Components/CheckBox.hpp"
+#include "Views/Components/Choice.hpp"
+#include "Views/MainMenu/RMouseHackView.hpp"
 
 //---------------------------------------------------------------------------
-class HostOptionsView : public RMouseHackView
-{
-private:
-    void addMeterButtons(const iXY &pos);
-    void drawMeterInfo(Surface &dest, const iXY &pos);
+class HostOptionsView : public RMouseHackView {
+ private:
+  void addMeterButtons(const iXY &pos);
+  void drawMeterInfo(Surface &dest, const iXY &pos);
 
-    static int cloudCoverageCount;
-    static int windSpeed;
-    static int gameType;
+  static int cloudCoverageCount;
+  static int windSpeed;
+  static int gameType;
 
-    Choice choiceMapStyle;
-    static int mapStyle;
+  Choice choiceMapStyle;
+  static int mapStyle;
 
+  enum { BORDER_SPACE = 4 };
 
-    enum { BORDER_SPACE = 4 };
+  CheckBox checkPowerUp;
+  CheckBox checkPublic;
 
-    CheckBox checkPowerUp;
-    CheckBox checkPublic;
+  Choice choiceGameType;
+  Choice choiceWindSpeed;
+  Choice choiceCloudCoverage;
 
-    Choice choiceGameType;
-    Choice choiceWindSpeed;
-    Choice choiceCloudCoverage;
-protected:
-    virtual void doDeactivate();
+ protected:
+  virtual void doDeactivate();
 
-public:
-    HostOptionsView();
-    virtual ~HostOptionsView()
-    {}
+ public:
+  HostOptionsView();
+  virtual ~HostOptionsView() {}
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
-    virtual void actionPerformed(mMouseEvent me);
+  virtual void doDraw(Surface &windowArea, Surface &clientArea);
+  virtual void actionPerformed(mMouseEvent me);
 
-    static void updateGameConfigCloudCoverage();
-    static void updateGameConfigGameType();
-    static void updateWindSpeedString();
+  static void updateGameConfigCloudCoverage();
+  static void updateGameConfigGameType();
+  static void updateWindSpeedString();
 
-    static int  getCloudCoverageCount()
-    {
-        return cloudCoverageCount;
-    }
-    static void setCloudCoverageCount(int count)
-    {
-        cloudCoverageCount = count;
-    }
-    static int  getWindSpeed()
-    {
-        return windSpeed;
-    }
-    static void setWindSpeed(int speed)
-    {
-        windSpeed = speed;
-    }
+  static int getCloudCoverageCount() { return cloudCoverageCount; }
+  static void setCloudCoverageCount(int count) { cloudCoverageCount = count; }
+  static int getWindSpeed() { return windSpeed; }
+  static void setWindSpeed(int speed) { windSpeed = speed; }
 
-    static std::string cloudCoverageString;
-    static std::string windSpeedString;
+  static std::string cloudCoverageString;
+  static std::string windSpeedString;
 
-    static void updateGameConfigMapStyle();
-    static std::string getMapStyleString();
+  static void updateGameConfigMapStyle();
+  static std::string getMapStyleString();
 
+};  // end HostOptionsView
 
-
-}; // end HostOptionsView
-
-#endif // end __HostOptionsView_hpp__
+#endif  // end __HostOptionsView_hpp__

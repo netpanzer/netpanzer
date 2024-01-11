@@ -19,35 +19,30 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __CloudParticle2D_hpp__
 #define __CloudParticle2D_hpp__
 
-
-#include "WindParticle2D.hpp"
 #include "2D/PackedSurface.hpp"
 #include "Types/iXY.hpp"
+#include "WindParticle2D.hpp"
 
+class CloudParticle2D : public WindParticle2D {
+ private:
+  static void loadPAKFiles();
+  static void packFiles();
 
-class CloudParticle2D : public WindParticle2D
-{
-private:
-    static void loadPAKFiles();
-    static void packFiles();
+  static iXY worldSize;  // How big the is the current world map?
 
-    static iXY worldSize;    // How big the is the current world map?
+  static PackedSurface staticPackedCloud;
 
-    static PackedSurface staticPackedCloud;
+  void setRandomSurface();
 
-    void setRandomSurface();
+ public:
+  CloudParticle2D(const fXYZ &pos, const iXY &worldSize, float windMin,
+                  float windRand);
 
-public:
-    CloudParticle2D(	const fXYZ &pos,
-                     const iXY  &worldSize,
-                     float       windMin,
-                     float       windRand);
+  static void init();
+  static void uninit();
 
-    static void init();
-    static void uninit();
-
-    virtual void sim();
-    virtual void draw(const Surface &dest, SpriteSorter &sorter);
+  virtual void sim();
+  virtual void draw(const Surface &dest, SpriteSorter &sorter);
 };
 
-#endif // __CloudParticle2D_hpp__
+#endif  // __CloudParticle2D_hpp__

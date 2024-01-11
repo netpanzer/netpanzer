@@ -20,47 +20,41 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 
-#include "Interfaces/BaseGameManager.hpp"
 #include "Classes/ScreenSurface.hpp"
-
-#include "InfoSocket.hpp"
 #include "Heartbeat.hpp"
+#include "InfoSocket.hpp"
+#include "Interfaces/BaseGameManager.hpp"
 
-//#include "UI/FontManager.hpp"
-//#include "Panels/TestPanel.hpp"
+// #include "UI/FontManager.hpp"
+// #include "Panels/TestPanel.hpp"
 
+class BotGameManager : public BaseGameManager {
+ private:
+  std::string m_serverHost;
+  // void joinMultiPlayerGame();
+  // NTimer getaflag;
 
-class BotGameManager : public BaseGameManager
-{
-private:
-    std::string m_serverHost;
-    //void joinMultiPlayerGame();
-    //NTimer getaflag;
+ protected:
+  void initializeGameConfig(const std::string& configfile);
 
+  virtual void initializeVideoSubSystem();
+  virtual void shutdownVideoSubSystem();
 
-protected:
-    void initializeGameConfig(const std::string& configfile);
+  virtual void initializeInputDevices();
+  virtual void shutdownInputDevices();
 
-    virtual void initializeVideoSubSystem();
-    virtual void shutdownVideoSubSystem();
+  // virtual bool botinputLoop();
+  virtual void inputLoop();
+  //
+  // virtual void inputLoop();
 
-    virtual void initializeInputDevices();
-    virtual void shutdownInputDevices();
+ public:
+  BotGameManager(const std::string& serverHost);
 
-    //virtual bool botinputLoop();
-    virtual void inputLoop();
-    //
-    //virtual void inputLoop();
+  virtual bool launchNetPanzerGame();
+  // virtual void botinputLoop();
 
-public:
-    BotGameManager(const std::string &serverHost);
-
-    virtual bool launchNetPanzerGame();
-    //virtual void botinputLoop();
-
-    //void quitGame();
+  // void quitGame();
 };
-
-
 
 #endif

@@ -27,64 +27,47 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class StateChangedCallback;
 
 //--------------------------------------------------------------------------
-class CheckBox : public Component
-{
-protected:
-    std::string label;
-    bool   state;
-    StateChangedCallback* callback;
+class CheckBox : public Component {
+ protected:
+  std::string label;
+  bool state;
+  StateChangedCallback* callback;
 
-    PIX textColor;
-    PIX forcedtextColor;
+  PIX textColor;
+  PIX forcedtextColor;
 
+  void render();
 
-    void render();
+ public:
+  CheckBox(StateChangedCallback* newcallback = 0)
+      : Component(), state(false), callback(newcallback) {
+    setSize(14, 14);
+    forcedtextColor = Color::darkGray;
+  }
 
-public:
-    CheckBox(StateChangedCallback* newcallback = 0)
-            : Component(), state(false), callback(newcallback)
-    {
-        setSize( 14, 14);
-        forcedtextColor = Color::darkGray;
-    }
+  CheckBox(const std::string& newlabel, bool newstate = false)
+      : Component(), label(newlabel), state(newstate), callback(0) {
+    setSize(20 + label.length() * 8, 14);
+    forcedtextColor = Color::darkGray;
+    dirty = true;
+  }
 
-    CheckBox(const std::string& newlabel, bool newstate = false)
-            : Component(), label(newlabel), state(newstate), callback(0)
-    {
-        setSize( 20+label.length()*8, 14);
-        forcedtextColor = Color::darkGray;
-        dirty = true;
-    }
+  virtual ~CheckBox() {}
 
-    virtual ~CheckBox()
-    {
-    }
+  const std::string& getLabel() const { return label; }
+  bool getState() const { return state; }
 
-    const std::string& getLabel() const
-    {
-        return label;
-    }
-    bool   getState() const
-    {
-        return state;
-    }
+  void setLabel(const std::string& label) {
+    CheckBox::label = label;
+    setSize(20 + label.length() * 8, 14);
+    dirty = true;
+  }
+  void setState(bool state) { CheckBox::state = state; }
+  void setStateChangedCallback(StateChangedCallback* newcallback) {
+    callback = newcallback;
+  }
 
-    void setLabel(const std::string& label)
-    {
-        CheckBox::label = label;
-        setSize( 20+label.length()*8, 14);
-        dirty = true;
-    }
-    void setState(bool state)
-    {
-        CheckBox::state = state;
-    }
-    void setStateChangedCallback(StateChangedCallback* newcallback)
-    {
-        callback = newcallback;
-    }
+  virtual void actionPerformed(const mMouseEvent& me);
+};  // end CheckBox
 
-    virtual void actionPerformed(const mMouseEvent &me);
-}; // end CheckBox
-
-#endif // end __CheckBox_hpp__
+#endif  // end __CheckBox_hpp__

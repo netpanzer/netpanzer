@@ -22,105 +22,98 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "ArrayUtil/BoundBox.hpp"
 #include "Types/Angle.hpp"
-
 #include "UnitLifecycles.hpp"
 
-enum { _threat_level_all_clear,
-       _threat_level_under_attack,
-       _threat_level_defending
-     };
+enum {
+  _threat_level_all_clear,
+  _threat_level_under_attack,
+  _threat_level_defending
+};
 
 #ifdef MSVC
 #pragma pack(1)
 #endif
 
-class NetworkUnitState
-{
-public:
-    NetworkUnitState()
-    { }
+class NetworkUnitState {
+ public:
+  NetworkUnitState() {}
 
-private:
-    Uint8     unit_type;
+ private:
+  Uint8 unit_type;
 
-    Sint32     location_x;
-    Sint32     location_y;
-    Sint32     bbox_min_x;
-    Sint32     bbox_min_y;
-    Sint32     bbox_max_x;
-    Sint32     bbox_max_y;
+  Sint32 location_x;
+  Sint32 location_y;
+  Sint32 bbox_min_x;
+  Sint32 bbox_min_y;
+  Sint32 bbox_max_x;
+  Sint32 bbox_max_y;
 
-    NetworkAngleInt body_angle;
-    NetworkAngleInt turret_angle;
+  NetworkAngleInt body_angle;
+  NetworkAngleInt turret_angle;
 
-    Uint16    orientation;
-    Uint16    speed_rate;
-    Uint16    speed_factor;
+  Uint16 orientation;
+  Uint16 speed_rate;
+  Uint16 speed_factor;
 
-    Uint16    reload_time;
-    Sint16    max_hit_points;
-    Sint16    hit_points;
-    Uint16    damage_factor;
-    Uint32    weapon_range;
-    Uint32    defend_range;
+  Uint16 reload_time;
+  Sint16 max_hit_points;
+  Sint16 hit_points;
+  Uint16 damage_factor;
+  Uint32 weapon_range;
+  Uint32 defend_range;
 
-    Uint8     unit_style;
-    Uint8     moving;
+  Uint8 unit_style;
+  Uint8 moving;
 
-    Uint8 threat_level;
-    Uint8 lifecycle_state;
+  Uint8 threat_level;
+  Uint8 lifecycle_state;
 
-    friend class UnitState;
+  friend class UnitState;
 } __attribute__((packed));
 
 #ifdef MSVC
 #pragma pack()
 #endif
 
-class UnitState
-{
-public:
-    unsigned char  unit_type;
+class UnitState {
+ public:
+  unsigned char unit_type;
 
-    /// true if the unit is currently selected
-    bool           select;
-    /// position of the unit
-    iXY            location;
-    BoundBox       bbox;
+  /// true if the unit is currently selected
+  bool select;
+  /// position of the unit
+  iXY location;
+  BoundBox bbox;
 
-    AngleInt       body_angle;
-    AngleInt       turret_angle;
+  AngleInt body_angle;
+  AngleInt turret_angle;
 
-    unsigned short orientation;
-    unsigned short speed_rate;
-    unsigned short speed_factor;
+  unsigned short orientation;
+  unsigned short speed_rate;
+  unsigned short speed_factor;
 
-    unsigned short reload_time;
-    short	       max_hit_points;
-    short          hit_points;
-    unsigned short damage_factor;
-    unsigned long  weapon_range;
-    unsigned long  defend_range;
+  unsigned short reload_time;
+  short max_hit_points;
+  short hit_points;
+  unsigned short damage_factor;
+  unsigned long weapon_range;
+  unsigned long defend_range;
 
-    unsigned char  unit_style;
-    bool           moving;
+  unsigned char unit_style;
+  bool moving;
 
-    unsigned char  threat_level;
-    unsigned char  lifecycle_state;
+  unsigned char threat_level;
+  unsigned char lifecycle_state;
 
-    UnitState( );
+  UnitState();
 
-    bool bounds(const iXY& loc) const
-    {
-        return( bbox.bounds( location, loc ) );
-    }
+  bool bounds(const iXY& loc) const { return (bbox.bounds(location, loc)); }
 
-    int percentDamageInt();
-    float percentDamageFloat();
+  int percentDamageInt();
+  float percentDamageFloat();
 
-    NetworkUnitState getNetworkUnitState() const;
-    void setFromNetworkUnitState(const NetworkUnitState& state);
+  NetworkUnitState getNetworkUnitState() const;
+  void setFromNetworkUnitState(const NetworkUnitState& state);
 };
 
 #endif
-

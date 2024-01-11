@@ -21,29 +21,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PowerUps/PowerUp.hpp"
 #include "Units/UnitState.hpp"
 
-class UnitGlobalPowerUp : public PowerUp
-{
-protected:
-    int unit_powerup_type;
+class UnitGlobalPowerUp : public PowerUp {
+ protected:
+  int unit_powerup_type;
 
-    virtual void onHit( UnitID unit_id );
+  virtual void onHit(UnitID unit_id);
 
+  void powerUpGlobalFirePower(UnitState *unit_state, UnitID unit_id);
+  void powerUpGlobalSpeed(UnitState *unit_state, UnitID unit_id);
+  void powerUpGlobalRepair(UnitState *unit_state, UnitID unit_id);
+  void powerUpGlobalReload(UnitState *unit_state, UnitID unit_id);
+  void powerUpGlobalDestruct(UnitID unit_id);
 
-    void powerUpGlobalFirePower( UnitState *unit_state, UnitID unit_id );
-    void powerUpGlobalSpeed( UnitState *unit_state, UnitID unit_id );
-    void powerUpGlobalRepair( UnitState *unit_state, UnitID unit_id );
-    void powerUpGlobalReload( UnitState *unit_state, UnitID unit_id );
-    void powerUpGlobalDestruct( UnitID unit_id );
+ public:
+  UnitGlobalPowerUp(iXY map_loc, int type);
+  virtual ~UnitGlobalPowerUp() {}
 
-
-public:
-
-    UnitGlobalPowerUp(iXY map_loc, int type);
-    virtual ~UnitGlobalPowerUp()
-    { }
-
-    virtual void onHitMessage( PowerUpHitMesg *message  );
-
+  virtual void onHitMessage(PowerUpHitMesg *message);
 };
 
-#endif // ** _UNIT_GLOBAL_POWERUP_HPP
+#endif  // ** _UNIT_GLOBAL_POWERUP_HPP

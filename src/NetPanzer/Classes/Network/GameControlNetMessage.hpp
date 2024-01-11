@@ -23,47 +23,41 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "NetMessage.hpp"
 
-enum { _net_message_id_game_control_cycle_map,
-       _net_message_id_game_control_cycle_respawn_ack
-     };
+enum {
+  _net_message_id_game_control_cycle_map,
+  _net_message_id_game_control_cycle_respawn_ack
+};
 
 #ifdef MSVC
 #pragma pack(1)
 #endif
 
-class GameControlCycleMap : public NetMessage
-{
-public:
-    char map_name[128];
+class GameControlCycleMap : public NetMessage {
+ public:
+  char map_name[128];
 
-    void set(const char* newmap_name)
-    {
-        snprintf(map_name, sizeof(map_name), "%s", newmap_name);
-    }
+  void set(const char* newmap_name) {
+    snprintf(map_name, sizeof(map_name), "%s", newmap_name);
+  }
 
-    GameControlCycleMap()
-    {
-        message_class = _net_message_class_game_control;
-        message_id = _net_message_id_game_control_cycle_map;
-        memset(map_name, 0, sizeof(map_name));
-    }
+  GameControlCycleMap() {
+    message_class = _net_message_class_game_control;
+    message_id = _net_message_id_game_control_cycle_map;
+    memset(map_name, 0, sizeof(map_name));
+  }
 
-}
-__attribute__((packed));
+} __attribute__((packed));
 
-class GameControlCycleRespawnAck : public NetMessage
-{
-public:
-    GameControlCycleRespawnAck()
-    {
-        message_class = _net_message_class_game_control;
-        message_id = _net_message_id_game_control_cycle_respawn_ack;
-    }
-}
-__attribute__((packed));
+class GameControlCycleRespawnAck : public NetMessage {
+ public:
+  GameControlCycleRespawnAck() {
+    message_class = _net_message_class_game_control;
+    message_id = _net_message_id_game_control_cycle_respawn_ack;
+  }
+} __attribute__((packed));
 
 #ifdef MSVC
 #pragma pack()
 #endif
 
-#endif // ** _GAME_CONTROL_NET_MESSAGE_HPP
+#endif  // ** _GAME_CONTROL_NET_MESSAGE_HPP

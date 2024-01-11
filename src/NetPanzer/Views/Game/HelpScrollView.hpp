@@ -19,49 +19,44 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __HelpScrollView_hpp__
 #define __HelpScrollView_hpp__
 
-#include <vector>
 #include <string>
+#include <vector>
 
-#include "Views/MainMenu/SpecialButtonView.hpp"
 #include "2D/Surface.hpp"
-#include "Views/Components/ScrollBar.hpp"
 #include "Views/Components/Button.hpp"
+#include "Views/Components/ScrollBar.hpp"
+#include "Views/MainMenu/SpecialButtonView.hpp"
 
 //---------------------------------------------------------------------------
-class HelpScrollView : public SpecialButtonView
-{
-protected:
-    int columns;
-    int rows;
+class HelpScrollView : public SpecialButtonView {
+ protected:
+  int columns;
+  int rows;
 
-    int  maxYOffset;
-    void drawHelpText(Surface &dest, const int &x, const int &y);
+  int maxYOffset;
+  void drawHelpText(Surface &dest, const int &x, const int &y);
 
-    ScrollBar *scrollBar;
-    std::vector<std::string> text;
+  ScrollBar *scrollBar;
+  std::vector<std::string> text;
 
-    enum { TEXT_GAP_SPACE = 3 };
-    void insert(const char *string);
+  enum { TEXT_GAP_SPACE = 3 };
+  void insert(const char *string);
 
-    Button * upButton;
-    Button * downButton;
+  Button *upButton;
+  Button *downButton;
 
-    int maxViewableItems;
-    int topViewableItem;
+  int maxViewableItems;
+  int topViewableItem;
 
-public:
-    HelpScrollView();
-    virtual ~HelpScrollView()
-    {
-        delete scrollBar;
-    }
+ public:
+  HelpScrollView();
+  virtual ~HelpScrollView() { delete scrollBar; }
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
-    virtual void actionPerformed(mMouseEvent me);
-    virtual void doActivate();
-    //virtual void processEvents();
+  virtual void doDraw(Surface &windowArea, Surface &clientArea);
+  virtual void actionPerformed(mMouseEvent me);
+  virtual void doActivate();
+  // virtual void processEvents();
 
-}
-; // end HelpScrollView
+};  // end HelpScrollView
 
-#endif // end __HelpScrollView_hpp__
+#endif  // end __HelpScrollView_hpp__
