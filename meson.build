@@ -58,6 +58,7 @@ exe = executable(
     inc_dirs
   ],
   dependencies: [
+    deps,
     dep_netpanzer,
   ]
 )

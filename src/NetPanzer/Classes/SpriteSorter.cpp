@@ -25,8 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 SpriteSorter SPRITE_SORTER;
 
-class SpriteCompare
-    : public std::binary_function<const Sprite *, const Sprite *, bool> {
+class SpriteCompare {
  public:
   bool operator()(const Sprite *sprite1, const Sprite *sprite2) const {
     long y1 = sprite1->world_pos.y;
