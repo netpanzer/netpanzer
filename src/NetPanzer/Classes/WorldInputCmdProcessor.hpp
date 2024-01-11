@@ -18,112 +18,110 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _WORLDINPUTCMDPROCESSOR_HPP
 #define _WORLDINPUTCMDPROCESSOR_HPP
 
-#include "SelectionList.hpp"
 #include "Interfaces/MouseInterface.hpp"
+#include "SelectionList.hpp"
 #include "Util/NTimer.hpp"
 
-class WorldInputCmdProcessor
-{
-protected:
-    iRect world_win;
+class WorldInputCmdProcessor {
+ protected:
+  iRect world_win;
 
-    bool left_button_hold_action_complete;
+  bool left_button_hold_action_complete;
 
-    bool selection_box_active;
-    iXY box_press, box_release;
+  bool selection_box_active;
+  iXY box_press, box_release;
 
-    ObjectiveID outpost_goal_selection; //number of the outpost, -1 if none
-    iXY output_pos_press;
+  ObjectiveID outpost_goal_selection;  // number of the outpost, -1 if none
+  iXY output_pos_press;
 
-    iXY right_mouse_scroll_pos;
-    iXY right_mouse_scrolled_pos;
-    bool right_mouse_scroll;
-    bool right_mouse_scroll_moved;
-    bool selectBoundBoxUnits();
+  iXY right_mouse_scroll_pos;
+  iXY right_mouse_scrolled_pos;
+  bool right_mouse_scroll;
+  bool right_mouse_scroll_moved;
+  bool selectBoundBoxUnits();
 
-    bool manual_control_state;
-    bool previous_manual_control_state;
-    bool manual_fire_state;
+  bool manual_control_state;
+  bool previous_manual_control_state;
+  bool manual_fire_state;
 
-    /// timer that detects double keypressed (for centering selected unit group)
-    NTimer lastSelectTimer;
-    //NTimer actionTimer;
-    //NTimer moveBetterTimer;
+  /// timer that detects double keypressed (for centering selected unit group)
+  NTimer lastSelectTimer;
+  // NTimer actionTimer;
+  // NTimer moveBetterTimer;
 
-    SelectionList selection_group_lists[10];
-    SelectionList working_list;
-    int last_selected_group;
-    unsigned long current_selection_list_index;
-    SelectionList target_list;
+  SelectionList selection_group_lists[10];
+  SelectionList working_list;
+  int last_selected_group;
+  unsigned long current_selection_list_index;
+  SelectionList target_list;
 
-    void switchSelectionList(unsigned long new_list_index);
-    void setSelectionList(unsigned long new_list_index);
-    void cycleSelectedUnits(unsigned long new_list_index);
+  void switchSelectionList(unsigned long new_list_index);
+  void setSelectionList(unsigned long new_list_index);
+  void cycleSelectedUnits(unsigned long new_list_index);
 
-    unsigned char getCursorStatus(const iXY& loc);
-    void setMouseCursor(unsigned char world_cursor_status);
+  unsigned char getCursorStatus(const iXY &loc);
+  void setMouseCursor(unsigned char world_cursor_status);
 
-    void getManualControlStatus();
+  void getManualControlStatus();
 
-    void sendManualMoveCommand(unsigned char orientation,
-                                bool start_stop);
-    void sendManualFireCommand(const iXY &world_pos);
-    void sendMoveCommand(const iXY &world_pos);
-    void sendAttackCommand(const iXY &world_pos);
-    void sendAllianceRequest(const iXY &world_pos, bool make_break);
+  void sendManualMoveCommand(unsigned char orientation, bool start_stop);
+  void sendManualFireCommand(const iXY &world_pos);
+  void sendMoveCommand(const iXY &world_pos);
+  void sendAttackCommand(const iXY &world_pos);
+  void sendAllianceRequest(const iXY &world_pos, bool make_break);
 
-    void evalLeftMButtonDownEvents(const MouseEvent &event);
-    void evalLeftMButtonUpEvents(const MouseEvent &event);
-    void evalLeftMButtonEvents(const MouseEvent &event);
-    void evalRightMButtonEvents(const MouseEvent &event);
+  void evalLeftMButtonDownEvents(const MouseEvent &event);
+  void evalLeftMButtonUpEvents(const MouseEvent &event);
+  void evalLeftMButtonEvents(const MouseEvent &event);
+  void evalRightMButtonEvents(const MouseEvent &event);
 
-    void evaluateMouseEvents();
+  void evaluateMouseEvents();
 
-    unsigned long keyboard_input_mode;
+  unsigned long keyboard_input_mode;
 
-    void keyboardInputModeCommand();
+  void keyboardInputModeCommand();
 
-    long enter_key_hit_count;
-    void setKeyboardInputModeChatMesg();
-    void keyboardInputModeChatMesg();
-    void setKeyboardInputModeAllieChatMesg();
-    void keyboardInputModeAllieChatMesg();
+  long enter_key_hit_count;
+  void setKeyboardInputModeChatMesg();
+  void keyboardInputModeChatMesg();
+  void setKeyboardInputModeAllieChatMesg();
+  void keyboardInputModeAllieChatMesg();
 
-    void evaluateKeyCommands();
-    void evaluateGroupingKeys();
+  void evaluateKeyCommands();
+  void evaluateGroupingKeys();
 
-    void evaluateKeyboardEvents();
+  void evaluateKeyboardEvents();
 
-    void jumpLastAttackedUnit();
-    /** move camera to a position that shows the currently selected group of
-     * tank
-     */
-    void centerSelectedUnits();
+  void jumpLastAttackedUnit();
+  /** move camera to a position that shows the currently selected group of
+   * tank
+   */
+  void centerSelectedUnits();
 
-    bool getConsoleInputString(char *input_string);
+  bool getConsoleInputString(char *input_string);
 
-    static ObjectiveID selected_objective_id;
+  static ObjectiveID selected_objective_id;
 
-public:
-    NTimer Flagtimer;
+ public:
+  NTimer Flagtimer;
 
-    WorldInputCmdProcessor();
+  WorldInputCmdProcessor();
 
-    void process(bool process_mouse = true);
+  void process(bool process_mouse = true);
 
-    void inFocus();
+  void inFocus();
 
-    void updateScrollStatus(const iXY &mouse_pos);
+  void updateScrollStatus(const iXY &mouse_pos);
 
-    void draw();
+  void draw();
 
-    void closeSelectionBox();
+  void closeSelectionBox();
 
-    static bool isObjectiveSelected();
-    static const char* getSelectedObjectiveName();
-    static iXY getSelectedObjectiveWorldPos();
+  static bool isObjectiveSelected();
+  static const char *getSelectedObjectiveName();
+  static iXY getSelectedObjectiveWorldPos();
 };
 
 extern WorldInputCmdProcessor COMMAND_PROCESSOR;
 
-#endif // ** _WORLDINPUTCMDPROCESSOR_HPP
+#endif  // ** _WORLDINPUTCMDPROCESSOR_HPP

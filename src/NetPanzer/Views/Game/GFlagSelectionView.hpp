@@ -19,37 +19,35 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef GFLAGSELECTIONVIEW_HPP
 #define GFLAGSELECTIONVIEW_HPP
 
+#include "2D/Surface.hpp"
 #include "Core/CoreTypes.hpp"
 #include "Views/Components/View.hpp"
-#include "2D/Surface.hpp"
 
 //---------------------------------------------------------------------------
-class GFlagSelectionView : public View
-{
-private:
-    iXY loc_player_flag;
-    const char * text_current;
-    iXY loc_text_current;
-    bool loaded;
+class GFlagSelectionView : public View {
+ private:
+  iXY loc_player_flag;
+  const char *text_current;
+  iXY loc_text_current;
+  bool loaded;
 
-    iRect rect;
+  iRect rect;
 
-public:
-    GFlagSelectionView();
-    virtual ~GFlagSelectionView()
-    {}
+ public:
+  GFlagSelectionView();
+  virtual ~GFlagSelectionView() {}
 
-    virtual void doActivate();
-    virtual void doDeactivate();
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
-    virtual void checkResolution(iXY oldResolution, iXY newResolution);
-    virtual void processEvents();
+  virtual void doActivate();
+  virtual void doDeactivate();
+  virtual void doDraw(Surface &windowArea, Surface &clientArea);
+  virtual void checkResolution(iXY oldResolution, iXY newResolution);
+  virtual void processEvents();
 
-    //virtual int  lMouseUp(const iXY &downPos, const iXY &upPos);
-    //virtual void drawBorder(Surface& )
-    //{}
+  // virtual int  lMouseUp(const iXY &downPos, const iXY &upPos);
+  // virtual void drawBorder(Surface& )
+  //{}
 
-    void init();
+  void init();
 };
 
-#endif // GFLAGSELECTIONVIEW_HPP
+#endif  // GFLAGSELECTIONVIEW_HPP

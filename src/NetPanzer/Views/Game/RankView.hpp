@@ -16,63 +16,54 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #ifndef __RankView_hpp__
 #define __RankView_hpp__
 
 #include <vector>
-#include "Views/Components/View.hpp"
+
 #include "2D/Surface.hpp"
 #include "GameTemplateView.hpp"
 #include "Views/Components/ScrollBar.hpp"
+#include "Views/Components/View.hpp"
 
 class PlayerState;
 
 //---------------------------------------------------------------------------
-class RankView : public GameTemplateView
-{
-private:
-    int viewableMessageCount;
-    enum { ITEM_GAP_SPACE = 10 };
-    void drawPlayerStats(Surface &dest, unsigned int flagHeight);
+class RankView : public GameTemplateView {
+ private:
+  int viewableMessageCount;
+  enum { ITEM_GAP_SPACE = 10 };
+  void drawPlayerStats(Surface &dest, unsigned int flagHeight);
 
-    ScrollBar *scrollBar;
-    Surface allyImage;
-    Surface allyRequestImage;
-    Surface allyOtherImage;
-    Surface noAllyImage;
-    Surface colorImage;
-    Surface muteImageW;
-    Surface muteImageR;
-    Surface botImage;
-    Surface humanImage;
-    Surface unknownImage;
-    std::vector<const PlayerState*> states;
-    int selected_line;
-    PlayerState* mstate;
-    PlayerState* tstate;
+  ScrollBar *scrollBar;
+  Surface allyImage;
+  Surface allyRequestImage;
+  Surface allyOtherImage;
+  Surface noAllyImage;
+  Surface colorImage;
+  Surface muteImageW;
+  Surface muteImageR;
+  Surface botImage;
+  Surface humanImage;
+  Surface unknownImage;
+  std::vector<const PlayerState *> states;
+  int selected_line;
+  PlayerState *mstate;
+  PlayerState *tstate;
 
-public:
+ public:
+  RankView();
+  virtual ~RankView() { delete scrollBar; }
 
-    RankView();
-    virtual ~RankView()
-    {
-        delete scrollBar;
-    }
+  virtual void doDraw(Surface &windowArea, Surface &clientArea);
+  virtual void notifyMoveTo();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
-    virtual void notifyMoveTo();
+ protected:
+  virtual void lMouseDown(const iXY &pos);
+  virtual void mouseMove(const iXY &prevPos, const iXY &newPos);
+  virtual void doActivate();
+  virtual void doDeactivate();
+  virtual void processEvents();
+};  // end _WIN
 
-
-
-protected:
-
-    virtual void lMouseDown(const iXY &pos);
-    virtual void mouseMove(const iXY & prevPos, const iXY &newPos);
-    virtual void doActivate();
-    virtual void doDeactivate();
-    virtual void processEvents();
-}
-; // end _WIN
-
-#endif // end __RankView_hpp__
+#endif  // end __RankView_hpp__

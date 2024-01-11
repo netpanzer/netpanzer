@@ -16,186 +16,178 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "package.hpp"
 #include "CreditsScrollView.hpp"
 
-#include "Views/GameViewGlobals.hpp"
 #include "Views/Components/Desktop.hpp"
-//#include "Classes/WorldInputCmdProcessor.hpp"
+#include "Views/GameViewGlobals.hpp"
+#include "package.hpp"
+// #include "Classes/WorldInputCmdProcessor.hpp"
 //---------------------------------------------------------------------------
-CreditsScrollView::CreditsScrollView() : SpecialButtonView()
-{
-    setSearchName("CreditsScrollView");
-    setTitle("Credits Information");
-    setSubTitle("");
+CreditsScrollView::CreditsScrollView() : SpecialButtonView() {
+  setSearchName("CreditsScrollView");
+  setTitle("Credits Information");
+  setSubTitle("");
 
-    setAllowResize(false);
-    setAllowMove(false);
+  setAllowResize(false);
+  setAllowMove(false);
 
-    moveTo(bodyTextRect.min);
-    resize(bodyTextRect.getSize());
-    //moveTo(iXY(0, 0));
-    //resize(iXY(800, 600));
+  moveTo(bodyTextRect.min);
+  resize(bodyTextRect.getSize());
+  // moveTo(iXY(0, 0));
+  // resize(iXY(800, 600));
 
-    // Is having the game description here really necessary? And isn't
-    // the version info already available at the main menu?
-    char line[512];
-    insert("");
-    snprintf (line, sizeof line, "  This is %s v. %s, a massively multiplayer", Package::GetName().c_str(), Package::GetVersion().c_str());
-    insert(line);
-    insert("  tank battle game.");
-    insert("");
-    insert("  This application is free software under the terms of the");
-    insert("  Gnu General Public license (GPL). See the COPYING file for details.");
-    insert("");
-    insert("  Source and binaries at: http://netpanzer.sourceforge.net/");
-    insert("");
-    insert("  Please visit www.NETPANZER.info");
-    insert("  - for binaries, maps, flags, related tools and news");
-    insert("  - and don't forget to register your nickname for the ranking");
-    insert("");
-    insert("  Current Development Team");
-    insert("  - Devon Winrick (winrid)");
-    insert("  - Fulvio Testi (fu)");
-    insert("");
-    insert("");
-    insert("  Authors");
-    insert("");
-    insert("  Additional graphics:");
-    insert("  Peter Lisker (Nessie), Jesus Eugenio (Silvestre)");
-    insert("");
-    insert("");
-    insert("  Original Game (Pyrosoft):");
-    insert("  Vlad Rahkoy, Skip Rhudy, Matt Bogue, Clint Bogue");
-    insert("");
-    insert("  Linux Port, Polishing, Packaging and Related Tools:");
-    insert("  Matthias Braun, Ivo Danihelka, Hollis Blanchard, Hankin Chick, BenUrban");
-    insert("  Tyler Nielsen, Bastosz Fenski, Tobias Blerch, Ingo Ruhnke");
-    insert("");
-    insert("  0.8.3 Release:");
-    insert("  Aaron Perez (krom), C-D, fu");
-    insert("");
-    insert("  0.8.4 Release up to 0.8.5-test-1:");
-    insert("  Aaron Perez (krom), Laurant Jacques (Wile64), C-D, fu");
-    insert("");
-    insert("  0.8.7 Release:");
-    insert("  Fulvio Testi (fu), Guido Ueffing (Lohengrin)");
+  // Is having the game description here really necessary? And isn't
+  // the version info already available at the main menu?
+  char line[512];
+  insert("");
+  snprintf(line, sizeof line, "  This is %s v. %s, a massively multiplayer",
+           Package::GetName().c_str(), Package::GetVersion().c_str());
+  insert(line);
+  insert("  tank battle game.");
+  insert("");
+  insert("  This application is free software under the terms of the");
+  insert(
+      "  Gnu General Public license (GPL). See the COPYING file for details.");
+  insert("");
+  insert("  Source and binaries at: http://netpanzer.sourceforge.net/");
+  insert("");
+  insert("  Please visit www.NETPANZER.info");
+  insert("  - for binaries, maps, flags, related tools and news");
+  insert("  - and don't forget to register your nickname for the ranking");
+  insert("");
+  insert("  Current Development Team");
+  insert("  - Devon Winrick (winrid)");
+  insert("  - Fulvio Testi (fu)");
+  insert("");
+  insert("");
+  insert("  Authors");
+  insert("");
+  insert("  Additional graphics:");
+  insert("  Peter Lisker (Nessie), Jesus Eugenio (Silvestre)");
+  insert("");
+  insert("");
+  insert("  Original Game (Pyrosoft):");
+  insert("  Vlad Rahkoy, Skip Rhudy, Matt Bogue, Clint Bogue");
+  insert("");
+  insert("  Linux Port, Polishing, Packaging and Related Tools:");
+  insert(
+      "  Matthias Braun, Ivo Danihelka, Hollis Blanchard, Hankin Chick, "
+      "BenUrban");
+  insert("  Tyler Nielsen, Bastosz Fenski, Tobias Blerch, Ingo Ruhnke");
+  insert("");
+  insert("  0.8.3 Release:");
+  insert("  Aaron Perez (krom), C-D, fu");
+  insert("");
+  insert("  0.8.4 Release up to 0.8.5-test-1:");
+  insert("  Aaron Perez (krom), Laurant Jacques (Wile64), C-D, fu");
+  insert("");
+  insert("  0.8.7 Release:");
+  insert("  Fulvio Testi (fu), Guido Ueffing (Lohengrin)");
 
+  // insert("  Alt + '-'                        Decrease brightness");
+  // insert("  Alt + '='                        Increase brightness");
 
-    //insert("  Alt + '-'                        Decrease brightness");
-    //insert("  Alt + '='                        Increase brightness");
+  int CHAR_YPIX = Surface::getFontHeight();
+  maxViewableItems =
+      (getClientRect().getSizeY() - (TEXT_GAP_SPACE + CHAR_YPIX)) /
+          (TEXT_GAP_SPACE + CHAR_YPIX) -
+      1;
+  topViewableItem = 0;
 
-    int CHAR_YPIX = Surface::getFontHeight();
-    maxViewableItems = (getClientRect().getSizeY() - (TEXT_GAP_SPACE + CHAR_YPIX)) / (TEXT_GAP_SPACE + CHAR_YPIX) - 1;
-    topViewableItem  = 0;
+  iXY size(20, 20);
+  iXY pos(getClientRect().getSizeX() - size.x, 0);
 
-    iXY size(20, 20);
-    iXY pos(getClientRect().getSizeX() - size.x, 0);
+  upButton = new Button("upButton");
+  upButton->setLabel("+");
+  upButton->setLocation(pos.x, pos.y);
+  upButton->setSize(size.x, size.y);
+  upButton->setNormalBorder();
+  upButton->setTextColors(Color::darkGray, Color::red, Color::gray);
+  add(upButton);
 
-    upButton = new Button("upButton");
-    upButton->setLabel("+");
-    upButton->setLocation(pos.x, pos.y);
-    upButton->setSize(size.x, size.y);
-    upButton->setNormalBorder();
-    upButton->setTextColors(Color::darkGray, Color::red, Color::gray);
-    add(upButton);
-
-    pos = iXY(getClientRect().getSizeX() - size.x, getClientRect().getSizeY() - size.y);
-    downButton = new Button("downButton");
-    downButton->setLabel("-");
-    downButton->setLocation(pos.x, pos.y);
-    downButton->setSize(size.x, size.y);
-    downButton->setNormalBorder();
-    downButton->setTextColors(Color::darkGray, Color::red, Color::gray);
-    add(downButton);
-
+  pos = iXY(getClientRect().getSizeX() - size.x,
+            getClientRect().getSizeY() - size.y);
+  downButton = new Button("downButton");
+  downButton->setLabel("-");
+  downButton->setLocation(pos.x, pos.y);
+  downButton->setSize(size.x, size.y);
+  downButton->setNormalBorder();
+  downButton->setTextColors(Color::darkGray, Color::red, Color::gray);
+  add(downButton);
 }
 
 // doDraw
 //---------------------------------------------------------------------------
 
-void CreditsScrollView::doDraw(Surface &viewArea, Surface &clientArea)
-{
-    //if (Desktop::getVisible("GameView")) {
-    //    bltViewBackground(viewArea);
-    //}
+void CreditsScrollView::doDraw(Surface &viewArea, Surface &clientArea) {
+  // if (Desktop::getVisible("GameView")) {
+  //     bltViewBackground(viewArea);
+  // }
 
+  // clientArea.FillRoundRect(getClientRect(), 10, Color::darkGray);
+  drawHelpText(clientArea, 0, 0);
 
+  clientArea.bltString(4, clientArea.getHeight() - Surface::getFontHeight(),
+                       "Note: Use the right mouse button to scroll quickly.",
+                       windowTextColor);
+  // char strBuf[256];
+  // sprintf(strBuf, "%d", scrollBar->getValue());
+  // clientArea.bltStringCenter(strBuf, Color::red);
 
-    //clientArea.FillRoundRect(getClientRect(), 10, Color::darkGray);
-    drawHelpText(clientArea, 0, 0);
-
-    clientArea.bltString(   4,
-                            clientArea.getHeight() - Surface::getFontHeight(),
-                            "Note: Use the right mouse button to scroll quickly.",
-                            windowTextColor);
-    //char strBuf[256];
-    //sprintf(strBuf, "%d", scrollBar->getValue());
-    //clientArea.bltStringCenter(strBuf, Color::red);
-
-    View::doDraw(viewArea, clientArea);
-
+  View::doDraw(viewArea, clientArea);
 }
-
 
 // drawHelpText
 //--------------------------------------------------------------------------
-void CreditsScrollView::drawHelpText(Surface &dest, const int &, const int &)
-{
-    //PIX color   = windowTextColor;
-    PIX color   = Color::black;
-    //if (scrollBar != 0)
-    //{
-    //	int minView = scrollBar->getValue();
-    //	int maxView = minView + scrollBar->getViewableAmount();
-    //
-    //	if(maxView > scrollBar->getMaximum())
-    //	{
-    //		maxView = scrollBar->getMaximum();
-    //	}
-    //
-    int curIndex = 0;
-    for (int i = topViewableItem; i < topViewableItem + maxViewableItems; i++) {
-        dest.bltString(1, 6 + curIndex * (TEXT_GAP_SPACE +
-                    Surface::getFontHeight()), text[i].c_str(), color);
-        curIndex++;
-    }
-    //}
-
+void CreditsScrollView::drawHelpText(Surface &dest, const int &, const int &) {
+  // PIX color   = windowTextColor;
+  PIX color = Color::black;
+  // if (scrollBar != 0)
+  //{
+  //	int minView = scrollBar->getValue();
+  //	int maxView = minView + scrollBar->getViewableAmount();
+  //
+  //	if(maxView > scrollBar->getMaximum())
+  //	{
+  //		maxView = scrollBar->getMaximum();
+  //	}
+  //
+  int curIndex = 0;
+  for (int i = topViewableItem; i < topViewableItem + maxViewableItems; i++) {
+    dest.bltString(1,
+                   6 + curIndex * (TEXT_GAP_SPACE + Surface::getFontHeight()),
+                   text[i].c_str(), color);
+    curIndex++;
+  }
+  //}
 }
 
 // insert
 //--------------------------------------------------------------------------
-void CreditsScrollView::insert(const char *string)
-{
-    text.push_back(std::string(string));
+void CreditsScrollView::insert(const char *string) {
+  text.push_back(std::string(string));
 }
 
 // actionPerformed
 //--------------------------------------------------------------------------
-void CreditsScrollView::actionPerformed(mMouseEvent me)
-{
-    if ((me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED) ||
-        (me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED))
-    {
-        if (me.getSource()==upButton) {
-            if (--topViewableItem < 0) {
-                topViewableItem = 0;
-            }
-        } else if (me.getSource()==downButton) {
-            if (++topViewableItem >= (long) text.size() - maxViewableItems) {
-                topViewableItem = (long) text.size() - maxViewableItems;
-            }
-        }
+void CreditsScrollView::actionPerformed(mMouseEvent me) {
+  if ((me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED) ||
+      (me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED)) {
+    if (me.getSource() == upButton) {
+      if (--topViewableItem < 0) {
+        topViewableItem = 0;
+      }
+    } else if (me.getSource() == downButton) {
+      if (++topViewableItem >= (long)text.size() - maxViewableItems) {
+        topViewableItem = (long)text.size() - maxViewableItems;
+      }
     }
-
+  }
 }
 
 // doActivate
 //--------------------------------------------------------------------------
-void CreditsScrollView::doActivate()
-{
-    /* empty */
+void CreditsScrollView::doActivate() { /* empty */
 }
 /*
 void HelpScrollView::processEvents()

@@ -16,56 +16,47 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "NetMessageDecoder.hpp"
 
 #include <string.h>
-#include "NetMessageDecoder.hpp"
+
 #include "Util/Log.hpp"
 
-NetMessageDecoder::NetMessageDecoder()
-{
+NetMessageDecoder::NetMessageDecoder() {
+  memset(&decode_message, 0, sizeof(decode_message));
+}
+
+NetMessageDecoder::~NetMessageDecoder() {}
+
+void NetMessageDecoder::setDecodeMessage(const NetMessage* message,
+                                         const size_t size) {
+  if (size > sizeof(decode_message)) {
+    LOGGER.warning("Multimessage with wrong size!");
     memset(&decode_message, 0, sizeof(decode_message));
+    return;
+  }
+
+  memcpy(&decode_message, message, size);
+  this->size = size;
+  offset = 0;
 }
 
-NetMessageDecoder::~NetMessageDecoder()
-{
+Uint16 NetMessageDecoder::decodeMessage(NetMessage** message) {
+  if (sizeof(NetMessage) + offset >= size) {
+    return 0;  // no more messages
+  }
+
+  Uint16* mlen = (Uint16*)(decode_message.data + offset);
+  unsigned int msg_len = ltoh16(*mlen);
+
+  if (msg_len > size - sizeof(NetMessage) - offset) {
+    LOGGER.warning("Malformed Multimessage!!");
+    return false;
+  }
+
+  *message = (NetMessage*)(mlen + 1);
+
+  offset += msg_len + 2;
+
+  return msg_len;
 }
-
-void
-NetMessageDecoder::setDecodeMessage(const NetMessage* message, const size_t size)
-{
-    if ( size > sizeof(decode_message) )
-    {
-        LOGGER.warning("Multimessage with wrong size!");
-        memset(&decode_message, 0, sizeof(decode_message));
-        return;
-    }
-
-    memcpy(&decode_message, message, size);
-    this->size = size;
-    offset = 0;
-}
-
-Uint16
-NetMessageDecoder::decodeMessage(NetMessage **message)
-{
-    if ( sizeof(NetMessage) + offset >= size )
-    {
-        return 0; // no more messages
-    }
-
-    Uint16* mlen = (Uint16*)(decode_message.data + offset);
-    unsigned int msg_len = ltoh16(*mlen);
-
-    if( msg_len > size - sizeof(NetMessage) - offset)
-    {
-        LOGGER.warning("Malformed Multimessage!!");
-        return false;
-    }
-
-    *message = (NetMessage *)(mlen+1);
-
-    offset += msg_len + 2;
-
-    return msg_len;
-}
-

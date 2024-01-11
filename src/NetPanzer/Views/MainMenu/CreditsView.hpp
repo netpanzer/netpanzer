@@ -16,21 +16,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __CreditsView_hpp__
 #define __CreditsView_hpp__
 
-#include "Views/Components/View.hpp"
 #include "2D/Surface.hpp"
+#include "Views/Components/View.hpp"
 #include "Views/MainMenu/MenuTemplateView.hpp"
 
 //--------------------------------------------------------------------------
-class CreditsView : public MenuTemplateView
-{
-protected:
-    virtual void loadTitleSurface();
-public:
-    CreditsView();
+class CreditsView : public MenuTemplateView {
+ protected:
+  virtual void loadTitleSurface();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
-    virtual void doActivate();
-    virtual void doDeactivate();
+ public:
+  CreditsView();
+
+  virtual void doDraw(Surface &windowArea, Surface &clientArea);
+  virtual void doActivate();
+  virtual void doDeactivate();
 };
 
 #endif

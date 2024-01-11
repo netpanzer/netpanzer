@@ -19,27 +19,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _INFOSOCKET_HPP
 #define _INFOSOCKET_HPP
 
-#include "Network/UDPSocket.hpp"
 #include <string>
+
+#include "Network/UDPSocket.hpp"
 
 using namespace network;
 
-class InfoSocket : public UDPSocketObserver
-{
-public:
-    InfoSocket(int p);
-    ~InfoSocket();
+class InfoSocket : public UDPSocketObserver {
+ public:
+  InfoSocket(int p);
+  ~InfoSocket();
 
-protected:
-    void onDataReceived(UDPSocket *so, const Address &from, const char *data, const int len);
-    void onSocketError(UDPSocket *so);
-    
-private:
-    std::string prepareStatusPacket();
-    std::string prepareFlagPacket(const int flagNum);
-    std::string statusHead;
-    UDPSocket * socket;
-    
+ protected:
+  void onDataReceived(UDPSocket *so, const Address &from, const char *data,
+                      const int len);
+  void onSocketError(UDPSocket *so);
+
+ private:
+  std::string prepareStatusPacket();
+  std::string prepareFlagPacket(const int flagNum);
+  std::string statusHead;
+  UDPSocket *socket;
 };
 
 #endif

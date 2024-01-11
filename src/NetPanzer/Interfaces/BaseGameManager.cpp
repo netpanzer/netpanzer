@@ -21,258 +21,213 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <SDL2/SDL.h>
 
 // ** PObject netPanzer Network Includes
-#include "Classes/Network/ClientMessageRouter.hpp"
-#include "Classes/Network/ServerConnectDaemon.hpp"
-#include "Classes/Network/ServerMessageRouter.hpp"
-#include "Classes/Network/NetworkState.hpp"
-#include "Classes/Network/NetworkServer.hpp"
-#include "Classes/Network/NetworkClient.hpp"
-
-#include "Util/Log.hpp"
-#include "Interfaces/GameConfig.hpp"
-#include "Interfaces/GameManager.hpp"
-#include "System/DummySound.hpp"
-#include "Interfaces/PlayerInterface.hpp"
-#include "Units/UnitInterface.hpp"
-#include "Units/UnitBlackBoard.hpp"
-#include "Particles/Particle2D.hpp"
-#include "Particles/ParticleSystem2D.hpp"
-#include "Particles/ParticleInterface.hpp"
-#include "PathScheduler.hpp"
-#include "Weapons/ProjectileInterface.hpp"
-#include "Units/UnitProfileInterface.hpp"
-#include "Objectives/ObjectiveInterface.hpp"
-#include "Interfaces/ConsoleInterface.hpp"
-#include "MapsManager.hpp"
-#include "PowerUps/PowerUpInterface.hpp"
-#include "Interfaces/GameControlRulesDaemon.hpp"
-#include "Util/Exception.hpp"
-#include "Util/FileSystem.hpp"
-#include "Resources/ResourceManager.hpp"
-#include "Units/UnitGlobals.hpp"
 #include "2D/ColorTable.hpp"
 #include "2D/Palette.hpp"
-
+#include "Classes/Network/ClientMessageRouter.hpp"
+#include "Classes/Network/NetworkClient.hpp"
+#include "Classes/Network/NetworkServer.hpp"
+#include "Classes/Network/NetworkState.hpp"
+#include "Classes/Network/ServerConnectDaemon.hpp"
+#include "Classes/Network/ServerMessageRouter.hpp"
+#include "Interfaces/ConsoleInterface.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Interfaces/GameControlRulesDaemon.hpp"
+#include "Interfaces/GameManager.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "MapsManager.hpp"
+#include "Objectives/ObjectiveInterface.hpp"
+#include "Particles/Particle2D.hpp"
+#include "Particles/ParticleInterface.hpp"
+#include "Particles/ParticleSystem2D.hpp"
+#include "PathScheduler.hpp"
+#include "PowerUps/PowerUpInterface.hpp"
+#include "Resources/ResourceManager.hpp"
+#include "System/DummySound.hpp"
+#include "Units/UnitBlackBoard.hpp"
+#include "Units/UnitGlobals.hpp"
+#include "Units/UnitInterface.hpp"
+#include "Units/UnitProfileInterface.hpp"
+#include "Util/Exception.hpp"
+#include "Util/FileSystem.hpp"
+#include "Util/Log.hpp"
+#include "Weapons/ProjectileInterface.hpp"
 
 //** Physics/Particle Stuff
-#include "Particles/Physics.hpp"
-#include "Util/TimerInterface.hpp"
-
 #include "Network/NetworkManager.hpp"
-
+#include "Particles/Physics.hpp"
 #include "Scripts/ScriptManager.hpp"
+#include "Util/TimerInterface.hpp"
 
 BaseGameManager* gamemanager = nullptr;
 
 //------------------------------------------------------------------
-BaseGameManager::BaseGameManager()
-    : running(true)
-{
-    assert(gamemanager == nullptr);
-    gamemanager = this;
+BaseGameManager::BaseGameManager() : running(true) {
+  assert(gamemanager == nullptr);
+  gamemanager = this;
 }
 
 //------------------------------------------------------------------
-BaseGameManager::~BaseGameManager()
-{
-    gamemanager = nullptr;
-}
+BaseGameManager::~BaseGameManager() { gamemanager = nullptr; }
 
 //-----------------------------------------------------------------
-void BaseGameManager::initializeSoundSubSystem()
-{
-    sound = new DummySound();
+void BaseGameManager::initializeSoundSubSystem() { sound = new DummySound(); }
+//-----------------------------------------------------------------
+void BaseGameManager::shutdownSoundSubSystem() {
+  if (sound) {
+    delete sound;
+    sound = nullptr;
+  }
 }
 //-----------------------------------------------------------------
-void BaseGameManager::shutdownSoundSubSystem()
-{
-    if(sound) {
-        delete sound;
-        sound = nullptr;
-    }
+void BaseGameManager::initializeGameConfig(const std::string& configfile) {
+  if (configfile.empty())
+    gameconfig = new GameConfig("/config/client.cfg");
+  else
+    gameconfig = new GameConfig(configfile, false);
+  // cleanup/saving of game config is done in main and depends on shutdown
+  // process
 }
 //-----------------------------------------------------------------
-void BaseGameManager::initializeGameConfig(const std::string& configfile)
-{
-    if(configfile.empty())
-        gameconfig = new GameConfig("/config/client.cfg");
-    else
-        gameconfig = new GameConfig(configfile, false);
-    // cleanup/saving of game config is done in main and depends on shutdown process
-}
+void BaseGameManager::initializeInputDevices() {}
 //-----------------------------------------------------------------
-void BaseGameManager::initializeInputDevices()
-{
-}
+void BaseGameManager::shutdownInputDevices() {}
 //-----------------------------------------------------------------
-void BaseGameManager::shutdownInputDevices()
-{}
-//-----------------------------------------------------------------
-void BaseGameManager::initializeGameObjects()
-{
-    Physics::init();
-    Weapon::init();
+void BaseGameManager::initializeGameObjects() {
+  Physics::init();
+  Weapon::init();
 
-    ConsoleInterface::initialize(25);
-    PowerUpInterface::initialize();
-    ParticleInterface::initParticleSystems();
+  ConsoleInterface::initialize(25);
+  PowerUpInterface::initialize();
+  ParticleInterface::initParticleSystems();
 
-    GameManager::initializeGameLogic();
+  GameManager::initializeGameLogic();
 }
 //-----------------------------------------------------------------
-void BaseGameManager::shutdownGameObjects()
-{}
+void BaseGameManager::shutdownGameObjects() {}
 //-----------------------------------------------------------------
-void BaseGameManager::loadGameData()
-{
-//    UnitProfileInterface::loadUnitProfiles();
+void BaseGameManager::loadGameData() {
+  //    UnitProfileInterface::loadUnitProfiles();
 }
 //-----------------------------------------------------------------
-void BaseGameManager::initializeNetworkSubSystem()
-{
-    SERVER = new NetworkServer();
-    CLIENT = new NetworkClient();
+void BaseGameManager::initializeNetworkSubSystem() {
+  SERVER = new NetworkServer();
+  CLIENT = new NetworkClient();
 
-    ServerMessageRouter::initialize();
-    ClientMessageRouter::initialize();
+  ServerMessageRouter::initialize();
+  ClientMessageRouter::initialize();
 
-    ServerConnectDaemon::initialize( GameConfig::game_maxplayers );
+  ServerConnectDaemon::initialize(GameConfig::game_maxplayers);
 
-    NetworkState::setNetworkStatus( _network_state_server );
-    NetworkState::resetNetworkStats();
+  NetworkState::setNetworkStatus(_network_state_server);
+  NetworkState::resetNetworkStats();
 }
 //-----------------------------------------------------------------
-void BaseGameManager::shutdownNetworkSubSystem()
-{
-    if(SERVER) {
-        SERVER->closeSession();
-        ServerMessageRouter::cleanUp();
-        delete SERVER;
-        SERVER = nullptr;
-    }
-    if(CLIENT) {
-        CLIENT->partServer();
-        ClientMessageRouter::cleanUp();
-        delete CLIENT;
-        CLIENT = nullptr;
-    }
+void BaseGameManager::shutdownNetworkSubSystem() {
+  if (SERVER) {
+    SERVER->closeSession();
+    ServerMessageRouter::cleanUp();
+    delete SERVER;
+    SERVER = nullptr;
+  }
+  if (CLIENT) {
+    CLIENT->partServer();
+    ClientMessageRouter::cleanUp();
+    delete CLIENT;
+    CLIENT = nullptr;
+  }
 }
 //-----------------------------------------------------------------
 // boots up netPanzer; initializes all subsystems, game objects etc.
-void BaseGameManager::initialize(const std::string& configfile)
-{
-    try {
-        if(!filesystem::exists("config"))
-            filesystem::mkdir("config");
-        initializeGameConfig(configfile);
-        ResourceManager::initialize();
+void BaseGameManager::initialize(const std::string& configfile) {
+  try {
+    if (!filesystem::exists("config")) filesystem::mkdir("config");
+    initializeGameConfig(configfile);
+    ResourceManager::initialize();
 
-        initializeSoundSubSystem();
-        initializeVideoSubSystem();
-        initializeGameObjects();
-        initializeNetworkSubSystem();
-        initializeInputDevices();
-    } catch(std::exception& e) {
-        LOGGER.warning("Initialisation failed:\n%s", e.what());
-        shutdown();
-        throw Exception("bootstrap failed.");
-    }
+    initializeSoundSubSystem();
+    initializeVideoSubSystem();
+    initializeGameObjects();
+    initializeNetworkSubSystem();
+    initializeInputDevices();
+  } catch (std::exception& e) {
+    LOGGER.warning("Initialisation failed:\n%s", e.what());
+    shutdown();
+    throw Exception("bootstrap failed.");
+  }
 }
 //-----------------------------------------------------------------
-void BaseGameManager::shutdown()
-{
-    shutdownSubSystems();
+void BaseGameManager::shutdown() { shutdownSubSystems(); }
+//-----------------------------------------------------------------
+void BaseGameManager::shutdownSubSystems() {
+  GameManager::shutdownGameLogic();
+  shutdownNetworkSubSystem();
+  shutdownSoundSubSystem();
+  shutdownVideoSubSystem();
+  shutdownInputDevices();
+  ResourceManager::finalize();
 }
 //-----------------------------------------------------------------
-void BaseGameManager::shutdownSubSystems()
-{
-    GameManager::shutdownGameLogic();
-    shutdownNetworkSubSystem();
-    shutdownSoundSubSystem();
-    shutdownVideoSubSystem();
-    shutdownInputDevices();
-    ResourceManager::finalize();
-}
-//-----------------------------------------------------------------
-bool BaseGameManager::mainLoop()
-{
-    TimerInterface::start();
-    inputLoop();
-    graphicsLoop();
-    simLoop();
+bool BaseGameManager::mainLoop() {
+  TimerInterface::start();
+  inputLoop();
+  graphicsLoop();
+  simLoop();
 
-    sleeping();
-    TimerInterface::update();
+  sleeping();
+  TimerInterface::update();
 
-    return running;
+  return running;
 }
 //-----------------------------------------------------------------
 /**
  * Sleep to make stable FPS and happy CPU.
  */
-void
-BaseGameManager::sleeping()
-{
-    static Uint32 nextTime = 0;
+void BaseGameManager::sleeping() {
+  static Uint32 nextTime = 0;
 
-    Uint32 now = SDL_GetTicks();
-    if (now < nextTime) {
-        SDL_Delay(nextTime - now);
-    }
-    nextTime += TIMEINTERVAL;
+  Uint32 now = SDL_GetTicks();
+  if (now < nextTime) {
+    SDL_Delay(nextTime - now);
+  }
+  nextTime += TIMEINTERVAL;
 }
 
 //-----------------------------------------------------------------
-void BaseGameManager::simLoop()
-{
-    if ( SERVER )
-        SERVER->cleanUpClientList();
+void BaseGameManager::simLoop() {
+  if (SERVER) SERVER->cleanUpClientList();
 
+  if (NetworkState::status == _network_state_server) {
+    ServerMessageRouter::routeMessages();
+  } else {
+    ClientMessageRouter::routeMessages();
+  }
+  NetworkState::updateNetworkStats();
 
-    if ( NetworkState::status == _network_state_server ) {
-        ServerMessageRouter::routeMessages();
-    } else {
-        ClientMessageRouter::routeMessages();
-    }
-    NetworkState::updateNetworkStats();
+  UnitInterface::updateUnitStatus();
 
-    UnitInterface::updateUnitStatus();
+  ProjectileInterface::updateStatus();
 
-    ProjectileInterface::updateStatus();
+  ObjectiveInterface::updateObjectiveStatus();
+  PowerUpInterface::updateState();
+  PathScheduler::run();
 
-    ObjectiveInterface::updateObjectiveStatus();
-    PowerUpInterface::updateState();
-    PathScheduler::run();
+  Physics::sim();
 
+  ParticleSystem2D::simAll();
+  Particle2D::simAll();
 
-    Physics::sim();
+  ScriptManager::setDoubleValue("game.frametime",
+                                TimerInterface::getTimeSlice());
+  ScriptManager::runFunction("scriptLoop");
 
-    ParticleSystem2D::simAll();
-    Particle2D::simAll();
-
-
-    ScriptManager::setDoubleValue("game.frametime", TimerInterface::getTimeSlice());
-    ScriptManager::runFunction("scriptLoop");
-
-    GameControlRulesDaemon::updateGameControlFlow();
-    if ( SERVER )
-        SERVER->sendRemaining();
-    if ( CLIENT )
-        CLIENT->sendRemaining();
+  GameControlRulesDaemon::updateGameControlFlow();
+  if (SERVER) SERVER->sendRemaining();
+  if (CLIENT) CLIENT->sendRemaining();
 }
 //-----------------------------------------------------------------
-void BaseGameManager::inputLoop()
-{
-    network::NetworkManager::run();
-}
+void BaseGameManager::inputLoop() { network::NetworkManager::run(); }
 //-----------------------------------------------------------------
-void BaseGameManager::graphicsLoop()
-{
-}
+void BaseGameManager::graphicsLoop() {}
 
 //---------------------------------------------------------------------
-void
-BaseGameManager::stopMainLoop()
-{
-    running = false;
-}
+void BaseGameManager::stopMainLoop() { running = false; }

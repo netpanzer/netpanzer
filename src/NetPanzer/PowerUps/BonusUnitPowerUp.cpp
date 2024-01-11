@@ -19,81 +19,71 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "BonusUnitPowerUp.hpp"
 
 #include <stdlib.h>
-#include "Units/UnitTypes.hpp"
-#include "Units/UnitInterface.hpp"
-#include "Interfaces/PlayerInterface.hpp"
-#include "Interfaces/MapInterface.hpp"
-#include "Interfaces/ConsoleInterface.hpp"
-#include "Units/UnitProfileInterface.hpp"
 
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkState.hpp"
-#include "Classes/Network/UnitNetMessage.hpp"
 #include "Classes/Network/PowerUpNetMessage.hpp"
-
+#include "Classes/Network/UnitNetMessage.hpp"
+#include "Interfaces/ConsoleInterface.hpp"
+#include "Interfaces/MapInterface.hpp"
+#include "Interfaces/PlayerInterface.hpp"
 #include "System/Sound.hpp"
+#include "Units/UnitInterface.hpp"
+#include "Units/UnitProfileInterface.hpp"
+#include "Units/UnitTypes.hpp"
 
 BonusUnitPowerUp::BonusUnitPowerUp(iXY map_loc, int type)
-        : PowerUp( map_loc, type )
-{
-    bonus_unit_type = rand() % UnitProfileInterface::getNumUnitTypes();
+    : PowerUp(map_loc, type) {
+  bonus_unit_type = rand() % UnitProfileInterface::getNumUnitTypes();
 }
 
+void BonusUnitPowerUp::onHit(UnitID unit_id) {
+  PlacementMatrix placement_matrix;
 
-void BonusUnitPowerUp::onHit( UnitID unit_id )
-{
-    PlacementMatrix placement_matrix;
+  sound->playPowerUpSound();
 
-    sound->playPowerUpSound();
+  PlayerID own_player = UnitInterface::getUnit(unit_id)->player->getID();
 
-    PlayerID own_player = UnitInterface::getUnit(unit_id)->player->getID();
+  placement_matrix.reset(map_loc);
 
-    placement_matrix.reset( map_loc );
+  for (int i = 0; i < 9; i++) {
+    UnitBase *new_unit;
+    iXY spawn_loc;
 
+    placement_matrix.getNextEmptyLoc(&spawn_loc);
+    /*
+        PlayerState *player_state2;
+        player_state2 = PlayerInterface::getPlayer(own_player);
+        unsigned char ustyle2 = player_state2->getPlayerStyle();
+    */
+    new_unit =
+        UnitInterface::createUnit(bonus_unit_type, spawn_loc, own_player);
 
-    for( int i = 0; i < 9; i++ )
-    {
-        UnitBase *new_unit;
-        iXY spawn_loc;
-
-        placement_matrix.getNextEmptyLoc( &spawn_loc );
-/*
-    PlayerState *player_state2;
-    player_state2 = PlayerInterface::getPlayer(own_player);
-    unsigned char ustyle2 = player_state2->getPlayerStyle();
-*/
-        new_unit = UnitInterface::createUnit(bonus_unit_type,
-                                             spawn_loc,
-                                             own_player );
-
-        if ( new_unit != 0 )
-        {
-            UnitRemoteCreate create_mesg(new_unit->player->getID(),
-                    new_unit->id, spawn_loc.x, spawn_loc.y, bonus_unit_type);
-            SERVER->broadcastMessage( &create_mesg, sizeof( UnitRemoteCreate ));
-        }
-
+    if (new_unit != 0) {
+      UnitRemoteCreate create_mesg(new_unit->player->getID(), new_unit->id,
+                                   spawn_loc.x, spawn_loc.y, bonus_unit_type);
+      SERVER->broadcastMessage(&create_mesg, sizeof(UnitRemoteCreate));
     }
+  }
 
-    PowerUpHitMesg hit_mesg;
-    hit_mesg.set( ID, own_player );
-    SERVER->broadcastMessage( &hit_mesg, sizeof( PowerUpHitMesg ));
+  PowerUpHitMesg hit_mesg;
+  hit_mesg.set(ID, own_player);
+  SERVER->broadcastMessage(&hit_mesg, sizeof(PowerUpHitMesg));
 
-    life_cycle_state = _power_up_lifecycle_state_inactive;
+  life_cycle_state = _power_up_lifecycle_state_inactive;
 
-    if( PlayerInterface::isLocalPlayer(own_player) )
-    {
-        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "YOU GOT A BONUS UNITS POWERUP" );
-    }
+  if (PlayerInterface::isLocalPlayer(own_player)) {
+    ConsoleInterface::postMessage(Color::unitAqua, false, 0,
+                                  "YOU GOT A BONUS UNITS POWERUP");
+  }
 }
 
-void BonusUnitPowerUp::onHitMessage( PowerUpHitMesg *message  )
-{
-    sound->playPowerUpSound();
-    life_cycle_state = _power_up_lifecycle_state_inactive;
+void BonusUnitPowerUp::onHitMessage(PowerUpHitMesg *message) {
+  sound->playPowerUpSound();
+  life_cycle_state = _power_up_lifecycle_state_inactive;
 
-    if( PlayerInterface::getLocalPlayerIndex() == message->getPlayerID() )
-    {
-        ConsoleInterface::postMessage( Color::unitAqua, false, 0, "YOU GOT A BONUS UNITS POWERUP" );
-    }
+  if (PlayerInterface::getLocalPlayerIndex() == message->getPlayerID()) {
+    ConsoleInterface::postMessage(Color::unitAqua, false, 0,
+                                  "YOU GOT A BONUS UNITS POWERUP");
+  }
 }

@@ -21,30 +21,29 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class ClientSocket;
 class NetPacket;
 
-class ServerConnectDaemon
-{
-private:
-    static unsigned char nss;
+class ServerConnectDaemon {
+ private:
+  static unsigned char nss;
 
-public:
-    static void initialize( unsigned long max_players );
+ public:
+  static void initialize(unsigned long max_players);
 
-    static void startConnectDaemon( unsigned long max_players );
+  static void startConnectDaemon(unsigned long max_players);
 
-    static void shutdownConnectDaemon();
+  static void shutdownConnectDaemon();
 
-    static bool inConnectQueue( ClientSocket *client );
+  static bool inConnectQueue(ClientSocket *client);
 
-    static void connectProcess();
+  static void connectProcess();
 
-    static void processNetPacket(const NetPacket* message);
+  static void processNetPacket(const NetPacket *message);
 
-    static void lockConnectProcess();
-    static void unlockConnectProcess();
-    static bool getConnectLockStatus();
+  static void lockConnectProcess();
+  static void unlockConnectProcess();
+  static bool getConnectLockStatus();
 
-    static bool isConnecting();
-    static void removeClientFromQueue(ClientSocket *client);
+  static bool isConnecting();
+  static void removeClientFromQueue(ClientSocket *client);
 };
 
-#endif // ** _SERVERCONNECTDAEMON_HPP
+#endif  // ** _SERVERCONNECTDAEMON_HPP

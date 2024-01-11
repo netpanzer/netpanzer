@@ -18,74 +18,56 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _WEAPON_HPP
 #define _WEAPON_HPP
 
+#include "Classes/Sprite.hpp"
 #include "Core/CoreTypes.hpp"
-#include "Weapons/Projectile.hpp"
+#include "Particles/Particle2D.hpp"
+#include "Types/fXY.hpp"
 #include "Util/BresenhamLine.hpp"
 #include "Util/Timer.hpp"
-#include "Classes/Sprite.hpp"
-#include "Types/fXY.hpp"
-#include "Particles/Particle2D.hpp"
+#include "Weapons/Projectile.hpp"
 
-enum
-{
-    _lifecycle_weapon_in_fight,
-    _lifecycle_weapon_in_active
+enum { _lifecycle_weapon_in_fight, _lifecycle_weapon_in_active };
+
+enum { _fsmFlight_idle, _fsmFlight_in_flight, _fsmFlight_on_target };
+
+class Weapon : public Projectile {
+ public:
+  /**
+   * Projectile types.
+   */
+  enum { _none, _quad_missile, _bullet, _shell, _double_missile };
+
+ protected:
+  SpritePacked shell;
+  SpritePacked shellShadow;
+
+ protected:
+  UnitID owner_id;
+  unsigned short owner_type_id;
+
+  unsigned short damage_factor;
+  iXY location;
+  BresenhamLine path;
+  Timer fsm_timer;
+  unsigned char fsmFlight_state;
+
+  fXY direction;
+
+  virtual void fsmFlight();
+
+ public:
+  Weapon(UnitID owner, unsigned short owner_type_id, unsigned short damage,
+         iXY &start, iXY &end);
+
+  virtual ~Weapon() {}
+
+  virtual void updateStatus();
+
+  virtual void offloadGraphics(SpriteSorter &) {}
+
+  static void init();
+  static void uninit();
+  static int getGoalAngle(const iXY &start, const iXY &end);
 };
 
-enum
-{
-    _fsmFlight_idle,
-    _fsmFlight_in_flight,
-    _fsmFlight_on_target
-};
-
-class Weapon : public Projectile
-{
-public:
-    /**
-     * Projectile types.
-     */
-    enum {
-        _none,
-        _quad_missile,
-        _bullet,
-        _shell,
-        _double_missile
-    };
-
-protected:
-    SpritePacked shell;
-    SpritePacked shellShadow;
-
-protected:
-    UnitID         owner_id;
-    unsigned short owner_type_id;
-
-    unsigned short damage_factor;
-    iXY       location;
-    BresenhamLine  path;
-    Timer          fsm_timer;
-    unsigned char  fsmFlight_state;
-
-    fXY            direction;
-
-    virtual void fsmFlight();
-
-public:
-
-    Weapon(UnitID owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end);
-
-    virtual ~Weapon()
-    { }
-
-    virtual void updateStatus();
-
-    virtual void offloadGraphics(SpriteSorter& )
-    { }
-
-    static void init();
-    static void uninit();
-    static int  getGoalAngle(const iXY &start, const iXY &end);
-};
-
-#endif // ** _WEAPON_HPP
+#endif  // ** _WEAPON_HPP

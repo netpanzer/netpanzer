@@ -18,49 +18,43 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __SERVERINFO_HPP__
 #define __SERVERINFO_HPP__
 
+#include <SDL2/SDL.h>
+
 #include <string>
 
-#include <SDL2/SDL.h>
 #include "Network/Address.hpp"
 
-namespace masterserver
-{
+namespace masterserver {
 
 /**
  * This class contains informations about running gameservers
  */
-class ServerInfo
-{
-public:
-    enum Status {
-        RUNNING,
-        QUERYING,
-        TIMEOUT
-    };
+class ServerInfo {
+ public:
+  enum Status { RUNNING, QUERYING, TIMEOUT };
 
-    ServerInfo();
-    ~ServerInfo();
+  ServerInfo();
+  ~ServerInfo();
 
-    std::string name;
-    std::string address;
-    int port;
+  std::string name;
+  std::string address;
+  int port;
 
-    Status status;
-    int players;
-    int maxplayers;
-    std::string map;
-    int ping;
-    int protocol;
-    bool needs_password;
-    bool auth_on;
+  Status status;
+  int players;
+  int maxplayers;
+  std::string map;
+  int ping;
+  int protocol;
+  bool needs_password;
+  bool auth_on;
 
-    network::Address ipaddress;
-    Uint32 querystartticks;
+  network::Address ipaddress;
+  Uint32 querystartticks;
 
-    int tryNum;
+  int tryNum;
 };
 
-} // masterserver
+}  // namespace masterserver
 
 #endif
-

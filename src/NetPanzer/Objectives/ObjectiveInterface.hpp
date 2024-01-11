@@ -26,53 +26,49 @@ class NetMessage;
 class iXY;
 class ClientSocket;
 
-class ObjectiveInterface
-{
-protected:
+class ObjectiveInterface {
+ protected:
+  static Objective** objective_list;
+  static int num_objectives;
 
-    static Objective** objective_list;
-    static int num_objectives;
+  static void cleanUpObjectiveList();
 
-    static void cleanUpObjectiveList();
+ public:
+  static void cleanUp();
 
-public:
-    static void cleanUp();
+  static void resetLogic();
 
-    static void resetLogic();
+  static void loadObjectiveList(const char* file_path);
 
-    static void loadObjectiveList( const char *file_path );
+  static void serverHandleNetPacket(const NetPacket* packet);
+  static void clientHandleNetMessage(const NetMessage* message);
 
-    static void serverHandleNetPacket(const NetPacket* packet);
-    static void clientHandleNetMessage(const NetMessage* message);
+  static void sendChangeGeneratingUnit(ObjectiveID objective_id,
+                                       Uint8 unit_type, bool active);
+  static void sendDisownObj(ObjectiveID objective_id, Uint8 disown_scope,
+                            PlayerID player_id);
+  static void sendChangeOutputLocation(ObjectiveID objective_id, Uint32 map_x,
+                                       Uint32 map_y);
 
-    static void sendChangeGeneratingUnit(ObjectiveID objective_id, Uint8 unit_type, bool active);
-    static void sendDisownObj(ObjectiveID objective_id, Uint8 disown_scope, PlayerID player_id);
-    static void sendChangeOutputLocation(ObjectiveID objective_id, Uint32 map_x, Uint32 map_y);
+  static void updateObjectiveStatus();
 
-    static void updateObjectiveStatus();
+  static void disownPlayerObjectives(PlayerID player_id);
+  static void disownPlayerObjective(ObjectiveID objective_id,
+                                    PlayerID player_id);
 
-    static void disownPlayerObjectives(PlayerID player_id);
-    static void disownPlayerObjective(ObjectiveID objective_id, PlayerID player_id);
+  static Objective* getObjective(ObjectiveID objective_id) {
+    return (objective_list && objective_id < num_objectives)
+               ? objective_list[objective_id]
+               : 0;
+  }
 
-    static Objective* getObjective( ObjectiveID objective_id )
-    {
-        return (objective_list && objective_id < num_objectives)
-                ? objective_list[objective_id]
-                : 0;
-    }
+  static Objective* getObjectiveAtWorldXY(const iXY& loc);
 
-    static Objective* getObjectiveAtWorldXY( const iXY& loc );
+  static size_t getObjectiveCount() { return num_objectives; }
 
-    static size_t getObjectiveCount()
-    {
-        return num_objectives;
-    }
+  static int getObjectiveLimit();
 
-    static int getObjectiveLimit();
-
-    static void syncObjectives( ClientSocket * client );
-
+  static void syncObjectives(ClientSocket* client);
 };
 
-
-#endif //  ** _OBJECTIVEINTERFACE_HPP
+#endif  //  ** _OBJECTIVEINTERFACE_HPP

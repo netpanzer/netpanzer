@@ -25,31 +25,33 @@ class iXY;
 #include "Classes/SelectionList.hpp"
 
 class Bot {
-    static class Bot *s_bot;
-    public:
-        static void initialize(Bot *bot);
-        static void shutdown();
-        static Bot *bot() { return s_bot; }
+  static class Bot *s_bot;
 
-        virtual ~Bot() {}
-        virtual void processEvents() = 0;
-        virtual void processEvents2() = 0;
-        virtual void processEvents3() = 0;
-        virtual void processEvents4() = 0;
-        virtual void processEvents5() = 0;
-        virtual void processEvents6() = 0;
-        virtual void processEvents7() = 0;
-        virtual void processEvents8() = 0;
-        virtual void processEvents9() = 0;
+ public:
+  static void initialize(Bot *bot);
+  static void shutdown();
+  static Bot *bot() { return s_bot; }
 
-        void sendMoveCommand(const iXY& world_pos);
+  virtual ~Bot() {}
+  virtual void processEvents() = 0;
+  virtual void processEvents2() = 0;
+  virtual void processEvents3() = 0;
+  virtual void processEvents4() = 0;
+  virtual void processEvents5() = 0;
+  virtual void processEvents6() = 0;
+  virtual void processEvents7() = 0;
+  virtual void processEvents8() = 0;
+  virtual void processEvents9() = 0;
 
-        void moveUnit(UnitBase *unit, iXY map_pos);
-        void attackUnit(UnitBase *unit, UnitBase *enemyUnit);
-        void manualFire(UnitBase *unit, iXY world_pos);
-        void produceUnit(ObjectiveID outpostID, int selectedProduce);
-    protected:
-        BotTaskList m_tasks;
+  void sendMoveCommand(const iXY &world_pos);
+
+  void moveUnit(UnitBase *unit, iXY map_pos);
+  void attackUnit(UnitBase *unit, UnitBase *enemyUnit);
+  void manualFire(UnitBase *unit, iXY world_pos);
+  void produceUnit(ObjectiveID outpostID, int selectedProduce);
+
+ protected:
+  BotTaskList m_tasks;
 };
 
 #endif

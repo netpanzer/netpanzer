@@ -21,31 +21,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PowerUps/PowerUp.hpp"
 #include "Units/UnitState.hpp"
 
-class UnitPowerUp : public PowerUp
-{
-protected:
-    int unit_powerup_type;
+class UnitPowerUp : public PowerUp {
+ protected:
+  int unit_powerup_type;
 
-    virtual void onHit( UnitID unit_id );
+  virtual void onHit(UnitID unit_id);
 
-    void powerUpHitPoints( UnitState *unit_state, UnitID unit_id );
-    void powerUpFirePower( UnitState *unit_state, UnitID unit_id );
-    void powerUpSpeed( UnitState *unit_state, UnitID unit_id );
-    void powerUpRepair( UnitState *unit_state, UnitID unit_id );
-    void powerUpReload( UnitState *unit_state, UnitID unit_id );
-    void powerUpWRange( UnitState *unit_state, UnitID unit_id );
-    void powerUpDestruct( UnitID unit_id );
-    void powerUpGRepair( UnitState *unit_state, UnitID unit_id );
-    void powerUpSuperunit( UnitState *unit_state, UnitID unit_id );
+  void powerUpHitPoints(UnitState *unit_state, UnitID unit_id);
+  void powerUpFirePower(UnitState *unit_state, UnitID unit_id);
+  void powerUpSpeed(UnitState *unit_state, UnitID unit_id);
+  void powerUpRepair(UnitState *unit_state, UnitID unit_id);
+  void powerUpReload(UnitState *unit_state, UnitID unit_id);
+  void powerUpWRange(UnitState *unit_state, UnitID unit_id);
+  void powerUpDestruct(UnitID unit_id);
+  void powerUpGRepair(UnitState *unit_state, UnitID unit_id);
+  void powerUpSuperunit(UnitState *unit_state, UnitID unit_id);
 
-public:
+ public:
+  UnitPowerUp(iXY map_loc, int type);
+  virtual ~UnitPowerUp() {}
 
-    UnitPowerUp(iXY map_loc, int type);
-    virtual ~UnitPowerUp()
-    { }
-
-    virtual void onHitMessage( PowerUpHitMesg *message  );
-
+  virtual void onHitMessage(PowerUpHitMesg *message);
 };
 
-#endif // ** _UNIT_POWERUP_HPP
+#endif  // ** _UNIT_POWERUP_HPP

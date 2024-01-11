@@ -20,45 +20,44 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <vector>
 
-#include "PowerUps/PowerUp.hpp"
-#include "Util/Timer.hpp"
 #include "Classes/Network/NetPacket.hpp"
 #include "Network/ClientSocket.hpp"
+#include "PowerUps/PowerUp.hpp"
+#include "Util/Timer.hpp"
 
-class PowerUpInterface
-{
-protected:
-    typedef std::vector<PowerUp *> PowerUpList;
-    static PowerUpList powerup_list;
+class PowerUpInterface {
+ protected:
+  typedef std::vector<PowerUp*> PowerUpList;
+  static PowerUpList powerup_list;
 
-    static PowerUpID getNextPowerUpID();
+  static PowerUpID getNextPowerUpID();
 
-    static int power_up_limit;
-    static int power_up_regen_time_upper_bound;
-    static int power_up_regen_time_lower_bound;
+  static int power_up_limit;
+  static int power_up_regen_time_upper_bound;
+  static int power_up_regen_time_lower_bound;
 
-    static Timer regen_timer;
+  static Timer regen_timer;
 
-    static void setPowerUpLimits( unsigned long map_size_x, unsigned long map_size_y );
+  static void setPowerUpLimits(unsigned long map_size_x,
+                               unsigned long map_size_y);
 
-    static void generatePowerUp();
+  static void generatePowerUp();
 
-    static void netMessagePowerUpCreate(const NetMessage* message);
-    static void netMessagePowerUpHit(const NetMessage* message );
+  static void netMessagePowerUpCreate(const NetMessage* message);
+  static void netMessagePowerUpHit(const NetMessage* message);
 
-public:
+ public:
+  static void initialize();
+  static void uninitialize();
+  static void resetLogic();
 
-    static void initialize();
-    static void uninitialize();
-    static void resetLogic();
+  static void updateState();
+  static void offloadGraphics(SpriteSorter& sorter);
 
-    static void updateState();
-    static void offloadGraphics( SpriteSorter &sorter );
+  static void processNetMessages(const NetMessage* message);
 
-    static void processNetMessages(const NetMessage* message );
-
-    static void syncPowerUps( ClientSocket * client );
-    static void syncPowerUpsBC();
+  static void syncPowerUps(ClientSocket* client);
+  static void syncPowerUpsBC();
 };
 
-#endif // ** _POWERUP_INTERFACE_HPP
+#endif  // ** _POWERUP_INTERFACE_HPP

@@ -14,61 +14,45 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #include "CreditsView.hpp"
-#include "Views/Components/Desktop.hpp"
-#include "Interfaces/GameManager.hpp"
-#include "Views/GameViewGlobals.hpp"
-
-#include "Views/MainMenu/Multi/HostJoinTemplateView.hpp"
-#include "Views/MainMenu/Multi/GetSessionView.hpp"
-#include "Interfaces/GameConfig.hpp"
 
 #include "CreditsScrollView.hpp"
-
+#include "Interfaces/GameConfig.hpp"
+#include "Interfaces/GameManager.hpp"
+#include "Views/Components/Desktop.hpp"
+#include "Views/GameViewGlobals.hpp"
+#include "Views/MainMenu/Multi/GetSessionView.hpp"
+#include "Views/MainMenu/Multi/HostJoinTemplateView.hpp"
 
 // CreditsView
 //---------------------------------------------------------------------------
-CreditsView::CreditsView() : MenuTemplateView()
-{
-    setSearchName("CreditsView");
-    setTitle("Credits");
-    setSubTitle("");
-    setAllowResize(false);
-    setAllowMove(false);
-    //MenuTemplateView::loadBackgroundSurface();
-    //setVisible(true);
-
+CreditsView::CreditsView() : MenuTemplateView() {
+  setSearchName("CreditsView");
+  setTitle("Credits");
+  setSubTitle("");
+  setAllowResize(false);
+  setAllowMove(false);
+  // MenuTemplateView::loadBackgroundSurface();
+  // setVisible(true);
 }
 
 // doDraw
 //---------------------------------------------------------------------------
-void CreditsView::doDraw(Surface &viewArea, Surface &clientArea)
-{
+void CreditsView::doDraw(Surface &viewArea, Surface &clientArea) {
+  // MenuTemplateView::doDraw(viewArea, clientArea);
 
-    //MenuTemplateView::doDraw(viewArea, clientArea);
-
-    MenuTemplateView::doDraw(viewArea, clientArea);
-
-
+  MenuTemplateView::doDraw(viewArea, clientArea);
 }
 
-void CreditsView::loadTitleSurface()
-{
-   // doLoadTitleSurface("CreditsTitle");
-} // end HelpView::loadTitleSurface
-void CreditsView::doActivate()
-{
-    MenuTemplateView::doActivate();
-    Desktop::setVisibilityNoDoAnything("CreditsScrollView", true);
-    //Desktop::setVisibility("CreditsView", true);
-} // end Credits::doActivate
+void CreditsView::loadTitleSurface() {
+  // doLoadTitleSurface("CreditsTitle");
+}  // end HelpView::loadTitleSurface
+void CreditsView::doActivate() {
+  MenuTemplateView::doActivate();
+  Desktop::setVisibilityNoDoAnything("CreditsScrollView", true);
+  // Desktop::setVisibility("CreditsView", true);
+}  // end Credits::doActivate
 
 // doDeactivate
 //---------------------------------------------------------------------------
-void CreditsView::doDeactivate()
-{
-} // end CreditsView::doDeactivate
-
-
-
+void CreditsView::doDeactivate() {}  // end CreditsView::doDeactivate

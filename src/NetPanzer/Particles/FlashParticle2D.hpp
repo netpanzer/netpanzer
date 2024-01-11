@@ -19,36 +19,29 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __FlashParticle2D_hpp__
 #define __FlashParticle2D_hpp__
 
-
-#include "Particles/Particle2D.hpp"
 #include "2D/Surface.hpp"
-
+#include "Particles/Particle2D.hpp"
 
 // FlashParticle2D
 //--------------------------------------------------------------------------
-class FlashParticle2D : public Particle2D
-{
-public:
-    FlashParticle2D(	const fXYZ  &pos,
-                     float scaleMin,
-                     float scaleRand,
-                     float lifetime,
-                     int   layer,
-                     bool  singleFrame = false);
+class FlashParticle2D : public Particle2D {
+ public:
+  FlashParticle2D(const fXYZ &pos, float scaleMin, float scaleRand,
+                  float lifetime, int layer, bool singleFrame = false);
 
-    static void init();
-    static void uninit();
+  static void init();
+  static void uninit();
 
-    static PackedSurface staticPackedFlash;
+  static PackedSurface staticPackedFlash;
 
-protected:
-    // The size relative to the original image.  This is so we can keep
-    // the images aspect ratio.
-    bool  singleFrame;
+ protected:
+  // The size relative to the original image.  This is so we can keep
+  // the images aspect ratio.
+  bool singleFrame;
 
-    virtual void draw(const Surface &dest, SpriteSorter &sorter);
-    virtual void sim();
+  virtual void draw(const Surface &dest, SpriteSorter &sorter);
+  virtual void sim();
 
-}; // end FlashParticle2D
+};  // end FlashParticle2D
 
-#endif // __FlashParticle2D_hpp__
+#endif  // __FlashParticle2D_hpp__

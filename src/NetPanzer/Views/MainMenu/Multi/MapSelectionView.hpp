@@ -18,53 +18,45 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __MapSelectionView_hpp__
 #define __MapSelectionView_hpp__
 
-#include <vector>
 #include <string.h>
 
-#include "Views/MainMenu/RMouseHackView.hpp"
+#include <vector>
+
 #include "2D/Surface.hpp"
 #include "Views/Components/Choice.hpp"
+#include "Views/MainMenu/RMouseHackView.hpp"
 
 //---------------------------------------------------------------------------
-class MapInfo
-{
-public:
-    Surface thumbnail;
-    std::string name;
-    std::string description;
-    iXY     cells;
-    int     objectiveCount;
+class MapInfo {
+ public:
+  Surface thumbnail;
+  std::string name;
+  std::string description;
+  iXY cells;
+  int objectiveCount;
 
-    MapInfo()
-    {
-    }
-}; // end MapInfo
+  MapInfo() {}
+};  // end MapInfo
 
 //---------------------------------------------------------------------------
-class MapSelectionView : public RMouseHackView
-{
-private:
-    enum { BORDER_SPACE =   4 };
-    enum { MAP_SIZE     = 100 };
-    int  loadMaps();
-    void drawCurMapInfo(Surface &dest, const iXY &pos);
+class MapSelectionView : public RMouseHackView {
+ private:
+  enum { BORDER_SPACE = 4 };
+  enum { MAP_SIZE = 100 };
+  int loadMaps();
+  void drawCurMapInfo(Surface &dest, const iXY &pos);
 
+ public:
+  MapSelectionView();
+  ~MapSelectionView();
 
+  virtual void doDraw(Surface &windowArea, Surface &clientArea);
 
-public:
-    MapSelectionView();
-    ~MapSelectionView();
+  static std::vector<MapInfo *> mapList;
+  static int curMap;
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+  void init();
 
-    static std::vector<MapInfo*> mapList;
-    static int curMap;
+};  // end MapSelectionView
 
-    void init();
-
-
-
-
-}; // end MapSelectionView
-
-#endif // end __MapSelectionView_hpp__
+#endif  // end __MapSelectionView_hpp__

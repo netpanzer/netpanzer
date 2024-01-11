@@ -18,59 +18,54 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _OBJECTIVE_HPP
 #define _OBJECTIVE_HPP
 
-#include "Core/CoreTypes.hpp"
 #include "ArrayUtil/BoundBox.hpp"
+#include "Core/CoreTypes.hpp"
 #include "Util/Timer.hpp"
 
 class PlayerState;
 class ObjectiveSyncData;
 
-class Objective
-{
-public:
-    ObjectiveID   id;
-    iRect         selection_box;
-    unsigned char outpost_type;
-    char          name[64];
-    iXY           location;
-    BoundBox      capture_area;
-    BoundBox      area;
-    PlayerState*  occupying_player;
+class Objective {
+ public:
+  ObjectiveID id;
+  iRect selection_box;
+  unsigned char outpost_type;
+  char name[64];
+  iXY location;
+  BoundBox capture_area;
+  BoundBox area;
+  PlayerState* occupying_player;
 
-// from outpost
-    unsigned char outpost_state;
-    iXY outpost_map_loc;
-    iXY unit_generation_loc;
-    iXY unit_collection_loc;
-    iXY occupation_pad_offset;
+  // from outpost
+  unsigned char outpost_state;
+  iXY outpost_map_loc;
+  iXY unit_generation_loc;
+  iXY unit_collection_loc;
+  iXY occupation_pad_offset;
 
-    unsigned short unit_generation_type;
-    bool unit_generation_on_flag;
+  unsigned short unit_generation_type;
+  bool unit_generation_on_flag;
 
-    Timer occupation_status_timer;
-    Timer unit_generation_timer;
+  Timer occupation_status_timer;
+  Timer unit_generation_timer;
 
-    Objective(ObjectiveID ID, iXY location, BoundBox area );
-    ~Objective() { }
+  Objective(ObjectiveID ID, iXY location, BoundBox area);
+  ~Objective() {}
 
-    void changeOwner( PlayerState * new_owner );
-    void changeUnitGeneration(bool is_on, int unit_type);
+  void changeOwner(PlayerState* new_owner);
+  void changeUnitGeneration(bool is_on, int unit_type);
 
-    void getSyncData( ObjectiveSyncData& sync_data );
-    void syncFromData( const ObjectiveSyncData& sync_data );
+  void getSyncData(ObjectiveSyncData& sync_data);
+  void syncFromData(const ObjectiveSyncData& sync_data);
 
-    void updateStatus();
+  void updateStatus();
 
+ private:
+  void attemptOccupationChange(PlayerState* player);
 
+  void checkOccupationStatus(void);
 
-private:
-    void attemptOccupationChange(PlayerState* player);
-
-    void checkOccupationStatus( void );
-
-    void generateUnits( void );
-
-
+  void generateUnits(void);
 };
 
-#endif // ** _OBJECTIVE_HPP
+#endif  // ** _OBJECTIVE_HPP

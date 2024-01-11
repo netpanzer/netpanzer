@@ -17,48 +17,45 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef USTYLESELECTIONVIEW_HPP
 #define USTYLESELECTIONVIEW_HPP
 
+#include "2D/Surface.hpp"
 #include "Core/CoreTypes.hpp"
 #include "Views/Components/View.hpp"
-#include "2D/Surface.hpp"
 
 //---------------------------------------------------------------------------
-class UStyleSelectionView : public View
-{
-private:
-    iXY loc_player_flag;
-    const char * text_current;
-    iXY loc_text_current;
-    bool loaded;
+class UStyleSelectionView : public View {
+ private:
+  iXY loc_player_flag;
+  const char *text_current;
+  iXY loc_text_current;
+  bool loaded;
 
-    iRect rect;
+  iRect rect;
 
-public:
-    UStyleSelectionView();
-    virtual ~UStyleSelectionView()
-    {}
+ public:
+  UStyleSelectionView();
+  virtual ~UStyleSelectionView() {}
 
-    static unsigned char rstyle_mem;
+  static unsigned char rstyle_mem;
 
-    virtual void doActivate();
-    virtual void doDeactivate();
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
-    virtual void checkResolution(iXY oldResolution, iXY newResolution);
-    virtual void processEvents();
-/*
-    static unsigned char getStyleMem()
-    {
-    return rstyle_mem;
-    }
+  virtual void doActivate();
+  virtual void doDeactivate();
+  virtual void doDraw(Surface &windowArea, Surface &clientArea);
+  virtual void checkResolution(iXY oldResolution, iXY newResolution);
+  virtual void processEvents();
+  /*
+      static unsigned char getStyleMem()
+      {
+      return rstyle_mem;
+      }
 
-    void setStyleMem(unsigned char style_mem)
-    {
-    static unsigned char rstyle_mem = style_mem;
-    }
-*/
-    void onComponentClicked(Component* c);
+      void setStyleMem(unsigned char style_mem)
+      {
+      static unsigned char rstyle_mem = style_mem;
+      }
+  */
+  void onComponentClicked(Component *c);
 
-
-    void init();
+  void init();
 };
 
-#endif // USTYLESELECTIONVIEW_HPP
+#endif  // USTYLESELECTIONVIEW_HPP

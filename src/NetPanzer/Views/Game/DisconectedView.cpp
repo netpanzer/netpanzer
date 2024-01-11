@@ -18,107 +18,92 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "DisconectedView.hpp"
 
-#include "Interfaces/GameManager.hpp"
+#include "Classes/ScreenSurface.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/GameManager.hpp"
+#include "UStyleSelectionView.hpp"
+#include "Units/UnitProfileInterface.hpp"
+#include "Util/Log.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Views/MainMenu/MenuTemplateView.hpp"
 #include "Views/MainMenu/OptionsTemplateView.hpp"
-#include "Classes/ScreenSurface.hpp"
 
-#include "Units/UnitProfileInterface.hpp"
-#include "UStyleSelectionView.hpp"
+void DisconectedView::buttonOk() {
+  if (gameconfig->quickConnect == true) {
+    GameManager::exitNetPanzer();
+    return;
+  }
 
-#include "Util/Log.hpp"
+  GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
+  sprintf(MenuTemplateView::currentMultiView, "GetSessionView");
 
+  // Vlad put all code in here for shutdown.
+  //----------------------
+  GameManager::quitNetPanzerGame();
+  //----------------------
 
-void
-DisconectedView::buttonOk()
-{
-    if(gameconfig->quickConnect == true) {
-        GameManager::exitNetPanzer();
-        return;
-    }
+  // Swap to the menu resolution.
+  // GameManager::setVideoMode(iXY(640, 480), false);
 
-    GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
-    sprintf(MenuTemplateView::currentMultiView, "GetSessionView");
+  GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
 
-    // Vlad put all code in here for shutdown.
-    //----------------------
-    GameManager::quitNetPanzerGame();
-    //----------------------
+  // Must remove the gameView first so that the initButtons detects that
+  // and loads the correct buttons.
+  Desktop::setVisibilityAllWindows(false);
 
-    // Swap to the menu resolution.
-    //GameManager::setVideoMode(iXY(640, 480), false);
+  // cleaning some vectors and resetting stuff - important on restart!
+  UnitProfileInterface::cleaning();
+  GameManager::cleaning();
+  UnitProfileSprites::clearProfiles();
+  UnitProfileInterface::clearProfiles();
 
-    GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
+  UStyleSelectionView::rstyle_mem = 0;
 
+  Desktop::setVisibility("MainView", true);
 
-    // Must remove the gameView first so that the initButtons detects that
-    // and loads the correct buttons.
-    Desktop::setVisibilityAllWindows(false);
+  View *v = Desktop::getView("OptionsView");
 
-     // cleaning some vectors and resetting stuff - important on restart!
-    UnitProfileInterface::cleaning();
-    GameManager::cleaning();
-    UnitProfileSprites::clearProfiles();
-    UnitProfileInterface::clearProfiles();
-
-
-    UStyleSelectionView::rstyle_mem = 0;
-
-
-    Desktop::setVisibility("MainView", true);
-
-    View *v = Desktop::getView("OptionsView");
-
-    if (v != 0) {
-        ((OptionsTemplateView *)v)->initButtons();
-        ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-    } else {
-        assert(false);
-    }
-    LOGGER.warning("DisconectedView:: finished disconection");
+  if (v != 0) {
+    ((OptionsTemplateView *)v)->initButtons();
+    ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
+  } else {
+    assert(false);
+  }
+  LOGGER.warning("DisconectedView:: finished disconection");
 }
 
-
-DisconectedView::DisconectedView() : SpecialButtonView()
-{
-    setSearchName("DisconectedView");
-    setTitle("Disconected from server");
-    setSubTitle("");
+DisconectedView::DisconectedView() : SpecialButtonView() {
+  setSearchName("DisconectedView");
+  setTitle("Disconected from server");
+  setSubTitle("");
 }
 
-void
-DisconectedView::init()
-{
-    removeAllButtons();
+void DisconectedView::init() {
+  removeAllButtons();
 
-    setBordered(true);
-    setAllowResize(false);
+  setBordered(true);
+  setAllowResize(false);
 
-    resize(screen->getWidth(),screen->getHeight());
-    moveTo(0,0);
+  resize(screen->getWidth(), screen->getHeight());
+  moveTo(0, 0);
 
-    int bsize = Surface::getTextWidth(" ") * 8;
-    addButtonCenterText(iXY((getClientRect().getSizeX()/2)-(bsize/2),
-                (getClientRect().getSizeY()/2)+(Surface::getFontHeight() * 2)),
-                bsize, "Ok", "", buttonOk);
+  int bsize = Surface::getTextWidth(" ") * 8;
+  addButtonCenterText(
+      iXY((getClientRect().getSizeX() / 2) - (bsize / 2),
+          (getClientRect().getSizeY() / 2) + (Surface::getFontHeight() * 2)),
+      bsize, "Ok", "", buttonOk);
 }
 
-void
-DisconectedView::doDraw(Surface &viewArea, Surface &clientArea)
-{
-    iRect r(min, max);
+void DisconectedView::doDraw(Surface &viewArea, Surface &clientArea) {
+  iRect r(min, max);
 
-    viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
-    viewArea.bltStringCenter(disconectMsg.c_str(), Color::white);
+  viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
+  viewArea.bltStringCenter(disconectMsg.c_str(), Color::white);
 
-    View::doDraw(viewArea, clientArea);
+  View::doDraw(viewArea, clientArea);
 }
 
-void
-DisconectedView::doActivate()
-{
-    init();
-    Desktop::setActiveView(this);
+void DisconectedView::doActivate() {
+  init();
+  Desktop::setActiveView(this);
 }
