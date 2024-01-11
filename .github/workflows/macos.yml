@@ -50,7 +50,12 @@ jobs:
           sdl2_mixer
         pip3 install meson ninja
 
-    - name: Meson build
+    - name: Build
       run: |
         meson setup _build
         ninja -v -C _build
+
+    - name: Test
+      run: |
+        cd _build
+        meson test -v

@@ -42,23 +42,16 @@ inc_dirs = [include_directories('.')]
 
 subdir('src')
 
-src = []
-core_src = [
-  'NetworkGlobals.cpp',
-  'main.cpp',
-]
-foreach file : core_src
-  src += [join_paths('src/NetPanzer/Core', file)]
-endforeach
-
 exe = executable(
   'netpanzer',
-  src,
+  'src/NetPanzer/Core/main.cpp',
   include_directories : [
     inc_dirs
   ],
+  link_with: lib_netpanzer.get_static_lib(),
   dependencies: [
     deps,
-    dep_netpanzer,
   ]
 )
+
+subdir('tests')

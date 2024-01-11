@@ -333,16 +333,17 @@ foreach file : src_basename
   src += [join_paths('../Lib/Types', file)]
 endforeach
 
-lib_netpanzer = static_library(
+src += ['Core/NetworkGlobals.cpp']
+
+lib_netpanzer = both_libraries(
   'netpanzer',
   src,
   include_directories : [
     inc_dirs
   ],
   dependencies: [
+    dep_embedded_lua,
     deps,
-    dep_embedded_lua
-  ]
+  ],
+  install: false # The shared lib is only used for tests.
 )
-
-dep_netpanzer = declare_dependency(link_with: lib_netpanzer)

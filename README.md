@@ -424,6 +424,13 @@ Inside "support" folder there are many useful scripts and resources.
 
 And of course, the file "netpanzer" is the main binary that should be on the PATH.
 
+## Tests
+
+See [tests/README.md](https://github.com/netpanzer/netpanzer/blob/master/tests/README.md)
+
+Note: More info about using the meson build system will be added soon. There
+are no tests configured yet for the NetPanzer scons build.
+
 ### Music
 
 Netpanzer doesn't come with own musicfiles yet. However, you can place your
