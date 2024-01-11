@@ -13,5 +13,5 @@ foreach case : test_cases
 #    c_args: '-DSOURCE_DIR="@0@"'.format(meson.current_source_dir())
     cpp_args: '-DTEST_LIB'
   )
-  test(case, exe)
+  test('test_' + fs.name(case), exe)
 endforeach
