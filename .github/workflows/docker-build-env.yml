@@ -10,7 +10,7 @@ on:
 
 jobs:
   docker:
-    name: ${{ matrix.platform}}_netpanzer-build-env_${{ matrix.tag }}
+    name: ${{ matrix.platform}}_NP-build-env_${{ matrix.tag }}
     strategy:
       fail-fast: false
       matrix:
@@ -50,7 +50,8 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: .
+          build-args: ${{ env.ARCH }}
+          context: ./support/docker
           file: ./support/docker/Dockerfile-build-env_${{ matrix.tag }}
           platforms: ${{ matrix.platform }}
           push: true
