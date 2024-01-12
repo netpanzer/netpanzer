@@ -10,7 +10,7 @@ on:
 
 jobs:
   docker:
-    name: netpanzer-build-env_${{ matrix.tag }}_${{ matrix.platform}}
+    name: ${{ matrix.platform}}_netpanzer-build-env_${{ matrix.tag }}
     strategy:
       fail-fast: true
       matrix:
