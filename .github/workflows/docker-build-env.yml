@@ -52,7 +52,7 @@ jobs:
         with:
           context: .
           file: ./support/docker/Dockerfile-build-env_${{ matrix.tag }}
-          platforms: ${{ env.matrix.platform }}
+          platforms: ${{ matrix.platform }}
           push: true
           tags: ${{ secrets.UNCLE_ANDY_DOCKERHUB_USERNAME }}/netpanzer-build-env:${{ matrix.tag }}
           cache-from: type=registry,ref=${{ secrets.UNCLE_ANDY_DOCKERHUB_USERNAME }}/netpanzer-build-env:buildcache
