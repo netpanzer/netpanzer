@@ -22,10 +22,10 @@ ENV TOOLS_DIR="/tools"
 RUN mkdir -p $TOOLS_DIR
 ARG ARCH
 RUN /bin/bash -c 'cd $TOOLS_DIR \
-    && curl -LO https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20231206-1/linuxdeploy-${ARCH}.AppImage \
-    && chmod +x linuxdeploy-${ARCH}.AppImage \
-    && ./linuxdeploy-${ARCH}.AppImage --appimage-extract \
-    && rm ./linuxdeploy-${ARCH}.AppImage \
+    && curl -LO https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20231206-1/linuxdeploy-$ARCH.AppImage \
+    && chmod +x linuxdeploy-$ARCH.AppImage \
+    && ./linuxdeploy-$ARCH.AppImage --appimage-extract \
+    && rm ./linuxdeploy-$ARCH.AppImage \
     && cd -'
 
 RUN useradd -m npbuilder && passwd -d npbuilder
