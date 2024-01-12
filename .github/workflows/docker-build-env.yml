@@ -16,6 +16,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         tag: [jammy, focal]
+        platform: ['linux/amd64','linux/arm64']
     runs-on: ${{ matrix.os }}
     steps:
       -
@@ -35,13 +36,23 @@ jobs:
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      - if: ${{ contains(matrix.platform, 'amd64') }}
+        run: |
+          export ARCH="x86_64"
+          echo "ARCH=${ARCH}" >> $GITHUB_ENV
+
+      - if: ${{ contains(matrix.platform, 'arm64') }}
+        run: |
+          export ARCH="aarch64"
+          echo "ARCH=${ARCH}" >> $GITHUB_ENV
       -
         name: Build and push
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./support/docker/Dockerfile-build-env_${{ matrix.tag }}
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ env.matrix.platform }}
           push: true
           tags: ${{ secrets.UNCLE_ANDY_DOCKERHUB_USERNAME }}/netpanzer-build-env:${{ matrix.tag }}
           cache-from: type=registry,ref=${{ secrets.UNCLE_ANDY_DOCKERHUB_USERNAME }}/netpanzer-build-env:buildcache
