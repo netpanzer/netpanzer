@@ -36,53 +36,48 @@ CreditsScrollView::CreditsScrollView() : SpecialButtonView() {
   // moveTo(iXY(0, 0));
   // resize(iXY(800, 600));
 
-  // Is having the game description here really necessary? And isn't
-  // the version info already available at the main menu?
-  char line[512];
-  insert("");
-  snprintf(line, sizeof line, "  This is %s v. %s, a massively multiplayer",
-           Package::GetName().c_str(), Package::GetVersion().c_str());
-  insert(line);
-  insert("  tank battle game.");
-  insert("");
-  insert("  This application is free software under the terms of the");
-  insert(
-      "  Gnu General Public license (GPL). See the COPYING file for details.");
-  insert("");
-  insert("  Source and binaries at: http://netpanzer.sourceforge.net/");
-  insert("");
-  insert("  Please visit www.NETPANZER.info");
-  insert("  - for binaries, maps, flags, related tools and news");
-  insert("  - and don't forget to register your nickname for the ranking");
-  insert("");
-  insert("  Current Development Team");
-  insert("  - Devon Winrick (winrid)");
-  insert("  - Fulvio Testi (fu)");
-  insert("");
-  insert("");
-  insert("  Authors");
-  insert("");
-  insert("  Additional graphics:");
-  insert("  Peter Lisker (Nessie), Jesus Eugenio (Silvestre)");
-  insert("");
-  insert("");
-  insert("  Original Game (Pyrosoft):");
-  insert("  Vlad Rahkoy, Skip Rhudy, Matt Bogue, Clint Bogue");
-  insert("");
-  insert("  Linux Port, Polishing, Packaging and Related Tools:");
-  insert(
-      "  Matthias Braun, Ivo Danihelka, Hollis Blanchard, Hankin Chick, "
-      "BenUrban");
-  insert("  Tyler Nielsen, Bastosz Fenski, Tobias Blerch, Ingo Ruhnke");
-  insert("");
-  insert("  0.8.3 Release:");
-  insert("  Aaron Perez (krom), C-D, fu");
-  insert("");
-  insert("  0.8.4 Release up to 0.8.5-test-1:");
-  insert("  Aaron Perez (krom), Laurant Jacques (Wile64), C-D, fu");
-  insert("");
-  insert("  0.8.7 Release:");
-  insert("  Fulvio Testi (fu), Guido Ueffing (Lohengrin)");
+const char *credits = "\
+  This application is free software under the terms of the\n\
+    Gnu General Public license (GPL). See the COPYING file for details.\n\
+\n\
+  Source and binaries at: http://github.com/netpanzer/netpanzer/releases/\n\
+\n\
+  Please visit www.NETPANZER.info\n\
+  - for binaries, maps, flags, related tools and news\n\
+  - and don't forget to register your nickname for the ranking\n\
+\n\
+  Current Development Team\n\
+  - Devon Winrick (winrid)\n\
+  - Fulvio Testi (fu)\n\
+\n\
+\n\
+  Authors\n\
+\n\
+  Additional graphics:\n\
+  Peter Lisker (Nessie), Jesus Eugenio (Silvestre)\n\
+\n\
+\n\
+  Original Game (Pyrosoft):\n\
+  Vlad Rahkoy, Skip Rhudy, Matt Bogue, Clint Bogue\n\
+\n\
+  Linux Port, Polishing, Packaging and Related Tools:\n\
+\n\
+      Matthias Braun, Ivo Danihelka, Hollis Blanchard, Hankin Chick, \n\
+    BenUrban\n\
+  Tyler Nielsen, Bastosz Fenski, Tobias Blerch, Ingo Ruhnke\n\
+\n\
+  0.8.3 Release:\n\
+  Aaron Perez (krom), C-D, fu\n\
+\n\
+  0.8.4 Release up to 0.8.5-test-1:\n\
+  Aaron Perez (krom), Laurant Jacques (Wile64), C-D, fu\n\
+\n\
+  0.8.7 Release:\n\
+  Fulvio Testi (fu), Guido Ueffing (Lohengrin)";
+
+fprintf(stderr, "credits: %s\n", credits);
+
+insert(credits);
 
   // insert("  Alt + '-'                        Decrease brightness");
   // insert("  Alt + '='                        Increase brightness");
