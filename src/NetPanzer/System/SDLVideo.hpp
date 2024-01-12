@@ -34,7 +34,7 @@ class SDLVideo {
   SDLVideo();
   virtual ~SDLVideo();
 
-  void setVideoMode(int width, int height, int bpp, bool fullscreen);
+  bool setVideoMode(int width, int height, int bpp, bool fullscreen);
   void setPalette(SDL_Color* color);
   SDL_Surface* getSurface();
   void render();

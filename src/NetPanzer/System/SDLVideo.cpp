@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/FileSystem.hpp"
 #include "Util/Log.hpp"
 #include "Util/NTimer.hpp"
+#include "Util/Log.hpp"
 #include "package.hpp"
 
 #if defined _WIN32 || defined __MINGW32__
@@ -76,12 +77,13 @@ SDLVideo::~SDLVideo() {
   SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-void SDLVideo::setVideoMode(int new_width, int new_height, int bpp,
+bool SDLVideo::setVideoMode(int new_width, int new_height, int bpp,
                             bool fullscreen) {
   const bool was_fullscreen = this->is_fullscreen;
   this->is_fullscreen = fullscreen;
 
   if (window == nullptr) {
+    LOGGER.debug("Creating new window.");
     if (fullscreen) {
       // use the native desktop resolution, and scale linearly later using
       // renderer
@@ -91,74 +93,108 @@ void SDLVideo::setVideoMode(int new_width, int new_height, int bpp,
     } else {
       window = SDL_CreateWindow(
           Package::GetFullyQualifiedName().c_str(), SDL_WINDOWPOS_UNDEFINED,
-          SDL_WINDOWPOS_UNDEFINED, new_width, new_height, SDL_WINDOW_RESIZABLE);
+          SDL_WINDOWPOS_UNDEFINED, new_width, new_height, 0);
     }
     if (window == nullptr) {
-      throw Exception("Couldn't create a window %s", SDL_GetError());
+        LOGGER.warning("Couldn't create a window: %s", SDL_GetError());
+        return false;
     }
 
+      LOGGER.debug("Showing window.");
+      SDL_ShowWindow(window);  // has to happen before fullscreen switch to fix
+      // cursor stuck in region issue
+      SDL_RaiseWindow(window);
+
+    LOGGER.debug("Creating new renderer.");
     renderer = SDL_CreateRenderer(window, -1, 0);
 
     if (renderer == nullptr) {
-      throw Exception("Couldn't create renderer %s", SDL_GetError());
+        LOGGER.warning("Couldn't create renderer: %s", SDL_GetError());
+        return false;
     }
   } else {
+
+      LOGGER.debug("Showing window.");
+      SDL_ShowWindow(window);  // has to happen before fullscreen switch to fix
+      // cursor stuck in region issue
+      SDL_RaiseWindow(window);
     if (fullscreen) {
       if (was_fullscreen) {
         // no change
       } else {
-        SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+        LOGGER.debug("Setting fullscreen.");
+        const int setFullscreenResult = SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+        if (setFullscreenResult < 0) {
+            LOGGER.warning("Could not set fullscreen: %s", SDL_GetError());
+        }
       }
     } else {
       if (was_fullscreen) {
-        SDL_SetWindowFullscreen(window, 0);
+        LOGGER.debug("Disabling fullscreen.");
+        const int disableFullScreenResult = SDL_SetWindowFullscreen(window, 0);
+        if (disableFullScreenResult < 0) {
+            LOGGER.warning("Could not disable fullscreen: %s", SDL_GetError());
+        }
       }
+      LOGGER.debug("Setting window size.");
       SDL_SetWindowSize(window, new_width, new_height);
     }
   }
 
   if (surface != nullptr) {
+    LOGGER.debug("Cleaning up old surface.");
     SDL_FreeSurface(surface);
   }
 
+  LOGGER.debug("Creating surface.");
   surface = SDL_CreateRGBSurfaceWithFormat(0, new_width, new_height, 8,
                                            SDL_PIXELFORMAT_INDEX8);
 
   if (surface == nullptr) {
-    throw Exception("Couldn't create surface %s", SDL_GetError());
+    LOGGER.warning("Couldn't create render surface: %s", SDL_GetError());
+    return false;
   }
 
   if (texture != nullptr) {
+    LOGGER.debug("Destroying old texture.");
     SDL_DestroyTexture(texture);
   }
 
+  LOGGER.debug("Creating new render texture.");
   texture = SDL_CreateTextureFromSurface(renderer, surface);
 
   if (texture == nullptr) {
-    throw Exception("Couldn't create texture %s", SDL_GetError());
+    LOGGER.warning("Couldn't create render texture: %s", SDL_GetError());
+    return false;
   }
 
   // make the scaled rendering look smoother.
   // Note: "linear" made game look blurry when game resolution did not match
   // monitor resolution.
+  LOGGER.debug("Setting render hints.");
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
-  SDL_RenderSetLogicalSize(renderer, new_width, new_height);
-
-  SDL_ShowWindow(window);  // has to happen before fullscreen switch to fix
-                           // cursor stuck in region issue
+  LOGGER.debug("Setting render logical size.");
+  const int setLogicalSizeResult = SDL_RenderSetLogicalSize(renderer, new_width, new_height);
+  if (setLogicalSizeResult < 0) {
+    LOGGER.warning("Couldn't set logical resolution: %d %d %s", new_width, new_height, SDL_GetError());
+  }
 
   // let's scare the mouse :)
   // this fixes the mouse cursor stuck to a small region after resolution change
-  int showCursorResult = SDL_ShowCursor(SDL_DISABLE);
+  LOGGER.debug("Showing cursor.");
+  const int showCursorResult = SDL_ShowCursor(SDL_DISABLE);
   if (showCursorResult < 0) {
-    printf("Could not show cursor! %s\n", SDL_GetError());
+    LOGGER.warning("Couldn't show cursor: %s", SDL_GetError());
+    // can still try to continue
   }
 
   // Center the mouse after changing the resolution - also helps mouse cursor
   // from getting stuck in old region
   int centerX = new_width / 2;
   int centerY = new_height / 2;
+  LOGGER.debug("Warping mouse into window...");
   SDL_WarpMouseInWindow(window, centerX, centerY);
+  return true;
 }
 
 void SDLVideo::setPalette(SDL_Color *color) {
