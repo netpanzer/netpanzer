@@ -50,7 +50,7 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v5
         with:
-          build-args: ${{ env.ARCH }}
+          build-args: ARCH=${{ env.ARCH }}
           context: ./support/docker
           file: ./support/docker/Dockerfile-build-env_${{ matrix.tag }}
           platforms: ${{ matrix.platform }}
