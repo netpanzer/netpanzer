@@ -36,19 +36,21 @@ CreditsScrollView::CreditsScrollView() : SpecialButtonView() {
   // moveTo(iXY(0, 0));
   // resize(iXY(800, 600));
 
-const char *credits = "\
+  char credits[] =
+      "\
   This application is free software under the terms of the\n\
-    Gnu General Public license (GPL). See the COPYING file for details.\n\
+  Gnu General Public license (GPL). See the COPYING file for details.\n\
 \n\
-  Source and binaries at: http://github.com/netpanzer/netpanzer/releases/\n\
+  Source and binaries: https://github.com/netpanzer/netpanzer/\n\
 \n\
-  Please visit www.NETPANZER.info\n\
+  Website: https://netpanzer.io\n\
   - for binaries, maps, flags, related tools and news\n\
   - and don't forget to register your nickname for the ranking\n\
 \n\
   Current Development Team\n\
   - Devon Winrick (winrid)\n\
   - Fulvio Testi (fu)\n\
+  - Andy Alt\n\
 \n\
 \n\
   Authors\n\
@@ -62,9 +64,8 @@ const char *credits = "\
 \n\
   Linux Port, Polishing, Packaging and Related Tools:\n\
 \n\
-      Matthias Braun, Ivo Danihelka, Hollis Blanchard, Hankin Chick, \n\
-    BenUrban\n\
-  Tyler Nielsen, Bastosz Fenski, Tobias Blerch, Ingo Ruhnke\n\
+  Matthias Braun, Ivo Danihelka, Hollis Blanchard, Hankin Chick, \n\
+  BenUrban Tyler Nielsen, Bastosz Fenski, Tobias Blerch, Ingo Ruhnke\n\
 \n\
   0.8.3 Release:\n\
   Aaron Perez (krom), C-D, fu\n\
@@ -75,9 +76,15 @@ const char *credits = "\
   0.8.7 Release:\n\
   Fulvio Testi (fu), Guido Ueffing (Lohengrin)";
 
-fprintf(stderr, "credits: %s\n", credits);
-
-insert(credits);
+  char *sStart = credits;
+  char *sEnd = strchr(sStart, '\n');
+  while (sEnd != NULL) {
+    *sEnd = '\0';
+    insert(sStart);
+    sStart = sEnd + 1;
+    sEnd = strchr(sStart, '\n');
+  }
+  if (*sStart != '\0') insert(sStart);
 
   // insert("  Alt + '-'                        Decrease brightness");
   // insert("  Alt + '='                        Increase brightness");
