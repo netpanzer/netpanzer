@@ -89,7 +89,7 @@ bool SDLVideo::setVideoMode(int new_width, int new_height, int bpp,
       // renderer
       window = SDL_CreateWindow(
           Package::GetFullyQualifiedName().c_str(), SDL_WINDOWPOS_UNDEFINED,
-          SDL_WINDOWPOS_UNDEFINED, 0, 0, SDL_WINDOW_FULLSCREEN);
+          SDL_WINDOWPOS_UNDEFINED, 0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP);
     } else {
       window = SDL_CreateWindow(
           Package::GetFullyQualifiedName().c_str(), SDL_WINDOWPOS_UNDEFINED,
@@ -121,7 +121,7 @@ bool SDLVideo::setVideoMode(int new_width, int new_height, int bpp,
         // no change
       } else {
         LOGGER.debug("Setting fullscreen.");
-        const int setFullscreenResult = SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+        const int setFullscreenResult = SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
         if (setFullscreenResult < 0) {
             LOGGER.warning("Could not set fullscreen: %s", SDL_GetError());
         }
