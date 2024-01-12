@@ -6,8 +6,10 @@
 test_cases = [
   '../src/Lib/package'
   ]
+
 fs = import('fs')
 foreach case : test_cases
+  test_name = 'test_' + fs.name(case)
   exe = executable(
     'test_' + fs.name(case),
     case + '.cpp',
@@ -17,5 +19,5 @@ foreach case : test_cases
 #    c_args: '-DSOURCE_DIR="@0@"'.format(meson.current_source_dir())
     cpp_args: '-DTEST_LIB'
   )
-  test('test_' + fs.name(case), exe)
+  test(test_name, exe)
 endforeach
