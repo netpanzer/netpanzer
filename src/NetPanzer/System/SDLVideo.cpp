@@ -200,6 +200,7 @@ void SDLVideo::setPalette(SDL_Color *color) {
 }
 
 SDL_Surface *SDLVideo::getSurface() { return surface; }
+SDL_Window *SDLVideo::getWindow() { return window; }
 
 void SDLVideo::render() {
   // This mechanism is only about 5-10% slower than SDL_BlitSurface &&

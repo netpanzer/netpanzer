@@ -37,6 +37,7 @@ class SDLVideo {
   bool setVideoMode(int width, int height, int bpp, bool fullscreen);
   void setPalette(SDL_Color* color);
   SDL_Surface* getSurface();
+  SDL_Window* getWindow();
   void render();
   void doScreenshot();
 };  // end DirectDraw
