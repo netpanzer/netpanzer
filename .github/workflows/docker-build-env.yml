@@ -12,7 +12,7 @@ jobs:
   docker:
     name: ${{ matrix.platform}}_netpanzer-build-env_${{ matrix.tag }}
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
         tag: [jammy, focal]
