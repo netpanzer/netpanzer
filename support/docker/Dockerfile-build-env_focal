@@ -1,7 +1,17 @@
 FROM ubuntu:focal
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt update &&   \
-    apt -y upgrade && \
+RUN apt update && apt install curl libfuse2
+ENV TOOLS_DIR="/tools"
+RUN mkdir -p $TOOLS_DIR
+ARG ARCH
+RUN /bin/bash -c 'cd $TOOLS_DIR \
+    && curl -LO https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20231206-1/linuxdeploy-$ARCH.AppImage \
+    && chmod +x linuxdeploy-$ARCH.AppImage \
+    && ./linuxdeploy-$ARCH.AppImage --appimage-extract \
+    && rm ./linuxdeploy-$ARCH.AppImage \
+    && cd -'
+
+RUN apt -y upgrade && \
     apt install -y  \
         build-essential \
         git \
@@ -13,20 +23,9 @@ RUN apt update &&   \
         python3-pip \
         python3-setuptools && \
     apt install -y  \
-        curl    \
         wget && \
     rm -rf /var/lib/apt/lists && \
     python3 -m pip install meson ninja
-
-ENV TOOLS_DIR="/tools"
-RUN mkdir -p $TOOLS_DIR
-ARG ARCH
-RUN /bin/bash -c 'cd $TOOLS_DIR \
-    && curl -LO https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20231206-1/linuxdeploy-$ARCH.AppImage \
-    && chmod +x linuxdeploy-$ARCH.AppImage \
-    && ./linuxdeploy-$ARCH.AppImage --appimage-extract \
-    && rm ./linuxdeploy-$ARCH.AppImage \
-    && cd -'
 
 RUN useradd -m npbuilder && passwd -d npbuilder
 
