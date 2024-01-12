@@ -89,7 +89,7 @@ bool SDLVideo::setVideoMode(int new_width, int new_height, int bpp,
       // renderer
       window = SDL_CreateWindow(
           Package::GetFullyQualifiedName().c_str(), SDL_WINDOWPOS_UNDEFINED,
-          SDL_WINDOWPOS_UNDEFINED, 0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP);
+          SDL_WINDOWPOS_UNDEFINED, 0, 0, SDL_WINDOW_FULLSCREEN);
     } else {
       window = SDL_CreateWindow(
           Package::GetFullyQualifiedName().c_str(), SDL_WINDOWPOS_UNDEFINED,
@@ -100,10 +100,9 @@ bool SDLVideo::setVideoMode(int new_width, int new_height, int bpp,
         return false;
     }
 
-      LOGGER.debug("Showing window.");
-      SDL_ShowWindow(window);  // has to happen before fullscreen switch to fix
-      // cursor stuck in region issue
-      SDL_RaiseWindow(window);
+    LOGGER.debug("Showing window.");
+    SDL_ShowWindow(window); // has to happen before fullscreen switch to fix cursor stuck in region issue
+    SDL_RaiseWindow(window);
 
     LOGGER.debug("Creating new renderer.");
     renderer = SDL_CreateRenderer(window, -1, 0);
@@ -113,17 +112,16 @@ bool SDLVideo::setVideoMode(int new_width, int new_height, int bpp,
         return false;
     }
   } else {
-
-      LOGGER.debug("Showing window.");
-      SDL_ShowWindow(window);  // has to happen before fullscreen switch to fix
-      // cursor stuck in region issue
-      SDL_RaiseWindow(window);
+    LOGGER.debug("Showing window.");
+    SDL_ShowWindow(window);  // has to happen before fullscreen switch to fix
+    // cursor stuck in region issue
+    SDL_RaiseWindow(window);
     if (fullscreen) {
       if (was_fullscreen) {
         // no change
       } else {
         LOGGER.debug("Setting fullscreen.");
-        const int setFullscreenResult = SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+        const int setFullscreenResult = SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
         if (setFullscreenResult < 0) {
             LOGGER.warning("Could not set fullscreen: %s", SDL_GetError());
         }
