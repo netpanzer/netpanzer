@@ -20,8 +20,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "package.hpp"
 
+#include <fstream>
+
 #ifndef PACKAGE_VERSION
 #include "config.h"
+#endif
+
+#ifdef NP_DATADIR
+#define DATADIR NP_DATADIR
 #endif
 
 const std::string Package::GetVersion(void) {
@@ -34,17 +40,61 @@ const std::string Package::GetFullyQualifiedName(void) {
   return Package::GetName() + " " + Package::GetVersion();
 }
 
+const void Package::assignDataDir(void) {
+  const char *possible[] = {".", "..", DATADIR, NULL};
+  int i = 0;
+
+  while (possible[i] != NULL) {
+    char map[1024] = "";
+    size_t r = snprintf(map, sizeof map, "%s/maps", possible[i]);
+    if (r >= sizeof map) {
+      // handle error
+    }
+
+    std::ifstream file(map);
+    if (file.good()) {
+      std::string leadPath(possible[i]);
+      Package::setDataDir(leadPath);
+      return;
+    }
+
+    i++;
+  }
+
+  // check env for $APPDIOR
+
+  return;
+}
+
 #else
+
+#include <filesystem>
 
 #include "package.hpp"
 #include "test.hpp"
 
-int main(void)
-{
+void test_name(void) {
   int len = Package::GetVersion().length();
   assert(len >= 5 && len < 10);
   assert(Package::GetName().compare("NetPanzer") == 0);
 
+  return;
+}
+
+void test_datadir(void) {
+  // fprintf(stderr, "meson_build_root: " MESON_BUILD_ROOT "\n");
+  std::filesystem::current_path(std::string(MESON_BUILD_ROOT));
+  // fprintf(stderr, "cwd: %s\n", path.c_str());
+  Package::assignDataDir();
+  // fprintf(stdout, "datadir: %s\n", Package::getDataDir().c_str());
+  assert(Package::getDataDir() == "..");
+
+  return;
+}
+
+int main(void) {
+  test_name();
+  test_datadir();
   return 0;
 }
 

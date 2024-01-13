@@ -18,9 +18,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 
+// This condition should get removed after the scons build
+#ifndef NP_DATADIR
+#include "config.h"
+#endif
+
 class Package {
  public:
   static const std::string GetVersion(void);
   static const std::string GetName(void);
   static const std::string GetFullyQualifiedName(void);
+
+  static const std::string getDataDir(void) { return datadir; }
+
+  static const void assignDataDir(void);
+  static void setDataDir(std::string &str) { datadir = str; }
+
+ private:
+  inline static std::string datadir;
 };

@@ -30,7 +30,12 @@ add_project_arguments(cxx.get_supported_arguments(extra_flags), language: 'cpp')
 
 conf = configuration_data()
 conf.set_quoted('PACKAGE_VERSION', meson.project_version())
+conf.set_quoted('DATADIR', join_paths(get_option('prefix'), get_option('datadir')))
 config_h = configure_file(output : 'config.h', configuration : conf)
+
+#devenv = environment()
+#devenv.set('NETPANZER_DATADIR', meson.source_root())
+#meson.add_devenv(devenv)
 
 deps = [
   dependency('SDL2'),
