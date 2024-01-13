@@ -16,11 +16,29 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include <filesystem>
 #include <string>
+
+// This condition should get removed after the scons build
+#ifndef NP_DATADIR
+#include "config.h"
+#endif
 
 class Package {
  public:
   static const std::string GetVersion(void);
   static const std::string GetName(void);
   static const std::string GetFullyQualifiedName(void);
+
+  // This will probably get removed and the datadir assignment
+  // can happen in getDataSubPath
+  static const std::string getDataDir(void) { return datadir; }
+
+  static void assignDataDir(void);
+  static void setDataDir(const std::filesystem::path& p) { datadir = p; }
+
+  static const std::string getDataSubPath(const char *data);
+
+ private:
+  inline static std::string datadir;
 };

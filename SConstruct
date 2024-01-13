@@ -103,8 +103,7 @@ Help(opts.GenerateHelpText(env))
 
 env.Append( CCFLAGS = [ '-DPACKAGE_VERSION=\\"' + NPVERSION + '\\"' ] )
 
-if env['datadir'] != '':
-    env.Append( CCFLAGS = [ '-DNP_DATADIR=\\"' +  env['datadir'] + '\\"' ])
+env.Append( CCFLAGS = [ '-DNP_DATADIR=\\"' +  env['datadir'] + '\\"' ])
 
 buildpath = 'build/'
 if env['cross'] != '':

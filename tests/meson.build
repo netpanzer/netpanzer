@@ -17,7 +17,18 @@ foreach case : test_cases
     link_with: lib_netpanzer.get_shared_lib(),
 #    dependencies : deps,
 #    c_args: '-DSOURCE_DIR="@0@"'.format(meson.current_source_dir())
-    cpp_args: '-DTEST_LIB'
+    cpp_args: [
+      '-DTEST_LIB',
+      '-DMESON_BUILD_ROOT="@0@"'.format(meson.project_build_root()),
+      '-DMESON_SOURCE_ROOT="@0@"'.format(meson.project_source_root())
+      ]
   )
-  test(test_name, exe)
+
+  test(
+    'test_' + fs.name(case),
+    exe,
+    env: [
+      #'NETPANZER_DATADIR=FOO/BAR/PANZER/NET'
+      ]
+    )
 endforeach
