@@ -43,7 +43,7 @@ public:
 
     void setParams(const std::string& host, const std::string& port);
 
-    static Address resolve(const std::string& name, unsigned short port, bool isTcp = true, bool forBinding = false) throw(NetworkException);
+    static Address resolve(const std::string& name, unsigned short port, bool isTcp = true, bool forBinding = false) noexcept(false);
 
     std::string getIP() const;
 

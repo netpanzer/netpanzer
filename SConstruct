@@ -24,13 +24,13 @@ try:
 except:
     pass
 
-print "NPVERSION = " + NPVERSION
-print "SVERSION = " + SVERSION
+print("NPVERSION = " + NPVERSION)
+print("SVERSION = " + SVERSION)
 if NPVERSION == '' and SVERSION != '':
     NPVERSION = 'svn-' + SVERSION;
 
 thisplatform = sys.platform;
-print 'Building version ' + NPVERSION + ' in ' + thisplatform
+print('Building version ' + NPVERSION + ' in ' + thisplatform)
 
 ################################################################
 # Fix compiling with long lines in windows
@@ -46,9 +46,9 @@ class ourSpawn:
         data, err = proc.communicate()
         rv = proc.wait()
         if rv:
-            print "====="
-            print err
-            print "====="
+            print("=====")
+            print(err)
+            print("=====")
         return rv
 
 def SetupSpawn( env ):
@@ -65,7 +65,7 @@ def globSources(localenv, sourcePrefix, sourceDirs, pattern):
     sources = []
     sourceDirs = Split(sourceDirs)
     for d in sourceDirs:
-        sources.append(glob.glob( sourcePrefix + '/' + d + '/' + pattern))
+        sources.append(sorted(glob.glob( sourcePrefix + '/' + d + '/' + pattern)))
     sources = Flatten(sources)
     targetsources = []
     for s in sources:
@@ -118,8 +118,18 @@ else:
 
 exeappend = ''
 
+if 'CXXFLAGS' in os.environ:
+    env.Append(CCFLAGS = os.environ['CXXFLAGS'])
+
+if 'CPPFLAGS' in os.environ:
+    env.Append(CCFLAGS = os.environ['CPPFLAGS'])
+
+if 'LDFLAGS' in os.environ:
+    env.Append(LINKFLAGS = os.environ['LDFLAGS'])
+
+
 if env['cross'] == 'mingw':
-    print 'configuring for mingw cross compilation'
+    print('configuring for mingw cross compilation')
     env.Tool('crossmingw', toolpath = ['.'])
     env.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
     env.Append( LDFLAGS = [ '-mwindows' ] )
@@ -158,15 +168,13 @@ env.Append(CCFLAGS = ['-Wall'])
 
 env.VariantDir(buildpath,'.',duplicate=0)
 
-luaenv = env.Clone()
-physfsenv = env.Clone()
 networkenv = env.Clone()
 
 ################################################################
 # Configure Environments
 ################################################################
 
-env.Append( CPPPATH = [ 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/lua'] )
+env.Append( CPPPATH = [ 'src/Lib', 'src/NetPanzer' ] )
 
 # for this platform
 if thisplatform == 'darwin':
@@ -174,15 +182,11 @@ if thisplatform == 'darwin':
                            '/Library/Frameworks/SDL_mixer.framework/Headers' ] )
     networkenv.Append( CPPPATH = ['/Library/Frameworks/SDL.framework/Headers'] )
     if env['universal'] != 'false':
-		env.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
-		luaenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
-		physfsenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
-		networkenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
-		env.Append( LINKFLAGS = [ '-mmacosx-version-min=10.4', '-arch', 'ppc', '-arch', 'i386' ] )
+        env.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
+        networkenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
+        env.Append( LINKFLAGS = [ '-mmacosx-version-min=10.4', '-arch', 'ppc', '-arch', 'i386' ] )
     else:
         env.Append( CCFLAGS = [ '-arch', 'i386' ] )
-        luaenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
-        physfsenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
         networkenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
         env.Append( LINKFLAGS = [ '-arch', 'i386' ] )
     env.AppendUnique(FRAMEWORKS=Split('SDL SDL_mixer Cocoa IOKit'))
@@ -214,18 +218,8 @@ else:
 networkenv.Append(           CPPPATH = [ 'src/Lib' ] )
 MakeStaticLib(          networkenv, 'npnetwork', 'Network', '*.cpp')
 
-# BUILDS LUA
-luaenv.Append(           CPPPATH = [ 'src/Lib/lua'] )
-MakeStaticLib(          luaenv, 'nplua', 'lua', '*.c')
-
-# BUILDS PHYSFS
-physfsenv.Append( CFLAGS = [ '-DPHYSFS_SUPPORTS_ZIP=1', '-DZ_PREFIX=1', '-DPHYSFS_NO_CDROM_SUPPORT=1' ] )
-physfsenv.Append( CPPPATH = [ 'src/Lib/physfs', 'src/Lib/physfs/zlib123' ] )
-MakeStaticLib(physfsenv, 'npphysfs', 'physfs physfs/platform physfs/archivers physfs/zlib123', '*.c')
-
 # BUILDS 2D
 env.Append( CFLAGS = [ '-DZ_PREFIX=1' ] )
-env.Append( CPPPATH = 'src/Lib/physfs/zlib123' )
 MakeStaticLib(env, 'np2d', '2D 2D/libpng', '*.c*')
 
 # BUILDS REST OF LIBRARIES
@@ -243,10 +237,10 @@ npdirs = """
 """
 
 env.Append( NPSOURCES = globSources(env, 'src/NetPanzer', npdirs, "*.cpp") )
-if env.has_key('WINICON'):
+if 'WINICON' in env:
     env.Append( NPSOURCES = env['WINICON'] )
 
-env.Prepend( LIBS = ['np2d','nplua','npnetwork','nplibs','npphysfs'] )
+env.Prepend( LIBS = ['np2d','lua5.1','npnetwork','nplibs','physfs'] )
 env.Prepend( LIBPATH = libpath )
 
 netpanzer = env.Program( binpath+'netpanzer'+exeappend, env['NPSOURCES'])

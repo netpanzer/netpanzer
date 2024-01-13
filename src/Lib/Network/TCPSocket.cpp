@@ -30,14 +30,14 @@ namespace network
 {
 
 TCPSocket::TCPSocket(SOCKET fd, const Address& newaddr, TCPSocketObserver *o)
-    throw(NetworkException)
+    noexcept(false)
     : SocketBase(fd,newaddr), observer(o)
 {
     // nothing, socket is added to SocketManager because is already connected.
 }
 
 TCPSocket::TCPSocket(const std::string &host, const std::string &port, TCPSocketObserver *o)
-    throw(NetworkException)
+    noexcept(false)
     : SocketBase(), observer(o)
 {
     Address a(true, false);
@@ -46,7 +46,7 @@ TCPSocket::TCPSocket(const std::string &host, const std::string &port, TCPSocket
 }
 
 TCPSocket::TCPSocket(const Address& address, TCPSocketObserver *o)
-    throw(NetworkException)
+    noexcept(false)
     : SocketBase(address,true), observer(o)
 {
 #ifdef _WIN32
@@ -86,7 +86,7 @@ TCPSocket::destroy()
 }
 
 size_t
-TCPSocket::send(const void* data, size_t size) throw(NetworkException)
+TCPSocket::send(const void* data, size_t size) noexcept(false)
 {
     int res = doSend(data,size);
     if (!res && !observer) // disconnected

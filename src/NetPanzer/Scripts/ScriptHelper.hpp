@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _SCRIPTHELPER_HPP
 #define	_SCRIPTHELPER_HPP
 
-#include "lua/lua.hpp"
+#include "lua5.1/lua.hpp"
 
 #define GETSVTYPE_BYTE ScriptHelper::get_byte
 #define SETSVTYPE_BYTE ScriptHelper::set_byte

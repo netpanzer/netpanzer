@@ -46,12 +46,12 @@ public:
 //    TCPSocket(const Address& bindaddr, const Address& address, bool blocking = true);
 
 
-    TCPSocket(const Address& address, TCPSocketObserver *o) throw(NetworkException);
-    TCPSocket(const std::string& host,const std::string& port, TCPSocketObserver *o) throw(NetworkException);
+    TCPSocket(const Address& address, TCPSocketObserver *o) noexcept(false);
+    TCPSocket(const std::string& host,const std::string& port, TCPSocketObserver *o) noexcept(false);
 
     void destroy();
 
-    size_t send(const void* data, size_t datasize) throw(NetworkException);
+    size_t send(const void* data, size_t datasize) noexcept(false);
     
 protected:
     ~TCPSocket();
@@ -64,7 +64,7 @@ protected:
 private:
     friend class TCPListenSocket;
 
-    TCPSocket(SOCKET fd, const Address& addr, TCPSocketObserver *o) throw(NetworkException);
+    TCPSocket(SOCKET fd, const Address& addr, TCPSocketObserver *o) noexcept(false);
 
     TCPSocketObserver *observer;
 };
