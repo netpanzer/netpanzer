@@ -68,8 +68,8 @@ void Package::assignDataDir(void) {
   return;
 }
 
-const std::string Package::getDataSubPath(const char *data) {
-  std::string subPath = Package::getDataDir() + "/" + std::string(data);
+const std::string Package::getDataSubPath(const char *path) {
+  std::string subPath = Package::getDataDir() + "/" + std::string(path);
   return subPath;
 }
 
