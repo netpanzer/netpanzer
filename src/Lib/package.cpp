@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef TEST_LIB
 
 #include "package.hpp"
+#include "Util/FileSystem.hpp"
 
 #include <fstream>
 
@@ -51,8 +52,9 @@ const void Package::assignDataDir(void) {
       // handle error
     }
 
-    std::ifstream file(map);
-    if (file.good()) {
+    //std::ifstream file(map);
+    // if (file.good()) {
+    if (filesystem::exists(map)) {
       std::string leadPath(possible[i]);
       Package::setDataDir(leadPath);
       return;
