@@ -43,20 +43,19 @@ const std::string Package::GetFullyQualifiedName(void) {
 }
 
 void Package::assignDataDir(void) {
-  std::vector<std::string> possible{".", "..", DATADIR};
+  std::vector<std::string> possible{DATADIR};
 
   char *npDataEnv = getenv("NETPANZER_DATADIR");
   if (npDataEnv != NULL) possible.insert(possible.begin(), npDataEnv);
   char *npAppDir = getenv("APPDIR");
-  if (npAppDir != NULL) possible.insert(possible.end(), npAppDir);
+  if (npAppDir != NULL) possible.insert(possible.end(), npAppDir + std::string("/usr/share"));
   int length = possible.size();
 
   int i = 0;
   while (i < length) {
     std::ifstream file(possible[i] + "/maps");
     if (file.good()) {
-      std::filesystem::path p = possible[i];
-      Package::setDataDir(std::filesystem::absolute(p).parent_path().parent_path());
+      Package::setDataDir(possible[i]);
       return;
     }
 
@@ -75,8 +74,6 @@ const std::string Package::getDataSubPath(const char *path) {
 
 #else
 
-#include <filesystem>
-
 #include "package.hpp"
 #include "test.hpp"
 
@@ -89,9 +86,6 @@ void test_name(void) {
 }
 
 void test_datadir(void) {
-  // fprintf(stderr, "meson_build_root: " MESON_BUILD_ROOT "\n");
-  std::filesystem::current_path(std::string(MESON_BUILD_ROOT));
-  // fprintf(stderr, "cwd: %s\n", path.c_str());
   Package::assignDataDir();
   fprintf(stderr, "datadir: %s\n", Package::getDataDir().c_str());
   assert(Package::getDataDir() == MESON_SOURCE_ROOT);

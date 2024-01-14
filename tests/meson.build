@@ -28,7 +28,7 @@ foreach case : test_cases
     'test_' + fs.name(case),
     exe,
     env: [
-      #'NETPANZER_DATADIR=FOO/BAR/PANZER/NET'
+      # 'NETPANZER_DATADIR="@0@"'.format(meson.project_source_root())
       ]
     )
 endforeach

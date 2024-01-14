@@ -5,6 +5,7 @@ freebsd_task:
 
   env:
     CIRRUS_CLONE_SUBMODULES: true
+    NETPANZER_DATADIR: $PWD
 
   pkginstall_script:
     - pkg update -f

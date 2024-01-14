@@ -2,7 +2,7 @@ project(
   'netpanzer',
   ['c', 'cpp'],
   version: '0.9.0.06',
-  meson_version : '>= 0.56.2',
+  meson_version : '>= 0.58.0',
   default_options: [
     'warning_level=1',
     'cpp_std=c++17',
@@ -33,9 +33,7 @@ conf.set_quoted('PACKAGE_VERSION', meson.project_version())
 conf.set_quoted('DATADIR', join_paths(get_option('prefix'), get_option('datadir')))
 config_h = configure_file(output : 'config.h', configuration : conf)
 
-#devenv = environment()
-#devenv.set('NETPANZER_DATADIR', meson.source_root())
-#meson.add_devenv(devenv)
+meson.add_devenv({'NETPANZER_DATADIR': meson.project_source_root()})
 
 deps = [
   dependency('SDL2'),
