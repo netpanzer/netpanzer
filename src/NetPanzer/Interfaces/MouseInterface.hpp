@@ -22,9 +22,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <deque>
 #include <map>
+#include <math.h>
 #include <string>
 
 #include "2D/Surface.hpp"
+#include "Classes/ScreenSurface.hpp"
 #include "Util/NTimer.hpp"
 
 class MouseEvent {
@@ -105,8 +107,9 @@ class MouseInterface {
 
   static void setCursor(const char *cursorname);
   static inline void onMouseMoved(SDL_MouseMotionEvent *e) {
-    mouse_pos.x = e->x;
-    mouse_pos.y = e->y;
+      // min/max here keep cursor in window, always visible, even when we have black bars
+      mouse_pos.x = std::min(std::max(e->x, 0), (int) screen->getWidth());
+      mouse_pos.y = std::min(std::max(e->y, 0), (int) screen->getHeight());
   }
 
   static inline iXY getMousePosition() { return mouse_pos; }
