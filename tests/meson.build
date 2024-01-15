@@ -4,7 +4,8 @@
 # foreach loop and specify the 'dependencies: ...' conditionally
 
 test_cases = [
-  '../src/Lib/package'
+  '../src/Lib/package',
+  '../src/Lib/Util/FileSystem'
   ]
 
 fs = import('fs')

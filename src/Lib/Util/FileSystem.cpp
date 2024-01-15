@@ -16,14 +16,16 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifndef TEST_LIB
+
 #include "FileSystem.hpp"
 
+#include <physfs.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "Exception.hpp"
 #include "Log.hpp"
-#include "physfs/physfs.h"
 
 namespace filesystem {
 
@@ -513,3 +515,44 @@ FileReadException::FileReadException(size_t newobjread, size_t newobjrequested,
 FileReadException::~FileReadException() throw() {}
 
 }  // namespace filesystem
+
+#else
+
+#include "FileSystem.hpp"
+#include "package.hpp"
+#include "test.hpp"
+
+void test_open_maps_dir(void) {
+  filesystem::initialize("./netpanzer", "netpanzer", "netpanzer");
+
+  Package::assignDataDir();
+  filesystem::addToSearchPath(Package::getDataDir().c_str(), true);
+
+  const char mapsPath[] = "maps/";
+
+  char **list = filesystem::enumerateFiles(mapsPath);
+  int n = 0;
+  for (char **i = list; *i != NULL; i++) {
+    fprintf(stderr, "i: %s\n", *i);
+    if (strcmp(*i, "Two clans.npm") == 0)
+      n++;
+    else if (strcmp(*i, "Two clans.opt") == 0)
+      n++;
+    else if (strcmp(*i, "Two clans.spn") == 0)
+      n++;
+    else if (strcmp(*i, "Open War.npm") == 0)
+      n++;
+  }
+  assert(n == 4);
+
+  filesystem::freeList(list);
+
+  return;
+}
+
+int main(void) {
+  test_open_maps_dir();
+  return 0;
+}
+
+#endif
