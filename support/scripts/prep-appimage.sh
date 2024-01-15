@@ -1,4 +1,6 @@
 #!/bin/sh
+# This script is not used by the CI, but meant to be run by anyone
+# who wants to create any appimage.
 
 if [ -z "$UID" ]; then
   echo "Could not detect UID."
@@ -11,7 +13,7 @@ if [ ! -e "src/NetPanzer/Core/main.cpp" ];then
 fi
 
 export WORKSPACE="/np-src-root"
-export VERSION=${VERSION:-"0.9.0-RC6_1"}
+export VERSION=${VERSION:-"0.9.0-RC6"}
 
 echo "Version is set to '$VERSION'"
 echo "use 'VERSION=<version> $0' to change it."

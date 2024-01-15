@@ -1,0 +1,63 @@
+## Change version number
+
+meson.build
+support/scripts/prep-appimage.sh
+SConstruct
+
+
+Remove from meson default options:
+
+    'b_sanitize=address,undefined',
+    'b_lundef=false'
+
+Those two options can be disabled easily enough by package maintainers, but
+anybody else who wants to build from the release wouldn't necessarily know
+they should be disabled. Having that enabled slows the game down a bit.
+
+
+## Translations
+
+TBD
+
+## ChangeLog
+
+Update/Review
+
+commit changes (NOTE: meson dist only packages *committed* changes)
+
+## Source Distribution Archive
+
+meson dist --include-subprojects (argument only needed after subprojects are
+added. We'll probably need subprojects for the Windows build. On Linux, meson
+should use system physfs and lua, on Windows we may want to use meson's wrap
+system)
+
+meson adds all files tracked by version control so...
+
+Remove unneeded directories from the resulting xz file
+  (The process will be in the GitHub workflow)
+
+Example:
+
+        xz -d ${REL_TAR}.xz
+        tar --delete -f ${REL_TAR} rmw-${VERSION}/support
+        xz ${REL_TAR}
+        sha256sum ${REL_TAR}.xz > ${REL_TAR}.xz.sha256sum
+
+## Post release
+
+Change version number to a dev version (see files above). Note messon doesn't
+allow alpha characters and typically projects use something like 0.9.0.555 for
+dev versions.
+
+
+Add back to meson default options:
+
+    'b_sanitize=address,undefined',
+    'b_lundef=false'
+
+
+Close milestone (https://github.com/netpanzer/netpanzer/milestones)
+
+
+

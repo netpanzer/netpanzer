@@ -1,9 +1,13 @@
 #!/bin/sh
+# To create an AppImage from the CI, only this script is neeed and
+# prep-appimage.sh is not used.
 
 set -ev
 
 if [ -z "$WORKSPACE" ]; then
-  echo "This script needs to be called from prep-appimage.sh"
+  echo "Workspace needs to be set. If you're buildling locally, use prepimage.sh."
+  echo "If calling from a GitHub workflow, be sure to check and set the WORKSPACE"
+  echo "environmental variable."
   exit 1
 fi
 
