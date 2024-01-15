@@ -5,7 +5,6 @@ freebsd_task:
 
   env:
     CIRRUS_CLONE_SUBMODULES: true
-    NETPANZER_DATADIR: $CIRRUS_WORKING_DIR
 
   pkginstall_script:
     - pkg update -f
@@ -16,7 +15,7 @@ freebsd_task:
   build_script:
     - cd _build && ninja
   test_script:
-    - cd _build && meson test
+    - cd _build && export NETPANZER_DATADIR=$CIRRUS_WORKING_DIR && meson test
 
 arm_task:
   name: Ubuntu arm64
@@ -29,7 +28,7 @@ arm_task:
   build_script:
     - cd _build && ninja -v
   test_script:
-    - cd _build && meson test -v
+    - cd _build && export NETPANZER_DATADIR=$CIRRUS_WORKING_DIR && meson test -v
 
 macos_task:
   name: macOS arm64
@@ -47,4 +46,4 @@ macos_task:
   build_script:
     - cd _build && ninja
   test_script:
-    - cd _build && meson test
+    - cd _build && export NETPANZER_DATADIR=$CIRRUS_WORKING_DIR && meson test -v
