@@ -243,11 +243,14 @@ BaseGameManager* initialise(int argc, char** argv) {
   }
 
   Package::assignDataDir();
-  try {
-    filesystem::addToSearchPath(Package::getDataDir().c_str());
-  } catch (...) {
+  const std::string dataDir = Package::getDataDir();
+  if (dataDir != "") {
+      try {
+        filesystem::addToSearchPath(dataDir.c_str());
+      } catch (...) {
+      }
+      fprintf(stderr, "dataDir: %s\n", Package::getDataDir().c_str());
   }
-  fprintf(stderr, "datadir: %s\n", Package::getDataDir().c_str());
 
 #ifdef __APPLE__
   // Mac OS X puts the data files into NetPanzer.app/Contents/Resources

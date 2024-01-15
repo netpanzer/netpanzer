@@ -46,8 +46,6 @@ void Package::assignDataDir(void) {
 
   char *npDataEnv = getenv("NETPANZER_DATADIR");
   if (npDataEnv != NULL) possible.insert(possible.begin(), npDataEnv);
-  char *npAppDir = getenv("APPDIR");
-  if (npAppDir != NULL) possible.insert(possible.end(), npAppDir + std::string("/usr/share"));
   int length = possible.size();
 
   int i = 0;

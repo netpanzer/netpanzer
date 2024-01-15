@@ -20,12 +20,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "FileSystem.hpp"
 
-#include <physfs.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "Exception.hpp"
 #include "Log.hpp"
+#include "physfs/physfs.h"
 
 namespace filesystem {
 
@@ -522,7 +522,7 @@ FileReadException::~FileReadException() throw() {}
 #include "package.hpp"
 #include "test.hpp"
 
-void test_open_maps_dir(void) {
+void testEnumerateFilesOpenMapsDir(void) {
   filesystem::initialize("./netpanzer", "netpanzer", "netpanzer");
 
   Package::assignDataDir();
@@ -531,9 +531,9 @@ void test_open_maps_dir(void) {
   const char mapsPath[] = "maps/";
 
   char **list = filesystem::enumerateFiles(mapsPath);
-  int n = 0;
+  int n = 0, nTotal = 0;
   for (char **i = list; *i != NULL; i++) {
-    fprintf(stderr, "i: %s\n", *i);
+    fprintf(stderr, "%d / i: %s\n", nTotal++, *i);
     if (strcmp(*i, "Two clans.npm") == 0)
       n++;
     else if (strcmp(*i, "Two clans.opt") == 0)
@@ -543,15 +543,18 @@ void test_open_maps_dir(void) {
     else if (strcmp(*i, "Open War.npm") == 0)
       n++;
   }
+  filesystem::freeList(list);
   assert(n == 4);
 
-  filesystem::freeList(list);
+  // This will need to be changed when more maps are added
+  fprintf(stderr, "nTotal: %d\n", nTotal);
+  assert(nTotal < 120 && nTotal > 76);
 
   return;
 }
 
 int main(void) {
-  test_open_maps_dir();
+  testEnumerateFilesOpenMapsDir();
   return 0;
 }
 
