@@ -192,6 +192,7 @@ bool SDLVideo::setVideoMode(int new_width, int new_height, int bpp,
   int centerY = new_height / 2;
   LOGGER.debug("Warping mouse into window...");
   SDL_WarpMouseInWindow(window, centerX, centerY);
+  SDL_SetWindowGrab(window, fullscreen ? SDL_TRUE : SDL_FALSE);
   return true;
 }
 
