@@ -56,7 +56,27 @@ exe = executable(
   link_with: lib_netpanzer.get_static_lib(),
   dependencies: [
     deps,
-  ]
+  ],
+  install : true, install_dir : get_option('bindir')
 )
+
+data_subdirs = [
+  'cache',
+  'fonts',
+  'maps',
+  'pics',
+  'powerups',
+  'scripts',
+  'sound',
+  'units',
+  'wads'
+  ]
+
+foreach dir : data_subdirs
+  install_subdir(
+    dir,
+    install_dir : get_option('datadir')
+  )
+endforeach
 
 subdir('tests')
