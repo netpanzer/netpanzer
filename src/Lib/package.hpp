@@ -30,13 +30,10 @@ class Package {
   static const std::string GetName(void);
   static const std::string GetFullyQualifiedName(void);
 
-  // This will probably get removed and the datadir assignment
-  // can happen in getDataSubPath
-  static const std::string getDataDir(void) { return datadir; }
-
+  static const std::string getDataDir(void) { return dataDir; }
   static void assignDataDir(void);
-  static void setDataDir(const std::filesystem::path& p) { datadir = p; }
+  static void setDataDir(std::string &absPath) { dataDir = absPath; }
 
  private:
-  inline static std::string datadir;
+  inline static std::string dataDir;
 };
