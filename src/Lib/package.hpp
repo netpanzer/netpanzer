@@ -37,8 +37,6 @@ class Package {
   static void assignDataDir(void);
   static void setDataDir(const std::filesystem::path& p) { datadir = p; }
 
-  static const std::string getDataSubPath(const char *path);
-
  private:
   inline static std::string datadir;
 };

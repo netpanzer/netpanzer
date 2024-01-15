@@ -65,11 +65,6 @@ void Package::assignDataDir(void) {
   return;
 }
 
-const std::string Package::getDataSubPath(const char *path) {
-  std::string subPath = getDataDir() + "/" + std::string(path);
-  return subPath;
-}
-
 #else
 
 #include "package.hpp"
@@ -87,7 +82,6 @@ void test_datadir(void) {
   Package::assignDataDir();
   fprintf(stderr, "datadir: %s\n", Package::getDataDir().c_str());
   assert(Package::getDataDir() == MESON_SOURCE_ROOT);
-  assert(Package::getDataSubPath("maps/") == MESON_SOURCE_ROOT "/maps/");
 
   return;
 }
