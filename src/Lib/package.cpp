@@ -39,7 +39,7 @@ const std::string Package::GetVersion(void) {
 const std::string Package::GetName(void) { return std::string("NetPanzer"); }
 
 const std::string Package::GetFullyQualifiedName(void) {
-  return Package::GetName() + " " + Package::GetVersion();
+  return GetName() + " " + Package::GetVersion();
 }
 
 void Package::assignDataDir(void) {
@@ -55,20 +55,18 @@ void Package::assignDataDir(void) {
   while (i < length) {
     std::ifstream file(possible[i] + "/maps");
     if (file.good()) {
-      Package::setDataDir(possible[i]);
+      setDataDir(possible[i]);
       return;
     }
 
     i++;
   }
 
-  // check env for $APPDIOR
-
   return;
 }
 
 const std::string Package::getDataSubPath(const char *path) {
-  std::string subPath = Package::getDataDir() + "/" + std::string(path);
+  std::string subPath = getDataDir() + "/" + std::string(path);
   return subPath;
 }
 
