@@ -38,12 +38,11 @@ void CachedFontRenderer::initFont() {
     exit(EXIT_FAILURE);
   }
   // Quantico-Regular looked good too but some issues with some characters.
-  const std::filesystem::path absFontPath = std::string(filesystem::getRealName("/fonts/GNUUnifont9FullHintInstrUCSUR.ttf"));
-  const char * fontPathChar = (char*) absFontPath.c_str();
+  const std::string absFontPath = std::string(filesystem::getRealName("/fonts/GNUUnifont9FullHintInstrUCSUR.ttf"));
   CachedFontRenderer::font =
-      TTF_OpenFont(fontPathChar, FONT_SIZE);
+      TTF_OpenFont(absFontPath.c_str(), FONT_SIZE);
   if (font == NULL) {
-    LOGGER.warning("CachedFontRenderer - cannot load font %s.", fontPathChar);
+    LOGGER.warning("CachedFontRenderer - cannot load font %s.", absFontPath.c_str());
     exit (EXIT_FAILURE);
   }
 
