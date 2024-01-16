@@ -61,6 +61,7 @@ See
 The game depends on some tools and libraries to be present, before you can start
 building it. Here's a list of them:
 
+- A compiler that supports C++17
 - Python3 (for build scripts)
 - SDL 2
   http://www.libsdl.org
