@@ -249,7 +249,7 @@ BaseGameManager* initialise(int argc, char** argv) {
         filesystem::addToSearchPath(dataDir.c_str());
       } catch (...) {
       }
-      fprintf(stderr, "dataDir: %s\n", Package::getDataDir().c_str());
+      LOGGER.warning("dataDir: %s\n", Package::getDataDir().c_str());
   }
 
 #ifdef __APPLE__
