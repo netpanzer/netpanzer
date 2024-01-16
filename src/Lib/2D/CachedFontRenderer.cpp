@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "CachedFontRenderer.hpp"
 
-#include <filesystem>
 #include <string>
 
 #include "Util/FileSystem.hpp"
