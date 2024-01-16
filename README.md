@@ -61,9 +61,6 @@ See
 The game depends on some tools and libraries to be present, before you can start
 building it. Here's a list of them:
 
-- A compiler that supports C++17, as that is the standard we follow now.
-- SCons build tool
-  http://www.scons.org/
 - Python3 (for build scripts)
 - SDL 2
   http://www.libsdl.org
@@ -71,13 +68,81 @@ building it. Here's a list of them:
   https://wiki.libsdl.org/SDL2_ttf/FrontPage
 - SDL_mixer 2
   http://www.libsdl.org/projects/SDL_mixer/
-- Git (to fetch the source from repository)
-  https://git-scm.com/
 
 Thanks to all the authors of these helpful libraries that made our development
 easy and straightforward.
 
-To build the game and run as normal user do the following:
+We are in the process of deprecating the [Scons](https://scons.org/) build
+system in favor of [Meson](https://mesonbuild.com/). You still may use either
+one (or both). Note that our meson build doesn't yet support Windows.
+
+## Meson
+
+Instructions for installing `meson` are on their website (see link above).
+
+Install the `physfs` library (required by NetPanzer).
+
+The general usage for meson can be found in the meson docs
+Here are the basics:
+
+    meson setup _build
+
+To see options that can be used with 'setup', use `meson help setup`.
+
+The third argument, the build dir, can be named anything you like. Sometimes
+you might want to have more than one, depending on how you configure your
+build. For example:
+
+    meson configure -Db_sanitize=none
+
+After meson has configured your build directory, change to it, then run
+
+    meson devenv
+
+You only need to do that once in the terminal you're working in. That sets the
+environmental variable `NETPANZER_DATADIR` to the source root. When you build
+netpanzer, the binary will be output to your build directory. You can run it
+from there, and it will find the data in the parent directory.
+
+To see various build-time configuration options, use:
+
+    meson configure
+
+To build netpanzer:
+
+    ninja
+
+Add '-v' for more output.
+
+Note: `ninja` uses all cores by default. If you wish to set it manually use
+`-j n' (where 'n' is the number of desired cores).
+
+To see other meson command line options, use
+
+    meson help
+
+To install netpanzer, use `meson configure -Ddatadir=<data-dest-dir> -Dbindir=<bin-dest-dir>`, where destdir
+could be similar to the following:
+
+    /usr/share/netpanzer
+    $HOME/.local/share/netpanzer
+
+and bin dir could be one of these:
+
+    /usr/bin
+    $HOME/.local/bin
+
+Then use
+
+    ninja install
+
+For packaging, or to test installation, use `DESTDIR`, e.g.:
+
+    DESTDIR=/tmp/pkg ninja install
+
+## Scons
+
+To build:
 
     scons
 
