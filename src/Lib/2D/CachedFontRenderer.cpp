@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "CachedFontRenderer.hpp"
 
-#include <filesystem>
 #include <string>
 
 #include "Util/FileSystem.hpp"
@@ -34,15 +33,15 @@ std::unordered_map<std::string, RenderedText>
 
 void CachedFontRenderer::initFont() {
   if (TTF_Init() < 0) {
-    printf("Couldn't initialize SDL TTF: %s\n", SDL_GetError());
-    exit(1);
+    LOGGER.warning("Couldn't initialize SDL TTF: %s\n", SDL_GetError());
+    exit(EXIT_FAILURE);
   }
   // Quantico-Regular looked good too but some issues with some characters.
-  const std::filesystem::path absFontPath = std::string(filesystem::getRealName("/fonts/GNUUnifont9FullHintInstrUCSUR.ttf"));
+  const std::string absFontPath = std::string(filesystem::getRealName("/fonts/GNUUnifont9FullHintInstrUCSUR.ttf"));
   CachedFontRenderer::font =
       TTF_OpenFont(absFontPath.c_str(), FONT_SIZE);
   if (font == NULL) {
-    fprintf (stderr, "%s:%d:%s not found.\n", __func__, __LINE__, absFontPath.c_str());
+    LOGGER.warning("CachedFontRenderer - cannot load font %s.", absFontPath.c_str());
     exit (EXIT_FAILURE);
   }
 
