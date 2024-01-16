@@ -22,25 +22,20 @@ APPDIR="$OUTPUT_DIR/AppDir"
 BUILD_DIR="$WORKSPACE/support/docker_build"
 
 cd "$WORKSPACE"
-meson setup "$BUILD_DIR" -Dbuildtype=release -Dstrip=true -Db_sanitize=none -Dprefix=/usr
+meson setup "$BUILD_DIR" \
+  -Dbuildtype=release \
+  -Dstrip=true \
+  -Db_sanitize=none \
+  -Dbindir=/usr/bin \
+  -Ddatadir=/usr/data
 
-rm -rf "$APPDIR"
-DESTDIR="$APPDIR" ninja -C "$BUILD_DIR"
-mkdir -p "$APPDIR/usr/bin"
-cp "$BUILD_DIR/netpanzer" "$APPDIR/usr/bin"
+cd $BUILD_DIR
+ninja
 
-datadirs="cache \
-  fonts \
-  maps \
-  pics \
-  powerups \
-  scripts \
-  sound \
-  units \
-  wads"
-for dir in $datadirs; do
-  cp -a $dir "$APPDIR/usr/bin"
-done
+if [ -d "$APPDIR" ]; then
+  rm -rf "$APPDIR"
+fi
+DESTDIR="$APPDIR" ninja install
 
 cd "$OUTPUT_DIR"
 #if [ ! -e "linuxdeploy-${ARCH}.AppImage" ]; then
@@ -53,6 +48,7 @@ cd "$OUTPUT_DIR"
 export NAME="netpanzer"
 "$TOOLS_DIR/squashfs-root/AppRun"  \
   -d "$WORKSPACE/support/win32/netpanzer.desktop" \
+  --custom-apprun=$WORKSPACE/support/appimage/AppRun \
   --icon-file="$WORKSPACE/netpanzer.png" \
   --icon-filename=netpanzer \
   --executable "$APPDIR/usr/bin/netpanzer" \

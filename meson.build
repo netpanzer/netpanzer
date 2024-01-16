@@ -2,7 +2,7 @@ project(
   'netpanzer',
   ['c', 'cpp'],
   version: '0.9.0.06',
-  meson_version : '>= 0.56.2',
+  meson_version : '>= 0.58.0',
   default_options: [
     'warning_level=1',
     'cpp_std=c++17',
@@ -30,7 +30,10 @@ add_project_arguments(cxx.get_supported_arguments(extra_flags), language: 'cpp')
 
 conf = configuration_data()
 conf.set_quoted('PACKAGE_VERSION', meson.project_version())
+conf.set_quoted('DATADIR', join_paths(get_option('prefix'), get_option('datadir')))
 config_h = configure_file(output : 'config.h', configuration : conf)
+
+meson.add_devenv({'NETPANZER_DATADIR': meson.project_source_root()})
 
 deps = [
   dependency('SDL2'),
@@ -53,7 +56,27 @@ exe = executable(
   link_with: lib_netpanzer.get_static_lib(),
   dependencies: [
     deps,
-  ]
+  ],
+  install : true, install_dir : get_option('bindir')
 )
+
+data_subdirs = [
+  'cache',
+  'fonts',
+  'maps',
+  'pics',
+  'powerups',
+  'scripts',
+  'sound',
+  'units',
+  'wads'
+  ]
+
+foreach dir : data_subdirs
+  install_subdir(
+    dir,
+    install_dir : get_option('datadir')
+  )
+endforeach
 
 subdir('tests')

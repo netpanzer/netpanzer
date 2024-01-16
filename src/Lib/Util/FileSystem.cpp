@@ -16,6 +16,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifndef TEST_LIB
+
 #include "FileSystem.hpp"
 
 #include <stdio.h>
@@ -513,3 +515,47 @@ FileReadException::FileReadException(size_t newobjread, size_t newobjrequested,
 FileReadException::~FileReadException() throw() {}
 
 }  // namespace filesystem
+
+#else
+
+#include "FileSystem.hpp"
+#include "package.hpp"
+#include "test.hpp"
+
+void testEnumerateFilesOpenMapsDir(void) {
+  filesystem::initialize("./netpanzer", "netpanzer", "netpanzer");
+
+  Package::assignDataDir();
+  filesystem::addToSearchPath(Package::getDataDir().c_str(), true);
+
+  const char mapsPath[] = "maps/";
+
+  char **list = filesystem::enumerateFiles(mapsPath);
+  int n = 0, nTotal = 0;
+  for (char **i = list; *i != NULL; i++) {
+    fprintf(stderr, "%d / i: %s\n", nTotal++, *i);
+    if (strcmp(*i, "Two clans.npm") == 0)
+      n++;
+    else if (strcmp(*i, "Two clans.opt") == 0)
+      n++;
+    else if (strcmp(*i, "Two clans.spn") == 0)
+      n++;
+    else if (strcmp(*i, "Open War.npm") == 0)
+      n++;
+  }
+  filesystem::freeList(list);
+  assert(n == 4);
+
+  // This will need to be changed when more maps are added
+  fprintf(stderr, "nTotal: %d\n", nTotal);
+  assert(nTotal < 120 && nTotal > 76);
+
+  return;
+}
+
+int main(void) {
+  testEnumerateFilesOpenMapsDir();
+  return 0;
+}
+
+#endif

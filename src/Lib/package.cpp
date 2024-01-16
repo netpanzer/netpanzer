@@ -20,8 +20,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "package.hpp"
 
+#include <fstream>
+#include <vector>
+
 #ifndef PACKAGE_VERSION
 #include "config.h"
+#endif
+
+#ifdef NP_DATADIR
+#define DATADIR NP_DATADIR
 #endif
 
 const std::string Package::GetVersion(void) {
@@ -31,7 +38,28 @@ const std::string Package::GetVersion(void) {
 const std::string Package::GetName(void) { return std::string("NetPanzer"); }
 
 const std::string Package::GetFullyQualifiedName(void) {
-  return Package::GetName() + " " + Package::GetVersion();
+  return GetName() + " " + Package::GetVersion();
+}
+
+void Package::assignDataDir(void) {
+  std::vector<std::string> possible{DATADIR};
+
+  char *npDataEnv = getenv("NETPANZER_DATADIR");
+  if (npDataEnv != NULL) possible.insert(possible.begin(), npDataEnv);
+  int length = possible.size();
+
+  int i = 0;
+  while (i < length) {
+    std::ifstream file(possible[i] + "/maps");
+    if (file.good()) {
+      setDataDir(possible[i]);
+      return;
+    }
+
+    i++;
+  }
+
+  return;
 }
 
 #else
@@ -39,12 +67,25 @@ const std::string Package::GetFullyQualifiedName(void) {
 #include "package.hpp"
 #include "test.hpp"
 
-int main(void)
-{
+void test_name(void) {
   int len = Package::GetVersion().length();
   assert(len >= 5 && len < 10);
   assert(Package::GetName().compare("NetPanzer") == 0);
 
+  return;
+}
+
+void test_datadir(void) {
+  Package::assignDataDir();
+  fprintf(stderr, "datadir: %s\n", Package::getDataDir().c_str());
+  assert(Package::getDataDir() == MESON_SOURCE_ROOT);
+
+  return;
+}
+
+int main(void) {
+  test_name();
+  test_datadir();
   return 0;
 }
 
