@@ -1,6 +1,12 @@
-## Dedicated Server and Configuration Files
+# Dedicated Server and Configuration Files
 
-### For Linux Servers
+## Docker
+
+See
+[support/docker](https://github.com/netpanzer/netpanzer/blob/master/support/docker)
+for details.
+
+## Linux
 
 Here's a series of commands to setup a dedicated server that will survive server restarts and crashes.
 
@@ -79,35 +85,35 @@ This file will contain all the entries to configure your dedicated server.
 
 Note: Not ALL the entries in server.cfg are related to the server, only those tagged as `server.` and `game.` - so let's see in detail the ones which are really important.
 
-#### Server Name
+### Server Name
 
     server.name = "My Cool Server"
 
 Your game server name which will be displayed in server browser etc.
 
-#### Port Number
+### Port Number
 
     server.port = 3030
 
 No reason to change this if you run a single server.
 
-#### Message of The Day
+### Message of The Day
 
     server.motd = "Welcome to NetPanzer Server"
 
 This is the message that appears to players when they connect to the game server.
 
-#### Detailed Logging
+### Detailed Logging
 
     server.logging = true
 
 You can get more detailed logs by setting this to `true`.
 
-#### Public Server
+### Public Server
 
     server.public = true
 
-#### Custom Master Servers
+### Custom Master Servers
 
 The master servers are servers that hold the server list.
 
@@ -115,14 +121,14 @@ So your server needs to ping it. Your game client needs to call it. We don't rec
 
     server.masterservers = "masterserver.netpanzer.info, netpanzer.io"
 
-#### Interactive Server Console
+### Interactive Server Console
 
      server.interactive_console = true
 
 You may want to set this too false to disable the interactive console, to run the server as a daemon.
 Otherwise, the server will create excessive logs and 100% cpu/disk usage.
 
-#### Anti-Cheat
+### Anti-Cheat
 
 Anti-cheat is accomplished by kicking clients if they exceed a certain number of commands a second.
 
@@ -131,136 +137,136 @@ Anti-cheat is accomplished by kicking clients if they exceed a certain number of
 This sets the max consecutive number of "burst" packets from the client (packets within 125ms of each other).
 This is to prevent people from using auto-clickers.
 
-#### Enable/Disable Bases
+### Enable/Disable Bases
 
     game.enable_bases = true
 
 By setting this to `false` you disable all bases in the map.
 
-#### Capture Mode
+### Capture Mode
 
     game.base_capture_mode = 1
 
 The kind of base capture, no capture, helipad capture, full base capture.
 
-#### Base Limit
+### Base Limit
 
     game.base_limit = 0
 
 Max bases per player.
 
-#### Auto Kick
+### Auto Kick
 
     game.autokicktime = 20
 
 Kicks inactive player after given minutes.
 
-#### Multiple Players w/ Same IP
+### Multiple Players w/ Same IP
 
     game.allowmultiip = true
 
 By setting this to 'false' you prevent people with same IP address to connect.
 
-#### Unit Profiles
+### Unit Profiles
 
     game.unit_profiles = "Manta, Panther1, Titan, Stinger, Bobcat, Bear, Archer, Wolf, Drake, Spanzer"
 
 In this string separated by commas you can decide the available units in a game (the ones you see when you click on top of an outpost you own).
 
-#### Unit Spawn Counts
+### Unit Spawn Counts
 
     game.unit_spawnlist = "1, 1, 1, 1, 1, 1, 1, 1, 1, 1"
 
 Comma separated string which must reflect `game.unit_profiles`. Here you decide the starting number of units (on respawn).
 
-#### Admin Password
+### Admin Password
 
     game.adminpass = ""
 
 Set a password to allow admin commands via chat in a game.
 See the help section in your NetPanzer client for a full list of commands.
 
-#### Game Password
+### Game Password
 
     game.gamepass = ""
 
 You can set a password players must know to connect to your game server.
 
-#### Flag Change Timeout
+### Flag Change Timeout
 
     game.changeflagtime = 15
 
 Timeout for flag change in minutes.
 
-#### Game Type
+### Game Type
 
     game.gametype = 0
 
 0=objective, 1=frag limit, 2=timelimit
 
-#### Max Players
+### Max Players
 
     game.maxplayers = 8
 
-#### Max Units
+### Max Units
 
     game.maxunits = 320
 
 Max number of units (tanks) in the game - which also determines the max number of units per player: `maxunits/maxplayers`
 
-#### Time Limit
+### Time Limit
 
     game.timelimit = 30
 
 Time limit in minutes.
 
-#### Frag Limit
+### Frag Limit
 
     game.fraglimit = 300
 
-#### Enable/Disable Power Ups
+### Enable/Disable Power Ups
 
     game.powerups = true
 
-#### Occupation Percentage
+### Occupation Percentage
 
     game.occupationpercentage = 75
 
 Decides outposts percentage to end an objective game.
 
-#### Enable/Disable Allies
+### Enable/Disable Allies
 
     game.allowallies = true
 
-#### Low Score Limit
+### Low Score Limit
 
     game.lowscorelimit = -25
 
 Players get kicked if their score is less than this value - allowed range is -15 to -100.
 
-#### Cloud Coverage
+### Cloud Coverage
 
     game.cloudcoverage = 0
 
 Clouds density.
 
-#### Wind Speed
+### Wind Speed
 
     game.windspeed = 30
 
 Wind affects bullet travel and cloud coverage movement.
 
-#### Respawn Type
+### Respawn Type
 
     game.respawntype = 0
 
 0=round robin, 1=random
 
-#### Starting Map
+### Starting Map
 
     game.map = "Two clans"
 
-#### Map List
+### Map List
 
     game.mapcycle = "Two clans"
 
