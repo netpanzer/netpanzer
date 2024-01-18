@@ -1,0 +1,42 @@
+name: Format Check
+
+on:
+  push:
+    branches: master
+    paths:
+      - '**.cpp'
+      - '**.hpp'
+      - '**.c'
+      - '**.h'
+      - '**/check-formatting.yml'
+  pull_request:
+    branches: master
+    paths:
+      - '**.cpp'
+      - '**.hpp'
+      - '**.c'
+      - '**.h'
+      - '**/check-formatting.yml'
+
+jobs:
+  format-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Clang Format
+      run: sudo apt-get install -y clang-format
+
+    - name: Check code formatting
+      run: |
+        if [ -n "$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E '\.(cpp|h|hpp)$')" ]; then
+          clang-format \
+            --style=file \
+            -output-replacements-xml \
+              $(git diff --name-only \
+              ${{ github.event.before }} \
+              ${{ github.sha }} | grep -E '\.(cpp|h|hpp)') | grep -c '<replacement ' && \
+                exit 1 || exit 0
+        fi
