@@ -227,3 +227,23 @@ are no tests configured yet for the NetPanzer scons build.
 Netpanzer doesn't come with own musicfiles yet. However, you can place your
 favourite .mp3, .ogg or .mod files into the sound/music directory and netpanzer
 will play these in random order while you play.
+
+## Contact
+
+* [Discord](https://discord.gg/kCAB2CMswd)
+
+It's important to remember that any discussions about bugs or desired features
+in a chat room usually scroll away and become forgotten, so it's best to
+create a ticket or discussion on GitHub (mentioned above) if you really want a
+bug fix or new feature.
+
+* [NetPanzer Discussions](https://github.com/netpanzer/netpanzer/discussions) on GitHub
+* [Issues/Bug Tracker](https://github.com/netpanzer/netpanzer/issues)
+
+### Unofficial
+
+These areas are not moderated or maintained by the NetPanzer team. If looking
+for information about the game, always be sure to verify with *official*
+sources.
+
+* [Reddit](https://www.reddit.com/r/netpanzer)

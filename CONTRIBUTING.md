@@ -5,18 +5,9 @@
 Anyone may [open an
 issue](https://github.com/netpanzer/netpanzer/issues).
 
-## Discussion
-
 If you're not sure if something is a bug, you can search, or post on, the
-[Discussions](https://github.com/netpanzer/netpanzer/issues).
-
-### Discord
-
-You may participate on our [Discord server](https://discord.gg/kCAB2CMswd).
-It's important to remember that any discussions about bugs or desired features
-in a chat room usually scroll away and become forgotten, so it's best to
-create a ticket or discussion on GitHub (mentioned above) if you really want a
-bug fix or new feature.
+[Discussions](https://github.com/netpanzer/netpanzer/issues) or use other
+forms of [contact](https://github.com/netpanzer/netpanzer#contact)
 
 ## Coding Standards
 
@@ -71,8 +62,8 @@ See
 [tests/README.md](https://github.com/netpanzer/netpanzer/blob/master/tests/README.md)
 for detailed information.
 
-If you have any questions about tests, don't hesitate to ask the
-NetPanzer community.
+If you have any questions about tests, don't hesitate to [ask the
+NetPanzer community](https://github.com/netpanzer/netpanzer#contact).
 
 ### Commit Messages
 
