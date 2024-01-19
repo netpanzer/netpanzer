@@ -1,0 +1,48 @@
+name: Docker Build Environment Image CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: master
+    paths:
+      - '.github/workflows/docker.yml'
+      - 'support/docker/Dockerfile'
+      - 'src/**/*.{cpp,c,h,hpp}'
+
+jobs:
+  docker:
+    name: ${{ matrix.platform}}_NP-build-env_${{ matrix.tag }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: ['linux/amd64','linux/arm64']
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.UNCLE_ANDY_DOCKERHUB_USERNAME }}
+          password: ${{ secrets.UNCLE_ANDY_DOCKERHUB_ACCESS_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          build-args: ARCH=${{ env.ARCH }}
+          context: ./support/docker
+          file: ./support/docker/Dockerfile }}
+          platforms: ${{ matrix.platform }}
+          push: true
+          tags: ${{ secrets.UNCLE_ANDY_DOCKERHUB_USERNAME }}/netpanzer:latest
+          cache-from: type=registry,ref=${{ secrets.UNCLE_ANDY_DOCKERHUB_USERNAME }}/netpanzer:buildcache
+          cache-to: type=registry,ref=${{ secrets.UNCLE_ANDY_DOCKERHUB_USERNAME }}/netpanzer:buildcache,mode=max

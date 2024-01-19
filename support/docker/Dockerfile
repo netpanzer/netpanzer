@@ -1,12 +1,25 @@
-FROM andy5995/netpanzer-build-env:jammy
+FROM ubuntu:jammy
 ARG DEBIAN_FRONTEND=noninteractive
+RUN apt update && apt upgrade -y && apt install -y \
+        build-essential \
+        git \
+        libphysfs-dev \
+        libsdl2-dev \
+        libsdl2-mixer-dev \
+        libsdl2-ttf-dev \
+        meson \
+        python3  \
+        python3-pip \
+        python3-setuptools && \
+    rm -rf /var/lib/apt/lists
+
 RUN git clone --depth 1 https://github.com/netpanzer/netpanzer && \
         cd netpanzer && \
-        meson setup _build && \
+        meson setup _build -Db_sanitize=none && \
         cd _build && \
         ninja
 
-FROM ubuntu:jammy-20231128
+FROM ubuntu:jammy
 COPY --from=0 /netpanzer/_build/netpanzer /netpanzer/
 COPY --from=0 /netpanzer/cache /netpanzer/cache
 COPY --from=0 /netpanzer/fonts /netpanzer/fonts
