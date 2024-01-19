@@ -8,10 +8,6 @@ on:
 jobs:
   docker:
     name: ${{ matrix.platform}}_NP_server
-    strategy:
-      fail-fast: false
-      matrix:
-        platform: ['linux/amd64','linux/arm64']
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,6 +33,6 @@ jobs:
           build-args: ARCH=${{ env.ARCH }}
           context: ./support/docker
           file: ./support/docker/Dockerfile
-          platforms: ${{ matrix.platform }}
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ secrets.UNCLE_ANDY_DOCKERHUB_USERNAME }}/netpanzer:latest
