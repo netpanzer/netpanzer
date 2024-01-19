@@ -1,3 +1,6 @@
+env:
+  NETPANZER_DATADIR: $CIRRUS_WORKING_DIR
+
 freebsd_task:
   name: FreeBSD 13.2
   freebsd_instance:
@@ -15,7 +18,7 @@ freebsd_task:
   build_script:
     - cd _build && ninja
   test_script:
-    - cd _build && export NETPANZER_DATADIR=$CIRRUS_WORKING_DIR && meson test
+    - cd _build && meson test
 
 arm_task:
   name: Ubuntu arm64
@@ -28,7 +31,7 @@ arm_task:
   build_script:
     - cd _build && ninja -v
   test_script:
-    - cd _build && export NETPANZER_DATADIR=$CIRRUS_WORKING_DIR && meson test -v
+    - cd _build && meson test -v
 
 macos_task:
   name: macOS arm64
@@ -46,4 +49,4 @@ macos_task:
   build_script:
     - cd _build && ninja
   test_script:
-    - cd _build && export NETPANZER_DATADIR=$CIRRUS_WORKING_DIR && meson test -v
+    - cd _build && meson test -v
