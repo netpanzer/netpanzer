@@ -40,5 +40,3 @@ jobs:
           platforms: ${{ matrix.platform }}
           push: true
           tags: ${{ secrets.UNCLE_ANDY_DOCKERHUB_USERNAME }}/netpanzer:latest
-          cache-from: type=registry,ref=${{ secrets.UNCLE_ANDY_DOCKERHUB_USERNAME }}/netpanzer:buildcache
-          cache-to: type=registry,ref=${{ secrets.UNCLE_ANDY_DOCKERHUB_USERNAME }}/netpanzer:buildcache,mode=max
