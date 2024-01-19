@@ -2,12 +2,8 @@ name: Docker Build Environment Image CI
 
 on:
   workflow_dispatch:
-  push:
-    branches: master
-    paths:
-      - '.github/workflows/docker.yml'
-      - 'support/docker/Dockerfile'
-      - 'src/**/*.{cpp,c,h,hpp}'
+  schedule:
+    - cron: '30 11 * * 5'
 
 jobs:
   docker:
