@@ -49,4 +49,4 @@ macos_task:
   build_script:
     - cd _build && ninja
   test_script:
-    - cd _build && meson test -v
+    - ls $CIRRUS_WORKING_DIR && tree $CIRRUS_WORKING_DIR && cd _build && meson test -v
