@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Core/NetworkGlobals.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/GameControlRulesDaemon.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
@@ -36,11 +37,12 @@ InfoSocket::InfoSocket(int p) : socket(nullptr) {
       Address::resolve(*GameConfig::server_bindaddress, p, false, true);
   socket = new network::UDPSocket(addr, this);
 
-  // These parameters are fixed always
-  // others I plan to be modifiable while game is running.
+  std::string hostname = GameControlRulesDaemon::isDedicatedServer()
+          ? *GameConfig::server_name
+          : *GameConfig::player_name;
   std::stringstream s;
   s << "gamename\\netpanzer\\protocol\\" << NETPANZER_PROTOCOL_VERSION
-    << "\\hostname\\" << *GameConfig::player_name << "\\gameversion\\"
+    << "\\hostname\\" << hostname << "\\gameversion\\"
     << Package::GetVersion();
   statusHead = s.str();
 }

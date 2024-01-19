@@ -93,6 +93,10 @@ void GameControlRulesDaemon::setStateServerIdle() {
 void GameControlRulesDaemon::setDedicatedServer() {
   GameControlRulesDaemon::execution_mode = _execution_mode_dedicated_server;
 }
+//-----------------------------------------------------------------
+bool GameControlRulesDaemon::isDedicatedServer() {
+  return GameControlRulesDaemon::execution_mode == _execution_mode_dedicated_server;
+}
 
 //-----------------------------------------------------------------
 void GameControlRulesDaemon::mapCycleFsmClient() {
