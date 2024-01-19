@@ -6,8 +6,8 @@ project(
   default_options: [
     'warning_level=2',
     'cpp_std=c++17',
-    'b_sanitize=address,undefined',
-    'b_lundef=false'
+#    'b_sanitize=address,undefined',
+#    'b_lundef=false'
     ]
   )
 
