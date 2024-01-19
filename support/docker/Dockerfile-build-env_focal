@@ -5,13 +5,13 @@ ENV TOOLS_DIR="/tools"
 RUN mkdir -p $TOOLS_DIR
 ARG TARGETARCH
 ARG ARCH
-RUN if [ $TARGETARCH = amd64 ]; then \
+RUN if [ "$TARGETARCH" = "amd64" ]; then \
       ARCH=x86_64; \
-    elif [ $TARGETARCH = arm64 ]; then \
+    elif [ "$TARGETARCH" = "arm64" ]; then \
       ARCH=aarch64; \
     fi
 
-RUN if [ ARCH=="x86_64" ]; then /bin/bash -c 'cd $TOOLS_DIR \
+RUN if [ "$ARCH" = "x86_64" ]; then /bin/bash -c 'cd $TOOLS_DIR \
     && curl -LO https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20231206-1/linuxdeploy-$ARCH.AppImage \
     && chmod +x linuxdeploy-$ARCH.AppImage \
     && ./linuxdeploy-$ARCH.AppImage --appimage-extract \
