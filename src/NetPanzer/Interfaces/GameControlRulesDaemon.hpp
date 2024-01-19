@@ -61,6 +61,7 @@ class GameControlRulesDaemon {
   static void setStateServerInProgress();
   static void setStateServerIdle();
   static void setDedicatedServer();
+  static bool isDedicatedServer();
 
   static void forceMapChange(std::string map);
 
