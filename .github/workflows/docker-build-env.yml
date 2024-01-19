@@ -2,22 +2,17 @@ name: Docker Build Environment Image CI
 
 on:
   workflow_dispatch:
-  push:
-    branches: master
-    paths:
-      - '.github/workflows/docker-build-env.yml'
-      - 'support/docker/Dockerfile-build-env_**'
+  schedule:
+    - cron: '30 11 * * 5'
 
 jobs:
   docker:
-    name: ${{ matrix.platform}}_NP-build-env_${{ matrix.tag }}
+    name: NP-build-env_${{ matrix.tag }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
         tag: [jammy, focal]
-        platform: ['linux/amd64','linux/arm64']
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       -
         name: Checkout
@@ -37,24 +32,12 @@ jobs:
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - if: ${{ contains(matrix.platform, 'amd64') }}
-        run: |
-          export ARCH="x86_64"
-          echo "ARCH=${ARCH}" >> $GITHUB_ENV
-
-      - if: ${{ contains(matrix.platform, 'arm64') }}
-        run: |
-          export ARCH="aarch64"
-          echo "ARCH=${ARCH}" >> $GITHUB_ENV
       -
         name: Build and push
         uses: docker/build-push-action@v5
         with:
-          build-args: ARCH=${{ env.ARCH }}
           context: ./support/docker
           file: ./support/docker/Dockerfile-build-env_${{ matrix.tag }}
-          platforms: ${{ matrix.platform }}
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ secrets.UNCLE_ANDY_DOCKERHUB_USERNAME }}/netpanzer-build-env:${{ matrix.tag }}
-          cache-from: type=registry,ref=${{ secrets.UNCLE_ANDY_DOCKERHUB_USERNAME }}/netpanzer-build-env:buildcache
-          cache-to: type=registry,ref=${{ secrets.UNCLE_ANDY_DOCKERHUB_USERNAME }}/netpanzer-build-env:buildcache,mode=max
