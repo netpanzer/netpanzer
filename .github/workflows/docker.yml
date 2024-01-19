@@ -1,4 +1,4 @@
-name: Docker Build Environment Image CI
+name: Build and Push Docker server image
 
 on:
   workflow_dispatch:
