@@ -77,7 +77,8 @@ void test_name(void) {
 
 void test_datadir(void) {
   Package::assignDataDir();
-  fprintf(stderr, "datadir: %s\n", Package::getDataDir().c_str());
+  fprintf(stderr, "datadir: %s\nmeson_source_root: %s\n", Package::getDataDir().c_str(),
+    MESON_SOURCE_ROOT);
   assert(Package::getDataDir() == MESON_SOURCE_ROOT);
 
   return;
