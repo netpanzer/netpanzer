@@ -33,7 +33,7 @@ Note: If you only are able to get v0.8.7 from your distribution, change the
 
     server.masterservers = "netpanzer.io"
 
-One we do our next official release, this will be done automatically and the
+One we release our next official version, this will be done automatically and the
 newer version will be more accessible to you.
 
 ### Latest Download
