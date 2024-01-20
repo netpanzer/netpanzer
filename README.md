@@ -29,7 +29,7 @@ Go to the Releases tab in GitHub and download the version for your OS. The versi
 is very (8+yrs) old, so we suggest simply downloading the latest release directly.
 
 Note: If you only are able to get v0.8.7 from your distribution, change the
-server.masterservers value to your client.cfg and server.cfg to
+'server.masterservers' value in your client.cfg and server.cfg to
 
     server.masterservers = "netpanzer.io"
 
