@@ -48,7 +48,7 @@ if you want to play on a public server.
 
 ## Contributing and Reporting Bugs
 
-See [CONTRIBUTING.md](https://github.com/netpanzer/netpanzer/blob/master/CONTRIBUTING.md)
+See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## Gameplay
 
@@ -60,11 +60,11 @@ The same list is available while in game too - just press F1 key.
 ## Dedicated Server and Configuration Files
 
 See
-[SERVER-HOWTO.md](https://github.com/netpanzer/netpanzer/blob/master/docs/SERVER-HOWTO.md)
+[SERVER-HOWTO.md](docs/SERVER-HOWTO.md)
 
 ## Building NetPanzer
 
-See [BUILD.md](https://github.com/netpanzer/netpanzer/blob/master/BUILD.md)
+See [BUILD.md](BUILD.md)
 
 ## Music
 
