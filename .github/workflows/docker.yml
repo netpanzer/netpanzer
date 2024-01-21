@@ -2,6 +2,12 @@ name: Build and Push Docker server image
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'change tag name or use default'
+        required: false
+        default: 'latest'
+        type: string
   schedule:
     - cron: '30 11 * * 5'
 
