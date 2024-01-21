@@ -159,6 +159,6 @@ And of course, the file "netpanzer" is the main binary that should be on the PAT
 
 ## Tests
 
-See [tests/README.md](https://github.com/netpanzer/netpanzer/blob/master/tests/README.md)
+See [tests/README.md](tests/README.md)
 
 There are no tests configured yet for the NetPanzer scons build.
