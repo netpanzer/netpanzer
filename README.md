@@ -28,6 +28,14 @@ is "winrid" on GitHub.
 Go to the Releases tab in GitHub and download the version for your OS. The version in Linux repos as of 2024
 is very (8+yrs) old, so we suggest simply downloading the latest release directly.
 
+Note: If you only are able to get v0.8.7 from your distribution, change the
+'server.masterservers' value in your client.cfg and server.cfg to
+
+    server.masterservers = "netpanzer.io"
+
+One we release our next official version, this will be done automatically and the
+newer version will be more accessible to you.
+
 ### Latest Download
 
 [You can download the latest version here.](https://github.com/netpanzer/netpanzer/releases/tag/0.9.0-RC-6)

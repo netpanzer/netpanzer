@@ -119,7 +119,7 @@ The master servers are servers that hold the server list.
 
 So your server needs to ping it. Your game client needs to call it. We don't recommend changing this.
 
-    server.masterservers = "masterserver.netpanzer.info, netpanzer.io"
+    server.masterservers = "netpanzer.io"
 
 ### Interactive Server Console
 
