@@ -41,4 +41,4 @@ jobs:
           file: ./support/docker/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ secrets.UNCLE_ANDY_DOCKERHUB_USERNAME }}/netpanzer:latest
+          tags: ${{ secrets.UNCLE_ANDY_DOCKERHUB_USERNAME }}/netpanzer:${{ github.event.inputs.tag }}
