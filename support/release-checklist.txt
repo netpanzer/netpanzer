@@ -50,6 +50,18 @@ run:
 
 support/scripts/prep-appimage.sh
 
+Or run the workflow after all release-related changes have been pushed to the
+master branch. Download the artifact and attach the files from the zip to the
+release page.
+
+## Docker Image
+
+Docker image should be created from the workflow, as it push an amd64 and
+arm64 image. This can be automated when releases are pushed. For now, the
+workflow has a "dispatch" trigger, so you can click "run workflow" at
+https://github.com/netpanzer/netpanzer/actions/workflows/docker.yml and you'll
+be prompted for the tag. The default is "latest".
+
 ## Post release
 
 Change version number to a dev version (see files above). Note messon doesn't
