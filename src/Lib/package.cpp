@@ -64,6 +64,8 @@ void Package::assignDataDir(void) {
 
 #else
 
+#include <string.h>
+
 #include "package.hpp"
 #include "test.hpp"
 
@@ -77,9 +79,21 @@ void test_name(void) {
 
 void test_datadir(void) {
   Package::assignDataDir();
+  const char *tmp = MESON_SOURCE_ROOT;
+
+  // Workaround for PR #141
+  const char *cirrusOS = getenv("CIRRUS_OS");
+  if (cirrusOS != NULL) {
+    if (strcmp(cirrusOS, "darwin") == 0) {
+      fputs("CIRRUS_WORKING_DIR used\n", stderr);
+      const char *envCirrusWd = getenv("CIRRUS_WORKING_DIR");
+      if (envCirrusWd != NULL) tmp = envCirrusWd;
+    }
+  }
+
   fprintf(stderr, "datadir: %s\nmeson_source_root: %s\n", Package::getDataDir().c_str(),
-    MESON_SOURCE_ROOT);
-  assert(Package::getDataDir() == MESON_SOURCE_ROOT);
+    tmp);
+  assert(Package::getDataDir() == tmp);
 
   return;
 }
