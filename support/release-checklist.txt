@@ -44,6 +44,12 @@ Example:
         xz ${REL_TAR}
         sha256sum ${REL_TAR}.xz > ${REL_TAR}.xz.sha256sum
 
+## AppImage
+
+run:
+
+support/scripts/prep-appimage.sh
+
 ## Post release
 
 Change version number to a dev version (see files above). Note messon doesn't

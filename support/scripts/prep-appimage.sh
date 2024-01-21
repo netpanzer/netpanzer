@@ -13,7 +13,7 @@ if [ ! -e "src/NetPanzer/Core/main.cpp" ];then
 fi
 
 export WORKSPACE="/np-src-root"
-export VERSION=${VERSION:-"0.9.0-RC6"}
+export VERSION=${VERSION:-"0.9.0-RC7"}
 
 echo "Version is set to '$VERSION'"
 echo "use 'VERSION=<version> $0' to change it."

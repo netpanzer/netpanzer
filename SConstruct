@@ -8,7 +8,7 @@ import subprocess
 # Set NetPanzer Version
 ################################################################
 
-NPVERSION = '0.9.0-RC6'
+NPVERSION = '0.9.0-RC7'
 GITVERSION = ''
 
 try:
