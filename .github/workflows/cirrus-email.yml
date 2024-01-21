@@ -1,12 +1,6 @@
 on:
   check_suite:
     type: ['completed']
-    paths:
-    - '**'
-    - '!**.yml'
-    - '!**/.github'
-    - '!**.md'
-    - '**/cirrus-email.yml'
 
 name: Email about Cirrus CI failures
 jobs:
