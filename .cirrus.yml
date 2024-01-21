@@ -2,6 +2,11 @@ env:
   NETPANZER_DATADIR: $CIRRUS_WORKING_DIR
 
 freebsd_task:
+  skip: "changesIncludeOnly(
+    '.cirrus.yml',
+    '**.{cpp,hpp,c,h}',
+    '**meson.build'
+    )"
   name: FreeBSD 13.2
   freebsd_instance:
     image_family: freebsd-13-2
@@ -21,6 +26,11 @@ freebsd_task:
     - cd _build && meson test
 
 arm_task:
+  skip: "changesIncludeOnly(
+    '.cirrus.yml',
+    '**.{cpp,hpp,c,h}',
+    '**meson.build'
+    )"
   name: Ubuntu arm64
   arm_container:
     image: andy5995/netpanzer-build-env:jammy
@@ -34,6 +44,11 @@ arm_task:
     - cd _build && meson test -v
 
 macos_task:
+  skip: "changesIncludeOnly(
+    '.cirrus.yml',
+    '**.{cpp,hpp,c,h}',
+    '**meson.build'
+    )"
   name: macOS arm64
   macos_instance:
     image: ghcr.io/cirruslabs/macos-ventura-xcode:latest
