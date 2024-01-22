@@ -90,4 +90,6 @@ These areas are not moderated or maintained by the NetPanzer team. If looking
 for information about the game, always be sure to verify with *official*
 sources.
 
+* [NetPanzer on Instagram](https://www.instagram.com/netpanzer/)
+* [ChatPanzer on WhatsApp](https://chat.whatsapp.com/8CJHyZAzc4XKgbm4CkVpWJ)
 * [Reddit](https://www.reddit.com/r/netpanzer)
