@@ -1,0 +1,91 @@
+name: Windows
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: master
+    paths:
+      - '**.cpp'
+      - '**.hpp'
+      - '**.c'
+      - '**.h'
+      - '**meson.build'
+      - '**/windows.yml'
+      - '!**.txt'
+      - '!**.md'
+  pull_request:
+    branches: master
+    paths:
+      - '**.cpp'
+      - '**.hpp'
+      - '**.c'
+      - '**.h'
+      - '**meson.build'
+      - '**/windows.yml'
+      - '!**.txt'
+      - '!**.md'
+
+jobs:
+  build:
+    name: ${{ matrix.build.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        build:
+          - os: windows-2022
+
+    runs-on: ${{ matrix.build.os }}
+    env:
+      NETPANZER_DATADIR: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Show info
+        run: |
+          echo '${{ toJSON(matrix) }}'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Python Dependencies
+        run: pip install meson ninja
+
+      - name: Install MinGW
+        uses: egor-tensin/setup-mingw@v2
+        with:
+          version: 12.2.0
+
+      - name: Meson Build Cache
+        id: mesonBuild-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/_build
+          key: ${{ runner.os }}-${{ hashFiles('**/meson.build') }}
+
+      - if: steps.mesonBuild-cache.outputs.cache-hit != 'true'
+        name: Setup
+        run: |
+          .\setup-build.bat _build
+
+      - name: Build
+        run: |
+          cd _build
+          ninja -v
+
+      - name: Test
+        run: |
+          cd _build
+          meson test --suite=netpanzer
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: netpanzer_winbin
+          path: ${{ github.workspace }}/_build/*.exe

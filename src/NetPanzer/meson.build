@@ -342,7 +342,6 @@ lib_netpanzer = both_libraries(
     inc_dirs
   ],
   dependencies: [
-    dep_embedded_lua,
     deps,
   ],
   install: false # The shared lib is only used for tests.

@@ -12,3 +12,11 @@ support/icon/npicon.o
 *.dll
 *.o
 *.log
+
+subprojects/**
+!subprojects/packagecache/
+!subprojects/packagecache/**
+
+# wrap files required
+!subprojects/**/*.wrap
+

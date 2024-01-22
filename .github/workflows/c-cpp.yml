@@ -31,15 +31,12 @@ jobs:
           - name: ubuntu-22.04-gcc-meson
             os: ubuntu-22.04
             cc: gcc
-          - name: ubuntu-22.04-gcc-scons
-            os: ubuntu-22.04
-            cc: gcc
           - name: ubuntu-22.04-clang-meson
             os: ubuntu-22.04
             cc: clang
-          - name: ubuntu-22.04-clang-scons
+          - name: noinst-deps-cache-ubuntu
             os: ubuntu-22.04
-            cc: clang
+            cc: gcc
 
     runs-on: ${{ matrix.build.os }}
     container: ${{ matrix.build.container }}
@@ -66,34 +63,34 @@ jobs:
         echo '${{ toJSON(matrix) }}'
 
     - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt upgrade -y
+        sudo apt install -y meson ninja-build python3 python3-setuptools
+
+    - if: ${{ ! contains(matrix.os.name, 'cache') }}
+      name: Install more dependencies
       run: .github/scripts/install-linux-deps.sh
 
-    - if: ${{ contains(matrix.build.name, 'meson') }}
-      name: Install dependencies
-      run: |
-        sudo apt install -y \
-          libphysfs-dev \
-          meson \
-          ninja-build
-        # sudo -H python3 -m pip install meson ninja
+    - if: ${{ ! contains(matrix.os.name, 'cache') }}
+      name: Meson Build Cache
+      id: Linux-mesonBuild-cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{ github.workspace }}/_build
+          ${{ github.workspace }}/subprojects
+        key: ${{ runner.os }}-${{ hashFiles('**/meson.build') }}
 
-    - if: ${{ contains(matrix.build.name, 'scons') }}
-      name: Install dependencies
+    - if: ${{ steps.Linux-mesonBuild-cache.outputs.cache-hit != 'true' || ! contains(matrix.os.name, 'cache') }}
+      name: Setup
       run: |
-        sudo apt install -y scons
+        ./setup-build.sh _build -Db_sanitize=none
 
-    - if: ${{ contains(matrix.build.name, 'meson') }}
-      name: Meson build
-      run: |
-        meson setup _build
-        ninja -v -C _build
+    - name: Meson build
+      run: ninja -v -C _build
 
-    - if: ${{ contains(matrix.build.name, 'meson') }}
-      name: Test
+    - name: Test
       run: |
         cd _build
-        meson test -v
-
-    - if: ${{ contains(matrix.build.name, 'scons') }}
-      name: Scons build
-      run: scons -j $(nproc)
+        meson test --suite=netpanzer -v

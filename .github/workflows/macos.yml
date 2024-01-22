@@ -56,10 +56,10 @@ jobs:
 
     - name: Build
       run: |
-        meson setup _build
+        ./setup-build.sh _build
         ninja -v -C _build
 
     - name: Test
       run: |
         cd _build
-        meson test -v
+        meson test --suite=netpanzer -v

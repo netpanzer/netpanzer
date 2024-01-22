@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <unistd.h>
 #endif
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <ctype.h>
 #include <signal.h>
 #include <stdio.h>
@@ -361,8 +361,7 @@ BaseGameManager* initialise(int argc, char** argv) {
   }
 }
 
-//-----------------------------------------------------------------
-int netpanzer_main(int argc, char** argv) {
+int main(int argc, char *argv[]) {
   network::NetworkManager::initialize();
   ScriptManager::initialize();
 
@@ -407,9 +406,4 @@ int netpanzer_main(int argc, char** argv) {
   ScriptManager::close();
   network::NetworkManager::cleanUp();
   return 0;
-}
-
-// XXX these tweaks are need for SDL on win32
-extern "C" {
-int main(int argc, char** argv) { return netpanzer_main(argc, argv); }
 }

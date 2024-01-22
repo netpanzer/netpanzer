@@ -27,15 +27,19 @@ commit changes (NOTE: meson dist only packages *committed* changes)
 
 ## Source Distribution Archive
 
-meson dist --include-subprojects (argument only needed after subprojects are
-added. We'll probably need subprojects for the Windows build. On Linux, meson
-should use system physfs and lua, on Windows we may want to use meson's wrap
-system)
+meson dist --no-tests --include-subprojects
 
-meson adds all files tracked by version control so...
+    meson adds all files tracked by version control so...
 
-Remove unneeded directories from the resulting xz file
-  (The process will be in the GitHub workflow)
+    Remove unneeded directories from the resulting xz file
+    (The process will be in the GitHub workflow)
+
+    Remove subprojects/packagecache (when --include-subprojects is used, the extracted
+    source should be included. We'll check the first time around)
+
+    Remove any directories that aren't needed for building or packaging, ie,
+    keep files like netpanzer.png but remove scripts used for packaging. Keep
+    scripts used to build the appimage or create docker images I think).
 
 Example:
 
