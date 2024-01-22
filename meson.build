@@ -80,3 +80,10 @@ foreach dir : data_subdirs
 endforeach
 
 subdir('tests')
+
+message('\n\n        == Important Note ==\n')
+message('In the build directory, you will need to enter "meson devenv"')
+message('to set the environmental variable NETPANZER_DATADIR to the absolute')
+message('path of the root of the source directory; or you may set the variable')
+message('by entering "export NETPANZER_DATADIR=$PWD" while in the source root')
+message('directory.\n')
