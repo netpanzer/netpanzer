@@ -17,14 +17,14 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <dirent.h>
 #include <errno.h>
 #include <sys/types.h>
 
 #include <algorithm>
 #define USE_RWOPS  // we want Mix_LOadMUS_RW
-#include <SDL2/SDL_mixer.h>
+#include <SDL_mixer.h>
 
 #include <chrono>
 #include <random>

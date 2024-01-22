@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __Surface_hpp__
 #define __Surface_hpp__
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

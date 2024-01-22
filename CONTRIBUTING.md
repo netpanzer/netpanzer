@@ -7,7 +7,7 @@ issue](https://github.com/netpanzer/netpanzer/issues).
 
 If you're not sure if something is a bug, you can search, or post on, the
 [Discussions](https://github.com/netpanzer/netpanzer/issues) or use other
-forms of [contact](https://github.com/netpanzer/netpanzer#contact)
+forms of [contact](README.md#contact)
 
 ## Coding Standards
 
@@ -59,7 +59,7 @@ graphics aren't currently supported by our test suite). Tests are not
 necessarily mandatory.
 
 See
-[tests/README.md](https://github.com/netpanzer/netpanzer/blob/master/tests/README.md)
+[tests/README.md](tests/README.md)
 for detailed information.
 
 If you have any questions about tests, don't hesitate to [ask the

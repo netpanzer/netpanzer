@@ -10,14 +10,15 @@ foreach case : test_cases
     'test_' + fs.name(case),
     case + '.cpp',
     include_directories : inc_dirs,
+    dependencies : [deps],
     link_with: lib_netpanzer.get_shared_lib(),
-    dependencies : deps,
 #    c_args: '-DSOURCE_DIR="@0@"'.format(meson.current_source_dir())
     cpp_args: [
       '-DTEST_LIB',
       '-DMESON_BUILD_ROOT="@0@"'.format(meson.project_build_root()),
       '-DMESON_SOURCE_ROOT="@0@"'.format(meson.project_source_root())
-      ]
+      ],
+    win_subsystem: 'console',
   )
 
   test(
@@ -25,6 +26,7 @@ foreach case : test_cases
     exe,
     env: [
       # 'NETPANZER_DATADIR="@0@"'.format(meson.project_source_root())
-      ]
+      ],
+    depends: lib_netpanzer.get_shared_lib()
     )
 endforeach

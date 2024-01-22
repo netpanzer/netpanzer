@@ -14,7 +14,7 @@ The tests are run from the build directory.
 
 To run all tests:
 
-    meson test
+    meson test --suite=netpanzer
 
 Add `-v` to get more output.
 

@@ -23,14 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <fstream>
 #include <vector>
 
-#ifndef PACKAGE_VERSION
-#include "config.h"
-#endif
-
-#ifdef NP_DATADIR
-#define DATADIR NP_DATADIR
-#endif
-
 const std::string Package::GetVersion(void) {
   return std::string(PACKAGE_VERSION);
 }
@@ -42,7 +34,7 @@ const std::string Package::GetFullyQualifiedName(void) {
 }
 
 void Package::assignDataDir(void) {
-  std::vector<std::string> possible{DATADIR};
+  std::vector<std::string> possible{NP_DATADIR};
 
   char *npDataEnv = getenv("NETPANZER_DATADIR");
   if (npDataEnv != NULL) possible.insert(possible.begin(), npDataEnv);

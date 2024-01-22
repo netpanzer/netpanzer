@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __SERVERINFO_HPP__
 #define __SERVERINFO_HPP__
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include <string>
 

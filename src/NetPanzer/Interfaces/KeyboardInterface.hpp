@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _KEYBOARDINTERFACE_HPP
 #define _KEYBOARDINTERFACE_HPP
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <string.h>
 
 #include <deque>

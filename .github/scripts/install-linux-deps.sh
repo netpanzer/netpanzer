@@ -6,11 +6,8 @@ set -ev
 sudo apt update
 sudo apt upgrade -y
 sudo apt install -y \
+  liblua5.1-0-dev \
+  libphysfs-dev \
   libsdl2-dev \
   libsdl2-mixer-dev \
-  libsdl2-ttf-dev \
-  python3 \
-  python3-setuptools
-
-# Installation of meson and ninja will be added here after the scons
-# build has been deprecated
+  libsdl2-ttf-dev

@@ -19,13 +19,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __LIB_FILESYSTEM_HPP__
 #define __LIB_FILESYSTEM_HPP__
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <stdlib.h>
 
 #include <stdexcept>
 #include <string>
 
-#include "physfs/physfs.h"
+#include <physfs.h>
 
 namespace filesystem {
 

@@ -1,0 +1,12 @@
+[wrap-file]
+directory = lua-5.1.5
+source_url = https://www.lua.org/ftp/lua-5.1.5.tar.gz
+source_filename = lua-5.1.5.tar.gz
+source_hash =  2640fc56a795f29d28ef15e13c34a47e223960b0240e8cb0a82d9b0738695333
+patch_filename = lua_5.1.5-1_patch.zip
+patch_url = https://github.com/netpanzer/netpanzer/raw/master/support/wrap-patches/lua_5.1.5-1_patch.zip
+patch_hash = af39805f73cb4f83e5540d965480136358a4b8e9a3b11060e609e72b4f25d3c8
+
+[provide]
+lua-5.1 = lua_dep
+

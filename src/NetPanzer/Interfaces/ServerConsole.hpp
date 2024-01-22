@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __SERVERCONSOLE_HPP__
 #define __SERVERCONSOLE_HPP__
 
-#include <SDL2/SDL_thread.h>
+#include <SDL_thread.h>
 
 #include <string>
 

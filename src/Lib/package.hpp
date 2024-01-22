@@ -16,13 +16,13 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifndef __PACKAGE_HPP
+#define __PACKAGE_HPP
+
 #include <filesystem>
 #include <string>
 
-// This condition should get removed after the scons build
-#ifndef NP_DATADIR
 #include "config.h"
-#endif
 
 class Package {
  public:
@@ -37,3 +37,5 @@ class Package {
  private:
   inline static std::string dataDir;
 };
+
+#endif

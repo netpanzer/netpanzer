@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __TimeStamp_hpp__
 #define __TimeStamp_hpp__
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 /**
  * Defines a way to record a point in time.  The actual value
