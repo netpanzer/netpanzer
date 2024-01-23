@@ -30,6 +30,5 @@ docker run -it --rm \
   -e HOSTUID=$UID \
   -v $PWD:$WORKSPACE \
   andy5995/netpanzer-build-env:focal \
-    /bin/bash -c 'apt update && apt upgrade -y && \
-      usermod -u $HOSTUID npbuilder && \
+    /bin/bash -c 'usermod -u $HOSTUID npbuilder && \
       su npbuilder --command "$WORKSPACE/support/appimage/make-appimage.sh"'
