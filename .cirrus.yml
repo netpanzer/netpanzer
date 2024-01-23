@@ -3,9 +3,10 @@ env:
 
 freebsd_task:
   skip: "changesIncludeOnly(
-    '.cirrus.yml',
     '**.{cpp,hpp,c,h}',
-    '**meson.build'
+    '**meson.build',
+    'setup-build.*',
+    '.cirrus.yml'
     )"
   name: FreeBSD 13.2
   freebsd_instance:

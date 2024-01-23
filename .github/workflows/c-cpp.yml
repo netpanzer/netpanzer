@@ -9,11 +9,13 @@ on:
     paths:
     - 'src/**/*.{cpp,c,h,hpp}'
     - '**meson.build'
+    - 'setup-build.*'
     - '**/c-cpp.yml'
   pull_request:
     branches: master
     paths:
     - 'src/**/*.{cpp,c,h,hpp}'
+    - 'setup-build.*'
     - '**meson.build'
     - '**/c-cpp.yml'
 

@@ -9,12 +9,14 @@ on:
     paths:
     - 'src/**/*.{cpp,c,h,hpp}'
     - '**meson.build'
+    - 'setup-build.*'
     - '**/macos.yml'
   pull_request:
     branches: master
     paths:
     - 'src/**/*.{cpp,c,h,hpp}'
     - '**meson.build'
+    - 'setup-build.*'
     - '**/macos.yml'
 
 jobs:
