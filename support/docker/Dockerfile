@@ -22,7 +22,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update &&   \
     apt -y upgrade && \
     apt install -y  \
-        lua5.1-0 \
+        liblua5.1-0 \
         libphysfs1 \
         libsdl2-2.0-0 \
         libsdl2-mixer-2.0-0 \
