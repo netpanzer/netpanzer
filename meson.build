@@ -2,7 +2,7 @@ project(
   'netpanzer',
   ['c', 'cpp'],
   version: '0.9.0.07.555',
-  meson_version : '>= 0.58.0',
+  meson_version : '>= 0.59.0',
   default_options: [
     'warning_level=2',
     'cpp_std=c++17',
@@ -49,15 +49,16 @@ if platform_is_windows == true
     deps += cxx.find_library('winpthread', static: true)
 endif
 
-localedir = join_paths(get_option('prefix'), get_option('localedir'))
 conf = configuration_data()
 subdir('po')
-conf.set_quoted('PACKAGE_STRING', meson.project_name())
+localedir = join_paths(get_option('prefix'), get_option('localedir'))
+conf.set_quoted('NP_LOCALEDIR', localedir)
 conf.set_quoted('PACKAGE_VERSION', meson.project_version())
 conf.set_quoted('NP_DATADIR', join_paths(get_option('prefix'), get_option('datadir')))
 config_h = configure_file(output : 'config.h', configuration : conf)
 
 meson.add_devenv({'NETPANZER_DATADIR': join_paths(meson.project_source_root(), 'data')})
+meson.add_devenv({'NETPANZER_LOCALEDIR': join_paths(meson.project_build_root(), 'po')})
 
 # this won't use fallback defined in subprojects/lua.wrap
 lua_dep = dependency('lua-5.1', required: false)

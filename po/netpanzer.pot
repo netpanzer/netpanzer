@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: netpanzer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-23 00:55-0600\n"
+"POT-Creation-Date: 2024-01-23 15:04-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,4 +19,20 @@ msgstr ""
 
 #: src/NetPanzer/Views/MainMenu/Multi/HostJoinTemplateView.cpp:103
 msgid "Play"
+msgstr ""
+
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:150
+msgid "Main"
+msgstr ""
+
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:151
+msgid "Join"
+msgstr ""
+
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:152
+msgid "Host"
+msgstr ""
+
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:153
+msgid "Options"
 msgstr ""

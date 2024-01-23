@@ -19,18 +19,35 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef TEST_LIB
 
 #include "package.hpp"
+#include "Util/Log.hpp"
 
 #include <fstream>
 #include <vector>
 
-const std::string Package::GetVersion(void) {
+const std::string Package::getVersion(void) {
   return std::string(PACKAGE_VERSION);
 }
 
-const std::string Package::GetName(void) { return std::string("NetPanzer"); }
+const std::string Package::getFormalName(void) { return std::string("NetPanzer"); }
+const std::string Package::getBinName(void) { return std::string("netpanzer"); }
 
-const std::string Package::GetFullyQualifiedName(void) {
-  return GetName() + " " + Package::GetVersion();
+const std::string Package::getFullyQualifiedName(void) {
+  return getFormalName() + " " + getVersion();
+}
+
+void Package::assignLocaleDir(void) {
+  char *npLocEnv = getenv("NETPANZER_LOCALEDIR");
+  if (npLocEnv != NULL) {
+    std::ifstream file(std::string(npLocEnv) + "/de");
+    if (file.good()) setLocaleDir(npLocEnv);
+    else LOGGER.debug("localeDir: %s\n", Package::getLocaleDir().c_str());
+    //else LOGGER.warn("fprintf
+  }
+  else setLocaleDir(NP_LOCALEDIR);
+
+  LOGGER.warning("localeDir: %s\n", Package::getLocaleDir().c_str());
+
+  return;
 }
 
 void Package::assignDataDir(void) {
@@ -62,9 +79,9 @@ void Package::assignDataDir(void) {
 #include "test.hpp"
 
 void test_name(void) {
-  int len = Package::GetVersion().length();
+  int len = Package::getVersion().length();
   assert(len >= 5 && len < 14);
-  assert(Package::GetName().compare("NetPanzer") == 0);
+  assert(Package::getFormalName().compare("NetPanzer") == 0);
 
   return;
 }

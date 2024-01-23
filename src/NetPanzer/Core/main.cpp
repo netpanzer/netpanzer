@@ -169,7 +169,7 @@ BaseGameManager* initialise(int argc, char** argv) {
   // Parse commandline
   using namespace optionmm;
   command_line commandline(
-      "NetPanzer", Package::GetVersion().c_str(),
+      "NetPanzer", Package::getVersion().c_str(),
       "Copyright(c) 1998 Pyrosoft Inc. & NetPanzer Development Team", "", argc,
       argv);
 
@@ -363,9 +363,10 @@ BaseGameManager* initialise(int argc, char** argv) {
 
 int main(int argc, char *argv[]) {
 #ifdef ENABLE_NLS
+  Package::assignLocaleDir();
   setlocale(LC_ALL, "");
-  bindtextdomain(PACKAGE_STRING, LOCALEDIR);
-  textdomain(PACKAGE_STRING);
+  bindtextdomain(Package::getBinName().c_str(), Package::getLocaleDir().c_str());
+  textdomain(Package::getBinName().c_str());
 #endif
   network::NetworkManager::initialize();
   ScriptManager::initialize();

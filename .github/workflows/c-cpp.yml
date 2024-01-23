@@ -85,7 +85,7 @@ jobs:
     - if: ${{ steps.Linux-mesonBuild-cache.outputs.cache-hit != 'true' || ! contains(matrix.os.name, 'cache') }}
       name: Setup
       run: |
-        ./setup-build.sh _build -Db_sanitize=none -Dnls=true
+        ./setup-build.sh _build -Db_sanitize=none
 
     - name: Meson build
       run: ninja -v -C _build
