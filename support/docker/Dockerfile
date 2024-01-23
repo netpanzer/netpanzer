@@ -1,4 +1,4 @@
-FROM and5995/netpanzer-build-env:jammy
+FROM andy5995/netpanzer-build-env:jammy
 
 RUN git clone --depth 1 https://github.com/netpanzer/netpanzer && \
         cd netpanzer && \
