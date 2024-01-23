@@ -362,6 +362,11 @@ BaseGameManager* initialise(int argc, char** argv) {
 }
 
 int main(int argc, char *argv[]) {
+#ifdef ENABLE_NLS
+  setlocale(LC_ALL, "");
+  bindtextdomain(PACKAGE_STRING, LOCALEDIR);
+  textdomain(PACKAGE_STRING);
+#endif
   network::NetworkManager::initialize();
   ScriptManager::initialize();
 

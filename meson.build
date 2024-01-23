@@ -49,7 +49,10 @@ if platform_is_windows == true
     deps += cxx.find_library('winpthread', static: true)
 endif
 
+localedir = join_paths(get_option('prefix'), get_option('localedir'))
 conf = configuration_data()
+subdir('po')
+conf.set_quoted('PACKAGE_STRING', meson.project_name())
 conf.set_quoted('PACKAGE_VERSION', meson.project_version())
 conf.set_quoted('NP_DATADIR', join_paths(get_option('prefix'), get_option('datadir')))
 config_h = configure_file(output : 'config.h', configuration : conf)

@@ -1,0 +1,22 @@
+# German translations for netpanzer package.
+# Copyright (C) 2024 THE netpanzer'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the netpanzer package.
+# Andy <arch_stanton5995@proton.me>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: netpanzer\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-23 00:55-0600\n"
+"PO-Revision-Date: 2024-01-23 00:57-0600\n"
+"Last-Translator: Andy <arch_stanton5995@proton.me>\n"
+"Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ASCII\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/NetPanzer/Views/MainMenu/Multi/HostJoinTemplateView.cpp:103
+msgid "Play"
+msgstr "Spiel"

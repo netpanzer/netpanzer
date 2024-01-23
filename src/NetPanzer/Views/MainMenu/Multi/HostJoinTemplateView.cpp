@@ -40,6 +40,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/newButton.hpp"
 #include "Views/GameViewGlobals.hpp"
 
+#ifdef ENABLE_NLS
+#include <locale.h>
+#endif
+#include "gettext.h"
+#define _(String) gettext (String)
+#define gettext_noop(String) String
+#define N_(String) gettext_noop (String)
+
 char HostJoinTemplateView::gameTypeBuf[256];
 
 Surface playerColor;
@@ -92,7 +100,7 @@ HostJoinTemplateView::HostJoinTemplateView() : MenuTemplateView() {
   setSearchName("HostJoinTemplateView");
   setTitle("");
   setSubTitle("");
-  add(new newButton("PLAY", "Play", playPos, 1));
+  add(new newButton("PLAY", _("Play"), playPos, 1));
 }  // end HostJoinTemplateView constructor
 
 // doDraw
