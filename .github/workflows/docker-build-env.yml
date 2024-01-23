@@ -3,7 +3,7 @@ name: Docker Build Environment Image CI
 on:
   workflow_dispatch:
   schedule:
-    - cron: '30 11 * * 5'
+    - cron: '30 11 20 * *'
 
 jobs:
   docker:
@@ -36,8 +36,9 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v5
         with:
+          build-args: CODENAME=${{ matrix.tag }}
           context: ./support/docker
-          file: ./support/docker/Dockerfile-build-env_${{ matrix.tag }}
+          file: ./support/docker/Dockerfile-build-env
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ secrets.UNCLE_ANDY_DOCKERHUB_USERNAME }}/netpanzer-build-env:${{ matrix.tag }}

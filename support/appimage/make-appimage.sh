@@ -22,7 +22,7 @@ APPDIR="$OUTPUT_DIR/AppDir"
 BUILD_DIR="$WORKSPACE/support/docker_build"
 
 cd "$WORKSPACE"
-meson setup "$BUILD_DIR" \
+./setup-build.sh "$BUILD_DIR" \
   -Dbuildtype=release \
   -Dstrip=true \
   -Db_sanitize=none \

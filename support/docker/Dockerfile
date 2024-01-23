@@ -1,21 +1,8 @@
-FROM ubuntu:jammy
-ARG DEBIAN_FRONTEND=noninteractive
-RUN apt update && apt upgrade -y && apt install -y \
-        build-essential \
-        git \
-        libphysfs-dev \
-        libsdl2-dev \
-        libsdl2-mixer-dev \
-        libsdl2-ttf-dev \
-        meson \
-        python3  \
-        python3-pip \
-        python3-setuptools && \
-    rm -rf /var/lib/apt/lists
+FROM and5995/netpanzer-build-env:jammy
 
 RUN git clone --depth 1 https://github.com/netpanzer/netpanzer && \
         cd netpanzer && \
-        meson setup _build -Db_sanitize=none && \
+        ./setup-build.sh _build -Db_sanitize=none && \
         cd _build && \
         ninja
 
@@ -35,10 +22,12 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update &&   \
     apt -y upgrade && \
     apt install -y  \
-        libphysfs-dev \
-        libsdl2-dev \
-        libsdl2-mixer-dev \
-        libsdl2-ttf-dev
+        lua5.1-0 \
+        libphysfs1 \
+        libsdl2-2.0-0 \
+        libsdl2-mixer-2.0-0 \
+        libsdl2-ttf-2.0-0
 
 RUN useradd -m npserver && passwd -d npserver
+
 CMD ["/bin/bash","-l"]

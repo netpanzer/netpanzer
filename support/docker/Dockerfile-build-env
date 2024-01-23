@@ -1,8 +1,8 @@
-FROM ubuntu:focal
+ARG CODENAME
+FROM ubuntu:$CODENAME
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt update && apt install -y curl libfuse2
-ENV TOOLS_DIR="/tools"
-RUN mkdir -p $TOOLS_DIR
+RUN apt update && apt install -y curl
+
 ARG TARGETARCH
 ARG ARCH
 RUN if [ "$TARGETARCH" = "amd64" ]; then \
@@ -10,18 +10,19 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then \
     elif [ "$TARGETARCH" = "arm64" ]; then \
       ARCH=aarch64; \
     fi
-
-RUN if [ "$ARCH" = "x86_64" ]; then /bin/bash -c 'cd $TOOLS_DIR \
+RUN if [ "$ARCH" = "x86_64" ] && [ "$CODENAME" == "focal" ]; then cd $TOOLS_DIR \
     && curl -LO https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20231206-1/linuxdeploy-$ARCH.AppImage \
     && chmod +x linuxdeploy-$ARCH.AppImage \
     && ./linuxdeploy-$ARCH.AppImage --appimage-extract \
     && rm ./linuxdeploy-$ARCH.AppImage \
-    && cd -'; fi
+    && cd -; fi
 
+ARG DEBIAN_FRONTEND=noninteractive
 RUN apt -y upgrade && \
     apt install -y  \
         build-essential \
         git \
+        liblua5.1-dev \
         libphysfs-dev \
         libsdl2-dev \
         libsdl2-mixer-dev \
@@ -29,10 +30,12 @@ RUN apt -y upgrade && \
         python3  \
         python3-pip \
         python3-setuptools && \
-    apt install -y  \
-        wget && \
-    rm -rf /var/lib/apt/lists && \
-    python3 -m pip install meson ninja
+        if [ "$CODENAME" = "jammy" ]; then \
+          python3 -m pip install meson ninja; \
+        else \
+          apt install -y meson ninja-build; \
+        fi && \
+        rm -rf /var/lib/apt/lists
 
 RUN useradd -m npbuilder && passwd -d npbuilder
 

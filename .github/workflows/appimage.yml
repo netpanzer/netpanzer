@@ -31,7 +31,7 @@ jobs:
     - name: Prepare AppImage
       run: |
         export -p
-        support/scripts/make-appimage.sh
+        support/appimage/make-appimage.sh
 
     - name: Release AppImage
       if: ${{ github.ref == 'refs/heads/master' }}

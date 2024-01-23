@@ -13,7 +13,7 @@ on:
 
 jobs:
   docker:
-    name: ${{ matrix.platform}}_NP_server
+    name: NP_server
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
