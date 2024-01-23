@@ -6,6 +6,7 @@ freebsd_task:
     '**.{cpp,hpp,c,h}',
     '**meson.build',
     'setup-build.*',
+    'subprojects/*.wrap',
     '.cirrus.yml'
     )"
   name: FreeBSD 13.2
