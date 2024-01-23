@@ -30,7 +30,7 @@ RUN apt -y upgrade && \
         python3  \
         python3-pip \
         python3-setuptools && \
-        if [ "$CODENAME" = "jammy" ]; then \
+        if [ "$CODENAME" = "focal" ]; then \
           python3 -m pip install meson ninja; \
         else \
           apt install -y meson ninja-build; \
