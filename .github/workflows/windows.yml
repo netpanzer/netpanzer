@@ -7,25 +7,15 @@ on:
   push:
     branches: master
     paths:
-      - '**.cpp'
-      - '**.hpp'
-      - '**.c'
-      - '**.h'
-      - '**meson.build'
-      - '**/windows.yml'
-      - '!**.txt'
-      - '!**.md'
+    - 'src/**/*.{cpp,c,h,hpp}'
+    - '**meson.build'
+    - '**/windows.yml'
   pull_request:
     branches: master
     paths:
-      - '**.cpp'
-      - '**.hpp'
-      - '**.c'
-      - '**.h'
-      - '**meson.build'
-      - '**/windows.yml'
-      - '!**.txt'
-      - '!**.md'
+    - 'src/**/*.{cpp,c,h,hpp}'
+    - '**meson.build'
+    - '**/windows.yml'
 
 jobs:
   build:
