@@ -23,27 +23,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class Timer {
  private:
-  float period;
+  float period_;
   TimeStamp last_count;
 
  public:
   Timer() {}
 
-  Timer(float rate) { period = 1 / rate; }
+  Timer(float rate) { period_ = 1 / rate; }
 
   void changeRate(float rate) {
-    period = 1 / rate;
+    period_ = 1 / rate;
     last_count = now();
   }
 
-  void changePeriod(float period) {
-    Timer::period = period;
+  void changePeriod(float arg) {
+    period_ = arg;
     last_count = now();
   }
 
   void reset() { last_count = now(); }
 
-  void zero() { last_count = now() - period; }
+  void zero() { last_count = now() - period_; }
 
   bool count() {
     float difference;
@@ -51,10 +51,10 @@ class Timer {
 
     difference = now() - last_count;
 
-    if (difference >= period) {
-      remainder = difference - period;
+    if (difference >= period_) {
+      remainder = difference - period_;
 
-      if (remainder >= period) remainder = 0;
+      if (remainder >= period_) remainder = 0;
 
       last_count = now() - remainder;
 
@@ -63,43 +63,43 @@ class Timer {
     return false;
   }
 
-  float getPeriod() const { return period; }
+  float getPeriod() const { return period_; }
 
-  float getRate() const { return 1 / period; }
+  float getRate() const { return 1 / period_; }
 
   float getTime() const { return ((float)(now() - last_count)); }
 
-  float getTimeLeft() const { return ((float)(period - (now() - last_count))); }
+  float getTimeLeft() const { return ((float)(period_ - (now() - last_count))); }
 
   void setTimeLeft(float timeleft) {
     last_count = now();
-    last_count -= float(period - timeleft);
+    last_count -= float(period_ - timeleft);
   }
 };
 
 class TimerFrameBase {
  private:
-  float period;
+  float period_;
   TimeStamp last_count;
 
  public:
   TimerFrameBase() {}
 
-  TimerFrameBase(float rate) { period = 1 / rate; }
+  TimerFrameBase(float rate) { period_ = 1 / rate; }
 
   void changeRate(float rate) {
-    period = 1 / rate;
+    period_ = 1 / rate;
     last_count = TimerInterface::getFrameStartTime();
   }
 
-  void changePeriod(float period) {
-    TimerFrameBase::period = period;
+  void changePeriod(float arg) {
+    period_ = arg;
     last_count = TimerInterface::getFrameStartTime();
   }
 
   void reset() { last_count = TimerInterface::getFrameStartTime(); }
 
-  void zero() { last_count = TimerInterface::getFrameStartTime() - period; }
+  void zero() { last_count = TimerInterface::getFrameStartTime() - period_; }
 
   bool count() {
     float difference;
@@ -107,10 +107,10 @@ class TimerFrameBase {
 
     difference = TimerInterface::getFrameStartTime() - last_count;
 
-    if (difference >= period) {
-      remainder = difference - period;
+    if (difference >= period_) {
+      remainder = difference - period_;
 
-      if (remainder >= period) remainder = 0;
+      if (remainder >= period_) remainder = 0;
 
       last_count = TimerInterface::getFrameStartTime() - remainder;
 
@@ -119,9 +119,9 @@ class TimerFrameBase {
     return false;
   }
 
-  float getPeriod() const { return period; }
+  float getPeriod() const { return period_; }
 
-  float getRate() const { return 1 / period; }
+  float getRate() const { return 1 / period_; }
 
   float getTime() const {
     return ((float)(TimerInterface::getFrameStartTime() - last_count));
@@ -129,7 +129,7 @@ class TimerFrameBase {
 
   float getTimeLeft() const {
     return (
-        (float)(period - (TimerInterface::getFrameStartTime() - last_count)));
+        (float)(period_ - (TimerInterface::getFrameStartTime() - last_count)));
   }
 };
 

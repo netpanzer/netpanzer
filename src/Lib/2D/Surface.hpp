@@ -58,8 +58,8 @@ class Surface : public NoCopy {
   void setOffsetCenter();
 
   // Accessor functions.
-  unsigned int getWidth() const { return twidth; }
-  unsigned int getHeight() const { return theight; }
+  unsigned short getWidth() const { return twidth; }
+  unsigned short getHeight() const { return theight; }
   unsigned int getPitch() const { return tpitch; }
 
   iXY getCenter() const { return iXY(getWidth() >> 1, getHeight() >> 1); }
