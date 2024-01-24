@@ -1,7 +1,7 @@
 project(
   'netpanzer',
   ['c', 'cpp'],
-  version: '0.9.0.07',
+  version: '0.9.0.07.555',
   meson_version : '>= 0.58.0',
   default_options: [
     'warning_level=2',
