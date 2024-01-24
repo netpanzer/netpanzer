@@ -36,8 +36,8 @@ class Timer {
     last_count = now();
   }
 
-  void changePeriod(float period) {
-    Timer::period = period;
+  void changePeriod(float arg) {
+    period = arg;
     last_count = now();
   }
 
@@ -92,8 +92,8 @@ class TimerFrameBase {
     last_count = TimerInterface::getFrameStartTime();
   }
 
-  void changePeriod(float period) {
-    TimerFrameBase::period = period;
+  void changePeriod(float arg) {
+    period = arg;
     last_count = TimerInterface::getFrameStartTime();
   }
 

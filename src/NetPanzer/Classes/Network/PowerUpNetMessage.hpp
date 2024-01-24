@@ -32,7 +32,7 @@ class PowerUpCreateMesg : public NetMessage {
  private:
   Sint32 map_loc_x;
   Sint32 map_loc_y;
-  PowerUpID ID;
+  PowerUpID powerup_id;
   Sint32 type;
 
  public:
@@ -40,23 +40,23 @@ class PowerUpCreateMesg : public NetMessage {
     message_class = _net_message_class_powerup;
     message_id = _net_message_id_powerup_create;
   }
-  void set(iXY map_loc, PowerUpID ID, int type) {
+  void set(iXY map_loc, PowerUpID arg_powerup_id, int type) {
     this->map_loc_x = htol32(map_loc.x);
     this->map_loc_y = htol32(map_loc.y);
-    this->ID = PowerUpID_toPortable(ID);  // XXX protocol
+    this->powerup_id = PowerUpID_toPortable(arg_powerup_id);  // XXX protocol
     this->type = htol32(type);
   }
   Sint32 getLocX() const { return ltoh32(map_loc_x); }
   Sint32 getLocY() const { return ltoh32(map_loc_y); }
   PowerUpID getID() const {
-    return PowerUpID_fromPortable(ID);  // XXX protocol
+    return PowerUpID_fromPortable(powerup_id);  // XXX protocol
   }
   Sint32 getType() const { return ltoh32(type); }
 } __attribute__((packed));
 
 class PowerUpHitMesg : public NetMessage {
  private:
-  PowerUpID ID;
+  PowerUpID powerup_id;
   PlayerID player_id;
   Sint32 unit_powerup_type;
 
@@ -65,13 +65,13 @@ class PowerUpHitMesg : public NetMessage {
     message_class = _net_message_class_powerup;
     message_id = _net_message_id_powerup_hit;
   }
-  void set(PowerUpID ID, PlayerID player_id, int type = 0) {
-    this->ID = PowerUpID_toPortable(ID);  // XXX protocol
-    this->player_id = player_id;
+  void set(PowerUpID arg_powerup_id, PlayerID arg_player_id, int type = 0) {
+    this->powerup_id = PowerUpID_toPortable(arg_powerup_id);  // XXX protocol
+    this->player_id = arg_player_id;
     this->unit_powerup_type = htol32(type);
   }
   PowerUpID getID() const {
-    return PowerUpID_fromPortable(ID);  // XXX protocol
+    return PowerUpID_fromPortable(powerup_id);  // XXX protocol
   }
   PlayerID getPlayerID() const { return player_id; }
   Sint32 getUnitPowerupType() const { return ltoh32(unit_powerup_type); }
