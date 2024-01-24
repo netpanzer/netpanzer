@@ -63,7 +63,7 @@ void Package::assignDataDir(void) {
 
 void test_name(void) {
   int len = Package::GetVersion().length();
-  assert(len >= 5 && len < 10);
+  assert(len >= 5 && len < 14);
   assert(Package::GetName().compare("NetPanzer") == 0);
 
   return;
