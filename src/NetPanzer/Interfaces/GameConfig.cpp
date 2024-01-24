@@ -22,8 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <sstream>
 
 #include "Core/NetworkGlobals.hpp"
-#include "INIParser/Section.hpp"
-#include "INIParser/Store.hpp"
 #include "Scripts/ScriptHelper.hpp"
 #include "Scripts/ScriptManager.hpp"
 #include "Util/Exception.hpp"
