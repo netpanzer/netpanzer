@@ -60,7 +60,7 @@ class Surface : public NoCopy {
   // Accessor functions.
   unsigned short getWidth() const { return twidth; }
   unsigned short getHeight() const { return theight; }
-  unsigned int getPitch() const { return tpitch; }
+  unsigned short int getPitch() const { return tpitch; }
 
   iXY getCenter() const { return iXY(getWidth() >> 1, getHeight() >> 1); }
   int getCenterX() const { return getWidth() >> 1; }

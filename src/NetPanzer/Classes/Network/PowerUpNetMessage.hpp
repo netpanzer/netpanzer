@@ -32,7 +32,7 @@ class PowerUpCreateMesg : public NetMessage {
  private:
   Sint32 map_loc_x;
   Sint32 map_loc_y;
-  PowerUpID powerup_id_;
+  PowerUpID powerup_id;
   Sint32 type;
 
  public:
@@ -43,21 +43,21 @@ class PowerUpCreateMesg : public NetMessage {
   void set(iXY map_loc, PowerUpID arg_powerup_id, int type) {
     this->map_loc_x = htol32(map_loc.x);
     this->map_loc_y = htol32(map_loc.y);
-    this->powerup_id_ = PowerUpID_toPortable(arg_powerup_id);  // XXX protocol
+    this->powerup_id = PowerUpID_toPortable(arg_powerup_id);  // XXX protocol
     this->type = htol32(type);
   }
   Sint32 getLocX() const { return ltoh32(map_loc_x); }
   Sint32 getLocY() const { return ltoh32(map_loc_y); }
   PowerUpID getID() const {
-    return PowerUpID_fromPortable(powerup_id_);  // XXX protocol
+    return PowerUpID_fromPortable(powerup_id);  // XXX protocol
   }
   Sint32 getType() const { return ltoh32(type); }
 } __attribute__((packed));
 
 class PowerUpHitMesg : public NetMessage {
  private:
-  PowerUpID powerup_id_;
-  PlayerID player_id_;
+  PowerUpID powerup_id;
+  PlayerID player_id;
   Sint32 unit_powerup_type;
 
  public:
@@ -66,14 +66,14 @@ class PowerUpHitMesg : public NetMessage {
     message_id = _net_message_id_powerup_hit;
   }
   void set(PowerUpID arg_powerup_id, PlayerID arg_player_id, int type = 0) {
-    this->powerup_id_ = PowerUpID_toPortable(arg_powerup_id);  // XXX protocol
-    this->player_id_ = arg_player_id;
+    this->powerup_id = PowerUpID_toPortable(arg_powerup_id);  // XXX protocol
+    this->player_id = arg_player_id;
     this->unit_powerup_type = htol32(type);
   }
   PowerUpID getID() const {
-    return PowerUpID_fromPortable(powerup_id_);  // XXX protocol
+    return PowerUpID_fromPortable(powerup_id);  // XXX protocol
   }
-  PlayerID getPlayerID() const { return player_id_; }
+  PlayerID getPlayerID() const { return player_id; }
   Sint32 getUnitPowerupType() const { return ltoh32(unit_powerup_type); }
 } __attribute__((packed));
 
