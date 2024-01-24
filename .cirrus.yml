@@ -62,7 +62,7 @@ macos_task:
     - brew update
     - brew install gettext meson ninja physfs sdl2 sdl2_ttf sdl2_mixer
   setup_script:
-    - ./setup-build.sh _build
+    - ./setup-build.sh _build -Dnls=false
   build_script:
     - cd _build && ninja
   test_script:
