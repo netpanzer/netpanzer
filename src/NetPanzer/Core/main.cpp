@@ -49,7 +49,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/DedicatedGameManager.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/PlayerGameManager.hpp"
-#include "Localization.hpp"
 #include "Network/NetworkManager.hpp"
 #include "Particles/ChunkTrajectoryParticle2D.hpp"
 #include "Particles/CloudParticle2D.hpp"
