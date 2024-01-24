@@ -7,7 +7,7 @@ on:
   push:
     branches: master
     paths:
-    - 'src/**/*.{cpp,c,h,hpp}'
+    - 'src/**'
     - '**meson.build'
     - 'setup-build.*'
     - 'subprojects/*.wrap'
