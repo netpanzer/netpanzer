@@ -48,6 +48,7 @@ jobs:
       run: |
         brew update
         brew install \
+          gettext \
           physfs \
           pkg-config \
           sdl2_ttf \

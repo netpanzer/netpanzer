@@ -1,5 +1,6 @@
 /*
 Copyright (C) 2003 Matthias Braun <matze@braunis.de>
+Copyright (C) 2024 The NetPanzer Team (https://github.com/netpanzer/)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -48,6 +49,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/DedicatedGameManager.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/PlayerGameManager.hpp"
+#include "Localization.hpp"
 #include "Network/NetworkManager.hpp"
 #include "Particles/ChunkTrajectoryParticle2D.hpp"
 #include "Particles/CloudParticle2D.hpp"

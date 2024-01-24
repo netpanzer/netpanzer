@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/ScreenSurface.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/GameManager.hpp"
+#include "Localization.hpp"
 #include "Multi/ServerListView.hpp"
 #include "Particles/Particle2D.hpp"
 #include "Particles/ParticleSystem2D.hpp"
@@ -37,14 +38,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/newButton.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "package.hpp"
-
-#ifdef ENABLE_NLS
-#include <locale.h>
-#endif
-#include "gettext.h"
-#define _(String) gettext (String)
-#define gettext_noop(String) String
-#define N_(String) gettext_noop (String)
 
 Surface MenuTemplateView::backgroundSurface;
 PackedSurface MenuTemplateView::titlePackedSurface;

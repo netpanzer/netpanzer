@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "IPAddressView.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/PlayerGameManager.hpp"
+#include "Localization.hpp"
 #include "MapSelectionView.hpp"
 #include "PlayerNameView.hpp"
 #include "Resources/ResourceManager.hpp"
@@ -40,14 +41,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/Desktop.hpp"
 #include "Views/Components/newButton.hpp"
 #include "Views/GameViewGlobals.hpp"
-
-#ifdef ENABLE_NLS
-#include <locale.h>
-#endif
-#include "gettext.h"
-#define _(String) gettext (String)
-#define gettext_noop(String) String
-#define N_(String) gettext_noop (String)
 
 char HostJoinTemplateView::gameTypeBuf[256];
 

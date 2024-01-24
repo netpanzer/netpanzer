@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: netpanzer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-23 15:04-0600\n"
+"POT-Creation-Date: 2024-01-24 14:44-0600\n"
 "PO-Revision-Date: 2024-01-23 00:57-0600\n"
 "Last-Translator: Andy <arch_stanton5995@proton.me>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -17,22 +17,22 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/NetPanzer/Views/MainMenu/Multi/HostJoinTemplateView.cpp:103
+#: src/NetPanzer/Views/MainMenu/Multi/HostJoinTemplateView.cpp:97
 msgid "Play"
 msgstr "Spiel"
 
-#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:150
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:143
 msgid "Main"
 msgstr "Haupt"
 
-#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:151
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:144
 msgid "Join"
 msgstr "Beitreten"
 
-#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:152
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:145
 msgid "Host"
 msgstr "Host"
 
-#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:153
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:146
 msgid "Options"
 msgstr "Optionen"

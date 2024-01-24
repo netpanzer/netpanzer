@@ -18,7 +18,7 @@ freebsd_task:
 
   pkginstall_script:
     - pkg update -f
-    - pkg install -y meson ninja physfs pkgconf SDL2 sdl2_mixer sdl2_ttf
+    - pkg install -y gettext meson ninja physfs pkgconf SDL2 sdl2_mixer sdl2_ttf
 
   setup_script:
     - ./setup-build.sh _build
@@ -60,7 +60,7 @@ macos_task:
 
   pkginstall_script:
     - brew update
-    - brew install meson ninja physfs sdl2 sdl2_ttf sdl2_mixer
+    - brew install gettext meson ninja physfs sdl2 sdl2_ttf sdl2_mixer
   setup_script:
     - ./setup-build.sh _build
   build_script:
