@@ -2,7 +2,7 @@ env:
   NETPANZER_DATADIR: $CIRRUS_WORKING_DIR
 
 freebsd_task:
-  skip: "changesIncludeOnly(
+  only_if: "changesIncludeOnly(
     '**.{cpp,hpp,c,h}',
     '**meson.build',
     'setup-build.*',
