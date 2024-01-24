@@ -31,7 +31,8 @@ mingw_flags = [
     '-static-libstdc++',
   ]
 
-platform_is_windows = (host_machine.system() == 'windows')
+host_sys = host_machine.system()
+platform_is_windows = (host_sys == 'windows')
 
 add_project_arguments(cc.get_supported_arguments(extra_flags), language: 'c')
 add_project_arguments(cxx.get_supported_arguments(extra_flags), language: 'cpp')
