@@ -7,18 +7,18 @@ on:
   push:
     branches: master
     paths:
-    - '**'
-    - '!maps/**'
-    - '!**.yml'
-    - '!**.md'
+    - 'src/**/*.{cpp,c,h,hpp}'
+    - '**meson.build'
+    - 'setup-build.*'
+    - 'subprojects/*.wrap'
     - '**/macos.yml'
   pull_request:
     branches: master
     paths:
-    - '**'
-    - '!maps/**'
-    - '!**.yml'
-    - '!**.md'
+    - 'src/**/*.{cpp,c,h,hpp}'
+    - '**meson.build'
+    - 'setup-build.*'
+    - 'subprojects/*.wrap'
     - '**/macos.yml'
 
 jobs:
