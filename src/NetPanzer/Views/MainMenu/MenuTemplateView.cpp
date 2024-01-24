@@ -147,7 +147,7 @@ void MenuTemplateView::initPreGameOptionButtons() {
                     new newButton("CREDITS", "Credits", emptyPos, 0),
                     new newButton("HELP", "Help", emptyPos, 0),
                 });
-  add(new newButton("EXITNP", "Exit netPanzer", exitPos, 0));
+  add(new newButton("EXITNP", _("Exit netPanzer"), exitPos, 0));
 }  // end MenuTemplateView::initPreGameOptionButtons
 
 // initInGameOptionButtons
@@ -155,12 +155,12 @@ void MenuTemplateView::initPreGameOptionButtons() {
 void MenuTemplateView::initInGameOptionButtons() {
   if (!gameconfig->quickConnect) {
     add(new newButton("RESIGN", "Resign", resignPos, 0));
-    add(new newButton("EXITNETNP", "Exit netPanzer", exitPos, 0));
+    add(new newButton("EXITNETNP", _("Exit netPanzer"), exitPos, 0));
   } else {
-    add(new newButton("EXITNETNP", "Exit netPanzer", exitPos, 0));
+    add(new newButton("EXITNETNP", _("Exit netPanzer"), exitPos, 0));
   }
 
-  add(new newButton("CLOSEOPT", "Close Options", returnToGamePos, 0));
+  add(new newButton("CLOSEOPT", _("Close Options"), returnToGamePos, 0));
 }  // end MenuTemplateView::initInGameOptionButtons
 
 // initButtons

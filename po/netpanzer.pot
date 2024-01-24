@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: netpanzer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-24 14:44-0600\n"
+"POT-Creation-Date: 2024-01-24 15:43-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,4 +35,16 @@ msgstr ""
 
 #: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:146
 msgid "Options"
+msgstr ""
+
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:150
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:158
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:160
+#: src/NetPanzer/Views/Game/AreYouSureExitView.cpp:46
+#: src/NetPanzer/Views/Game/ResignView.cpp:72
+msgid "Exit netPanzer"
+msgstr ""
+
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:163
+msgid "Close Options"
 msgstr ""
