@@ -15,6 +15,9 @@ building it. Here's a list of them:
 - SDL2_mixer
   http://www.libsdl.org/projects/SDL_mixer/
 
+- [gettext](https://www.gnu.org/software/gettext/) (If you want to install
+translations, otherwise, use '-Dnls=false' when setting up the build).
+
 Note: some dependencies may have different names depending on your OS and
 package manager, and commonly have a '-dev' or '-devel' suffix. If the
 dependencies aren't available from your package manager, meson will download
