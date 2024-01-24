@@ -153,6 +153,7 @@ ReadFile* openRead(const char* filename) {
     int fn_length = strlen(filename) + 1;
     char fn[fn_length];
     memcpy(fn, filename, fn_length);  // includes \0;
+    fn[sizeof fn - 1] = '\0';  // No, it doesn't
 
     char* folder_sep = strrchr(fn, '/');
     char* fn_start = fn;
@@ -170,7 +171,7 @@ ReadFile* openRead(const char* filename) {
     if (filelist) {
       for (char** curfile = filelist; *curfile != 0; curfile++) {
         if (strcasecmp(*curfile, fn_start) == 0) {
-          memcpy(fn_start, *curfile, fn_length - (folder_sep - fn));
+          memmove(fn_start, *curfile, (sizeof fn -1) - (folder_sep - fn));
           file = PHYSFS_openRead(fn);
           break;
         }
