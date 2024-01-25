@@ -219,6 +219,7 @@ void EndRoundView::drawPlayerStats(Surface& dest, unsigned int flagHeight) {
     flag_pos += ENTRY_HEIGHT;
     ++cur_state;
   }
+  dest.bltString(5, cur_line_pos + 2, "Next game will start soon...", Color::yellow);
 }
 
 void EndRoundView::lMouseDown(const iXY& pos) {
