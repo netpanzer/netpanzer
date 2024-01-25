@@ -126,60 +126,7 @@ endif
 # Don't add to deps, only link with the binary and the test programs
 # not the shared library.
 
-freetype2_dep = dependency('freetype2', required: false)
-if not freetype2_dep.found()
-  freetype2_dep = cc.find_library('freetype2', has_headers: 'freetype.h', required: false)
-  if not freetype2_dep.found()
-    freetype2_dep = dependency(
-      'freetype2',
-      required: true,
-      fallback: 'freetype2',
-      default_options: ['default_library=static'])
-  endif
-endif
-deps += freetype2_dep
-
-libogg_dep = dependency('ogg', required: false)
-if not libogg_dep.found()
-  libogg_dep = cc.find_library('ogg', has_headers: 'ogg.h', required: false)
-  if not libogg_dep.found()
-    libogg_dep = dependency(
-      'ogg',
-      required: true,
-      fallback: 'ogg',
-      default_options: ['default_library=static'])
-  endif
-endif
-deps += libogg_dep
-
-vorbis_dep = dependency('vorbis', required: false)
-if not vorbis_dep.found()
-  vorbis_dep = cc.find_library('vorbis', has_headers: 'vorbisfile.h', required: false)
-  if not vorbis_dep.found()
-    vorbis_dep = dependency(
-      'vorbis',
-      required: true,
-      fallback: 'vorbis',
-      default_options: ['default_library=static'])
-  endif
-endif
-deps += vorbis_dep
-
-sdl2_mixer_dep = dependency('SDL2_mixer', required: false)
-if not sdl2_mixer_dep.found()
-  sdl2_mixer_dep = cc.find_library('SDL2_mixer', has_headers: 'SDL_mixer.h', required: false)
-  if not sdl2_mixer_dep.found()
-    # This will use the fallback
-    sdl2_mixer_dep = dependency(
-      'sdl2_mixer',
-      required: true,
-      fallback: 'sdl2_mixer',
-      default_options: ['default_library=static']
-      )
-  endif
-endif
-deps += sdl2_mixer_dep
-
+freetype_use_embedded = false
 sdl2_ttf_dep = dependency('SDL2_ttf', required: false)
 if not sdl2_ttf_dep.found()
   sdl2_ttf_dep = cc.find_library('SDL2_ttf', has_headers: 'SDL_ttf.h', required: false)
@@ -191,9 +138,76 @@ if not sdl2_ttf_dep.found()
       fallback: 'sdl2_ttf',
       default_options: ['default_library=static']
       )
+    freetype_use_embedded = true
   endif
 endif
 deps += sdl2_ttf_dep
+
+# These are required by the SDL2_ttf meson wrap, but not by NetPanzer
+# If SDL2_ttf was found without using the fallback, chances are that it already
+# has all its dependencies.
+if freetype_use_embedded
+  freetype2_dep = dependency('freetype2', required: false)
+  if not freetype2_dep.found()
+    freetype2_dep = cc.find_library('freetype2', has_headers: 'freetype.h', required: false)
+    if not freetype2_dep.found()
+      freetype2_dep = dependency(
+        'freetype2',
+        required: true,
+        fallback: 'freetype2',
+        default_options: ['default_library=static'])
+    endif
+  endif
+  deps += freetype2_dep
+endif
+
+sdl2_mixer_use_embedded = false
+sdl2_mixer_dep = dependency('SDL2_mixer', required: false)
+if not sdl2_mixer_dep.found()
+  sdl2_mixer_dep = cc.find_library('SDL2_mixer', has_headers: 'SDL_mixer.h', required: false)
+  if not sdl2_mixer_dep.found()
+    # This will use the fallback
+    sdl2_mixer_dep = dependency(
+      'sdl2_mixer',
+      required: true,
+      fallback: 'sdl2_mixer',
+      default_options: ['default_library=static']
+      )
+    sdl2_mixer_use_embedded = true
+  endif
+endif
+deps += sdl2_mixer_dep
+
+# These are required by the SDL2_mixer meson wrap, but not by NetPanzer
+# If SDL2_mixer was found without using the fallback, chances are that it already
+# has all its dependencies.
+if sdl2_mixer_use_embedded
+  libogg_dep = dependency('ogg', required: false)
+  if not libogg_dep.found()
+    libogg_dep = cc.find_library('ogg', has_headers: 'ogg.h', required: false)
+    if not libogg_dep.found()
+      libogg_dep = dependency(
+        'ogg',
+        required: true,
+        fallback: 'ogg',
+        default_options: ['default_library=static'])
+    endif
+  endif
+  deps += libogg_dep
+
+  vorbis_dep = dependency('vorbis', required: false)
+  if not vorbis_dep.found()
+    vorbis_dep = cc.find_library('vorbis', has_headers: 'vorbisfile.h', required: false)
+    if not vorbis_dep.found()
+      vorbis_dep = dependency(
+        'vorbis',
+        required: true,
+        fallback: 'vorbis',
+        default_options: ['default_library=static'])
+    endif
+  endif
+  deps += vorbis_dep
+endif
 
 inc_dirs = [include_directories('.')]
 

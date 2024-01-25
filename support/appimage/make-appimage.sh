@@ -22,20 +22,30 @@ APPDIR="$OUTPUT_DIR/AppDir"
 BUILD_DIR="$WORKSPACE/support/docker_build"
 
 cd "$WORKSPACE"
-./setup-build.sh "$BUILD_DIR" \
+
+SETUP_CMD=""
+if [ ! -d $BUILD_DIR ]; then
+  SETUP_CMD="./setup-build.sh $BUILD_DIR"
+else
+  cd $BUILD_DIR
+  SETUP_CMD="meson configure"
+fi
+
+$SETUP_CMD \
   -Dbuildtype=release \
   -Dstrip=true \
   -Db_sanitize=none \
-  -Dbindir=/usr/bin \
-  -Ddatadir=/usr/data
+  -Dprefix=/usr \
+  -Ddatadir=/usr/data \
+  -Dlocaledir=/usr/locale
 
 cd $BUILD_DIR
-ninja
 
 if [ -d "$APPDIR" ]; then
   rm -rf "$APPDIR"
 fi
-DESTDIR="$APPDIR" ninja install
+ninja
+meson install --destdir $APPDIR --skip-subprojects
 
 cd "$OUTPUT_DIR"
 #if [ ! -e "linuxdeploy-${ARCH}.AppImage" ]; then
