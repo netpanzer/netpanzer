@@ -37,7 +37,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           build-args: ARCH=${{ env.ARCH }}
-          context: ./support/docker
+          context: .
           file: ./support/docker/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true

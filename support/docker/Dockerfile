@@ -1,22 +1,24 @@
 FROM andy5995/netpanzer-build-env:jammy
+RUN mkdir /netpanzer
+ADD meson* /netpanzer
+ADD data /netpanzer/data
+ADD docs /netpanzer/docs
+ADD po /netpanzer/po
+ADD src /netpanzer/src
+ADD subprojects /netpanzer/subprojects
+ADD tests /netpanzer/tests
+ADD --chmod=700 setup-build.sh /netpanzer
 
-RUN git clone --depth 1 https://github.com/netpanzer/netpanzer && \
-        cd netpanzer && \
-        ./setup-build.sh _build -Db_sanitize=none && \
+RUN cd /netpanzer && \
+        ./setup-build.sh _build -Dprefix=/usr -Ddatadir=/usr/share/netpanzer && \
         cd _build && \
-        ninja
+        ninja && \
+        meson install --skip-subprojects
 
 FROM ubuntu:jammy
-COPY --from=0 /netpanzer/_build/netpanzer /netpanzer/
-COPY --from=0 /netpanzer/cache /netpanzer/cache
-COPY --from=0 /netpanzer/fonts /netpanzer/fonts
-COPY --from=0 /netpanzer/maps /netpanzer/maps
-COPY --from=0 /netpanzer/pics /netpanzer/pics
-COPY --from=0 /netpanzer/powerups /netpanzer/powerups
-COPY --from=0 /netpanzer/scripts /netpanzer/scripts
-COPY --from=0 /netpanzer/sound /netpanzer/sound
-COPY --from=0 /netpanzer/units /netpanzer/units
-COPY --from=0 /netpanzer/wads /netpanzer/wads
+COPY --from=0 /usr/bin/netpanzer /usr/bin
+COPY --from=0 /usr/share/netpanzer /usr/share/netpanzer
+COPY --from=0 /netpanzer/_build/po/* /usr/share/locale
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update &&   \
@@ -26,8 +28,13 @@ RUN apt update &&   \
         libphysfs1 \
         libsdl2-2.0-0 \
         libsdl2-mixer-2.0-0 \
-        libsdl2-ttf-2.0-0
+        libsdl2-ttf-2.0-0 \
+        libasan6 \
+        libubsan1 \
+        sudo
 
 RUN useradd -m npserver && passwd -d npserver
+USER npserver
+WORKDIR /home/npserver
 
 CMD ["/bin/bash","-l"]

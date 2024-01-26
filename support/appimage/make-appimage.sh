@@ -16,12 +16,18 @@ if [ -z "$VERSION" ]; then
   exit 1
 fi
 
+export LINUXDEPLOY_OUTPUT_VERSION=$VERSION
+
 OUTPUT_DIR="$WORKSPACE/support"
 test -d "$OUTPUT_DIR"
 APPDIR="$OUTPUT_DIR/AppDir"
 BUILD_DIR="$WORKSPACE/support/docker_build"
 
 cd "$WORKSPACE"
+
+if [ "$CLEAN_BUILD" = "true" ]; then
+  rm -rf "$BUILD_DIR"
+fi
 
 SETUP_CMD=""
 if [ ! -d $BUILD_DIR ]; then

@@ -143,8 +143,8 @@ if not sdl2_ttf_dep.found()
 endif
 deps += sdl2_ttf_dep
 
-# These are required by the SDL2_ttf meson wrap, but not by NetPanzer
-# If SDL2_ttf was found without using the fallback, chances are that it already
+# These are required by the SDL2_mixer meson wrap, but not by NetPanzer
+# If SDL2_mixer was found without using the fallback, chances are that it already
 # has all its dependencies.
 if freetype_use_embedded
   freetype2_dep = dependency('freetype2', required: false)
@@ -178,9 +178,10 @@ if not sdl2_mixer_dep.found()
 endif
 deps += sdl2_mixer_dep
 
-# These are required by the SDL2_mixer meson wrap, but not by NetPanzer
-# If SDL2_mixer was found without using the fallback, chances are that it already
-# has all its dependencies.
+# These will be built as optional dependencies of SDL2_mixer by default
+# if found on the system, but they are not required by NetPanzer. If SDL2_mixer was
+# found without using the fallback, chances are that it already has all its
+# dependencies.
 if sdl2_mixer_use_embedded
   libogg_dep = dependency('ogg', required: false)
   if not libogg_dep.found()
