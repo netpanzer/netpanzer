@@ -32,7 +32,7 @@ jobs:
 
     runs-on: ${{ matrix.build.os }}
     env:
-      NETPANZER_DATADIR: ${{ github.workspace }}
+      NETPANZER_DATADIR: ${{ github.workspace }}/data
     steps:
       - uses: actions/checkout@v4
         with:

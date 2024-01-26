@@ -42,7 +42,7 @@ jobs:
     container: ${{ matrix.build.container }}
     env:
       CC: '${{ matrix.build.cc }}'
-      NETPANZER_DATADIR: ${{ github.workspace }}
+      NETPANZER_DATADIR: ${{ github.workspace }}/data
     steps:
     - uses: actions/checkout@v4
       with:
