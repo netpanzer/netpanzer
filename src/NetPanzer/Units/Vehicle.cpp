@@ -521,9 +521,9 @@ unsigned short Vehicle::shortestRotation(AngleInt &angle, long goal_angle,
 
   if (goal_angle > angle.angle_int)
     delta_minus = angle.angle_limit - (goal_angle - angle.angle_int);
-  else
+  else if (goal_angle > 0) {
     delta_minus = (angle.angle_int) - (goal_angle);
-
+  }
   if (delta_minus > delta_plus) {
     *delta = delta_plus;
     return (_rotate_pos);
