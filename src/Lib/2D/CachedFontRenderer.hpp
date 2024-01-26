@@ -50,6 +50,8 @@ class CachedFontRenderer {
   static void initFont();
   static SDL_Surface* render(const char* text, SDL_Color color);
   static void cleanup();
+
+  static void test_openFont(void);
 };
 
 #endif  // NETPANZER_FONTPOOL_HPP

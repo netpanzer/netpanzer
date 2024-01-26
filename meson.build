@@ -222,9 +222,7 @@ exe = executable(
   include_directories : [
     inc_dirs
   ],
-  dependencies: [
-    bin_deps,
-  ],
+  dependencies: bin_deps,
   link_with: lib_netpanzer.get_static_lib(),
   link_args: ldflags,
   install : true
@@ -236,9 +234,7 @@ install_subdir(
   strip_directory : true
   )
 
-if not platform_is_windows
-  subdir('tests')
-endif
+subdir('tests')
 
 message('\n\n        == Important Note ==\n')
 message('In the build directory, you will need to enter "meson devenv"')

@@ -75,7 +75,6 @@ void Package::assignDataDir(void) {
 
 #include <string.h>
 
-#include "package.hpp"
 #include "test.hpp"
 
 void test_name(void) {
@@ -109,7 +108,12 @@ void test_datadir(void) {
   return;
 }
 
-int main(void) {
+// main() must be defined with the args in this format, otherwise we may get an
+// "undefined reference to SDL_main"
+int main(int argc, char *argv[]) {
+  (void)argc;
+  (void)argv;
+
   test_name();
   test_datadir();
   return 0;

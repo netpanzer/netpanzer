@@ -522,14 +522,9 @@ FileReadException::~FileReadException() throw() {}
 
 #else
 
-#include "FileSystem.hpp"
-#include "package.hpp"
 #include "test.hpp"
 
 void testEnumerateFilesOpenMapsDir(void) {
-  filesystem::initialize("./netpanzer", "netpanzer");
-
-  Package::assignDataDir();
   filesystem::addToSearchPath(Package::getDataDir().c_str(), true);
 
   const char mapsPath[] = "maps/";
@@ -557,7 +552,12 @@ void testEnumerateFilesOpenMapsDir(void) {
   return;
 }
 
-int main(void) {
+int main(int argc, char *argv[]) {
+  (void)argc;
+
+  filesystem::initialize(argv[0], "test_FileSystem");
+  Package::assignDataDir();
+
   testEnumerateFilesOpenMapsDir();
   return 0;
 }
