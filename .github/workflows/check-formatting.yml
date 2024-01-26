@@ -4,13 +4,14 @@ on:
   push:
     branches: master
     paths:
-      - 'src/**/*.{cpp,c,h,hpp}'
-      - '**/check-formatting.yml'
+    - 'src/**/**'
+    - '**/check-formatting.yml'
   pull_request:
     branches: master
     paths:
-      - 'src/**/*.{cpp,c,h,hpp}'
-      - '**/check-formatting.yml'
+    - 'src/**/**'
+    - '**/check-formatting.yml'
+
 jobs:
  clang-format-checking:
    runs-on: ubuntu-latest

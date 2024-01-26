@@ -85,7 +85,9 @@ void test_datadir(void) {
 
   fprintf(stderr, "datadir: %s\nmeson_source_root: %s\n", Package::getDataDir().c_str(),
     tmp);
-  assert(Package::getDataDir() == tmp);
+  char expect_data[strlen(tmp) + sizeof "/data"];
+  snprintf(expect_data, sizeof expect_data, "%s/data", tmp);
+  assert(Package::getDataDir() == expect_data);
 
   return;
 }

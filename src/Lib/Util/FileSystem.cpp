@@ -1,5 +1,6 @@
 /*
 Copyright (C) 2003 Matthias Braun <matze@braunis.de>
+Copyright (C) 2024 The NetPanzer Team (https://github.com/netpanzer/)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,12 +30,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 namespace filesystem {
 
-void initialize(const char* argv0, const char*, const char* application) {
+void initialize(const char* argv0, const char* application) {
   if (!PHYSFS_init(argv0))
     throw Exception("failure while initialising physfs: %s",
                     PHYSFS_getLastError());
 
-  const char* basedir = PHYSFS_getBaseDir();
+  const char* tmp_basedir = PHYSFS_getBaseDir();
+  char basedir[strlen(tmp_basedir) + sizeof "/data"];
+  snprintf(basedir, sizeof basedir, "%s/data", tmp_basedir);
   const char* userdir = PHYSFS_getUserDir();
   const char* dirsep = PHYSFS_getDirSeparator();
   char* writedir = new char[strlen(userdir) + strlen(application) + 2];
@@ -524,7 +527,7 @@ FileReadException::~FileReadException() throw() {}
 #include "test.hpp"
 
 void testEnumerateFilesOpenMapsDir(void) {
-  filesystem::initialize("./netpanzer", "netpanzer", "netpanzer");
+  filesystem::initialize("./netpanzer", "netpanzer");
 
   Package::assignDataDir();
   filesystem::addToSearchPath(Package::getDataDir().c_str(), true);

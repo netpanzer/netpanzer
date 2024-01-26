@@ -1,5 +1,6 @@
 /*
 Copyright (C) 2003 Matthias Braun <matze@braunis.de>
+Copyright (C) 2024 The NetPanzer Team (https://github.com/netpanzer/)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -129,8 +130,7 @@ class WriteFile : public File {
  * documentation for details about the functions here. Most function names are
  * exactly the same as in physfs
  */
-void initialize(const char* argv0, const char* company,
-                const char* applicationname);
+void initialize(const char* argv0, const char* application);
 void shutdown();
 
 void addToSearchPath(const char* dir, bool append = true);

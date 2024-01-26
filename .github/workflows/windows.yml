@@ -7,7 +7,7 @@ on:
   push:
     branches: master
     paths:
-    - 'src/**'
+    - 'src/**/**'
     - '**meson.build'
     - 'setup-build.*'
     - 'subprojects/*.wrap'
@@ -15,7 +15,7 @@ on:
   pull_request:
     branches: master
     paths:
-    - 'src/**/*.{cpp,c,h,hpp}'
+    - 'src/**/**'
     - '**meson.build'
     - 'setup-build.*'
     - 'subprojects/*.wrap'
@@ -32,7 +32,7 @@ jobs:
 
     runs-on: ${{ matrix.build.os }}
     env:
-      NETPANZER_DATADIR: ${{ github.workspace }}
+      NETPANZER_DATADIR: ${{ github.workspace }}/data
     steps:
       - uses: actions/checkout@v4
         with:

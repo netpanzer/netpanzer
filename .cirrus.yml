@@ -1,5 +1,5 @@
 env:
-  NETPANZER_DATADIR: $CIRRUS_WORKING_DIR
+  NETPANZER_DATADIR: $CIRRUS_WORKING_DIR/data
 
 freebsd_task:
   only_if: "changesIncludeOnly(
