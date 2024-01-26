@@ -54,7 +54,7 @@ conf.set_quoted('PACKAGE_VERSION', meson.project_version())
 conf.set_quoted('NP_DATADIR', join_paths(get_option('prefix'), get_option('datadir')))
 config_h = configure_file(output : 'config.h', configuration : conf)
 
-meson.add_devenv({'NETPANZER_DATADIR': meson.project_source_root()})
+meson.add_devenv({'NETPANZER_DATADIR': join_paths(meson.project_source_root(), 'data')})
 
 # this won't use fallback defined in subprojects/lua.wrap
 lua_dep = dependency('lua-5.1', required: false)
@@ -223,7 +223,7 @@ data_subdirs = [
 
 foreach dir : data_subdirs
   install_subdir(
-    dir,
+    join_paths('data',dir),
     install_dir : get_option('datadir')
   )
 endforeach
