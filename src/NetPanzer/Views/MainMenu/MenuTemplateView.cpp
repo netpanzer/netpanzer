@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/ScreenSurface.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/GameManager.hpp"
+#include "Localization.hpp"
 #include "Multi/ServerListView.hpp"
 #include "Particles/Particle2D.hpp"
 #include "Particles/ParticleSystem2D.hpp"
@@ -139,14 +140,14 @@ void MenuTemplateView::initPreGameOptionButtons() {
   iXY emptyPos;
   addHorizontal(mainTopButtonsStartPos, 5,
                 std::vector<Component *>{
-                    new newButton("MAIN", "Main", emptyPos, 0),
-                    new newButton("JOIN", "Join", emptyPos, 0),
-                    new newButton("HOST", "Host", emptyPos, 0),
-                    new newButton("OPTIONS", "Options", emptyPos, 0),
+                    new newButton("MAIN", _("Main"), emptyPos, 0),
+                    new newButton("JOIN", _("Join"), emptyPos, 0),
+                    new newButton("HOST", _("Host"), emptyPos, 0),
+                    new newButton("OPTIONS", _("Options"), emptyPos, 0),
                     new newButton("CREDITS", "Credits", emptyPos, 0),
                     new newButton("HELP", "Help", emptyPos, 0),
                 });
-  add(new newButton("EXITNP", "Exit netPanzer", exitPos, 0));
+  add(new newButton("EXITNP", _("Exit netPanzer"), exitPos, 0));
 }  // end MenuTemplateView::initPreGameOptionButtons
 
 // initInGameOptionButtons
@@ -154,12 +155,12 @@ void MenuTemplateView::initPreGameOptionButtons() {
 void MenuTemplateView::initInGameOptionButtons() {
   if (!gameconfig->quickConnect) {
     add(new newButton("RESIGN", "Resign", resignPos, 0));
-    add(new newButton("EXITNETNP", "Exit netPanzer", exitPos, 0));
+    add(new newButton("EXITNETNP", _("Exit netPanzer"), exitPos, 0));
   } else {
-    add(new newButton("EXITNETNP", "Exit netPanzer", exitPos, 0));
+    add(new newButton("EXITNETNP", _("Exit netPanzer"), exitPos, 0));
   }
 
-  add(new newButton("CLOSEOPT", "Close Options", returnToGamePos, 0));
+  add(new newButton("CLOSEOPT", _("Close Options"), returnToGamePos, 0));
 }  // end MenuTemplateView::initInGameOptionButtons
 
 // initButtons
@@ -200,7 +201,7 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea) {
     clientArea.FillRoundRect(MenuRect, 10, Color::white);
     clientArea.RoundRect(MenuRect, 10, Color::gray);
 
-    static std::string text = Package::GetFullyQualifiedName();
+    static std::string text = Package::getFullyQualifiedName();
     clientArea.bltString(10, 580, text.c_str(), Color::gray);
     // I don't like them so I delete them!
     // titlePackedSurface.blt(clientArea, bodyTextRect.min.x, 390);
@@ -249,7 +250,7 @@ void MenuTemplateView::doDrawM(Surface &viewArea,
     // bodyTextRect.max.y-50, Palette::colorTable6040);
   }
 
-  static std::string text = Package::GetFullyQualifiedName();
+  static std::string text = Package::getFullyQualifiedName();
   clientArea.bltString(10, 580, text.c_str(), Color::gray);
 
   View::doDraw(viewArea, clientArea);
@@ -283,7 +284,7 @@ void MenuTemplateView::doDrawAlt(Surface &viewArea,
     clientArea.RoundRect(MenuRect, 10, Color::gray);
   }
 
-  static std::string text = Package::GetFullyQualifiedName();
+  static std::string text = Package::getFullyQualifiedName();
   clientArea.bltString(10, 590, text.c_str(), Color::gray);
 
   View::doDraw(viewArea, clientArea);

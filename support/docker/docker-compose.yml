@@ -7,7 +7,7 @@ services:
     ports:
       - "3031:3031/tcp"
       - "3031:3031/udp"
-    command: su - npserver -c "cd /netpanzer && ./netpanzer -d"
+    command: netpanzer -d
     volumes:
       - ./opt:/home/npserver/.netpanzer
     restart: unless-stopped

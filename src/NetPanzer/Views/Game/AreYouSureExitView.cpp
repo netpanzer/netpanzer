@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Palette.hpp"
 #include "Classes/ScreenSurface.hpp"
 #include "Interfaces/GameManager.hpp"
+#include "Localization.hpp"
 #include "Views/Components/Button.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Views/GameViewGlobals.hpp"
@@ -42,7 +43,7 @@ static void bNO() {
 //---------------------------------------------------------------------------
 AreYouSureExitView::AreYouSureExitView() : SpecialButtonView() {
   setSearchName("AreYouSureExitView");
-  setTitle("Exit netPanzer");
+  setTitle(_("Exit netPanzer"));
   setSubTitle("");
   loaded = false;
 }  // end AreYouSureExitView::AreYouSureExitView

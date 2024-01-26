@@ -26,6 +26,7 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then \
 
 RUN apt upgrade -y && apt install -y \
         build-essential \
+        gettext \
         git \
         liblua5.1-dev \
         libphysfs-dev \

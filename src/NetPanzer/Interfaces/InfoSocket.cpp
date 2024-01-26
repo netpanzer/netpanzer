@@ -43,7 +43,7 @@ InfoSocket::InfoSocket(int p) : socket(nullptr) {
   std::stringstream s;
   s << "gamename\\netpanzer\\protocol\\" << NETPANZER_PROTOCOL_VERSION
     << "\\hostname\\" << hostname << "\\gameversion\\"
-    << Package::GetVersion();
+    << Package::getVersion();
   statusHead = s.str();
 }
 

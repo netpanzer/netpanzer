@@ -66,7 +66,7 @@ jobs:
       - if: steps.mesonBuild-cache.outputs.cache-hit != 'true'
         name: Setup
         run: |
-          .\setup-build.bat _build
+          .\setup-build.bat _build -Dnls=false
 
       - name: Build
         run: |

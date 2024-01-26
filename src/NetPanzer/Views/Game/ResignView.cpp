@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Palette.hpp"
 #include "AreYouSureExitView.hpp"
 #include "AreYouSureResignView.hpp"
+#include "Localization.hpp"
 #include "Views/Components/Desktop.hpp"
 
 //---------------------------------------------------------------------------
@@ -68,7 +69,7 @@ void ResignView::init() {
   addButtonCenterText(iXY(x, y), buttonSize.x, "Resign",
                       "Returns to the MainView.", bResign);
   y += yOffset;
-  addButtonCenterText(iXY(x, y), buttonSize.x, "Exit netPanzer",
+  addButtonCenterText(iXY(x, y), buttonSize.x, _("Exit netPanzer"),
                       "Exits to Windows.", bExitNetPanzer);
   y += yOffset;
   addButtonCenterText(iXY(x, y), buttonSize.x, "Return To Game", "",

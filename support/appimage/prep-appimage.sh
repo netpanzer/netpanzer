@@ -21,6 +21,11 @@ echo "Waiting 10 seconds to start, hit CTRL-C now to cancel..."
 
 read -t 10
 
+CLEAN_BUILD=false
+if [ "${1}" = "clean-build" ]; then
+  CLEAN_BUILD=true
+fi
+
 set -ev
 
 docker run -it --rm \
@@ -28,6 +33,7 @@ docker run -it --rm \
   -e ARCH=x86_64 \
   -e WORKSPACE \
   -e HOSTUID=$UID \
+  -e CLEAN_BUILD=$CLEAN_BUILD \
   -v $PWD:$WORKSPACE \
   andy5995/netpanzer-build-env:focal \
     /bin/bash -c 'usermod -u $HOSTUID npbuilder && \

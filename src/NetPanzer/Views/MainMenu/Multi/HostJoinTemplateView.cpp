@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <sstream>
 
+#include "package.hpp"
 #include "2D/Palette.hpp"
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/NetworkServer.hpp"
@@ -30,6 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "IPAddressView.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/PlayerGameManager.hpp"
+#include "Localization.hpp"
 #include "MapSelectionView.hpp"
 #include "PlayerNameView.hpp"
 #include "Resources/ResourceManager.hpp"
@@ -92,7 +94,7 @@ HostJoinTemplateView::HostJoinTemplateView() : MenuTemplateView() {
   setSearchName("HostJoinTemplateView");
   setTitle("");
   setSubTitle("");
-  add(new newButton("PLAY", "Play", playPos, 1));
+  add(new newButton("PLAY", _("Play"), playPos, 1));
 }  // end HostJoinTemplateView constructor
 
 // doDraw

@@ -1,5 +1,6 @@
 /*
 Copyright (C) 2003 Matthias Braun <matze@braunis.de>
+Copyright (C) 2024 The NetPanzer Team (https://github.com/netpanzer/)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -48,6 +49,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/DedicatedGameManager.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/PlayerGameManager.hpp"
+#include "Localization.hpp"
 #include "Network/NetworkManager.hpp"
 #include "Particles/ChunkTrajectoryParticle2D.hpp"
 #include "Particles/CloudParticle2D.hpp"
@@ -169,7 +171,7 @@ BaseGameManager* initialise(int argc, char** argv) {
   // Parse commandline
   using namespace optionmm;
   command_line commandline(
-      "NetPanzer", Package::GetVersion().c_str(),
+      "NetPanzer", Package::getVersion().c_str(),
       "Copyright(c) 1998 Pyrosoft Inc. & NetPanzer Development Team", "", argc,
       argv);
 
@@ -362,6 +364,12 @@ BaseGameManager* initialise(int argc, char** argv) {
 }
 
 int main(int argc, char *argv[]) {
+#ifdef ENABLE_NLS
+  Package::assignLocaleDir();
+  setlocale(LC_ALL, "");
+  bindtextdomain(Package::getBinName().c_str(), Package::getLocaleDir().c_str());
+  textdomain(Package::getBinName().c_str());
+#endif
   network::NetworkManager::initialize();
   ScriptManager::initialize();
 

@@ -6,6 +6,7 @@ HERE="$(readlink -f "$(dirname "$0")")"
 BINARY_NAME=$(basename "$ARGV0")
 
 export NETPANZER_DATADIR=$HERE/usr/data
+export NETPANZER_LOCALEDIR=$HERE/usr/locale
 
 exec "$HERE/usr/bin/netpanzer" "$@"
 

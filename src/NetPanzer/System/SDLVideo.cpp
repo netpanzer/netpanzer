@@ -88,11 +88,11 @@ bool SDLVideo::setVideoMode(int new_width, int new_height, int bpp,
       // use the native desktop resolution, and scale linearly later using
       // renderer
       window = SDL_CreateWindow(
-          Package::GetFullyQualifiedName().c_str(), SDL_WINDOWPOS_UNDEFINED,
+          Package::getFullyQualifiedName().c_str(), SDL_WINDOWPOS_UNDEFINED,
           SDL_WINDOWPOS_UNDEFINED, 0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP);
     } else {
       window = SDL_CreateWindow(
-          Package::GetFullyQualifiedName().c_str(), SDL_WINDOWPOS_UNDEFINED,
+          Package::getFullyQualifiedName().c_str(), SDL_WINDOWPOS_UNDEFINED,
           SDL_WINDOWPOS_UNDEFINED, new_width, new_height, 0);
     }
     if (window == nullptr) {

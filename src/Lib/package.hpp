@@ -26,16 +26,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class Package {
  public:
-  static const std::string GetVersion(void);
-  static const std::string GetName(void);
-  static const std::string GetFullyQualifiedName(void);
+  static const std::string getVersion(void);
+  static const std::string getFormalName(void);
+  static const std::string getBinName(void);
+  static const std::string getFullyQualifiedName(void);
 
   static const std::string getDataDir(void) { return dataDir; }
+  static const std::string getLocaleDir(void) { return localeDir; }
   static void assignDataDir(void);
+  static void assignLocaleDir(void);
   static void setDataDir(std::string &absPath) { dataDir = absPath; }
+  static void setLocaleDir(std::string absPath) { localeDir = absPath; }
 
  private:
   inline static std::string dataDir;
+  inline static std::string localeDir;
 };
 
 #endif

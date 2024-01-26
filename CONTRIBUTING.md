@@ -28,7 +28,23 @@ TBD
 
 ## Translating
 
-TBD
+The language files are in /po. If a language file doesn't exist yet for the language for which you wish, you can create it if you have the gettext utilities installed:
+
+    msginit -l ?? (Where ?? is your iso-631-1 language code)
+
+Note: The argument is a lowercase `L`.
+
+Example: To create a french .po file:
+
+    run msginit -l fr
+
+You can edit the .po files directly in a text editor or use [po editing
+utilities](https://docs.translatehouse.org/projects/localization-guide/en/latest/guide/tools/trans_editors.html).
+
+### Transifex
+
+We plan to use Transifex in the future. If you'd like to get notified, please
+[contact us](#contact).
 
 ## Patches and Pull Requests
 

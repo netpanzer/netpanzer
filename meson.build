@@ -2,7 +2,7 @@ project(
   'netpanzer',
   ['c', 'cpp'],
   version: '0.9.0.07.555',
-  meson_version : '>= 0.58.0',
+  meson_version : '>= 0.59.0',
   default_options: [
     'warning_level=2',
     'cpp_std=c++17',
@@ -31,7 +31,8 @@ mingw_flags = [
     '-static-libstdc++',
   ]
 
-platform_is_windows = (host_machine.system() == 'windows')
+host_sys = host_machine.system()
+platform_is_windows = (host_sys == 'windows')
 
 add_project_arguments(cc.get_supported_arguments(extra_flags), language: 'c')
 add_project_arguments(cxx.get_supported_arguments(extra_flags), language: 'cpp')
@@ -50,11 +51,15 @@ if platform_is_windows == true
 endif
 
 conf = configuration_data()
+subdir('po')
+localedir = join_paths(get_option('prefix'), get_option('localedir'))
+conf.set_quoted('NP_LOCALEDIR', localedir)
 conf.set_quoted('PACKAGE_VERSION', meson.project_version())
 conf.set_quoted('NP_DATADIR', join_paths(get_option('prefix'), get_option('datadir')))
 config_h = configure_file(output : 'config.h', configuration : conf)
 
 meson.add_devenv({'NETPANZER_DATADIR': join_paths(meson.project_source_root(), 'data')})
+meson.add_devenv({'NETPANZER_LOCALEDIR': join_paths(meson.project_build_root(), 'po')})
 
 # this won't use fallback defined in subprojects/lua.wrap
 lua_dep = dependency('lua-5.1', required: false)
@@ -121,60 +126,7 @@ endif
 # Don't add to deps, only link with the binary and the test programs
 # not the shared library.
 
-freetype2_dep = dependency('freetype2', required: false)
-if not freetype2_dep.found()
-  freetype2_dep = cc.find_library('freetype2', has_headers: 'freetype.h', required: false)
-  if not freetype2_dep.found()
-    freetype2_dep = dependency(
-      'freetype2',
-      required: true,
-      fallback: 'freetype2',
-      default_options: ['default_library=static'])
-  endif
-endif
-deps += freetype2_dep
-
-libogg_dep = dependency('ogg', required: false)
-if not libogg_dep.found()
-  libogg_dep = cc.find_library('ogg', has_headers: 'ogg.h', required: false)
-  if not libogg_dep.found()
-    libogg_dep = dependency(
-      'ogg',
-      required: true,
-      fallback: 'ogg',
-      default_options: ['default_library=static'])
-  endif
-endif
-deps += libogg_dep
-
-vorbis_dep = dependency('vorbis', required: false)
-if not vorbis_dep.found()
-  vorbis_dep = cc.find_library('vorbis', has_headers: 'vorbisfile.h', required: false)
-  if not vorbis_dep.found()
-    vorbis_dep = dependency(
-      'vorbis',
-      required: true,
-      fallback: 'vorbis',
-      default_options: ['default_library=static'])
-  endif
-endif
-deps += vorbis_dep
-
-sdl2_mixer_dep = dependency('SDL2_mixer', required: false)
-if not sdl2_mixer_dep.found()
-  sdl2_mixer_dep = cc.find_library('SDL2_mixer', has_headers: 'SDL_mixer.h', required: false)
-  if not sdl2_mixer_dep.found()
-    # This will use the fallback
-    sdl2_mixer_dep = dependency(
-      'sdl2_mixer',
-      required: true,
-      fallback: 'sdl2_mixer',
-      default_options: ['default_library=static']
-      )
-  endif
-endif
-deps += sdl2_mixer_dep
-
+freetype_use_embedded = false
 sdl2_ttf_dep = dependency('SDL2_ttf', required: false)
 if not sdl2_ttf_dep.found()
   sdl2_ttf_dep = cc.find_library('SDL2_ttf', has_headers: 'SDL_ttf.h', required: false)
@@ -186,9 +138,77 @@ if not sdl2_ttf_dep.found()
       fallback: 'sdl2_ttf',
       default_options: ['default_library=static']
       )
+    freetype_use_embedded = true
   endif
 endif
 deps += sdl2_ttf_dep
+
+# These are required by the SDL2_mixer meson wrap, but not by NetPanzer
+# If SDL2_mixer was found without using the fallback, chances are that it already
+# has all its dependencies.
+if freetype_use_embedded
+  freetype2_dep = dependency('freetype2', required: false)
+  if not freetype2_dep.found()
+    freetype2_dep = cc.find_library('freetype2', has_headers: 'freetype.h', required: false)
+    if not freetype2_dep.found()
+      freetype2_dep = dependency(
+        'freetype2',
+        required: true,
+        fallback: 'freetype2',
+        default_options: ['default_library=static'])
+    endif
+  endif
+  deps += freetype2_dep
+endif
+
+sdl2_mixer_use_embedded = false
+sdl2_mixer_dep = dependency('SDL2_mixer', required: false)
+if not sdl2_mixer_dep.found()
+  sdl2_mixer_dep = cc.find_library('SDL2_mixer', has_headers: 'SDL_mixer.h', required: false)
+  if not sdl2_mixer_dep.found()
+    # This will use the fallback
+    sdl2_mixer_dep = dependency(
+      'sdl2_mixer',
+      required: true,
+      fallback: 'sdl2_mixer',
+      default_options: ['default_library=static']
+      )
+    sdl2_mixer_use_embedded = true
+  endif
+endif
+deps += sdl2_mixer_dep
+
+# These will be built as optional dependencies of SDL2_mixer by default
+# if found on the system, but they are not required by NetPanzer. If SDL2_mixer was
+# found without using the fallback, chances are that it already has all its
+# dependencies.
+if sdl2_mixer_use_embedded
+  libogg_dep = dependency('ogg', required: false)
+  if not libogg_dep.found()
+    libogg_dep = cc.find_library('ogg', has_headers: 'ogg.h', required: false)
+    if not libogg_dep.found()
+      libogg_dep = dependency(
+        'ogg',
+        required: true,
+        fallback: 'ogg',
+        default_options: ['default_library=static'])
+    endif
+  endif
+  deps += libogg_dep
+
+  vorbis_dep = dependency('vorbis', required: false)
+  if not vorbis_dep.found()
+    vorbis_dep = cc.find_library('vorbis', has_headers: 'vorbisfile.h', required: false)
+    if not vorbis_dep.found()
+      vorbis_dep = dependency(
+        'vorbis',
+        required: true,
+        fallback: 'vorbis',
+        default_options: ['default_library=static'])
+    endif
+  endif
+  deps += vorbis_dep
+endif
 
 inc_dirs = [include_directories('.')]
 
