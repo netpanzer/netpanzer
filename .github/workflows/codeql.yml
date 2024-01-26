@@ -7,12 +7,12 @@ on:
   push:
     branches: master
     paths:
-    - 'src/**/*.{cpp,c,h,hpp}'
+    - 'src/**'
     - '**/codeql.yml'
   pull_request:
     branches: master
     paths:
-    - 'src/**/*.{cpp,c,h,hpp}'
+    - 'src/**'
     - '**/codeql.yml'
 
 jobs:
