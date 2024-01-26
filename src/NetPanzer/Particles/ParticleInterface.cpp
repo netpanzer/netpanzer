@@ -220,7 +220,7 @@ void ParticleInterface::addPuffSystem(const iXY &worldPos, const iRect &bounds,
   (void)minFPS;
   (void)randFPS;
   (void)layer;
-  //    // Make sure the the bounding box is not negative.
+  //    // Make sure the bounding box is not negative.
   //    assert(bounds.getSize().x >= 0);
   //    assert(bounds.getSize().y >= 0);
   //
