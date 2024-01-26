@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 TemplateMuzzleSystem::TemplateMuzzleSystem(const fXYZ &pos,
                                            const fXYZ &direction,
                                            const MuzzleSystem &m)
-    : ParticleSystem2D(pos, isFarAway) {
+    : ParticleSystem2D(pos, 0) {
   //	enum MUZZLE_TYPE
   //	{
   //		SINGLE,
