@@ -25,12 +25,12 @@ SmolderParticleSystem2D::SmolderParticleSystem2D(const fXYZ &pos,
                                                  float lifetime, float waitMin,
                                                  float waitMax,
                                                  PUFF_TYPE particleType)
-    : ParticleSystem2D(pos, isFarAway) {
+    : ParticleSystem2D(pos, 0) {
   waitTime = 0.0f;
 
   iRect bounds(emitBounds);
 
-  // Make sure the the bounding box is not negative.
+  // Make sure the bounding box is not negative.
   assert(bounds.getSize().x >= 0);
   assert(bounds.getSize().y >= 0);
 

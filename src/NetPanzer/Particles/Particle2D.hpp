@@ -50,9 +50,6 @@ class Particle2D {
   virtual void draw(const Surface &dest, SpriteSorter &sorter);
   virtual void sim();
 
-  void *operator new(size_t numBytes);  // Overloaded for static array.
-  void operator delete(void *block);    // Overloaded for static array.
-
   static int getFrameCount() { return frameCount; }
   static int getPeakCount() { return peakCount; }
   static int getBltTo() { return bltTo; }
@@ -66,7 +63,7 @@ class Particle2D {
   // Return the resulting random FPS.
   int getFPS(int FPSmin, int FPSrand);
 
-  // Returns the pak index depending on the the specified scale.
+  // Returns the pak index depending on the specified scale.
   static int getPakIndex(float scale, int pakImageCount);
 
   static float getScale(float scaleMin, float scaleRand);

@@ -46,17 +46,18 @@ Uint16 NetMessageDecoder::decodeMessage(NetMessage** message) {
     return 0;  // no more messages
   }
 
-  Uint16* mlen = (Uint16*)(decode_message.data + offset);
-  unsigned int msg_len = ltoh16(*mlen);
+  Uint16 mlen_value;
+  memcpy(&mlen_value, decode_message.data + offset, sizeof(Uint16));
+  unsigned int msg_len = ltoh16(mlen_value);
 
   if (msg_len > size - sizeof(NetMessage) - offset) {
     LOGGER.warning("Malformed Multimessage!!");
     return false;
   }
 
-  *message = (NetMessage*)(mlen + 1);
+  *message = (NetMessage*)(decode_message.data + offset + sizeof(Uint16));
 
-  offset += msg_len + 2;
+  offset += msg_len + sizeof(Uint16);
 
   return msg_len;
 }

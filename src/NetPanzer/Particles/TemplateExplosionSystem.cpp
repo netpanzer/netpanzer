@@ -34,7 +34,7 @@ TemplateExplosionSystem::TemplateExplosionSystem(const fXYZ &pos,
                                                  const ExplosionSystem &e,
                                                  int isFarAway)
     : ParticleSystem2D(pos, isFarAway) {
-  // Make sure the the bounding box is not negative.
+  // Make sure the bounding box is not negative.
   assert(emitBounds.getSizeX() >= 0);
   assert(emitBounds.getSizeY() >= 0);
 
