@@ -978,6 +978,9 @@ void ParticleInterface::addMoveDirtPuff(const UnitState &unitState) {
   if (TileInterface::getWorldPixMovementValue(unitState.location.x,
                                               unitState.location.y) == 0) {
     if (movePuffWaitGroup >= movePuffWaitTotal) {
+      if (unitParticleInfo.empty()) {
+          getUnitParticleInfo();
+      }
       iXY size = unitParticleInfo[unitState.unit_type].minBounds.getSize();
 
       assert(size.x > 0 && size.y > 0);
