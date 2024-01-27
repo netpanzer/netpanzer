@@ -136,13 +136,11 @@ void SDLSound::playAmbientSound(const char *name, long distance) {
   if (sdata) {
     if (sdata->last_played.isTimeOut()) {
       int newVolume = getSoundVolume(distance);
-//      printf("playing %s at %d\n", name, newVolume);
-      int oldVolume =
-          Mix_VolumeChunk(sdata->getData(), newVolume);
+//      printf("playing %s at distance %ld and volume %d\n", name, distance, newVolume);
+      Mix_VolumeChunk(sdata->getData(), newVolume);
       if (Mix_PlayChannel(-1, sdata->getData(), 0) == -1) {
         // LOG (("Couldn't play sound '%s': %s", name, Mix_GetError()));
       }
-      Mix_VolumeChunk(sdata->getData(), oldVolume);
       sdata->last_played.reset();
     } else {
       //            LOGGER.debug("Skipped ambient sound '%s' due to timeout",
@@ -183,16 +181,16 @@ int SDLSound::getSoundVolume(long distance) {
   if ((distance < 640000)) return MIX_MAX_VOLUME;
 
   // 2 to 4 800x600 screen widths away--
-  if ((distance < 10240000)) return int(0.75 * MIX_MAX_VOLUME);
+  if ((distance < 10240000)) return int(0.2 * MIX_MAX_VOLUME);
 
   // 4 to 8 800x600 screen widths away--
-  if ((distance < 40960000)) return int(0.5 * MIX_MAX_VOLUME);
+  if ((distance < 40960000)) return int(0.1 * MIX_MAX_VOLUME);
 
   // 8 to 12 800x600 screen widths away--
-  if ((distance < 92760000)) return int(0.25 * MIX_MAX_VOLUME);
+  if ((distance < 92760000)) return int(0.05 * MIX_MAX_VOLUME);
 
   // 12 to 16 800x600 screen widths away--
-  if ((distance < 163840000)) return int(0.05 * MIX_MAX_VOLUME);
+  if ((distance < 163840000)) return int(0.02 * MIX_MAX_VOLUME);
 
   // anything further away--
   return 0;
