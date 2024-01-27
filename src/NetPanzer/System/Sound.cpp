@@ -30,6 +30,7 @@ Sound::Sound() {
  * Play "tankidle" repeatedly.
  */
 void Sound::playTankIdle() {
+  // TODO - play audio volume based on closest unit to player
   m_tankIdleChannel = playSoundRepeatedly("tankidle");
 }
 
