@@ -28,10 +28,12 @@ freebsd_task:
     - cd _build && meson test --suite=netpanzer -v
 
 arm_task:
-  skip: "changesIncludeOnly(
-    '.cirrus.yml',
+  only_if: "changesIncludeOnly(
     '**.{cpp,hpp,c,h}',
-    '**meson.build'
+    '**meson.build',
+    'setup-build.*',
+    'subprojects/*.wrap',
+    '.cirrus.yml'
     )"
   name: Ubuntu arm64
   arm_container:
@@ -46,10 +48,12 @@ arm_task:
     - cd _build && meson test --suite=netpanzer -v
 
 macos_task:
-  skip: "changesIncludeOnly(
-    '.cirrus.yml',
+  only_if: "changesIncludeOnly(
     '**.{cpp,hpp,c,h}',
-    '**meson.build'
+    '**meson.build',
+    'setup-build.*',
+    'subprojects/*.wrap',
+    '.cirrus.yml'
     )"
   name: macOS arm64
   macos_instance:
