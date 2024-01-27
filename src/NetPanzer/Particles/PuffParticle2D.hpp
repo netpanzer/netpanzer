@@ -43,20 +43,20 @@ class PuffParticle2D : public WindParticle2D {
  public:
   // A minSize of 1.0f would be the original size of the image.
   // WindScale is how much the wind effects this particle.  1.0f is full.
-  PuffParticle2D(const fXYZ &pos, const fXYZ &shadowPos, PUFF_TYPE particleType,
-                 float scaleMin, float scaleRand, int FPSMin, int FPSRand,
-                 int layer, int shadowLayer, float windScale = 1.0f,
-                 int isFarAway = 0);
+  PuffParticle2D(const fXYZ &arg_pos, const fXYZ &arg_shadowPos, PUFF_TYPE particleType,
+                 float scaleMin, float scaleRand, int arg_FPSMin, int arg_FPSRand,
+                 int arg_layer, int arg_shadowLayer, float arg_windScale = 1.0f,
+                 int arg_isFarAway = 0);
 
-  PuffParticle2D(const fXYZ &pos, PUFF_TYPE particleType, float scaleMin,
-                 float scaleRand, int FPSMin, int FPSRand, int layer,
-                 int shadowLayer, float windScale = 1.0f, int isFarAway = 0)
-      : WindParticle2D(pos, windScale) {
+  PuffParticle2D(const fXYZ &arg_pos, PUFF_TYPE particleType, float scaleMin,
+                 float scaleRand, int arg_FPSMin, int arg_FPSRand, int arg_layer,
+                 int arg_shadowLayer, float arg_windScale = 1.0f, int arg_isFarAway = 0)
+      : WindParticle2D(arg_pos, arg_windScale) {
     userDefinedShadowPos = false;
-    shadowPos = pos;
+    shadowPos = arg_pos;
 
-    create(particleType, scaleMin, scaleRand, FPSMin, FPSRand, layer,
-           shadowLayer, isFarAway);
+    create(particleType, scaleMin, scaleRand, arg_FPSMin, arg_FPSRand, arg_layer,
+           arg_shadowLayer, arg_isFarAway);
   }
 
   static void init();

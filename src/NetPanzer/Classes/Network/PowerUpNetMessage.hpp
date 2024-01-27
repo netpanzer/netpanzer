@@ -40,11 +40,11 @@ class PowerUpCreateMesg : public NetMessage {
     message_class = _net_message_class_powerup;
     message_id = _net_message_id_powerup_create;
   }
-  void set(iXY map_loc, PowerUpID arg_powerup_id, int type) {
-    this->map_loc_x = htol32(map_loc.x);
-    this->map_loc_y = htol32(map_loc.y);
-    this->powerup_id = PowerUpID_toPortable(arg_powerup_id);  // XXX protocol
-    this->type = htol32(type);
+  void set(iXY map_loc, PowerUpID arg_powerup_id, int arg_type) {
+    map_loc_x = htol32(map_loc.x);
+    map_loc_y = htol32(map_loc.y);
+    powerup_id = PowerUpID_toPortable(arg_powerup_id);  // XXX protocol
+    type = htol32(arg_type);
   }
   Sint32 getLocX() const { return ltoh32(map_loc_x); }
   Sint32 getLocY() const { return ltoh32(map_loc_y); }

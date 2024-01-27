@@ -38,9 +38,9 @@ struct iRect {
     max = a.max;
   }
 
-  inline iRect(const iXY &min, const iXY &max) {
-    iRect::min = min;
-    iRect::max = max;
+  inline iRect(const iXY &arg_min, const iXY &arg_max) {
+    min = arg_min;
+    max = arg_max;
   }
 
   inline iXY getSize() const { return max - min; }

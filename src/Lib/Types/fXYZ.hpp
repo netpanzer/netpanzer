@@ -31,10 +31,10 @@ struct fXYZ {
 
   static const fXYZ ZERO;
 
-  fXYZ(float x = 0, float y = 0, float z = 0) {
-    this->x = x;
-    this->y = y;
-    this->z = z;
+  fXYZ(float arg_x = 0, float arg_y = 0, float arg_z = 0) {
+    x = arg_x;
+    y = arg_y;
+    z = arg_z;
   }
 
   fXYZ(const fXYZ &a) {

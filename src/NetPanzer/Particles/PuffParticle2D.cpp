@@ -32,33 +32,33 @@ PackedSurfaceList PuffParticle2D::staticPackedDirtPuff;
 
 // PuffParticle2D
 //---------------------------------------------------------------------------
-PuffParticle2D::PuffParticle2D(const fXYZ &pos, const fXYZ &shadowPos,
+PuffParticle2D::PuffParticle2D(const fXYZ &arg_pos, const fXYZ &arg_shadowPos,
                                PUFF_TYPE particleType, float minScale,
-                               float randScale, int minFPS, int randFPS,
-                               int layer, int shadowLayer,
-                               float windScale /* = 1.0f */, int)
-    : WindParticle2D(pos, windScale) {
-  PuffParticle2D::shadowPos = shadowPos;
+                               float randScale, int arg_minFPS, int arg_FPSRand,
+                               int arg_layer, int arg_shadowLayer,
+                               float arg_windScale /* = 1.0f */, int)
+    : WindParticle2D(arg_pos, arg_windScale) {
+  shadowPos = arg_shadowPos;
   userDefinedShadowPos = true;
 
-  create(particleType, minScale, randScale, minFPS, randFPS, layer,
-         shadowLayer);
+  create(particleType, minScale, randScale, arg_minFPS, arg_FPSRand, arg_layer,
+         arg_shadowLayer);
 
 }  // end PuffParticle2D::PuffParticle2D
 
 // create
 //---------------------------------------------------------------------------
 void PuffParticle2D::create(PUFF_TYPE particleType, float scaleMin,
-                            float scaleRand, int FPSmin, int FPSrand, int layer,
-                            int shadowLayer, int isFarAway /* = 0 */) {
+                            float scaleRand, int FPSmin, int arg_FPSrand, int arg_layer,
+                            int arg_shadowLayer, int arg_isFarAway /* = 0 */) {
   assert(scaleMin >= 0.0);
   assert(scaleRand >= 0.0);
 
   scale = getScale(scaleMin, scaleRand);
 
-  PuffParticle2D::layer = layer;
-  PuffParticle2D::shadowLayer = shadowLayer;
-  PuffParticle2D::isFarAway = isFarAway;
+  layer = arg_layer;
+  shadowLayer = arg_shadowLayer;
+  isFarAway = arg_isFarAway;
 
   index = getPakIndex(scale, staticPackedSmokeLightPuff.size());
 
@@ -97,7 +97,7 @@ void PuffParticle2D::create(PUFF_TYPE particleType, float scaleMin,
     packedSurface.setDrawModeSolid();
   }
 
-  packedSurface.setFPS(getFPS(FPSmin, FPSrand));
+  packedSurface.setFPS(getFPS(FPSmin, arg_FPSrand));
 
   // If the particles are far away, speed them up.
   if (isFarAway) {

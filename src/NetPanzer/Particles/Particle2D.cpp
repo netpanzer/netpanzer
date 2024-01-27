@@ -36,10 +36,10 @@ int Particle2D::drawParticles = 1;
 
 // Particle2D
 //---------------------------------------------------------------------------
-Particle2D::Particle2D(const fXYZ &pos) {
+Particle2D::Particle2D(const fXYZ &arg_pos) {
   reset();
 
-  Particle2D::pos = pos;
+  pos = arg_pos;
 
   if (this == zParticle2D) {
     prev = next = zParticle2D;
@@ -179,12 +179,12 @@ void Particle2D::sim() {
 
 // getFPS
 //--------------------------------------------------------------------------
-int Particle2D::getFPS(int FPSmin, int FPSrand) {
+int Particle2D::getFPS(int FPSmin, int arg_FPSrand) {
   // Get the random particle fps.
   int FPS = FPSmin;
 
-  if (FPSrand > 0) {
-    FPS = (rand() % FPSrand) + FPSmin;
+  if (arg_FPSrand > 0) {
+    FPS = (rand() % arg_FPSrand) + FPSmin;
   }
 
   return FPS;

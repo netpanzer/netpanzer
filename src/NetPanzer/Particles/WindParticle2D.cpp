@@ -21,9 +21,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Physics.hpp"
 
 //--------------------------------------------------------------------------
-WindParticle2D::WindParticle2D(const fXYZ &pos, float windScale /* = 1.0f */)
+WindParticle2D::WindParticle2D(const fXYZ &pos, float arg_windScale /* = 1.0f */)
     : Particle2D(pos) {
-  WindParticle2D::windScale = windScale;
+  windScale = arg_windScale;
 }  // end WindParticle2D::WindParticle2D
 
 // WindParticle2D::sim

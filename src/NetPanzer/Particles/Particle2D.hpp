@@ -38,7 +38,7 @@ class PackedSurface;
 //--------------------------------------------------------------------------
 class Particle2D {
  public:
-  Particle2D(const fXYZ &pos);
+  Particle2D(const fXYZ &arg_pos);
   virtual ~Particle2D();
 
   static void setBltTo(int bltTo) { Particle2D::bltTo = bltTo; }
@@ -61,7 +61,7 @@ class Particle2D {
   }
 
   // Return the resulting random FPS.
-  int getFPS(int FPSmin, int FPSrand);
+  int getFPS(int FPSmin, int arg_FPSrand);
 
   // Returns the pak index depending on the specified scale.
   static int getPakIndex(float scale, int pakImageCount);

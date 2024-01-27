@@ -52,7 +52,7 @@ class UnitBase {
 
  private:
   friend class UnitInterface;
-  void setID(UnitID id) { this->id = id; }
+  void setID(UnitID arg_id) { id = arg_id; }
 
   UnitID getID() const { return id; }
 

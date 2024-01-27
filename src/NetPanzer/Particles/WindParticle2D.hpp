@@ -29,7 +29,7 @@ class WindParticle2D : public Particle2D {
 
  public:
   WindParticle2D(const fXYZ &pos,
-                 float windScale = 1.0f);  // Used to increase or decrease wind.
+                 float arg_windScale = 1.0f);  // Used to increase or decrease wind.
                                            // (Maybe depending on elevation.)
 
   virtual void sim();
