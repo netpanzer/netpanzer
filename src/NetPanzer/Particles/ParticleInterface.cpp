@@ -504,9 +504,6 @@ void ParticleInterface::testSim() {
   if (groupTime0 > 1.0f) {
     groupTime0 = 0.0f;
 
-    // SFX
-    sound->playSound("expl");
-
     iRect gameViewRect;
     WorldViewInterface::getViewWindow(&gameViewRect);
 
@@ -516,6 +513,9 @@ void ParticleInterface::testSim() {
         gameViewRect.min.x + 100 + (rand() % (gameViewRect.getSizeX() - 200));
     unitState.location.y =
         gameViewRect.min.y + 100 + (rand() % (gameViewRect.getSizeY() - 200));
+
+    // SFX
+    sound->playAmbientSound("expl", WorldViewInterface::getCameraDistance(unitState.location));
 
     // Hack until all the units are actually used.
     unitState.unit_type = rand() % UnitProfileInterface::getNumUnitTypes();
@@ -527,9 +527,6 @@ void ParticleInterface::testSim() {
   if (groupTime1 > 0.5f) {
     groupTime1 = 0.0f;
 
-    // SFX
-    sound->playSound("expl");
-
     iRect gameViewRect;
     WorldViewInterface::getViewWindow(&gameViewRect);
 
@@ -539,6 +536,9 @@ void ParticleInterface::testSim() {
         gameViewRect.min.x + 100 + (rand() % (gameViewRect.getSizeX() - 200));
     location.y =
         gameViewRect.min.y + 100 + (rand() % (gameViewRect.getSizeY() - 200));
+
+    // SFX
+    sound->playAmbientSound("expl", WorldViewInterface::getCameraDistance(location));
 
     addMiss(location, rand() % UnitProfileInterface::getNumUnitTypes());
   }

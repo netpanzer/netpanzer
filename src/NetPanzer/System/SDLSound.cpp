@@ -135,8 +135,10 @@ void SDLSound::playAmbientSound(const char *name, long distance) {
   SoundData *sdata = findChunk(name);
   if (sdata) {
     if (sdata->last_played.isTimeOut()) {
+      int newVolume = getSoundVolume(distance);
+//      printf("playing %s at %d\n", name, newVolume);
       int oldVolume =
-          Mix_VolumeChunk(sdata->getData(), getSoundVolume(distance));
+          Mix_VolumeChunk(sdata->getData(), newVolume);
       if (Mix_PlayChannel(-1, sdata->getData(), 0) == -1) {
         // LOG (("Couldn't play sound '%s': %s", name, Mix_GetError()));
       }
