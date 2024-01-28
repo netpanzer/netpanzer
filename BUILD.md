@@ -70,7 +70,7 @@ Common options to use before installing netpanzer:
 
 This will install the data to '/usr/share/netpanzer' and the binary to '/usr/bin'.
 
-For packaging, or to test installation, use the 'destdir' option', e.g.:
+To package or test installation, use the 'destdir' option', e.g.:
 
     meson install --destdir=/tmp/pkg --skip-subprojects
 
