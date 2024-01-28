@@ -244,7 +244,7 @@ data_subdirs = [
 foreach dir : data_subdirs
   install_subdir(
     join_paths('data',dir),
-    install_dir : get_option('datadir')
+    install_dir : join_paths(get_option('datadir'), meson.project_name())
   )
 endforeach
 
