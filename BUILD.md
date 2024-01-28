@@ -64,8 +64,7 @@ The scripts take the same options as `meson setup`, which you can view by:
 
 ## Installing
 
-Common options to use before installing netpanzer , use `meson configure '-Dprefix=/usr' where
-destdir could be similar to the following:
+Common options to use before installing netpanzer:
 
     -Dprefix=/usr
 
