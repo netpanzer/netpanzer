@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //---------------------------------------------------------------------------
 HelpScrollViewAlt::HelpScrollViewAlt() : View() {
   setSearchName("HelpScrollViewAlt");
-  setTitle("Help Information");
+  setTitle(_("Help Information"));
   setSubTitle("");
 
   setAllowResize(false);
