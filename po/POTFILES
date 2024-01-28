@@ -3,5 +3,7 @@
 src/NetPanzer/Views/MainMenu/Multi/HostJoinTemplateView.cpp
 src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp
 src/NetPanzer/Views/Game/AreYouSureExitView.cpp
+src/NetPanzer/Views/Game/HelpScrollView.cpp
+src/NetPanzer/Views/Game/HelpScrollViewAlt.cpp
 src/NetPanzer/Views/Game/ResignView.cpp
 

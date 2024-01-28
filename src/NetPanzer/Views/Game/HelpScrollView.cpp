@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "HelpScrollView.hpp"
 
 #include "GameView.hpp"
+#include "Localization.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Views/GameViewGlobals.hpp"
 // #include "Classes/WorldInputCmdProcessor.hpp"
@@ -39,130 +40,123 @@ HelpScrollView::HelpScrollView() : SpecialButtonView() {
 
   // TODO - with new variable spaced font support - render two columns - keys on
   // left and descriptions on right.
-  insert("Key");
+  insert(_("Key"));
   insert("");
-  insert("  LMC = Left Mouse Click");
-  insert("  RMC = Right Mouse Click");
-  insert("  RMH = Right Mouse Hold");
+  insert(_("  LMC = Left Mouse Click"));
+  insert(_("  RMC = Right Mouse Click"));
+  insert(_("  RMH = Right Mouse Hold"));
   insert("");
   insert("");
-  insert("Unit Related");
+  insert(_("Unit Related"));
   insert("");
-  insert("  LMC..............................Selects a unit");
+  insert(_("  LMC..............................Selects a unit"));
   insert(
-      "  LMH..............................Makes a bouding box for unit "
-      "selection");
-  insert("  RMC..............................De-selects all selected units");
+      _("  LMH..............................Makes a bounding box for unit selection"));
+  insert(_("  RMC..............................De-selects all selected units"));
   insert(
-      "  LMC + Ctrl.......................Directs (force/manual) fire of a "
-      "unit");
-  insert("  LMC + Shift, LMC + Ctrl..........Add unit to selection");
-  insert("  Ctrl + [0..9]....................Define a group of units");
-  insert("  [0..9]...........................Recall a group of units");
-  insert("  [0..9] (2 times).................Center view on a group of units");
+      _("  LMC + Ctrl.......................Directs (force/manual) fire of a unit"));
+  insert(_("  LMC + Shift, LMC + Ctrl..........Add unit to selection"));
+  insert(_("  Ctrl + [0..9]....................Define a group of units"));
+  insert(_("  [0..9]...........................Recall a group of units"));
+  insert(_("  [0..9] (2 times).................Center view on a group of units"));
   // insert("  'E'                              Select all units on screen");
 
   // insert("  LMC + 'T'............................Track the selected unit");
   // insert("  LMC + 'W'............................Set the selected objective's
   // way point");
-  insert("  RMH..............................Fast map scroll");
-  // insert("  X....................................Scatter units");
-  // insert("  S....................................Stop units");
-  // insert("  LMC + Ctrl + Alt.....................Escort unit");
+  insert(_("  RMH..............................Fast map scroll"));
+  // insert("  X....................................Scatter units"));
+  // insert("  S....................................Stop units"));
+  // insert("  LMC + Ctrl + Alt.....................Escort unit"));
   insert("");
   insert("");
-  insert("Game Related");
+  insert(_("Game Related"));
   insert("");
   insert(
-      "  LMC + 'A'........................Allies with the clicked unit's team");
-  insert("  ESC..............................In game menus");
+      _("  LMC + 'A'........................Allies with the clicked unit's team"));
+  insert(_("  ESC..............................In game menus"));
   insert("");
   insert("");
-  insert("Outpost Related");
+  insert(_("Outpost Related"));
   insert("");
-  insert("  'O'..............................Toggles outpost names");
-  insert("  LMC on captured outpost..........Displays the outpost view");
-  insert("  mouse drag on captured outpost...Select unit spawn point");
-  insert("");
-  insert("");
-  insert("Chat Related");
-  insert("");
-  insert("  Enter............................Send message to all");
-  insert("  'T'..............................Send message to allies");
-  insert("  'C'..............................Send count down message");
+  insert(_("  'O'..............................Toggles outpost names"));
+  insert(_("  LMC on captured outpost..........Displays the outpost view"));
+  insert(_("  mouse drag on captured outpost...Select unit spawn point"));
   insert("");
   insert("");
-  insert("View Related");
+  insert(_("Chat Related"));
   insert("");
-  insert("  F1...............................Help View");
-  insert("  'U'..............................Toggles Unit selection window");
-  insert("  'B'..............................Toggles Flag selection window");
-  insert("  'D'..............................Damage View");
-  insert("  'F'..............................Flag View");
-  insert("  'M'..............................Toggles Map View");
-  insert("  Shift + 'M'......................Toggles a Bigger Map View");
-  insert("  'N'..............................Name View");
-  insert("  TAB..............................Rank View");
-  insert("  RMH + mouse movement.............Moves any view on the screen");
-  insert("  RMH + [1 - 5]....................Sets the background drawing mode");
+  insert(_("  Enter............................Send message to all"));
+  insert(_("  'T'..............................Send message to allies"));
+  insert(_("  'C'..............................Send count down message"));
+  insert("");
+  insert("");
+  insert(_("View Related"));
+  insert("");
+  insert(_("  F1...............................Help View"));
+  insert(_("  'U'..............................Toggles Unit selection window"));
+  insert(_("  'B'..............................Toggles Flag selection window"));
+  insert(_("  'D'..............................Damage View"));
+  insert(_("  'F'..............................Flag View"));
+  insert(_("  'M'..............................Toggles Map View"));
+  insert(_("  Shift + 'M'......................Toggles a Bigger Map View"));
+  insert(_("  'N'..............................Name View"));
+  insert(_("  TAB..............................Rank View"));
+  insert(_("  RMH + mouse movement.............Moves any view on the screen"));
+  insert(_("  RMH + [1 - 5]....................Sets the background drawing mode"));
   insert(" ");
   insert(" ");
-  insert("Mini Map View Related");
+  insert(_("Mini Map View Related"));
   insert("");
   insert(
-      "  RMH + [1 - 7]....................Sets the blending level of the "
-      "minimap");
-  insert("  RMH + [+ or -]...................Scales the size of the minimap");
-  // insert("  RMH + 'O'                        Toggles outposts");
+      _("  RMH + [1 - 7].............Sets the blending level of the minimap"));
+  insert(_("  RMH + [+ or -]...................Scales the size of the minimap"));
+  // insert("  RMH + 'O'                        Toggles outposts"));
   insert(" ");
   insert(" ");
-  insert("System Related");
+  insert(_("System Related"));
   insert("");
-  insert("  ALT + Enter......................Toggles Fullscreen/Windowed mode");
-  insert("  F9...............................BMP screen shot");
+  insert(_("  ALT + Enter......................Toggles Fullscreen/Windowed mode"));
+  insert(_("  F9...............................BMP screen shot"));
   insert(" ");
   insert(" ");
-  insert("Scripting");
+  insert(_("Scripting"));
   insert(" ");
   insert("");
-  insert("Client Related");
+  insert(_("Client Related"));
   insert("");
-  insert("  /listcommands.....................List of available commands");
-  insert("  /countdown [timeout in seconds]...Generate a countdown");
-  insert("  /quit.............................Quit the game");
-  insert("  /help.............................Show Help window (same 'F1')");
+  insert(_("  /listcommands.....................List of available commands"));
+  insert(_("  /countdown [timeout in seconds]...Generate a countdown"));
+  insert(_("  /quit.............................Quit the game"));
+  insert(_("  /help.............................Show Help window (same 'F1')"));
   insert(
-      "  /say [your talk]..................Send message to all (same 'Enter'");
+      _("  /say [your talk]..................Send message to all (same 'Enter'"));
   insert(
-      "  /teamsay [your talk]..............Send message to allies (same Ctrl + "
-      "'A')");
+      _("  /teamsay [your talk]..............Send message to allies (same Ctrl + 'A')"));
   insert("");
-  insert("Server Related");
+  insert(_("Server Related"));
   insert("");
   insert(
-      "  /server listcommands..............List of Gameserver available "
-      "commands");
-  insert("  /server adminlogin [password].....Gameserver admin login");
-  insert("  /server unitspawnlist [list]......List/set spawn units (number)");
-  insert("  /server unitprofiles [list].......List/set spawn units (types)");
-  insert("  /server help......................Show Help window (same 'F1')");
-  insert("  /server map [map name]............Restart game with the given map");
+      _("  /server listcommands..............List of Gameserver available "
+      "commands"));
+  insert(_("  /server adminlogin [password].....Gameserver admin login"));
+  insert(_("  /server unitspawnlist [list]......List/set spawn units (number)"));
+  insert(_("  /server unitprofiles [list].......List/set spawn units (types)"));
+  insert(_("  /server help......................Show Help window (same 'F1')"));
+  insert(_("  /server map [map name]............Restart game with the given map"));
   insert(
-      "  /server autokick [timeout]........Show/set autokick for inactive "
-      "players");
-  insert("  /server flagtimer [timeout].......Show/set flag change timer");
-  insert("  /server countdown [timeout].......Generate a countdown (same 'c')");
-  insert("  /server say [your talk]...........Server say something in chat");
+      _("  /server autokick [timeout]........Show/set autokick for inactive players"));
+  insert(_("  /server flagtimer [timeout].......Show/set flag change timer"));
+  insert(_("  /server countdown [timeout].......Generate a countdown (same 'c')"));
+  insert(_("  /server say [your talk]...........Server say something in chat"));
   insert(
-      "  /server listplayers...............List players with the assigned "
-      "number");
-  insert("  /server listprofiles..............List available profiles");
-  insert("  /server kick [player number]......Kick a given player");
+      _("  /server listplayers...............List players with the assigned number"));
+  insert(_("  /server listprofiles..............List available profiles"));
+  insert(_("  /server kick [player number]......Kick a given player"));
   insert(
-      "  /server baselimit [max bases].....Show/set the max bases number per "
-      "player");
+      _("  /server baselimit [max bases].....Show/set the max bases number per player"));
   insert(
-      "  /server gamepass [password].......Show/set game connection password");
+      _("  /server gamepass [password].......Show/set game connection password"));
   insert(" ");
   insert(" ");
   // insert("  Alt + '-'                        Decrease brightness");
@@ -210,7 +204,7 @@ void HelpScrollView::doDraw(Surface &viewArea, Surface &clientArea) {
   drawHelpText(clientArea, 0, 0);
 
   clientArea.bltString(4, clientArea.getHeight() - Surface::getFontHeight(),
-                       "Note: Use the right mouse button to scroll quickly.",
+                       _("Note: Use the right mouse button to scroll quickly."),
                        windowTextColor);
   // char strBuf[256];
   // sprintf(strBuf, "%d", scrollBar->getValue());
