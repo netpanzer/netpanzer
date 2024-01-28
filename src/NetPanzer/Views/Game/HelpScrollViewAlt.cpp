@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Classes/WorldInputCmdProcessor.hpp"
 #include "GameView.hpp"
+#include "Localization.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "Views/Components/ScrollableText.hpp"
