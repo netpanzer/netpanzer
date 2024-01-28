@@ -226,7 +226,7 @@ exe = executable(
   ],
   link_with: lib_netpanzer.get_static_lib(),
   link_args: ldflags,
-  install : true, install_dir : get_option('bindir')
+  install : true
 )
 
 data_subdirs = [
