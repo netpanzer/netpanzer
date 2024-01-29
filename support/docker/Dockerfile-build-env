@@ -3,7 +3,7 @@ FROM ubuntu:$CODENAME
 # CODENAME needs to be declared again after importing the image above
 ARG CODENAME
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt update && apt install -y curl
+RUN apt update && apt install -y wget
 ARG TARGETARCH
 ARG ARCH
 ENV TOOLS_DIR=/tools
@@ -15,10 +15,13 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then \
     elif [ "$TARGETARCH" = "arm64" ]; then \
       ARCH="aarch64"; \
     fi && \
-    if [ "$ARCH" = "x86_64" ] && [ "$CODENAME" = "focal" ]; then \
+    if [ "$CODENAME" = "focal" ]; then \
         cd $TOOLS_DIR; \
-        curl -LO https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20231206-1/linuxdeploy-$ARCH.AppImage; \
+        wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20231206-1/linuxdeploy-$ARCH.AppImage; \
         chmod +x linuxdeploy-$ARCH.AppImage; \
+        if [ "$ARCH" = "aarch64" ]; then \
+          dd if=/dev/zero of=linuxdeploy-$ARCH.AppImage conv=notrunc bs=1 count=3 seek=8; \
+        fi && \
         ./linuxdeploy-$ARCH.AppImage --appimage-extract; \
         rm ./linuxdeploy-$ARCH.AppImage; \
         cd -; \
