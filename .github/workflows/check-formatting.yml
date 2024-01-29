@@ -17,7 +17,7 @@ jobs:
    runs-on: ubuntu-latest
    steps:
      - uses: actions/checkout@v4
-     - uses: RafikFarhad/clang-format-github-action@v3
+     - uses: RafikFarhad/clang-format-github-action@v4
        with:
          sources: "src/**/*.cpp,src/**/*.hpp,src/**/*.c,src/**/*.h"
          style: Google
