@@ -58,23 +58,26 @@ jobs:
 
   build-arm64:
     runs-on: ubuntu-22.04
-    container:
-      image: andy5995/netpanzer-build-env:focal
-      arch: arm64
     env:
       ARCH: aarch64
       WORKSPACE: ${{ github.workspace }}
     steps:
     - uses: actions/checkout@v4
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+      with:
+        platforms: 'arm64'
+
     - name: Set version
       run: |
+        export UID
+        echo $UID
         VERSION="$(echo ${GITHUB_SHA} | head -c 7)-$(date +%y%m%d%H%M)"
         echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
-    - name: Prepare AppImage
+    - name: Run in Docker
       run: |
-        export -p
-        support/appimage/make-appimage.sh
+        VERSION="$VERSION" support/appimage/prep-appimage.sh
 
     - name: Release AppImage
       if: ${{ github.ref == 'refs/heads/master' }}
@@ -91,7 +94,7 @@ jobs:
         omitBodyDuringUpdate: true
         omitNameDuringUpdate: true
         tag: appimage-weekly
-        removeArtifacts: true
+        removeArtifacts: false
 
     - if: ${{ github.ref != 'refs/heads/master' }}
       name: Upload Artifacts
