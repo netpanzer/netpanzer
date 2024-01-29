@@ -14,7 +14,7 @@ on:
     - '**/*appimage*'
 
 jobs:
-  build-appimage:
+  build-x86_64:
     runs-on: ubuntu-22.04
     container: andy5995/netpanzer-build-env:focal
     env:
@@ -53,10 +53,10 @@ jobs:
       name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: netpanzer_appimage
+        name: netpanzer_appimage_${{ env.ARCH }}
         path: ${{ github.workspace }}/support/NetPanz*.AppImage*
 
-  build-arm64:
+  build-aarch64:
     runs-on: ubuntu-22.04
     env:
       ARCH: aarch64
@@ -100,5 +100,5 @@ jobs:
       name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: netpanzer_appimage
+        name: netpanzer_appimage_${{ env.ARCH }}
         path: ${{ github.workspace }}/support/NetPanz*.AppImage*
