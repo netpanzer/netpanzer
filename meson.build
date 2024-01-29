@@ -226,27 +226,14 @@ exe = executable(
   ],
   link_with: lib_netpanzer.get_static_lib(),
   link_args: ldflags,
-  install : true, install_dir : get_option('bindir')
+  install : true
 )
 
-data_subdirs = [
-  'cache',
-  'fonts',
-  'maps',
-  'pics',
-  'powerups',
-  'scripts',
-  'sound',
-  'units',
-  'wads'
-  ]
-
-foreach dir : data_subdirs
-  install_subdir(
-    join_paths('data',dir),
-    install_dir : get_option('datadir')
+install_subdir(
+  'data',
+  install_dir : join_paths(get_option('datadir'), meson.project_name()),
+  strip_directory : true
   )
-endforeach
 
 if not platform_is_windows
   subdir('tests')

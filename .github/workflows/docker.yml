@@ -1,6 +1,10 @@
 name: Build and Push Docker server image
 
 on:
+  push:
+    branches: master
+    paths:
+    - '**Dockerfile'
   workflow_dispatch:
     inputs:
       tag:

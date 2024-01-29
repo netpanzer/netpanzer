@@ -62,33 +62,33 @@ The scripts take the same options as `meson setup`, which you can view by:
 
     meson help setup
 
-To install netpanzer, use `meson configure -Ddatadir=<data-dest-dir>
--Dbindir=<bin-dest-dir>`, where destdir could be similar to the following:
+## Installing
 
-    /usr/share/netpanzer
-    $HOME/.local/share/netpanzer
+Common options to use before installing netpanzer:
 
-and bin dir could be one of these:
+    -Dprefix=/usr
 
-    /usr/bin
-    $HOME/.local/bin
+This will install the data to '/usr/share/netpanzer' and the binary to '/usr/bin'.
 
-Then use
+To package or test installation, use the 'destdir' option', e.g.:
 
-    ninja install
+    meson install --destdir=/tmp/pkg --skip-subprojects
 
-For packaging, or to test installation, use `DESTDIR`, e.g.:
-
-    DESTDIR=/tmp/pkg ninja install
+Note: If 'destdir' is omitted, the files will be installed to '<prefix>'.
 
 As you gain more understanding of the build system, you might want to see
 various build-time configuration options. in the build directory, try:
 
     meson configure
 
-### Release
+## Release
 
-Add `-Dbuildtype=release` to the setup options.
+Common options to give to 'configure' before creating a release or before
+installing:
+
+    -Dbuildtype=release
+    -Db_sanitize=none
+    -Db_prefix=/usr (on Windows this will be different)
 
 ## Tests
 

@@ -41,9 +41,7 @@ $SETUP_CMD \
   -Dbuildtype=release \
   -Dstrip=true \
   -Db_sanitize=none \
-  -Dprefix=/usr \
-  -Ddatadir=/usr/data \
-  -Dlocaledir=/usr/locale
+  -Dprefix=/usr
 
 cd $BUILD_DIR
 
