@@ -5,6 +5,7 @@ on:
     branches: master
     paths:
     - '**Dockerfile'
+    - '**docker.yml'
   workflow_dispatch:
     inputs:
       tag:
@@ -19,6 +20,8 @@ jobs:
   docker:
     name: NP_server
     runs-on: ubuntu-latest
+    env:
+      TAG: latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,6 +39,8 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - if ( ${{ github.event.inputs.tag }} != '' }} )
+        run: echo "TAG=${{ github.event.inputs.tag }}" >> $GITHUB_ENV
 
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -45,4 +50,4 @@ jobs:
           file: ./support/docker/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ secrets.UNCLE_ANDY_DOCKERHUB_USERNAME }}/netpanzer:${{ github.event.inputs.tag }}
+          tags: ${{ secrets.UNCLE_ANDY_DOCKERHUB_USERNAME }}/netpanzer:${{ env.TAG }}
