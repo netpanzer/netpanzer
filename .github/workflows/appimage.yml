@@ -58,7 +58,9 @@ jobs:
 
   build-arm64:
     runs-on: ubuntu-22.04
-    container: 'arm64/andy5995/netpanzer-build-env:focal'
+    container:
+      image: 'andy5995/netpanzer-build-env:focal'
+      platform: linux/arm64
     env:
       ARCH: aarch64
       WORKSPACE: ${{ github.workspace }}
