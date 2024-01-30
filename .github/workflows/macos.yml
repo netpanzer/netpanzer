@@ -8,6 +8,7 @@ on:
     branches: master
     paths:
     - 'src/**/**'
+    - 'support/**/*.cpp'
     - '**meson.build'
     - 'setup-build.*'
     - 'subprojects/*.wrap'

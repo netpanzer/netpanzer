@@ -15,13 +15,10 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then \
     elif [ "$TARGETARCH" = "arm64" ]; then \
       ARCH="aarch64"; \
     fi && \
-    if [ "$CODENAME" = "focal" ]; then \
+    if [ "$ARCH" = "x86_64" ] && [ "$CODENAME" = "focal" ]; then \
         cd $TOOLS_DIR; \
         wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20231206-1/linuxdeploy-$ARCH.AppImage; \
         chmod +x linuxdeploy-$ARCH.AppImage && \
-        if [ "$ARCH" = "aarch64" ]; then \
-          dd if=/dev/zero of=linuxdeploy-$ARCH.AppImage conv=notrunc bs=1 count=3 seek=8; \
-        fi && \
         ./linuxdeploy-$ARCH.AppImage --appimage-extract; \
         rm ./linuxdeploy-$ARCH.AppImage; \
         cd -; \
@@ -41,8 +38,17 @@ RUN apt upgrade -y && apt install -y \
           python3 -m pip install meson ninja; \
         else \
           apt install -y meson ninja-build; \
-        fi && \
-        rm -rf /var/lib/apt/lists
+        fi
+        # rm -rf /var/lib/apt/lists && \
+
+RUN apt install -y \
+          cmake \
+          libjpeg-dev \
+          libpng-dev && \
+        git clone https://github.com/linuxdeploy/linuxdeploy --recurse-submodules && \
+        cd linuxdeploy && \
+        cmake -G Ninja . -DCMAKE_C_FLAGS=-I$PWD/src/core/copyright -DSTATIC_BUILD=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=RelWithDebInfo && \
+        ninja install
 
 RUN useradd -m npbuilder && passwd -d npbuilder
 

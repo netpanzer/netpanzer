@@ -1,5 +1,6 @@
 /*
 Copyright (C) 2012 by Aaron Perez <aaronps@gmail.com>
+Copyright (C) 2024 The NetPanzer Team (https://github.com/netpanzer/)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
