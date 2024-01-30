@@ -30,7 +30,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <sstream>
 #include <iomanip>
 
-using namespace std;
 /*******************************************************************/
 // BEGIN hacks to avoid compiling everything just for this converter
 
@@ -98,18 +97,18 @@ int main ( int argc, char** argv )
         return 1;
     }
 
-    string filename = argv[1];
+    std::string filename = argv[1];
 
-    string::size_type last_slash = filename.find_last_of('/');
+    std::string::size_type last_slash = filename.find_last_of('/');
 
-    string filename_noext = filename.substr(last_slash != string::npos ? last_slash : 0);
+    std::string filename_noext = filename.substr(last_slash != std::string::npos ? last_slash : 0);
     filename_noext = filename_noext.substr(0,filename_noext.size()-4);
-    string palettefile = "netp";
+    std::string palettefile = "netp";
     if ( argc >= 4 )
     {
         palettefile = argv[3];
     }
-    string outdir = argv[2];
+    std::string outdir = argv[2];
 
 
     printf("out dir is '%s'\n", outdir.c_str());

@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <cstdlib>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "Util/FileSystem.hpp"
 #include "2D/PackedSurface.hpp"
@@ -30,7 +30,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <sstream>
 #include <iomanip>
 
-using namespace std;
 /*******************************************************************/
 // BEGIN hacks to avoid compiling everything just for this converter
 
@@ -95,9 +94,9 @@ int main ( int argc, char** argv )
         return 1;
     }
 
-    string filename = argv[1];
-    string filename_noext = filename.substr(0,filename.size()-4);
-    string outfile = argv[2];
+    std::string filename = argv[1];
+    std::string filename_noext = filename.substr(0,filename.size()-4);
+    std::string outfile = argv[2];
 
     if ( ! PHYSFS_init(argv[0]) )
     {
