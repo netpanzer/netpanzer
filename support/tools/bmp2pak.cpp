@@ -83,7 +83,7 @@ int ScriptHelper::set_byte(lua_State *L, void *v)
 // END hacks
 /*******************************************************************/
 
-int main ( int argc, char** argv )
+int main(int argc, char *argv[])
 {
     printf("bmp2pak for NetPanzer V 1.0\n");
     if (argc < 3 )
