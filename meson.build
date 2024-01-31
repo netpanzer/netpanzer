@@ -214,6 +214,7 @@ inc_dirs = [include_directories('.')]
 
 subdir('src')
 bin_deps += deps
+subdir('support/tools')
 exe = executable(
   'netpanzer',
   'src/NetPanzer/Core/main.cpp',

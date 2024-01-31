@@ -1,5 +1,6 @@
 /*
 Copyright (C) 2012 by Aaron Perez <aaronps@gmail.com>
+Copyright (C) 2024 The NetPanzer Team (https://github.com/netpanzer/)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <cstdlib>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "Util/FileSystem.hpp"
 #include "2D/PackedSurface.hpp"
@@ -29,7 +30,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <sstream>
 #include <iomanip>
 
-using namespace std;
 /*******************************************************************/
 // BEGIN hacks to avoid compiling everything just for this converter
 
@@ -83,7 +83,7 @@ int ScriptHelper::set_byte(lua_State *L, void *v)
 // END hacks
 /*******************************************************************/
 
-int main ( int argc, char** argv )
+int main(int argc, char *argv[])
 {
     printf("bmp2pak for NetPanzer V 1.0\n");
     if (argc < 3 )
@@ -94,9 +94,9 @@ int main ( int argc, char** argv )
         return 1;
     }
 
-    string filename = argv[1];
-    string filename_noext = filename.substr(0,filename.size()-4);
-    string outfile = argv[2];
+    std::string filename = argv[1];
+    std::string filename_noext = filename.substr(0,filename.size()-4);
+    std::string outfile = argv[2];
 
     if ( ! PHYSFS_init(argv[0]) )
     {

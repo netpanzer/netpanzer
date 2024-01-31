@@ -1,5 +1,6 @@
 /*
 Copyright (C) 2012 by Aaron Perez <aaronps@gmail.com>
+Copyright (C) 2024 The NetPanzer Team (https://github.com/netpanzer/)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <cstdlib>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "Util/FileSystem.hpp"
 #include "2D/PackedSurface.hpp"
@@ -29,7 +30,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <sstream>
 #include <iomanip>
 
-using namespace std;
 /*******************************************************************/
 // BEGIN hacks to avoid compiling everything just for this converter
 
@@ -83,7 +83,7 @@ int ScriptHelper::set_byte(lua_State *L, void *v)
 // END hacks
 /*******************************************************************/
 
-int main ( int argc, char** argv )
+int main(int argc, char *argv[])
 {
     printf("pak2bmp for NetPanzer V 1.1\n");
     if (argc < 3 )
@@ -97,18 +97,18 @@ int main ( int argc, char** argv )
         return 1;
     }
 
-    string filename = argv[1];
+    std::string filename = argv[1];
 
-    string::size_type last_slash = filename.find_last_of('/');
+    std::string::size_type last_slash = filename.find_last_of('/');
 
-    string filename_noext = filename.substr(last_slash != string::npos ? last_slash : 0);
+    std::string filename_noext = filename.substr(last_slash != std::string::npos ? last_slash : 0);
     filename_noext = filename_noext.substr(0,filename_noext.size()-4);
-    string palettefile = "netp";
+    std::string palettefile = "netp";
     if ( argc >= 4 )
     {
         palettefile = argv[3];
     }
-    string outdir = argv[2];
+    std::string outdir = argv[2];
 
 
     printf("out dir is '%s'\n", outdir.c_str());
@@ -162,7 +162,7 @@ int main ( int argc, char** argv )
     }
 
     Palette::loadACT(palettefile);
-    SDL_SetColors(surf, Palette::color, 0, 256);
+    SDL_SetPaletteColors(surf->format->palette, Palette::color, 0, 256);
 
     printf("There are %d frames\n", pak.getFrameCount());
 
