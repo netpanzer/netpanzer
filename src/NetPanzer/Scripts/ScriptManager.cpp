@@ -32,7 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/FileSystem.hpp"
 #include "Util/Log.hpp"
 
-lua_State* ScriptManager::luavm = 0;
+lua_State* ScriptManager::luavm = NULL;
 
 int npmodule_load(lua_State* L);
 

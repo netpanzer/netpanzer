@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/Particle2D.hpp"
 #include "Particles/ParticleSystem2D.hpp"
 #include "Particles/RadarPingParticle2D.hpp"
+#include "Scripts/ScriptManager.hpp"
 #include "System/Sound.hpp"
 #include "Util/Exception.hpp"
 #include "Views/Components/Desktop.hpp"
@@ -245,7 +246,10 @@ void MenuTemplateView::doDrawM(Surface &viewArea,
     }
     //        clientArea.BltRoundRect(MenuRect, 10,
     //        Palette::gray256.getColorArray());
-    clientArea.FillRoundRect(MenuRectStart, 3, Color::white);
+    
+    // TODO: check config loaded OK
+    bool okidoki = ScriptManager::loadSimpleConfig("scripts/mainmenu.lua");
+    clientArea.FillRoundRect(MenuRectStart, 3, *(color_map.at(ScriptManager::getStringField("menu_bar_color", "white"))));
     clientArea.RoundRect(MenuRectStart, 3, Color::gray);
 
     // I don't like them so I delete them!
