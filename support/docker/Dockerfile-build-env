@@ -14,36 +14,57 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then \
       ARCH="x86_64"; \
     elif [ "$TARGETARCH" = "arm64" ]; then \
       ARCH="aarch64"; \
-    fi && \
-    if [ "$CODENAME" = "focal" ]; then \
-        cd $TOOLS_DIR; \
-        APPIMAGE_NAME=appimagetool-$ARCH.AppImage; \
-        wget -q https://github.com/AppImage/AppImageKit/releases/download/13/$APPIMAGE_NAME; \
-        chmod +x $APPIMAGE_NAME && \
-        if [ "$ARCH" = "aarch64" ]; then \
-          dd if=/dev/zero of=$APPIMAGE_NAME conv=notrunc bs=1 count=3 seek=8; \
-        fi && \
-        ./$APPIMAGE_NAME --appimage-extract && \
-        rm ./$APPIMAGE_NAME && \
-        cd -; \
     fi
 
 RUN apt upgrade -y && apt install -y \
         build-essential \
         gettext \
         git \
+        libcairo-dev \
         liblua5.1-dev \
         libphysfs-dev \
         libsdl2-dev \
         libsdl2-mixer-dev \
-        libsdl2-ttf-dev && \
+        libsdl2-ttf-dev \
+        xxd && \
         if [ "$CODENAME" = "focal" ]; then \
           apt install -y python3-pip; \
           python3 -m pip install meson ninja; \
         else \
           apt install -y meson ninja-build; \
-        fi && \
-        rm -rf /var/lib/apt/lists
+        fi
+
+RUN if [ $CODENAME="focal" ]; then \
+    apt install -y \
+      cmake \
+      desktop-file-utils \
+      fuse \
+      libgcrypt-dev \
+      libglib2.0-dev \
+      libgpgme-dev \
+      libfuse-dev \
+      libcairo-dev \
+      libfuse2 \
+      libssl-dev && \
+    git clone --depth 1 --branch 13 https://github.com/AppImage/AppImageKit --recurse-submodules && \
+      cd AppImageKit && mkdir build && cd build && \
+      cmake .. && make -j$(nproc) && make install && cd ../.. && \
+      rm -rf AppImageKit && \
+    apt remove -y \
+      cmake \
+      libglib2.0-dev \
+      libgpgme-dev \
+      libfuse-dev \
+      libssl-dev \
+      libgcrypt-dev && \
+    apt autoremove -y && \
+    apt install -y \
+      libglib2.0-0 \
+      libgpgme11 \
+      libfuse2 \
+      libssl1.1 \
+      libgcrypt20; \
+  fi
 
 RUN useradd -m npbuilder && passwd -d npbuilder
 
