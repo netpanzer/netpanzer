@@ -4,17 +4,6 @@ FROM ubuntu:$CODENAME
 ARG CODENAME
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt install -y wget
-ARG TARGETARCH
-ARG ARCH
-ENV TOOLS_DIR=/tools
-RUN mkdir -p $TOOLS_DIR
-# if ARCH is assigned in one RUN block, the value is lost
-# if used in a separate one.
-RUN if [ "$TARGETARCH" = "amd64" ]; then \
-      ARCH="x86_64"; \
-    elif [ "$TARGETARCH" = "arm64" ]; then \
-      ARCH="aarch64"; \
-    fi
 
 RUN apt upgrade -y && apt install -y \
         build-essential \
@@ -33,7 +22,7 @@ RUN apt upgrade -y && apt install -y \
           apt install -y meson ninja-build; \
         fi
 
-RUN if [ "$CODENAME"="focal" ]; then \
+RUN if [ "$CODENAME" = "focal" ]; then \
       apt install -y \
         cmake \
         desktop-file-utils \
