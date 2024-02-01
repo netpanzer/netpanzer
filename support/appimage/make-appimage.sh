@@ -15,7 +15,6 @@ if [ -z "$VERSION" ]; then
   echo "VERSION is set from prep-appimage.sh or the GitHub workflow."
   exit 1
 fi
-
 export LINUXDEPLOY_OUTPUT_VERSION=$VERSION
 
 OUTPUT_DIR="$WORKSPACE/support"
@@ -52,15 +51,10 @@ ninja
 meson install --destdir $APPDIR --skip-subprojects
 
 cd "$OUTPUT_DIR"
-#if [ ! -e "linuxdeploy-${ARCH}.AppImage" ]; then
-  #curl -LO https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20231206-1/linuxdeploy-${ARCH}.AppImage
-  #chmod +x linuxdeploy-${ARCH}.AppImage
-  #./linuxdeploy-${ARCH}.AppImage --appimage-extract
-#fi
 
 # This should set the name of the output appimage but it doesn't
 export NAME="netpanzer"
-"$TOOLS_DIR/squashfs-root/AppRun"  \
+linuxdeploy  \
   -d "$WORKSPACE/support/win32/netpanzer.desktop" \
   --custom-apprun=$WORKSPACE/support/appimage/AppRun \
   --icon-file="$WORKSPACE/netpanzer.png" \
