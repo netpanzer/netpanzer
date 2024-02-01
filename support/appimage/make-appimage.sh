@@ -17,14 +17,6 @@ if [ -z "$VERSION" ]; then
 fi
 export LINUXDEPLOY_OUTPUT_VERSION=$VERSION
 
-PATH_TO_LINUXDEPLOY_APPRUN=$TOOLS_DIR/squashfs-root/AppRun
-# For some odd reason, the extracted Linux Deploy files are not in /tools in the
-# arm64 image pushed from GitHub. Maybe some day it will be...
-if [ ! -e $PATH_TO_LINUXDEPLOY_APPRUN ]; then
-  echo "Linux Deploy AppRun not found"
-  exit 1
-fi
-
 OUTPUT_DIR="$WORKSPACE/support"
 test -d "$OUTPUT_DIR"
 APPDIR="$OUTPUT_DIR/AppDir"
@@ -62,7 +54,7 @@ cd "$OUTPUT_DIR"
 
 # This should set the name of the output appimage but it doesn't
 export NAME="netpanzer"
-"$PATH_TO_LINUXDEPLOY_APPRUN"  \
+linuxdeploy  \
   -d "$WORKSPACE/support/win32/netpanzer.desktop" \
   --custom-apprun=$WORKSPACE/support/appimage/AppRun \
   --icon-file="$WORKSPACE/netpanzer.png" \

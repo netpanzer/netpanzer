@@ -55,13 +55,4 @@ docker run -t --rm \
   -v $PWD:$WORKSPACE \
   andy5995/netpanzer-build-env:focal \
     /bin/bash -c 'usermod -u $HOSTUID npbuilder && \
-      if [ ! -e $TOOLS_DIR/squashfs-root/AppRun ]; then
-        cd $TOOLS_DIR && \
-        wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20231206-1/linuxdeploy-$ARCH.AppImage && \
-        chmod +x linuxdeploy-$ARCH.AppImage && \
-        # dd if=/dev/zero of=linuxdeploy-$ARCH.AppImage conv=notrunc bs=1 count=3 seek=8; \
-        sed -i "s|AI\x02|\x00\x00\x00|" linuxdeploy-$ARCH.AppImage; \
-        ./linuxdeploy-$ARCH.AppImage --appimage-extract; \
-        cd -; \
-      fi && \
       su npbuilder --command $WORKSPACE/support/appimage/make-appimage.sh'
