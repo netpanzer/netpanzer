@@ -17,13 +17,14 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then \
     fi && \
     if [ "$CODENAME" = "focal" ]; then \
         cd $TOOLS_DIR; \
-        wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20231206-1/linuxdeploy-$ARCH.AppImage; \
-        chmod +x linuxdeploy-$ARCH.AppImage && \
+        APPIMAGE_NAME=appimagetool-$ARCH.AppImage; \
+        wget -q https://github.com/AppImage/AppImageKit/releases/download/13/$APPIMAGE_NAME; \
+        chmod +x $APPIMAGE_NAME && \
         if [ "$ARCH" = "aarch64" ]; then \
-          dd if=/dev/zero of=linuxdeploy-$ARCH.AppImage conv=notrunc bs=1 count=3 seek=8; \
+          dd if=/dev/zero of=$APPIMAGE_NAME conv=notrunc bs=1 count=3 seek=8; \
         fi && \
-        ./linuxdeploy-$ARCH.AppImage --appimage-extract; \
-        rm ./linuxdeploy-$ARCH.AppImage; \
+        ./$APPIMAGE_NAME --appimage-extract && \
+        rm ./$APPIMAGE_NAME && \
         cd -; \
     fi
 
