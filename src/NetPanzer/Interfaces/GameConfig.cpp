@@ -476,17 +476,8 @@ GameConfig::GameConfig(const std::string& luaconfigfile, bool usePhysFS)
 GameConfig::~GameConfig() = default;
 
 void GameConfig::loadConfig() {
-  ScriptManager::loadConfigFile(luaconfigfile, "config");
 
-  // these lines might be usefull infuture? 2012-01-18
-  //    if(usePhysFS)
-  //    {
-  //        IFileStream in(configfile);
-  //        inifile.load(in);
-  //    } else {
-  //        std::ifstream in(configfile.c_str());
-  //        inifile.load(in);
-  //    }
+  ScriptManager::loadConfigFile(luaconfigfile, "config", this->usePhysFS);
 
   if (player_name->length() == 0) {
     std::stringstream default_player;

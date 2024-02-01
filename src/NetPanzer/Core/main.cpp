@@ -203,7 +203,7 @@ BaseGameManager* initialise(int argc, char** argv) {
   commandline.add(&master_server_option);
   option<std::string, true, false> game_config_option(
       0, "game_config",
-      "Which config file should be used (example '/config/[name].cfg')", "");
+      "Path to alternate config file", "");
   commandline.add(&game_config_option);
   option<bool, false, false> protocol_option(
       '\0', "protocol", "Show version of network protocol", false);
