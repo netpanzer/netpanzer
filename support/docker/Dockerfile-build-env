@@ -1,57 +1,16 @@
-ARG CODENAME
-FROM ubuntu:$CODENAME
-# CODENAME needs to be declared again after importing the image above
-ARG CODENAME
+FROM ubuntu:jammy
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt update && apt install -y wget
-
-RUN apt upgrade -y && apt install -y \
+RUN apt update && apt upgrade -y && apt install -y \
         build-essential \
         gettext \
         git \
-        libcairo-dev \
         liblua5.1-dev \
         libphysfs-dev \
         libsdl2-dev \
         libsdl2-mixer-dev \
-        libsdl2-ttf-dev && \
-        if [ "$CODENAME" = "focal" ]; then \
-          apt install -y python3-pip; \
-          python3 -m pip install meson ninja; \
-        else \
-          apt install -y meson ninja-build; \
-        fi
-
-RUN if [ "$CODENAME" = "focal" ]; then \
-      apt install -y \
-        cmake \
-        desktop-file-utils \
-        fuse \
-        libgcrypt-dev \
-        libglib2.0-dev \
-        libpng-dev \
-        libjpeg-dev \
-        libgpgme-dev \
-        libfuse-dev \
-        libcairo-dev \
-        libfuse2 \
-        libssl-dev \
-        patchelf \
-        xxd && \
-      git clone --depth 1 --branch 1-alpha-20240109-1 https://github.com/linuxdeploy/linuxdeploy --recurse-submodules && \
-        cd linuxdeploy && cp src/core/copyright/copyright.h src/core && \
-        cmake . -G Ninja && ninja && ninja install && cd .. && \
-        rm -rf linuxdeploy && \
-      git clone --depth 1 --branch 1-alpha-20230713-1 https://github.com/linuxdeploy/linuxdeploy-plugin-appimage --recurse-submodules && \
-        cd linuxdeploy-plugin-appimage && \
-        cmake . -G Ninja && ninja && ninja install && cd .. && \
-        rm -rf linuxdeploy-plugin-appimage && \
-      git clone --depth 1 --branch 13 https://github.com/AppImage/AppImageKit --recurse-submodules && \
-        cd AppImageKit && \
-        cmake . && make -j $(nproc) && make install && cd .. && \
-        rm -rf AppImageKit && \
-      apt remove -y cmake; \
-    fi
+        libsdl2-ttf-dev \
+        meson \
+        ninja-build
 
 RUN useradd -m npbuilder && passwd -d npbuilder
 

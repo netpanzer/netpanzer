@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        tag: [jammy, focal]
+        tag: [jammy]
     runs-on: ubuntu-latest
     steps:
       -
@@ -41,7 +41,6 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v5
         with:
-          build-args: CODENAME=${{ matrix.tag }}
           context: ./support/docker
           file: ./support/docker/Dockerfile-build-env
           platforms: linux/amd64,linux/arm64
