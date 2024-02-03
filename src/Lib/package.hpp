@@ -32,7 +32,7 @@ class Package {
   static const std::string getFullyQualifiedName(void);
 
   static const std::filesystem::path getDataDir(void) { return dataDir; }
-  static const std::string getLocaleDir(void) { return localeDir; }
+  static const std::filesystem::path getLocaleDir(void) { return localeDir; }
   static void assignDataDir(void);
   static void assignLocaleDir(void);
   static void setDataDir(std::filesystem::path &absPath) { dataDir = absPath; }
