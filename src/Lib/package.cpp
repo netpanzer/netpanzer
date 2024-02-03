@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "package.hpp"
 #include "Util/Log.hpp"
 
+#include <filesystem>
 #include <fstream>
 #include <vector>
 
@@ -51,7 +52,7 @@ void Package::assignLocaleDir(void) {
 }
 
 void Package::assignDataDir(void) {
-  std::vector<std::string> possible{NP_DATADIR};
+  std::vector<std::filesystem::path> possible{NP_DATADIR};
 
   char *npDataEnv = getenv("NETPANZER_DATADIR");
   if (npDataEnv != NULL) possible.insert(possible.begin(), npDataEnv);
@@ -59,7 +60,9 @@ void Package::assignDataDir(void) {
 
   int i = 0;
   while (i < length) {
-    std::ifstream file(possible[i] + "/maps");
+    std::filesystem::path tmp_path = possible[i];
+    tmp_path /= "maps";
+    std::ifstream file(tmp_path);
     if (file.good()) {
       setDataDir(possible[i]);
       return;

@@ -35,7 +35,7 @@ class Package {
   static const std::string getLocaleDir(void) { return localeDir; }
   static void assignDataDir(void);
   static void assignLocaleDir(void);
-  static void setDataDir(std::string &absPath) { dataDir = absPath; }
+  static void setDataDir(std::filesystem::path &absPath) { dataDir = absPath; }
   static void setLocaleDir(std::string absPath) { localeDir = absPath; }
 
  private:
