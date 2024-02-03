@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "package.hpp"
 #include "Util/Log.hpp"
 
-#include <filesystem>
 #include <fstream>
 #include <vector>
 
@@ -39,7 +38,9 @@ const std::string Package::getFullyQualifiedName(void) {
 void Package::assignLocaleDir(void) {
   char *npLocEnv = getenv("NETPANZER_LOCALEDIR");
   if (npLocEnv != NULL) {
-    std::ifstream file(std::string(npLocEnv) + "/de");
+    std::filesystem::path tmp_path = std::string(npLocEnv);
+    tmp_path /= "de";
+    std::ifstream file(tmp_path);
     if (file.good()) setLocaleDir(npLocEnv);
     else LOGGER.debug("localeDir: %s\n", Package::getLocaleDir().c_str());
     //else LOGGER.warn("fprintf
@@ -76,6 +77,7 @@ void Package::assignDataDir(void) {
 
 #else
 
+#include <filesystem>
 #include <string.h>
 
 #include "test.hpp"
@@ -106,7 +108,7 @@ void test_datadir(void) {
     tmp);
   char expect_data[strlen(tmp) + sizeof "/data"];
   snprintf(expect_data, sizeof expect_data, "%s/data", tmp);
-  assert(Package::getDataDir() == expect_data);
+  assert(Package::getDataDir() == std::filesystem::path(expect_data));
 
   return;
 }
