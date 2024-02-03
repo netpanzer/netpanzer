@@ -132,14 +132,15 @@ void WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos) {
       //  as you're holding down the right mouse button
       //  and the UP message doesn't come through
       right_mouse_scroll = false;
-    } else if (mouse_pos.x != right_mouse_scroll_pos.x ||
-               mouse_pos.y != right_mouse_scroll_pos.y) {
-      // we're holding down the right mouse button, and mouse has moved
-      int x_move = mouse_pos.x - right_mouse_scroll_pos.x;
-      int y_move = mouse_pos.y - right_mouse_scroll_pos.y;
+    } else {
+      if (mouse_pos.x != right_mouse_scroll_pos.x || mouse_pos.y != right_mouse_scroll_pos.y) {
+        // we're holding down the right mouse button, and mouse has moved
+        int x_move = mouse_pos.x - right_mouse_scroll_pos.x;
+        int y_move = mouse_pos.y - right_mouse_scroll_pos.y;
 
-      WorldViewInterface::scroll_right(x_move * 4);
-      WorldViewInterface::scroll_down(y_move * 4);
+        WorldViewInterface::scroll_right(x_move * 4);
+        WorldViewInterface::scroll_down(y_move * 4);
+      }
 
       SDL_WarpMouseInWindow(Screen->getWindow(), right_mouse_scroll_pos.x,
                             right_mouse_scroll_pos.y);
