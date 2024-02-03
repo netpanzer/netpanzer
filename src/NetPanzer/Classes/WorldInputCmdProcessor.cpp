@@ -137,14 +137,15 @@ void WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos) {
       // we're holding down the right mouse button, and mouse has moved
       int x_move = mouse_pos.x - right_mouse_scroll_pos.x;
       int y_move = mouse_pos.y - right_mouse_scroll_pos.y;
-      // TODO does not work with new renderer - need to figure out how to make old behavior work. Causes mouse to run to top left when enabled.
-//      SDL_WarpMouseInWindow(Screen->getWindow(), right_mouse_scroll_pos.x,
-//                            right_mouse_scroll_pos.y);
 
-      WorldViewInterface::scroll_right(x_move);
-      WorldViewInterface::scroll_down(y_move);
-      right_mouse_scrolled_pos.x += x_move;
-      right_mouse_scrolled_pos.y += y_move;
+      WorldViewInterface::scroll_right(x_move * 4);
+      WorldViewInterface::scroll_down(y_move * 4);
+
+      SDL_WarpMouseInWindow(Screen->getWindow(), right_mouse_scroll_pos.x,
+                            right_mouse_scroll_pos.y);
+
+      right_mouse_scrolled_pos.x = mouse_pos.x;
+      right_mouse_scrolled_pos.y = mouse_pos.y;
       right_mouse_scroll_moved = true;
     }
     return;
