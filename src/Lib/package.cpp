@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <fstream>
 #include <vector>
-#include <iostream>
 
 const std::string Package::getVersion(void) {
   return std::string(PACKAGE_VERSION);
