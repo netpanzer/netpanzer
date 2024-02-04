@@ -106,7 +106,7 @@ if not sdl2_dep.found()
 endif
 deps += sdl2_dep
 
-bin_deps = []
+sdl2main_dep = []
 if platform_is_windows
   sdl2main_dep = dependency('SDL2_main', required: false)
   if not sdl2main_dep.found()
@@ -120,7 +120,6 @@ if platform_is_windows
         default_options: ['default_library=static'])
     endif
   endif
-  bin_deps += sdl2main_dep
 endif
 
 # Don't add to deps, only link with the binary and the test programs
@@ -213,17 +212,13 @@ endif
 inc_dirs = [include_directories('.')]
 
 subdir('src')
-bin_deps += deps
+
 subdir('support/tools')
 exe = executable(
   'netpanzer',
   'src/NetPanzer/Core/main.cpp',
   win_subsystem: 'windows',
-  include_directories : [
-    inc_dirs
-  ],
-  dependencies: bin_deps,
-  link_with: lib_netpanzer.get_static_lib(),
+  dependencies: netpanzer_dep_static,
   link_args: ldflags,
   install : true
 )
