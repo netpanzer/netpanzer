@@ -108,7 +108,7 @@ void test_datadir(void) {
     tmp);
   char expect_data[strlen(tmp) + sizeof "/data"];
   snprintf(expect_data, sizeof expect_data, "%s/data", tmp);
-  assert(strcmp(Package::getDataDir().c_str(), expect_data) == 0);
+  assert(strcmp(Package::getDataDir().string().c_str(), expect_data) == 0);
 
   return;
 }
