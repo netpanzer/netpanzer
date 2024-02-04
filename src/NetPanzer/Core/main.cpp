@@ -246,9 +246,11 @@ BaseGameManager* initialise(int argc, char** argv) {
 
   Package::assignDataDir();
   const std::string dataDir = Package::getDataDir();
-  LOGGER.info("dataDir: %s\n", dataDir);
-  if (dataDir != "") {
+  if (!dataDir.empty()) {
+    LOGGER.info("Setting Data Directory: %s", dataDir);
     filesystem::addToSearchPath(dataDir.c_str());
+  } else {
+    LOGGER.warning("Data directory not specified! Game will only work if binary is in source root.");
   }
 
 #ifdef __APPLE__
