@@ -246,12 +246,9 @@ BaseGameManager* initialise(int argc, char** argv) {
 
   Package::assignDataDir();
   const std::string dataDir = Package::getDataDir();
+  LOGGER.info("dataDir: %s\n", dataDir);
   if (dataDir != "") {
-      try {
-        filesystem::addToSearchPath(dataDir.c_str());
-      } catch (...) {
-      }
-      LOGGER.warning("dataDir: %s\n", Package::getDataDir().c_str());
+    filesystem::addToSearchPath(dataDir.c_str());
   }
 
 #ifdef __APPLE__
