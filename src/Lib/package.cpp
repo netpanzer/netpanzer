@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <fstream>
 #include <vector>
+#include <iostream>
 
 const std::string Package::getVersion(void) {
   return std::string(PACKAGE_VERSION);
@@ -63,8 +64,7 @@ void Package::assignDataDir(void) {
   while (i < length) {
     std::filesystem::path tmp_path = possible[i];
     tmp_path /= "maps";
-    std::ifstream file(tmp_path);
-    if (file.good()) {
+    if (std::filesystem::is_directory(tmp_path)) {
       setDataDir(possible[i]);
       return;
     }
