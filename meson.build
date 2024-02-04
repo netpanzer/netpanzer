@@ -19,7 +19,7 @@ extra_flags = [
 #  '-fstack-protector-strong',
 #  '-Wformat-security',
 #  '-Wformat-overflow=2',
-  '-Wshadow',
+#  '-Wshadow',
 #  '-Wstrict-overflow=5'
 # '-Wconversion'
   ]
