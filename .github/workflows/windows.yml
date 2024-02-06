@@ -56,16 +56,7 @@ jobs:
         with:
           version: 12.2.0
 
-      - name: Meson Build Cache
-        id: mesonBuild-cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ github.workspace }}/_build
-          key: ${{ runner.os }}-${{ hashFiles('**/meson.build') }}
-
-      - if: steps.mesonBuild-cache.outputs.cache-hit != 'true'
-        name: Setup
+      - name: Setup
         run: |
           .\setup-build.bat _build -Dnls=false
 
