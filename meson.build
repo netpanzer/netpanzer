@@ -92,7 +92,9 @@ if not phyfs_dep.found()
 endif
 deps += phyfs_dep
 
-sdl2_dep = dependency('SDL2', required: false)
+# If platform is wondows, and the option for sdl2_main is 'true', then sdl2main
+# should be included in sdl2_dep
+sdl2_dep = dependency('SDL2', required: false, default_options: 'with_main=true')
 if not sdl2_dep.found()
   sdl2_dep = cc.find_library('SDL2', has_headers: 'SDL.h', required: false)
   if not sdl2_dep.found()
@@ -101,29 +103,10 @@ if not sdl2_dep.found()
       'sdl2',
       required: true,
       fallback: 'sdl2',
-      default_options: ['default_library=static'])
+      default_options: ['default_library=static', 'with_main=true'])
   endif
 endif
 deps += sdl2_dep
-
-sdl2main_dep = []
-if platform_is_windows
-  sdl2main_dep = dependency('SDL2_main', required: false)
-  if not sdl2main_dep.found()
-    sdl2main_dep = cc.find_library('SDL2_main', has_headers: 'SDL_main.h', required: false)
-    if not sdl2main_dep.found()
-      # This will use the fallback
-      sdl2main_dep = dependency(
-        'sdl2main',
-        required: true,
-        fallback: 'sdl2',
-        default_options: ['default_library=static'])
-    endif
-  endif
-endif
-
-# Don't add to deps, only link with the binary and the test programs
-# not the shared library.
 
 freetype_use_embedded = false
 sdl2_ttf_dep = dependency('SDL2_ttf', required: false)
@@ -146,15 +129,23 @@ deps += sdl2_ttf_dep
 # If SDL2_mixer was found without using the fallback, chances are that it already
 # has all its dependencies.
 if freetype_use_embedded
-  freetype2_dep = dependency('freetype2', required: false)
+  freetype2_dep = dependency(
+    'freetype2',
+    required: false,
+    default_options: 'png=disabled', 'zlib=disabled'
+    )
   if not freetype2_dep.found()
-    freetype2_dep = cc.find_library('freetype2', has_headers: 'freetype.h', required: false)
+    freetype2_dep = cc.find_library(
+      'freetype2',
+      has_headers: 'freetype.h',
+      required: false
+      )
     if not freetype2_dep.found()
       freetype2_dep = dependency(
         'freetype2',
         required: true,
         fallback: 'freetype2',
-        default_options: ['default_library=static'])
+        default_options: ['default_library=static', 'png=disabled', 'zlib=disabled'])
     endif
   endif
   deps += freetype2_dep

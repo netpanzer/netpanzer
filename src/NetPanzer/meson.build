@@ -350,11 +350,11 @@ lib_netpanzer = both_libraries(
 netpanzer_dep_static = declare_dependency(
   link_with: lib_netpanzer.get_static_lib(),
   include_directories: inc_dirs,
-  dependencies: [deps, sdl2main_dep]
+  dependencies: deps
   )
 
 netpanzer_dep_shared = declare_dependency(
   link_with: lib_netpanzer.get_shared_lib(),
   include_directories: inc_dirs,
-  dependencies: [deps, sdl2main_dep]
+  dependencies: deps
   )
