@@ -92,8 +92,6 @@ if not phyfs_dep.found()
 endif
 deps += phyfs_dep
 
-# If platform is wondows, and the option for sdl2_main is 'true', then sdl2main
-# should be included in sdl2_dep
 sdl2_dep = dependency('SDL2', required: false)
 if not sdl2_dep.found()
   sdl2_dep = cc.find_library('SDL2', has_headers: 'SDL.h', required: false)
