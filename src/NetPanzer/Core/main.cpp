@@ -247,7 +247,7 @@ BaseGameManager* initialise(int argc, char** argv) {
   Package::assignDataDir();
   const std::string dataDir = Package::getDataDir();
   if (!dataDir.empty()) {
-    LOGGER.info("Setting Data Directory: %s", dataDir);
+    LOGGER.info("Setting Data Directory: %s", dataDir.c_str());
     filesystem::addToSearchPath(dataDir.c_str());
   } else {
     LOGGER.warning("Data directory not specified! Game will only work if binary is in source root.");

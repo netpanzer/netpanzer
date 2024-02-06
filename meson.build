@@ -123,9 +123,7 @@ if platform_is_windows
     endif
   endif
 endif
-
-# Don't add to deps, only link with the binary and the test programs
-# not the shared library.
+# Don't add to deps, but add it to netpanzer_dep when the dependency is declared
 
 freetype_use_embedded = false
 sdl2_ttf_dep = dependency('SDL2_ttf', required: false)

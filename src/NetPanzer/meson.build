@@ -341,10 +341,8 @@ lib_netpanzer = both_libraries(
   include_directories : [
     inc_dirs
   ],
-  dependencies: [
-    deps,
-  ],
-  install: false # The shared lib is only used for tests.
+  dependencies: deps,
+  install: false # The shared lib is only used for tests and the pak tools
 )
 
 netpanzer_dep_static = declare_dependency(
