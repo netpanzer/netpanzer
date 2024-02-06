@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/PackedSurface.hpp"
 #include "2D/Palette.hpp"
 #include "Classes/ScreenSurface.hpp"
+#include "Interfaces/MenuConfig.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "Localization.hpp"
@@ -31,7 +32,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/Particle2D.hpp"
 #include "Particles/ParticleSystem2D.hpp"
 #include "Particles/RadarPingParticle2D.hpp"
-#include "Scripts/ScriptManager.hpp"
 #include "System/Sound.hpp"
 #include "Util/Exception.hpp"
 #include "Views/Components/Desktop.hpp"
@@ -247,9 +247,7 @@ void MenuTemplateView::doDrawM(Surface &viewArea,
     //        clientArea.BltRoundRect(MenuRect, 10,
     //        Palette::gray256.getColorArray());
     
-    // TODO: check config loaded OK
-    bool okidoki = ScriptManager::loadSimpleConfig("scripts/mainmenu.lua");
-    clientArea.FillRoundRect(MenuRectStart, 3, *(color_map.at(ScriptManager::getStringField("menu_bar_color", "white"))));
+    clientArea.FillRoundRect(MenuRectStart, 3, *(color_map.at(MenuConfig::bar_solid_color->c_str())));
     clientArea.RoundRect(MenuRectStart, 3, Color::gray);
 
     // I don't like them so I delete them!

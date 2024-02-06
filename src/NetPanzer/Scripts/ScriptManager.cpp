@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/ChatInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/MenuConfig.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "ScriptHelper.hpp"
 #include "Util/FileSystem.hpp"
@@ -112,6 +113,8 @@ void ScriptManager::initialize() {
     //        ParticleInterface::registerScript("particles");
 
     GameConfig::registerScript("config");
+
+    MenuConfig::registerScript("menu");
 
     int to_pop = npmodule_load(luavm);
     lua_pop(luavm, to_pop);
