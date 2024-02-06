@@ -128,20 +128,14 @@ sdl2_ttf_dep = dependency('SDL2_ttf', required: false)
 if not sdl2_ttf_dep.found()
   sdl2_ttf_dep = cc.find_library('SDL2_ttf', has_headers: 'SDL_ttf.h', required: false)
   if not sdl2_ttf_dep.found()
-    # This will use the fallback
-    sdl2_ttf_dep = dependency(
-      'sdl2_ttf',
-      required: true,
-      fallback: 'sdl2_ttf',
-      default_options: ['default_library=static']
-      )
     freetype_use_embedded = true
   endif
+  # Freetype configuration must happen first, otherwise using the freetype2 default_options
+  # won't work because it will have been configured by sdl2_ttf
 endif
-deps += sdl2_ttf_dep
 
-# These are required by the SDL2_mixer meson wrap, but not by NetPanzer
-# If SDL2_mixer was found without using the fallback, chances are that it already
+# These are required by the SDL2_ttf meson wrap, but not by NetPanzer
+# If SDL2_ttf was found without using the fallback, chances are that it already
 # has all its dependencies.
 if freetype_use_embedded
   freetype2_dep = dependency(
@@ -165,6 +159,18 @@ if freetype_use_embedded
   endif
   deps += freetype2_dep
 endif
+
+if not sdl2_ttf_dep.found()
+  # This will use the fallback
+  sdl2_ttf_dep = dependency(
+    'sdl2_ttf',
+    required: true,
+    fallback: 'sdl2_ttf',
+    default_options: ['default_library=static']
+    )
+  freetype_use_embedded = true
+endif
+deps += sdl2_ttf_dep
 
 sdl2_mixer_use_embedded = false
 sdl2_mixer_dep = dependency('SDL2_mixer', required: false)
