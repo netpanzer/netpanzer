@@ -132,7 +132,7 @@ if freetype_use_embedded
   freetype2_dep = dependency(
     'freetype2',
     required: false,
-    default_options: 'png=disabled', 'zlib=disabled'
+    default_options: ['png=disabled', 'zlib=disabled']
     )
   if not freetype2_dep.found()
     freetype2_dep = cc.find_library(
