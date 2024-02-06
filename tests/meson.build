@@ -25,7 +25,6 @@ foreach case : test_cases
     exe,
     env: [
       # 'NETPANZER_DATADIR="@0@"'.format(meson.project_source_root())
-      ],
-    depends: lib_netpanzer.get_shared_lib()
+      ]
     )
 endforeach
