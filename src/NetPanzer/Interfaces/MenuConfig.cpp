@@ -19,7 +19,7 @@ static const ScriptVarBindRecord bar_setters[] = {
 };
 
 void MenuConfig::loadConfig() {
-  ScriptManager::loadConfigFile(luaconfigfile, "menu");
+  ScriptManager::loadConfigFile(luaconfigfile, "menu", true);
 }
 
 void MenuConfig::registerScript(const NPString& table_name) {
