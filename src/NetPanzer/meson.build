@@ -341,7 +341,7 @@ lib_netpanzer = both_libraries(
   include_directories : [
     inc_dirs
   ],
-  dependencies: deps,
+  dependencies: [deps, sdl2main_dep],
   install: false # The shared lib is only used for tests and the pak tools
 )
 
