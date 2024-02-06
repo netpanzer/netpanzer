@@ -5,7 +5,7 @@ foreach tool : paktool
     tool,
     tool + '.cpp',
     win_subsystem: 'console',
-    dependencies: netpanzer_dep_static,
+    dependencies: (platform_is_windows ? netpanzer_dep_static : netpanzer_dep_shared),
     link_args: ldflags,
     install : false
   )

@@ -10,7 +10,7 @@ foreach case : test_cases
   exe = executable(
     'test_' + fs.name(case),
     case + '.cpp',
-    dependencies : netpanzer_dep_shared,
+    dependencies : (platform_is_windows ? netpanzer_dep_static : netpanzer_dep_shared),
 #    c_args: '-DSOURCE_DIR="@0@"'.format(meson.current_source_dir())
     cpp_args: [
       '-DTEST_LIB',

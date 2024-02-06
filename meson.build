@@ -19,7 +19,7 @@ extra_flags = [
 #  '-fstack-protector-strong',
 #  '-Wformat-security',
 #  '-Wformat-overflow=2',
-#  '-Wshadow',
+  '-Wno-shadow',
 #  '-Wstrict-overflow=5'
 # '-Wconversion'
   ]
@@ -94,7 +94,7 @@ deps += phyfs_dep
 
 # If platform is wondows, and the option for sdl2_main is 'true', then sdl2main
 # should be included in sdl2_dep
-sdl2_dep = dependency('SDL2', required: false, default_options: 'with_main=true')
+sdl2_dep = dependency('SDL2', required: false)
 if not sdl2_dep.found()
   sdl2_dep = cc.find_library('SDL2', has_headers: 'SDL.h', required: false)
   if not sdl2_dep.found()
@@ -103,10 +103,29 @@ if not sdl2_dep.found()
       'sdl2',
       required: true,
       fallback: 'sdl2',
-      default_options: ['default_library=static', 'with_main=true'])
+      default_options: 'default_library=static')
   endif
 endif
 deps += sdl2_dep
+
+sdl2main_dep = []
+if platform_is_windows
+  sdl2main_dep = dependency('SDL2_main', required: false)
+  if not sdl2main_dep.found()
+    sdl2main_dep = cc.find_library('SDL2_main', has_headers: 'SDL_main.h', required: false)
+    if not sdl2main_dep.found()
+      # This will use the fallback
+      sdl2main_dep = dependency(
+        'sdl2main',
+        required: true,
+        fallback: 'sdl2',
+        default_options: ['default_library=static'])
+    endif
+  endif
+endif
+
+# Don't add to deps, only link with the binary and the test programs
+# not the shared library.
 
 freetype_use_embedded = false
 sdl2_ttf_dep = dependency('SDL2_ttf', required: false)
