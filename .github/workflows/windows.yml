@@ -58,7 +58,7 @@ jobs:
 
       - name: Setup
         run: |
-          .\setup-build.bat _build -Dnls=false
+          .\setup-build.bat _build
 
       - name: Build
         run: |
