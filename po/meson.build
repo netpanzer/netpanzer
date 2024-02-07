@@ -38,7 +38,7 @@ if get_option('nls') and not platform_is_windows
       args: ['--directory=' + meson.project_source_root()])
   else
     message('libintl not found. You will either need to install the appropriate')
-    message('package or add \"-Dnls=false\" to the setup/configure options.')
+    message('package or add "-Dnls=false" to the setup/configure options.')
     error('')
   endif
 endif
