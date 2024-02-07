@@ -40,7 +40,9 @@ class Package {
   inline static std::filesystem::path dataDir;
   inline static std::filesystem::path localeDir;
   static void setDataDir(std::filesystem::path &absPath) { dataDir = absPath; }
-  static void setLocaleDir(std::filesystem::path absPath) { localeDir = absPath; }
+  static void setLocaleDir(std::filesystem::path absPath) {
+    localeDir = absPath;
+  }
 };
 
 #endif
