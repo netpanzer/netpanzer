@@ -19,16 +19,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef TEST_LIB
 
 #include "package.hpp"
-#include "Util/Log.hpp"
 
 #include <fstream>
 #include <vector>
+
+#include "Util/Log.hpp"
 
 const std::string Package::getVersion(void) {
   return std::string(PACKAGE_VERSION);
 }
 
-const std::string Package::getFormalName(void) { return std::string("NetPanzer"); }
+const std::string Package::getFormalName(void) {
+  return std::string("NetPanzer");
+}
 const std::string Package::getBinName(void) { return std::string("netpanzer"); }
 
 const std::string Package::getFullyQualifiedName(void) {
@@ -38,12 +41,16 @@ const std::string Package::getFullyQualifiedName(void) {
 void Package::assignLocaleDir(void) {
   char *npLocEnv = getenv("NETPANZER_LOCALEDIR");
   if (npLocEnv != NULL) {
-    std::ifstream file(std::string(npLocEnv) + "/de");
-    if (file.good()) setLocaleDir(npLocEnv);
-    else LOGGER.debug("localeDir: %s\n", Package::getLocaleDir().c_str());
-    //else LOGGER.warn("fprintf
-  }
-  else setLocaleDir(NP_LOCALEDIR);
+    std::filesystem::path tmp_path = std::string(npLocEnv);
+    tmp_path /= "de";
+    std::ifstream file(tmp_path);
+    if (file.good())
+      setLocaleDir(npLocEnv);
+    else
+      LOGGER.debug("localeDir: %s\n", Package::getLocaleDir().c_str());
+    // else LOGGER.warn("fprintf
+  } else
+    setLocaleDir(NP_LOCALEDIR);
 
   LOGGER.warning("localeDir: %s\n", Package::getLocaleDir().c_str());
 
@@ -51,7 +58,7 @@ void Package::assignLocaleDir(void) {
 }
 
 void Package::assignDataDir(void) {
-  std::vector<std::string> possible{NP_DATADIR};
+  std::vector<std::filesystem::path> possible{NP_DATADIR};
 
   char *npDataEnv = getenv("NETPANZER_DATADIR");
   if (npDataEnv != NULL) possible.insert(possible.begin(), npDataEnv);
@@ -59,8 +66,9 @@ void Package::assignDataDir(void) {
 
   int i = 0;
   while (i < length) {
-    std::ifstream file(possible[i] + "/maps");
-    if (file.good()) {
+    std::filesystem::path tmp_path = possible[i];
+    tmp_path /= "maps";
+    if (std::filesystem::is_directory(tmp_path)) {
       setDataDir(possible[i]);
       return;
     }
@@ -75,7 +83,8 @@ void Package::assignDataDir(void) {
 
 #include <string.h>
 
-#include "package.hpp"
+#include <filesystem>
+
 #include "test.hpp"
 
 void test_name(void) {
@@ -100,16 +109,21 @@ void test_datadir(void) {
     }
   }
 
-  fprintf(stderr, "datadir: %s\nmeson_source_root: %s\n", Package::getDataDir().c_str(),
-    tmp);
+  fprintf(stderr, "datadir: %s\nmeson_source_root: %s\n",
+          Package::getDataDir().c_str(), tmp);
   char expect_data[strlen(tmp) + sizeof "/data"];
   snprintf(expect_data, sizeof expect_data, "%s/data", tmp);
-  assert(Package::getDataDir() == expect_data);
+  assert(strcmp(Package::getDataDir().c_str(), expect_data) == 0);
 
   return;
 }
 
-int main(void) {
+// main() must be defined with the args in this format, otherwise we may get an
+// "undefined reference to SDL_main"
+int main(int argc, char *argv[]) {
+  (void)argc;
+  (void)argv;
+
   test_name();
   test_datadir();
   return 0;

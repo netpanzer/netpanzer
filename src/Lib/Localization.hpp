@@ -16,11 +16,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "config.h" // contains ENABLE_NLS definition
+#include "config.h"  // contains ENABLE_NLS definition
 #ifdef ENABLE_NLS
 #include <locale.h>
 #endif
 #include "gettext.h"
-#define _(String) gettext (String)
+#define _(String) gettext(String)
 #define gettext_noop(String) String
-#define N_(String) gettext_noop (String)
+#define N_(String) gettext_noop(String)
