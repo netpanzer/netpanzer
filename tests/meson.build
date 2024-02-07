@@ -10,6 +10,8 @@ foreach case : test_cases
   exe = executable(
     'test_' + fs.name(case),
     case + '.cpp',
+# On Windows, linking against the shared library results in
+# "multiple definition of unwind_Resume.
     dependencies : (platform_is_windows ? netpanzer_dep_static : netpanzer_dep_shared),
 #    c_args: '-DSOURCE_DIR="@0@"'.format(meson.current_source_dir())
     cpp_args: [

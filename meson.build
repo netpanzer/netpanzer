@@ -123,52 +123,40 @@ if platform_is_windows
 endif
 # Don't add to deps, but add it to netpanzer_dep when the dependency is declared
 
-freetype_use_embedded = false
 sdl2_ttf_dep = dependency('SDL2_ttf', required: false)
 if not sdl2_ttf_dep.found()
   sdl2_ttf_dep = cc.find_library('SDL2_ttf', has_headers: 'SDL_ttf.h', required: false)
   if not sdl2_ttf_dep.found()
-    freetype_use_embedded = true
-  endif
-  # Freetype configuration must happen first, otherwise using the freetype2 default_options
-  # won't work because it will have been configured by sdl2_ttf
-endif
 
-# These are required by the SDL2_ttf meson wrap, but not by NetPanzer
-# If SDL2_ttf was found without using the fallback, chances are that it already
-# has all its dependencies.
-if freetype_use_embedded
-  freetype2_dep = dependency(
-    'freetype2',
-    required: false,
-    default_options: ['png=disabled', 'zlib=disabled']
-    )
-  if not freetype2_dep.found()
-    freetype2_dep = cc.find_library(
-      'freetype2',
-      has_headers: 'freetype.h',
-      required: false
-      )
+# Freetype configuration must happen first, otherwise using the freetype2 default_options
+# won't work because it will have been configured by sdl2_ttf.
+# zlib and png are enabled by default by the SDL2_ttf meson wrap, but not required
+# by NetPanzer.
+    freetype2_dep = dependency('freetype2', required: false)
     if not freetype2_dep.found()
-      freetype2_dep = dependency(
+      freetype2_dep = cc.find_library(
         'freetype2',
-        required: true,
-        fallback: 'freetype2',
-        default_options: ['default_library=static', 'png=disabled', 'zlib=disabled'])
+        has_headers: 'freetype.h',
+        required: false
+        )
+      if not freetype2_dep.found()
+        freetype2_dep = dependency(
+          'freetype2',
+          required: true,
+          fallback: 'freetype2',
+          default_options: ['default_library=static', 'png=disabled', 'zlib=disabled'])
+      endif
     endif
-  endif
-  deps += freetype2_dep
-endif
+    deps += freetype2_dep
 
-if not sdl2_ttf_dep.found()
-  # This will use the fallback
-  sdl2_ttf_dep = dependency(
-    'sdl2_ttf',
-    required: true,
-    fallback: 'sdl2_ttf',
-    default_options: ['default_library=static']
-    )
-  freetype_use_embedded = true
+    # Now use the sdl2_ttf fallback
+    sdl2_ttf_dep = dependency(
+      'sdl2_ttf',
+      required: true,
+      fallback: 'sdl2_ttf',
+      default_options: ['default_library=static']
+      )
+  endif
 endif
 deps += sdl2_ttf_dep
 
