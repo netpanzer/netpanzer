@@ -3,7 +3,7 @@ env:
 
 freebsd_task:
   only_if: "changesIncludeOnly(
-    '**.{cpp,hpp,c,h}',
+    'src/**/**',
     '**meson.build',
     'setup-build.*',
     'subprojects/*.wrap',
@@ -29,7 +29,7 @@ freebsd_task:
 
 arm_task:
   only_if: "changesIncludeOnly(
-    '**.{cpp,hpp,c,h}',
+    'src/**/**',
     '**meson.build',
     'setup-build.*',
     'subprojects/*.wrap',
@@ -49,7 +49,7 @@ arm_task:
 
 macos_task:
   only_if: "changesIncludeOnly(
-    '**.{cpp,hpp,c,h}',
+    'src/**/**',
     '**meson.build',
     'setup-build.*',
     'subprojects/*.wrap',
