@@ -30,10 +30,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 namespace filesystem {
 
+const char *getErrStr(void) {
+  return PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode());
+}
+
 void initialize(const char* argv0, const char* application) {
   if (!PHYSFS_init(argv0))
     throw Exception("failure while initialising physfs: %s",
-                    PHYSFS_getLastError());
+                    getErrStr());
 
   const char* tmp_basedir = PHYSFS_getBaseDir();
   char basedir[strlen(tmp_basedir) + sizeof "/data"];
@@ -51,18 +55,18 @@ void initialize(const char* argv0, const char* application) {
       delete[] writedir;
       delete[] mkdir;
       throw Exception("failed creating configuration directory: '%s': %s",
-                      writedir, PHYSFS_getLastError());
+                      writedir, getErrStr());
     }
     delete[] mkdir;
 
     if (!PHYSFS_setWriteDir(writedir)) {
       throw Exception("couldn't set configuration directory to '%s': %s",
-                      writedir, PHYSFS_getLastError());
+                      writedir, getErrStr());
     }
   }
 
-  PHYSFS_addToSearchPath(writedir, 0);
-  PHYSFS_addToSearchPath(basedir, 1);
+  PHYSFS_mount(writedir, NULL, 0);
+  PHYSFS_mount(basedir, NULL, 1);
 
   /* Root out archives, and add them to search path... */
   const char* archiveExt = "zip";
@@ -81,7 +85,7 @@ void initialize(const char* argv0, const char* application) {
           const char* d = PHYSFS_getRealDir(*i);
           char* str = new char[strlen(d) + strlen(dirsep) + l + 1];
           sprintf(str, "%s%s%s", d, dirsep, *i);
-          PHYSFS_addToSearchPath(str, 0);
+          PHYSFS_mount(str, NULL, 0);
           delete[] str;
         } /* if */
       }   /* if */
@@ -91,22 +95,22 @@ void initialize(const char* argv0, const char* application) {
   } /* if */
 
   PHYSFS_removeFromSearchPath(writedir);
-  PHYSFS_addToSearchPath(writedir, 0);
+  PHYSFS_mount(writedir, NULL, 0);
   delete[] writedir;
 }
 
 void shutdown() { PHYSFS_deinit(); }
 
 void addToSearchPath(const char* directory, bool append) {
-  if (!PHYSFS_addToSearchPath(directory, append))
-    throw Exception("Couldn't add '%s' to searchpath: %s", directory,
-                    PHYSFS_getLastError());
+    if (!PHYSFS_mount(directory, NULL, append ? 1 : 0))
+        throw Exception("Couldn't add '%s' to searchpath: %s", directory,
+                        getErrStr());
 }
 
 void removeFromSearchPath(const char* directory) {
   if (!PHYSFS_removeFromSearchPath(directory))
     throw Exception("Couldn't remove '%s' from searchpath: %s", directory,
-                    PHYSFS_getLastError());
+                    getErrStr());
 }
 
 const char* getRealDir(const char* filename) {
@@ -145,7 +149,7 @@ WriteFile* openWrite(const char* filename) {
   PHYSFS_file* file = PHYSFS_openWrite(filename);
   if (!file)
     throw Exception("couldn't open file '%s' for writing: %s", filename,
-                    PHYSFS_getLastError());
+                    getErrStr());
 
   return new WriteFile(file);
 }
@@ -184,7 +188,7 @@ ReadFile* openRead(const char* filename) {
 
     if (!file) {
       throw Exception("couldn't open file '%s' for reading: %s", filename,
-                      PHYSFS_getLastError());
+                      getErrStr());
     }
   }
 
@@ -195,7 +199,7 @@ WriteFile* openAppend(const char* filename) {
   PHYSFS_file* file = PHYSFS_openAppend(filename);
   if (!file)
     throw Exception("couldn't open file '%s' for writing(append): %s", filename,
-                    PHYSFS_getLastError());
+                    getErrStr());
 
   return new WriteFile(file);
 }
@@ -203,13 +207,13 @@ WriteFile* openAppend(const char* filename) {
 void mkdir(const char* directory) {
   if (!PHYSFS_mkdir(directory))
     throw Exception("couldn't create directory '%s': %s", directory,
-                    PHYSFS_getLastError());
+                    getErrStr());
 }
 
 void remove(const char* filename) {
   if (!PHYSFS_delete(filename))
     throw Exception("couldn't remove file '%s': %s", filename,
-                    PHYSFS_getLastError());
+                    getErrStr());
 }
 
 bool exists(const char* filename) { return PHYSFS_exists(filename); }
@@ -224,7 +228,7 @@ int64_t getLastModTime(const char* filename) {
   int64_t modtime = PHYSFS_getLastModTime(filename);
   if (modtime < 0)
     throw Exception("couldn't determine modification time of '%s': %s",
-                    filename, PHYSFS_getLastError());
+                    filename, getErrStr());
 
   return modtime;
 }
@@ -241,14 +245,14 @@ int64_t File::tell() { return PHYSFS_tell(file); }
 
 void File::seek(uint64_t position) {
   if (!PHYSFS_seek(file, position))
-    throw Exception("Seek operation failed: %s", PHYSFS_getLastError());
+    throw Exception("Seek operation failed: %s", getErrStr());
 }
 
 int64_t File::fileLength() { return PHYSFS_fileLength(file); }
 
 void File::setBuffer(uint64_t bufsize) {
   if (!PHYSFS_setBuffer(file, bufsize))
-    throw Exception("couldn't adjust buffer size: %s", PHYSFS_getLastError());
+    throw Exception("couldn't adjust buffer size: %s", getErrStr());
 }
 
 void File::flush() {
@@ -328,91 +332,91 @@ int ReadFile::RWOps_Close(SDL_RWops* context) {
 Sint8 ReadFile::read8() {
   Sint8 val;
   if (PHYSFS_read(file, &val, 1, 1) != 1)
-    throw Exception("read error: %s", PHYSFS_getLastError());
+    throw Exception("read error: %s", getErrStr());
   return val;
 }
 
 Sint16 ReadFile::readSLE16() {
   Sint16 val;
   if (!PHYSFS_readSLE16(file, &val))
-    throw Exception("read error: %s", PHYSFS_getLastError());
+    throw Exception("read error: %s", getErrStr());
   return val;
 }
 
 Uint16 ReadFile::readULE16() {
   Uint16 val;
   if (!PHYSFS_readULE16(file, &val))
-    throw Exception("read error: %s", PHYSFS_getLastError());
+    throw Exception("read error: %s", getErrStr());
   return val;
 }
 
 Sint16 ReadFile::readSBE16() {
   Sint16 val;
   if (!PHYSFS_readSBE16(file, &val))
-    throw Exception("read error: %s", PHYSFS_getLastError());
+    throw Exception("read error: %s", getErrStr());
   return val;
 }
 
 Uint16 ReadFile::readUBE16() {
   Uint16 val;
   if (!PHYSFS_readUBE16(file, &val))
-    throw Exception("read error: %s", PHYSFS_getLastError());
+    throw Exception("read error: %s", getErrStr());
   return val;
 }
 
 Sint32 ReadFile::readSLE32() {
   Sint32 val;
   if (!PHYSFS_readSLE32(file, &val))
-    throw Exception("read error: %s", PHYSFS_getLastError());
+    throw Exception("read error: %s", getErrStr());
   return val;
 }
 
 Uint32 ReadFile::readULE32() {
   Uint32 val;
   if (!PHYSFS_readULE32(file, &val))
-    throw Exception("read error: %s", PHYSFS_getLastError());
+    throw Exception("read error: %s", getErrStr());
   return val;
 }
 
 Sint32 ReadFile::readSBE32() {
   Sint32 val;
   if (!PHYSFS_readSBE32(file, &val))
-    throw Exception("read error: %s", PHYSFS_getLastError());
+    throw Exception("read error: %s", getErrStr());
   return val;
 }
 
 Uint32 ReadFile::readUBE32() {
   Uint32 val;
   if (!PHYSFS_readUBE32(file, &val))
-    throw Exception("read error: %s", PHYSFS_getLastError());
+    throw Exception("read error: %s", getErrStr());
   return val;
 }
 
 int64_t ReadFile::readSLE64() {
   PHYSFS_sint64 val;
   if (!PHYSFS_readSLE64(file, &val))
-    throw Exception("read error: %s", PHYSFS_getLastError());
+    throw Exception("read error: %s", getErrStr());
   return val;
 }
 
 uint64_t ReadFile::readULE64() {
   PHYSFS_uint64 val;
   if (!PHYSFS_readULE64(file, &val))
-    throw Exception("read error: %s", PHYSFS_getLastError());
+    throw Exception("read error: %s", getErrStr());
   return val;
 }
 
 int64_t ReadFile::readSBE64() {
   PHYSFS_sint64 val;
   if (!PHYSFS_readSBE64(file, &val))
-    throw Exception("read error: %s", PHYSFS_getLastError());
+    throw Exception("read error: %s", getErrStr());
   return val;
 }
 
 uint64_t ReadFile::readUBE64() {
   PHYSFS_uint64 val;
   if (!PHYSFS_readUBE64(file, &val))
-    throw Exception("read error: %s", PHYSFS_getLastError());
+    throw Exception("read error: %s", getErrStr());
   return val;
 }
 
@@ -439,68 +443,68 @@ void WriteFile::write(const void* buffer, size_t objsize, size_t objcount) {
 }
 
 void WriteFile::write8(Sint8 val) {
-  if (PHYSFS_write(file, &val, 1, 1) != 1)
-    throw Exception("couldn't write: %s", PHYSFS_getLastError());
+    if (PHYSFS_writeBytes(file, &val, 1) != 1)
+        throw Exception("couldn't write: %s", getErrStr());
 }
 
 void WriteFile::writeSLE16(Sint16 val) {
   if (!PHYSFS_writeSLE16(file, val))
-    throw Exception("couldn't write: %s", PHYSFS_getLastError());
+    throw Exception("couldn't write: %s", getErrStr());
 }
 
 void WriteFile::writeULE16(Uint16 val) {
   if (!PHYSFS_writeULE16(file, val))
-    throw Exception("couldn't write: %s", PHYSFS_getLastError());
+    throw Exception("couldn't write: %s", getErrStr());
 }
 
 void WriteFile::writeSBE16(Sint16 val) {
   if (!PHYSFS_writeSBE16(file, val))
-    throw Exception("couldn't write: %s", PHYSFS_getLastError());
+    throw Exception("couldn't write: %s", getErrStr());
 }
 
 void WriteFile::writeUBE16(Uint16 val) {
   if (!PHYSFS_writeUBE16(file, val))
-    throw Exception("couldn't write: %s", PHYSFS_getLastError());
+    throw Exception("couldn't write: %s", getErrStr());
 }
 
 void WriteFile::writeSLE32(Sint32 val) {
   if (!PHYSFS_writeSLE32(file, val))
-    throw Exception("couldn't write: %s", PHYSFS_getLastError());
+    throw Exception("couldn't write: %s", getErrStr());
 }
 
 void WriteFile::writeULE32(Uint32 val) {
   if (!PHYSFS_writeULE32(file, val))
-    throw Exception("couldn't write: %s", PHYSFS_getLastError());
+    throw Exception("couldn't write: %s", getErrStr());
 }
 
 void WriteFile::writeSBE32(Sint32 val) {
   if (!PHYSFS_writeSBE32(file, val))
-    throw Exception("couldn't write: %s", PHYSFS_getLastError());
+    throw Exception("couldn't write: %s", getErrStr());
 }
 
 void WriteFile::writeUBE32(Uint32 val) {
   if (!PHYSFS_writeUBE32(file, val))
-    throw Exception("couldn't write: %s", PHYSFS_getLastError());
+    throw Exception("couldn't write: %s", getErrStr());
 }
 
 void WriteFile::writeSLE64(int64_t val) {
   if (!PHYSFS_writeSLE64(file, val))
-    throw Exception("couldn't write: %s", PHYSFS_getLastError());
+    throw Exception("couldn't write: %s", getErrStr());
 }
 
 void WriteFile::writeULE64(uint64_t val) {
   if (!PHYSFS_writeULE64(file, val))
-    throw Exception("couldn't write: %s", PHYSFS_getLastError());
+    throw Exception("couldn't write: %s", getErrStr());
 }
 
 void WriteFile::writeSBE64(int64_t val) {
   if (!PHYSFS_writeSBE64(file, val))
-    throw Exception("couldn't write: %s", PHYSFS_getLastError());
+    throw Exception("couldn't write: %s", getErrStr());
 }
 
 void WriteFile::writeUBE64(uint64_t val) {
   if (!PHYSFS_writeUBE64(file, val))
-    throw Exception("couldn't write: %s", PHYSFS_getLastError());
+    throw Exception("couldn't write: %s", getErrStr());
 }
 
 void WriteFile::writeLine(const std::string& buffer) {
