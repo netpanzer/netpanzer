@@ -90,7 +90,8 @@ int main(int argc, char *argv[]) {
   std::string outfile = argv[2];
 
   if (!PHYSFS_init(argv[0])) {
-    printf("Error initializing filesystem: %s", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
+    printf("Error initializing filesystem: %s",
+           PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
     return 1;
   }
 

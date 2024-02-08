@@ -107,7 +107,8 @@ int main(int argc, char *argv[]) {
   printf("out dir is '%s'\n", outdir.c_str());
 
   if (!PHYSFS_init(argv[0])) {
-    printf("Error initializing filesystem: %s", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
+    printf("Error initializing filesystem: %s",
+           PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
     return 1;
   }
 
