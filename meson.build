@@ -223,6 +223,12 @@ exe = executable(
   install : true
 )
 
+test(
+  'test_' + meson.project_name(),
+  exe,
+  args: '--help',
+  )
+
 install_subdir(
   'data',
   install_dir : join_paths(get_option('datadir'), meson.project_name()),
