@@ -142,6 +142,7 @@ void WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos) {
         WorldViewInterface::scroll_down(y_move * 4);
       }
 
+      SDL_FlushEvent(SDL_MOUSEMOTION);
       SDL_WarpMouseInWindow(Screen->getWindow(), right_mouse_scroll_pos.x,
                             right_mouse_scroll_pos.y);
 
