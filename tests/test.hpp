@@ -5,5 +5,14 @@
 #ifdef NDEBUG
 #undefine NDEBUG
 #endif
-
 #include <cassert>
+
+#include "Util/FileSystem.hpp"
+#include "package.hpp"
+
+// Maybe resolves "undefined reference to SDL_main"
+#ifdef WIN32
+#include <windows.h>
+#endif
+// Maybe Resolves "undefined reference to WinMain"
+#include <SDL.h>

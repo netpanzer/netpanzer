@@ -31,16 +31,18 @@ class Package {
   static const std::string getBinName(void);
   static const std::string getFullyQualifiedName(void);
 
-  static const std::string getDataDir(void) { return dataDir; }
-  static const std::string getLocaleDir(void) { return localeDir; }
+  static const std::string getDataDir(void) { return dataDir.string(); }
+  static const std::string getLocaleDir(void) { return localeDir.string(); }
   static void assignDataDir(void);
   static void assignLocaleDir(void);
-  static void setDataDir(std::string &absPath) { dataDir = absPath; }
-  static void setLocaleDir(std::string absPath) { localeDir = absPath; }
 
  private:
-  inline static std::string dataDir;
-  inline static std::string localeDir;
+  inline static std::filesystem::path dataDir;
+  inline static std::filesystem::path localeDir;
+  static void setDataDir(std::filesystem::path &absPath) { dataDir = absPath; }
+  static void setLocaleDir(std::filesystem::path absPath) {
+    localeDir = absPath;
+  }
 };
 
 #endif

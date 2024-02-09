@@ -17,6 +17,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifndef TEST_LIB
+
 #include "CachedFontRenderer.hpp"
 
 #include <string>
@@ -36,13 +38,18 @@ void CachedFontRenderer::initFont() {
     LOGGER.warning("Couldn't initialize SDL TTF: %s\n", SDL_GetError());
     exit(EXIT_FAILURE);
   }
+
   // Quantico-Regular looked good too but some issues with some characters.
-  const std::string absFontPath = std::string(filesystem::getRealName("/fonts/GNUUnifont9FullHintInstrUCSUR.ttf"));
-  CachedFontRenderer::font =
-      TTF_OpenFont(absFontPath.c_str(), FONT_SIZE);
+  std::string absFontPath = std::string(filesystem::getRealName("fonts/GNUUnifont9FullHintInstrUCSUR.ttf"));
+  LOGGER.warning("font path: %s", absFontPath.c_str());
+  font = TTF_OpenFont(absFontPath.c_str(), FONT_SIZE);
   if (font == NULL) {
     LOGGER.warning("CachedFontRenderer - cannot load font %s.", absFontPath.c_str());
+    #ifndef TEST_LIB
     exit (EXIT_FAILURE);
+    #else
+    return;
+    #endif
   }
 
   TTF_SetFontStyle(CachedFontRenderer::font, TTF_STYLE_BOLD);
@@ -98,3 +105,29 @@ void CachedFontRenderer::cleanup() {
   lastCleanedTick = currentTick;
   LOGGER.debug("Cached font cleanup: Done.");
 }
+
+#else
+
+#include "test.hpp"
+#include "CachedFontRenderer.hpp"
+
+void CachedFontRenderer::test_openFont(void) {
+  CachedFontRenderer::initFont();
+  assert(font != NULL);
+
+  return;
+}
+
+int main(int argc, char *argv[]) {
+  (void)argc;
+
+  filesystem::initialize(argv[0], "test_CachedFontRenderer");
+  Package::assignDataDir();
+  filesystem::addToSearchPath(Package::getDataDir().c_str());
+
+  CachedFontRenderer::test_openFont();
+
+  return 0;
+}
+
+#endif

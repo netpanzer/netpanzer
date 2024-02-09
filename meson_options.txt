@@ -1,2 +1,4 @@
-option('nls', type : 'boolean', value : true,
-       description : 'include native language support (install translations)')
+option('nls',
+  type : 'boolean',
+  value : 'true',
+  description : 'include native language support (install translations)')

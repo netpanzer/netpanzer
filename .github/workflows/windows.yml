@@ -56,18 +56,9 @@ jobs:
         with:
           version: 12.2.0
 
-      - name: Meson Build Cache
-        id: mesonBuild-cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ github.workspace }}/_build
-          key: ${{ runner.os }}-${{ hashFiles('**/meson.build') }}
-
-      - if: steps.mesonBuild-cache.outputs.cache-hit != 'true'
-        name: Setup
+      - name: Setup
         run: |
-          .\setup-build.bat _build -Dnls=false
+          .\setup-build.bat _build
 
       - name: Build
         run: |
@@ -77,7 +68,7 @@ jobs:
       - name: Test
         run: |
           cd _build
-          meson test --suite=netpanzer
+          meson test --suite=netpanzer -v
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
