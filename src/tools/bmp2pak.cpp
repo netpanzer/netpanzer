@@ -90,11 +90,12 @@ int main(int argc, char *argv[]) {
   std::string outfile = argv[2];
 
   if (!PHYSFS_init(argv[0])) {
-    printf("Error initializing filesystem: %s", PHYSFS_getLastError());
+    printf("Error initializing filesystem: %s",
+           PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
     return 1;
   }
 
-  PHYSFS_addToSearchPath(PHYSFS_getBaseDir(), 1);
+  PHYSFS_mount(PHYSFS_getBaseDir(), NULL, 1);
   PHYSFS_setWriteDir(PHYSFS_getBaseDir());
 
   FILE *f = fopen(filesystem::getRealWriteName(filename.c_str()).c_str(), "r");
