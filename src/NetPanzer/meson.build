@@ -110,44 +110,6 @@ foreach file : src_basename
 endforeach
 
 src_basename = [
-  'CachedFontRenderer.cpp',
-  'Color.cpp',
-  'ColorTable.cpp',
-  'PackedSurface.cpp',
-  'Palette.cpp',
-  'Span.cpp',
-  'Surface.cpp'
-]
-foreach file : src_basename
-  src += [join_paths('../Lib/2D', file)]
-endforeach
-
-src_basename = [
-  'ScriptManager.cpp',
-  'NetPanzerModule.cpp',
-  'ScriptHelper.cpp'
-]
-foreach file : src_basename
-  src += [join_paths('Scripts', file)]
-endforeach
-
-src_basename = [
-  'TimerInterface.cpp',
-  'Math.cpp',
-  'UtilInterface.cpp',
-  'Timer.cpp',
-  'TimeStamp.cpp',
-  'Log.cpp',
-  'FileSystem.cpp',
-  'BresenhamLine.cpp',
-  'Exception.cpp',
-  'StringUtil.cpp'
-]
-foreach file : src_basename
-  src += [join_paths('../Lib/Util', file)]
-endforeach
-
-src_basename = [
   'WorldInputCmdProcessor.cpp',
   'SpriteSorter.cpp',
   'OpcodeDebugger.cpp',
@@ -158,19 +120,6 @@ src_basename = [
   'SelectionList.cpp',
   'PlayerState.cpp',
   'Sprite.cpp',
-  'Network/ClientConnectDaemon.cpp',
-  'Network/ServerMessageRouter.cpp',
-  'Network/NetworkClient.cpp',
-  'Network/NetworkState.cpp',
-  'Network/NetworkServer.cpp',
-  'Network/NetworkInterface.cpp',
-  'Network/NetMessageEncoder.cpp',
-  'Network/NetPacketDebugger.cpp',
-  'Network/NetMessageDecoder.cpp',
-  'Network/ConnectNetMessage.cpp',
-  'Network/NetPacketQueues.cpp',
-  'Network/ClientMessageRouter.cpp',
-  'Network/ServerConnectDaemon.cpp',
   'PlayerUnitConfig.cpp',
   'MapFile.cpp',
   'SpawnList.cpp',
