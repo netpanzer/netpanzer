@@ -1,7 +1,8 @@
 env:
   NETPANZER_DATADIR: $CIRRUS_WORKING_DIR/data
 
-freebsd_task:
+# Define a template for tasks
+.job_template: &job_template
   only_if: "changesInclude(
     'src/**/**',
     '**meson.build',
@@ -9,35 +10,6 @@ freebsd_task:
     'subprojects/*.wrap',
     '.cirrus.yml'
     )"
-  name: FreeBSD 13.2
-  freebsd_instance:
-    image_family: freebsd-13-2
-
-  env:
-    CIRRUS_CLONE_SUBMODULES: true
-
-  pkginstall_script:
-    - pkg update -f
-    - pkg install -y gettext meson ninja physfs pkgconf SDL2 sdl2_mixer sdl2_ttf
-
-  setup_script:
-    - ./setup-build.sh _build
-  build_script:
-    - cd _build && ninja
-  test_script:
-    - cd _build && meson test --suite=netpanzer -v
-
-arm_task:
-  only_if: "changesInclude(
-    'src/**/**',
-    '**meson.build',
-    'setup-build.*',
-    'subprojects/*.wrap',
-    '.cirrus.yml'
-    )"
-  name: Ubuntu arm64
-  arm_container:
-    image: andy5995/netpanzer-build-env:jammy
   env:
     CIRRUS_CLONE_SUBMODULES: true
   setup_script:
@@ -47,34 +19,28 @@ arm_task:
   test_script:
     - cd _build && meson test --suite=netpanzer -v
 
+freebsd_task:
+  <<: *job_template
+  name: FreeBSD 13.2
+  freebsd_instance:
+    image_family: freebsd-13-2
+  pkginstall_script:
+    - pkg update -f
+    - pkg install -y gettext meson ninja physfs pkgconf SDL2 sdl2_mixer sdl2_ttf
+
+arm_task:
+  <<: *job_template
+  name: Ubuntu arm64
+  arm_container:
+    image: andy5995/netpanzer-build-env:jammy
+
 macos_task:
-  only_if: "changesInclude(
-    'src/**/**',
-    '**meson.build',
-    'setup-build.*',
-    'subprojects/*.wrap',
-    '.cirrus.yml'
-    )"
+  <<: *job_template
   name: macOS arm64
   macos_instance:
     image: ghcr.io/cirruslabs/macos-ventura-xcode:latest
-
-  env:
-    CIRRUS_CLONE_SUBMODULES: true
-
   pkginstall_script:
     - brew update
     - brew install gettext meson ninja physfs sdl2 sdl2_ttf sdl2_mixer
-# libintl.h not found even after the gettext package is installed
-# https://stackoverflow.com/questions/11370684/what-is-libintl-h-and-where-can-i-get-it
-# https://github.com/EOSIO/eos/issues/2028#issuecomment-378258329
     - brew unlink gettext && brew link gettext --force
-    # Does not fix the problem. Ticket opened:
-    # https://github.com/netpanzer/netpanzer/issues/206
-  setup_script:
     - ./setup-build.sh _build -Dnls=false
-  build_script:
-    - cd _build && ninja
-  test_script:
-    - cd _build && meson test --suite=netpanzer -v
-
