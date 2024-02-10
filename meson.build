@@ -235,7 +235,9 @@ install_subdir(
   strip_directory : true
   )
 
-subdir('tests')
+if get_option('build_tests')
+  subdir('tests')
+endif
 
 message('\n\n        == Important Note ==\n')
 message('In the build directory, you will need to enter "meson devenv"')
