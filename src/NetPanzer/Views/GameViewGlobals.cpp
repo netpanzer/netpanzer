@@ -21,12 +21,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Palette.hpp"
 #include "Interfaces/GameConfig.hpp"
 
+int menuRectPadding = 8;
 iRect MenuRect(80, 80, 80 + 640, 80 + 470);
 iRect MenuRectStart(80, 80, 80 + 640, 80 + 5);
 iRect bodyTextRect(MenuRect.min.x + 10, MenuRect.min.y + 10,
                    MenuRect.max.x - 10, MenuRect.max.y - 10);
 
-iXY mainTopButtonsStartPos(MenuRect.min.x + 8, MenuRect.min.y - 26);
+iXY mainTopButtonsStartPos(MenuRect.min.x + menuRectPadding, MenuRect.min.y - 26);
 iXY joinPos(mainTopButtonsStartPos.x + 54, mainTopButtonsStartPos.y);
 iXY hostPos(joinPos.x + 54, mainTopButtonsStartPos.y);
 iXY exitPos(MenuRect.max.x - 125, mainTopButtonsStartPos.y);

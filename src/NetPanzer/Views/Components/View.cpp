@@ -44,6 +44,16 @@ void View::add(Component *component) {
   }
 }  // end View::add
 
+// addRightEnd
+//---------------------------------------------------------------------------
+void View::addRightEnd(int y, int end_x, Component *component) {
+  if (component) {
+    iXY pos = iXY(end_x - component->getSize().x, y);
+    component->setLocation(pos);
+    add(component);
+  }
+}  // end View::addRightEnd
+
 // addHorizontal
 //---------------------------------------------------------------------------
 void View::addHorizontal(iXY start_pos, int spacing,
@@ -52,8 +62,7 @@ void View::addHorizontal(iXY start_pos, int spacing,
   for (Component *component : new_components) {
     component->setLocation(pos);
     pos = iXY(pos.x + component->getSize().x + spacing, pos.y);
-    components.push_back(component);
-    component->setParent(this);
+    add(component);
   }
 }  // end View::addHorizontal
 

@@ -44,6 +44,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 extern iXY exitPos;
 extern iXY readyPos;
 extern iXY playPos;
+extern int menuRectPadding;
 extern iXY mainTopButtonsStartPos;
 extern iXY multiPos;
 extern iXY creditsPos;

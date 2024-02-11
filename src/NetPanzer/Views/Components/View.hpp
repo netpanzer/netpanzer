@@ -38,6 +38,7 @@ class View : public iRect {
 
  public:
   void add(Component *Component);
+  void addRightEnd(int y, int end_x, Component *Component);
   void addHorizontal(iXY start_pos, int spacing,
                      std::vector<Component *> new_components);
   void add(DEFAULT_VIEW_BUTTON button);
