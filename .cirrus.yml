@@ -45,6 +45,7 @@ macos_task:
     image: ghcr.io/cirruslabs/macos-ventura-xcode:latest
   pkginstall_script:
     - brew update
+    - brew install gettext meson ninja physfs sdl2 sdl2_ttf sdl2_mixer
 # libintl.h not found even after the gettext package is installed
 # https://stackoverflow.com/questions/11370684/what-is-libintl-h-and-where-can-i-get-it
 # https://github.com/EOSIO/eos/issues/2028#issuecomment-378258329
