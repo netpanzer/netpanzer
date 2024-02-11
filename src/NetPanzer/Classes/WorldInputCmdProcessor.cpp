@@ -133,22 +133,20 @@ void WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos) {
       //  and the UP message doesn't come through
       right_mouse_scroll = false;
     } else {
-      if (mouse_pos.x != right_mouse_scroll_pos.x || mouse_pos.y != right_mouse_scroll_pos.y) {
-        // we're holding down the right mouse button, and mouse has moved
-        int x_move = mouse_pos.x - right_mouse_scroll_pos.x;
-        int y_move = mouse_pos.y - right_mouse_scroll_pos.y;
+      // we're holding down the right mouse button, and mouse has moved
+      if (mouse_pos.x != right_mouse_scrolled_pos.x || mouse_pos.y != right_mouse_scrolled_pos.y) {
+        const int x_delta = mouse_pos.x - right_mouse_scroll_pos.x;
+        const int y_delta = mouse_pos.y - right_mouse_scroll_pos.y;
+        WorldViewInterface::scroll_right(x_delta * 4);
+        WorldViewInterface::scroll_down(y_delta * 4);
 
-        WorldViewInterface::scroll_right(x_move * 4);
-        WorldViewInterface::scroll_down(y_move * 4);
+        SDL_WarpMouseInWindow(Screen->getWindow(), right_mouse_scroll_pos.x,
+                              right_mouse_scroll_pos.y);
+
+        right_mouse_scrolled_pos.x = mouse_pos.x;
+        right_mouse_scrolled_pos.y = mouse_pos.y;
+        right_mouse_scroll_moved = true;
       }
-
-      SDL_FlushEvent(SDL_MOUSEMOTION);
-      SDL_WarpMouseInWindow(Screen->getWindow(), right_mouse_scroll_pos.x,
-                            right_mouse_scroll_pos.y);
-
-      right_mouse_scrolled_pos.x = mouse_pos.x;
-      right_mouse_scrolled_pos.y = mouse_pos.y;
-      right_mouse_scroll_moved = true;
     }
     return;
   }
