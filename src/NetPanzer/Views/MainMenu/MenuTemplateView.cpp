@@ -147,7 +147,11 @@ void MenuTemplateView::initPreGameOptionButtons() {
                     new newButton("CREDITS", "Credits", emptyPos, 0),
                     new newButton("HELP", "Help", emptyPos, 0),
                 });
-  add(new newButton("EXITNP", _("Exit netPanzer"), exitPos, 0));
+  addRightEnd(
+          mainTopButtonsStartPos.y,
+          MenuRect.max.x - menuRectPadding,
+          new newButton("EXITNP", _("Exit netPanzer"), emptyPos, 0)
+          );
 }  // end MenuTemplateView::initPreGameOptionButtons
 
 // initInGameOptionButtons
