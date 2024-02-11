@@ -171,11 +171,13 @@ bool SDLVideo::setVideoMode(int new_width, int new_height, int bpp,
   // monitor resolution.
   LOGGER.debug("Setting render hints.");
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
-  LOGGER.debug("Setting render logical size.");
-  const int setLogicalSizeResult = SDL_RenderSetLogicalSize(renderer, new_width, new_height);
-  if (setLogicalSizeResult < 0) {
-    LOGGER.warning("Couldn't set logical resolution: %d %d %s", new_width, new_height, SDL_GetError());
-  }
+  // TODO add option for letter boxing.
+  //  Currently, this breaks right mouse movement w/ SDL_WarpMouseInWindow in fullscreen
+//  LOGGER.debug("Setting render logical size.");
+//  const int setLogicalSizeResult = SDL_RenderSetLogicalSize(renderer, new_width, new_height);
+//  if (setLogicalSizeResult < 0) {
+//    LOGGER.warning("Couldn't set logical resolution: %d %d %s", new_width, new_height, SDL_GetError());
+//  }
 
   // let's scare the mouse :)
   // this fixes the mouse cursor stuck to a small region after resolution change
