@@ -2,7 +2,7 @@ env:
   NETPANZER_DATADIR: $CIRRUS_WORKING_DIR/data
 
 # Define a template for tasks
-filter_template: &filter_template
+task_template: &task_template
   only_if: "changesInclude(
     'src/**/**',
     '**meson.build',
@@ -10,15 +10,13 @@ filter_template: &filter_template
     'subprojects/*.wrap',
     '.cirrus.yml'
     )"
-
-build_and_test_template: &build_and_test_template
   build_script:
     - cd _build && ninja
   test_script:
     - cd _build && meson test --suite=netpanzer -v
 
 freebsd_task:
-  <<: *filter_template
+  <<: *task_template
   name: FreeBSD 13.2
   freebsd_instance:
     image_family: freebsd-13-2
@@ -27,19 +25,17 @@ freebsd_task:
     - pkg install -y gettext meson ninja physfs pkgconf SDL2 sdl2_mixer sdl2_ttf
   setup_script:
   - ./setup-build.sh _build
-  <<: *build_and_test_template
 
 arm_task:
-  <<: *filter_template
+  <<: *task_template
   name: Ubuntu arm64
   arm_container:
     image: andy5995/netpanzer-build-env:jammy
   setup_script:
   - ./setup-build.sh _build
-  <<: *build_and_test_template
 
 macos_task:
-  <<: *filter_template
+  <<: *task_template
   name: macOS arm64
   macos_instance:
     image: ghcr.io/cirruslabs/macos-ventura-xcode:latest
@@ -53,4 +49,3 @@ macos_task:
     # https://github.com/netpanzer/netpanzer/issues/206
   setup_script:
     - ./setup-build.sh _build -Dnls=false
-    <<: *build_and_test_template
