@@ -42,6 +42,7 @@ else
 fi
 
 # Install necessary dependencies
+sudo apt update && sudo apt upgrade -y
 sudo apt install -y \
   gettext \
   liblua5.1-0-dev \
