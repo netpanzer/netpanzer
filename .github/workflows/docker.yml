@@ -108,13 +108,14 @@ jobs:
       -
         name: Set tag
         run: |
-          if [ -n ${{ inputs.tag }} ]; then
+          if [ -n "${{ inputs.tag }}" ]; then
             TAG="${{ inputs.tag }}"
           else
             TAG="latest"
           fi
           # store TAG for use in later steps
           echo "TAG=$TAG" >> $GITHUB_ENV
+          echo "TAG = $TAG" # For debugging (can be removed)
       -
         name: Docker meta
         id: meta
