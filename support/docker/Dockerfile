@@ -1,4 +1,4 @@
-FROM andy5995/netpanzer-build-env:jammy
+FROM andy5995/netpanzer:build-env-jammy-latest
 RUN mkdir /netpanzer
 ADD meson* /netpanzer
 ADD data /netpanzer/data
@@ -35,6 +35,7 @@ RUN apt update &&   \
         sudo
 
 RUN useradd -m npserver && passwd -d npserver
+RUN echo "npserver ALL=(ALL) ALL" >> /etc/sudoers
 USER npserver
 WORKDIR /home/npserver
 

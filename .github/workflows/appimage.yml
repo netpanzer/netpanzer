@@ -5,6 +5,11 @@ concurrency:
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'version number'
+        required: true
+        type: string
   schedule:
     - cron: '30 09 * * 5'
   pull_request:
@@ -13,55 +18,51 @@ on:
     - '**/appimage.yml'
     - '**/AppRun'
 
+env:
+  VERSION: ${{ inputs.version }}
+
 jobs:
   build-appimage:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        platform: [amd64, arm64]
+        platform:
+          - linux/amd64
+          - linux/arm64
+          - linux/arm/v7
     steps:
     - name: Set version
       run: |
-        VERSION="$(echo ${GITHUB_SHA} | head -c 7)-$(date +%y%m%d%H%M)"
-        echo "VERSION=${VERSION}" >> $GITHUB_ENV
+        # If run from cron and not by dispatch, the version won't be set...
+        if [ -z "$VERSION" ]; then
+          VERSION="$(echo ${GITHUB_SHA} | head -c 7)-$(date +%y%m%d%H%M)"
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+        fi
+
     - name: Checkout
       uses: actions/checkout@v4
+
+    - if: ${{ ! contains(matrix.platform, 'amd64') }}
+      uses: docker/setup-qemu-action@v3
+
     - name: Build AppImage
-      uses: andy5995/linuxdeploy-build-helper@v1
-      with:
-        platform: ${{ matrix.platform }}
-        dependency_commands: |
-          sudo apt install -y \
-            gettext \
-            liblua5.1-0-dev \
-            libphysfs-dev \
-            libsdl2-dev \
-            libsdl2-mixer-dev \
-            libsdl2-ttf-dev
-        build_commands: |
-          ./setup-build.sh _build \
-            -Dbuildtype=release \
-            -Dstrip=true \
-            -Db_sanitize=none \
-            -Dprefix=/usr
-          cd _build
-          ninja
-        install_to_appdir_commands: |
-          meson install --destdir=$APPDIR --skip-subprojects
-        linuxdeploy_output_version: $VERSION
-        linuxdeploy_args: |
-          -d support/win32/netpanzer.desktop \
-          --custom-apprun=support/appimage/AppRun \
-          --icon-file=netpanzer.png \
-          --icon-filename=netpanzer \
-          --executable $APPDIR/usr/bin/netpanzer \
-          --output appimage
+      run: |
+        docker run -t \
+        --platform=${{ matrix.platform }} \
+        --rm \
+        -e HOSTUID=$(id -u) \
+        -e VERSION \
+        -v $GITHUB_WORKSPACE:/workspace \
+        -w /workspace andy5995/linuxdeploy:latest support/appimage/make-appimage.sh
+        # Docs for this container are at
+        # https://github.com/andy5995/linuxdeploy-build-helper-container
 
     - name: Create sha256sum
       run: |
+        IMAGE_FILENAME=$(basename `find out/*AppImage`)
+        echo "IMAGE_FILENAME=$IMAGE_FILENAME" >> $GITHUB_ENV
         cd out
-        sha256sum $IMAGE_FILENAME > $IMAGE_FILENAME.sha256sum
-
+        sha256sum "$IMAGE_FILENAME" > "$IMAGE_FILENAME.sha256sum"
 
     - if: ${{ github.ref == 'refs/heads/master' }}
       name: Release AppImage
@@ -78,7 +79,7 @@ jobs:
         omitBodyDuringUpdate: true
         omitNameDuringUpdate: true
         tag: appimage-weekly
-        removeArtifacts: ${{ matrix.platform == 'amd64' }}
+        removeArtifacts: ${{ matrix.platform == 'linux/amd64' }}
 
     - if: ${{ github.ref != 'refs/heads/master' }}
       name: Upload AppImage
