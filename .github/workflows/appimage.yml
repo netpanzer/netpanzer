@@ -5,82 +5,67 @@ concurrency:
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'version number'
+        required: true
+        type: string
   schedule:
     - cron: '30 09 * * 5'
   pull_request:
     branches: master
     paths:
     - '**/appimage.yml'
-    - '**/*appimage*'
+    - '**/AppRun'
+
+env:
+  VERSION: ${{ inputs.version }}
 
 jobs:
-  build-x86_64:
-    runs-on: ubuntu-22.04
-    container: andy5995/netpanzer-build-env:focal
-    env:
-      ARCH: x86_64
-      WORKSPACE: ${{ github.workspace }}
+  build-appimage:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform:
+          - linux/amd64
+          - linux/arm64
+          - linux/arm/v7
     steps:
-    - uses: actions/checkout@v4
     - name: Set version
       run: |
-        VERSION="$(echo ${GITHUB_SHA} | head -c 7)-$(date +%y%m%d%H%M)"
-        echo "VERSION=${VERSION}" >> $GITHUB_ENV
+        # If run from cron and not by dispatch, the version won't be set...
+        if [ -z "$VERSION" ]; then
+          VERSION="$(echo ${GITHUB_SHA} | head -c 7)-$(date +%y%m%d%H%M)"
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+        fi
 
-    - name: Prepare AppImage
-      run: |
-        export -p
-        support/appimage/make-appimage.sh
+    - name: Checkout
+      uses: actions/checkout@v4
 
-    - name: Release AppImage
-      if: ${{ github.ref == 'refs/heads/master' }}
-      uses: ncipollo/release-action@v1
-      with:
-        allowUpdates: true
-        artifactErrorsFailBuild: true
-        name: NetPanzer Weekly AppImage (Unstable)
-        prerelease: true
-        draft: false
-        artifacts: "${{ env.WORKSPACE }}/support/NetPanz*.AppImage*"
-        token: ${{ secrets.GITHUB_TOKEN }}
-        omitBody: true
-        omitBodyDuringUpdate: true
-        omitNameDuringUpdate: true
-        tag: appimage-weekly
-        removeArtifacts: true
-
-    - if: ${{ github.ref != 'refs/heads/master' }}
-      name: Upload Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: netpanzer_appimage_${{ env.ARCH }}
-        path: ${{ github.workspace }}/support/NetPanz*.AppImage*
-
-  build-aarch64:
-    runs-on: ubuntu-22.04
-    env:
-      ARCH: aarch64
-      WORKSPACE: ${{ github.workspace }}
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up QEMU
+    - if: ${{ ! contains(matrix.platform, 'amd64') }}
       uses: docker/setup-qemu-action@v3
-      with:
-        platforms: 'arm64'
 
-    - name: Set version
+    - name: Build AppImage
       run: |
-        export UID
-        echo $UID
-        VERSION="$(echo ${GITHUB_SHA} | head -c 7)-$(date +%y%m%d%H%M)"
-        echo "VERSION=${VERSION}" >> $GITHUB_ENV
+        docker run -t \
+        --platform=${{ matrix.platform }} \
+        --rm \
+        -e HOSTUID=$(id -u) \
+        -e VERSION \
+        -v $GITHUB_WORKSPACE:/workspace \
+        -w /workspace andy5995/linuxdeploy:latest support/appimage/make-appimage.sh
+        # Docs for this container are at
+        # https://github.com/andy5995/linuxdeploy-build-helper-container
 
-    - name: Run in Docker
+    - name: Create sha256sum
       run: |
-        VERSION="$VERSION" support/appimage/prep-appimage.sh
+        IMAGE_FILENAME=$(basename `find out/*AppImage`)
+        echo "IMAGE_FILENAME=$IMAGE_FILENAME" >> $GITHUB_ENV
+        cd out
+        sha256sum "$IMAGE_FILENAME" > "$IMAGE_FILENAME.sha256sum"
 
-    - name: Release AppImage
-      if: ${{ github.ref == 'refs/heads/master' }}
+    - if: ${{ github.ref == 'refs/heads/master' }}
+      name: Release AppImage
       uses: ncipollo/release-action@v1
       with:
         allowUpdates: true
@@ -88,17 +73,18 @@ jobs:
         name: NetPanzer Weekly AppImage (Unstable)
         prerelease: true
         draft: false
-        artifacts: "${{ env.WORKSPACE }}/support/NetPanz*.AppImage*"
+        artifacts: ./out/*
         token: ${{ secrets.GITHUB_TOKEN }}
         omitBody: true
         omitBodyDuringUpdate: true
         omitNameDuringUpdate: true
         tag: appimage-weekly
-        removeArtifacts: false
+        removeArtifacts: ${{ matrix.platform == 'linux/amd64' }}
 
     - if: ${{ github.ref != 'refs/heads/master' }}
-      name: Upload Artifacts
+      name: Upload AppImage
       uses: actions/upload-artifact@v4
       with:
-        name: netpanzer_appimage_${{ env.ARCH }}
-        path: ${{ github.workspace }}/support/NetPanz*.AppImage*
+        name: ${{ env.IMAGE_FILENAME }}
+        path: ./out/*
+        if-no-files-found: error
