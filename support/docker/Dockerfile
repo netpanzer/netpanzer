@@ -9,12 +9,15 @@ ADD subprojects /netpanzer/subprojects
 ADD tests /netpanzer/tests
 ADD --chmod=700 setup-build.sh /netpanzer
 
-RUN cd /netpanzer && \
-        ./setup-build.sh _build -Dprefix=/usr -Db_sanitize=none \
-          -Dbuildtype=release -Dstrip=true && \
-        cd _build && \
-        ninja && \
-        meson install --skip-subprojects
+RUN \
+  cd /netpanzer && \
+  ./setup-build.sh _build \
+    -Dprefix=/usr \
+    -Db_sanitize=none \
+    -Dbuildtype=release -Dstrip=true && \
+  cd _build && \
+  ninja && \
+  meson install --skip-subprojects
 
 FROM ubuntu:jammy
 COPY --from=0 /usr/bin/netpanzer /usr/bin

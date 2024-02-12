@@ -66,7 +66,7 @@ jobs:
         id: build
         uses: docker/build-push-action@v5
         with:
-          context: ./support/docker
+          context: .
           file: ./support/docker/Dockerfile
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
