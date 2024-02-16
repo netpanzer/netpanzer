@@ -29,34 +29,33 @@ jobs:
       fail-fast: false
       matrix:
         build:
-          - name: ubuntu-22.04-gcc-meson
-            os: ubuntu-22.04
-            cc: gcc
-          - name: ubuntu-22.04-clang-meson
-            os: ubuntu-22.04
-            cc: clang
-          - name: noinst-deps-cache-ubuntu
-            os: ubuntu-22.04
-            cc: gcc
+        - name: ubuntu-22.04-gcc
+          os: ubuntu-22.04
+        - name: ubuntu-22.04-clang
+          os: ubuntu-22.04
+        - name: ubuntu-no-deps-gcc
+          os: ubuntu-22.04
 
     runs-on: ${{ matrix.build.os }}
-    container: ${{ matrix.build.container }}
     env:
-      CC: '${{ matrix.build.cc }}'
       NETPANZER_DATADIR: ${{ github.workspace }}/data
     steps:
     - uses: actions/checkout@v4
       with:
         submodules: false
 
-    - if: ${{ env.CC }}
+    - name: Prepare variables
       run: |
-        if [ "$CC" = "gcc" ]; then
+        if [ "${{ contains(matrix.build.name, 'gcc') }}" = "true" ]; then
+          CC=gcc
           CXX=g++
         else
+          CC=clang
           CXX=clang++
         fi
-        echo "CXX=${CXX}" >> $GITHUB_ENV
+        echo "CC=$CC" >> $GITHUB_ENV
+        echo "CXX=$CXX" >> $GITHUB_ENV
+        echo "want_nls=${{ ! contains(matrix.build.name, 'no-deps') }}" >> $GITHUB_ENV
 
     - name: Show info
       run: |
@@ -67,29 +66,28 @@ jobs:
       run: |
         sudo apt update
         sudo apt upgrade -y
-        sudo apt install -y meson ninja-build python3 python3-setuptools
+        sudo apt install -y \
+          meson \
+          ninja-build \
+          python3 \
+          python3-setuptools
 
-    - if: ${{ ! contains(matrix.os.name, 'cache') }}
-      name: Install more dependencies
-      run: .github/scripts/install-linux-deps.sh
-
-    - if: ${{ ! contains(matrix.os.name, 'cache') }}
-      name: Meson Build Cache
-      id: Linux-mesonBuild-cache
-      uses: actions/cache@v4
-      with:
-        path: |
-          ${{ github.workspace }}/_build
-          ${{ github.workspace }}/subprojects
-        key: ${{ runner.os }}-${{ hashFiles('**/meson.build') }}
-
-    - if: ${{ steps.Linux-mesonBuild-cache.outputs.cache-hit != 'true' || ! contains(matrix.os.name, 'cache') }}
-      name: Setup
+    - if: ${{ ! contains(matrix.build.name, 'no-deps') }}
       run: |
-        ./setup-build.sh _build -Db_sanitize=none
+        sudo apt install -y \
+          gettext \
+          liblua5.1-0-dev \
+          libphysfs-dev \
+          libsdl2-dev \
+          libsdl2-mixer-dev \
+          libsdl2-ttf-dev
+
+    - name: Setup
+      run: |
+        ./setup-build.sh _build -Dnls=$want_nls
 
     - name: Meson build
-      run: ninja -v -C _build
+      run: ninja -C _build
 
     - name: Test
       run: |

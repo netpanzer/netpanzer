@@ -29,8 +29,10 @@ jobs:
       fail-fast: false
       matrix:
         build:
-          - name: macos-meson
-            os: macos-latest
+        - name: macos
+          os: macos-latest
+        - name: macos-no-deps
+          os: macos-latest
 
     runs-on: ${{ matrix.build.os }}
     env:
@@ -46,6 +48,7 @@ jobs:
         echo '${{ toJSON(matrix) }}'
 
     - name: Install dependencies
+      if: ${{ ! contains(matrix.build.name, 'no-deps') }}
       run: |
         brew update
         brew install \
@@ -54,11 +57,12 @@ jobs:
           pkg-config \
           sdl2_ttf \
           sdl2_mixer
-        pip3 install meson ninja
+
+    - run: pip3 install meson ninja
 
     - name: Build
       run: |
-        ./setup-build.sh _build
+        ./setup-build.sh _build -Dnls=${{ ! contains(matrix.build.name, 'no-deps') }}
         ninja -v -C _build
 
     - name: Test
