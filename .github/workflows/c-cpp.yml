@@ -26,7 +26,7 @@ jobs:
   build:
     name: ${{ matrix.build.name }}
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         build:
         - name: fail-data-install-test-gcc
