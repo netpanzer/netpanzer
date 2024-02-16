@@ -102,7 +102,7 @@ jobs:
         meson test --suite=netpanzer -v
 
     - name: Data install test
-      if: ${{ matrix.build.data_install_test }} == 'true' }}
+      if: ${{ matrix.build.data_install_test == 'true' }}
       run: |
         cd _build
         meson install --skip-subprojects
@@ -110,7 +110,7 @@ jobs:
         $GITHUB_WORKSPACE/tests/test_data_install.sh
 
     - name: Fail Data install test
-      if: ${{ matrix.build.data_install_test }} == 'want_fail' }}
+      if: ${{ matrix.build.data_install_test == 'want_fail' }}
       run: |
         cd _build
         NETPANZER_DATADIR=""
