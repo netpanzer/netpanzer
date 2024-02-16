@@ -114,5 +114,5 @@ jobs:
       run: |
         cd _build
         NETPANZER_DATADIR=""
-        $GITHUB_WORKSPACE/tests/test_data_install.sh
+        $GITHUB_WORKSPACE/tests/test_data_install.sh && exit 1
 
