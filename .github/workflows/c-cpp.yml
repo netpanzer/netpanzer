@@ -29,9 +29,14 @@ jobs:
       fail-fast: false
       matrix:
         build:
-        - name: ubuntu-22.04-gcc
+        - name: fail-data-install-test-gcc
+          os: ubuntu-22.04
+          data_install_test: want_fail
+        - name: data-install-test-gcc
           os: ubuntu-22.04
           data_install_test: true
+        - name: ubuntu-22.04-gcc
+          os: ubuntu-22.04
         - name: ubuntu-22.04-clang
           os: ubuntu-22.04
         - name: ubuntu-no-deps-gcc
@@ -102,5 +107,12 @@ jobs:
         cd _build
         meson install --skip-subprojects
         cd $INST_PREFIX_DIR/bin
+        $GITHUB_WORKSPACE/tests/test_data_install.sh
+
+    - name: Fail Data install test
+      if: ${{ matrix.build.data_install_test }} == 'want_fail' }}
+      run: |
+        cd _build
+        NETPANZER_DATADIR=""
         $GITHUB_WORKSPACE/tests/test_data_install.sh
 
