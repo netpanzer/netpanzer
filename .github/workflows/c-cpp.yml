@@ -31,6 +31,7 @@ jobs:
         build:
         - name: ubuntu-22.04-gcc
           os: ubuntu-22.04
+          data_install_test: true
         - name: ubuntu-22.04-clang
           os: ubuntu-22.04
         - name: ubuntu-no-deps-gcc
@@ -39,6 +40,7 @@ jobs:
     runs-on: ${{ matrix.build.os }}
     env:
       NETPANZER_DATADIR: ${{ github.workspace }}/data
+      INST_PREFIX_DIR: ${{ github.workspace }}/inst_test
     steps:
     - uses: actions/checkout@v4
       with:
@@ -84,7 +86,7 @@ jobs:
 
     - name: Setup
       run: |
-        ./setup-build.sh _build -Dnls=$want_nls
+        ./setup-build.sh _build -Dprefix=$INST_PREFIX_DIR -Dnls=$want_nls
 
     - name: Meson build
       run: ninja -C _build
@@ -93,3 +95,12 @@ jobs:
       run: |
         cd _build
         meson test --suite=netpanzer -v
+
+    - name: Data install test
+      if: ${{ matrix.build.data_install_test }} == 'true' }}
+      run: |
+        cd _build
+        meson install --skip-subprojects
+        cd $INST_PREFIX_DIR/bin
+        $GITHUB_WORKSPACE/tests/test_data_install.sh
+
