@@ -247,7 +247,10 @@ void MenuTemplateView::doDrawM(Surface &viewArea,
     //        clientArea.BltRoundRect(MenuRect, 10,
     //        Palette::gray256.getColorArray());
     
-    clientArea.FillRoundRect(MenuRectStart, 3, *(color_map.at(MenuConfig::bar_solid_color->c_str())));
+    clientArea.FillRoundRect(
+          MenuRectStart,
+          3,
+          MenuConfig::bar_solid_color);
     clientArea.RoundRect(MenuRectStart, 3, Color::gray);
 
     // I don't like them so I delete them!

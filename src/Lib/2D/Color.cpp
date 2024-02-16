@@ -108,13 +108,6 @@ static const ScriptVarBindRecord color_getters[] = {
 static const ScriptVarBindRecord color_setters[] = {
     GEN_COLORS(GEN_SETSTRUCT){0, 0}};
 
-#define GEN_MAP_RECORD(CNAME) \
-    {#CNAME, &MERGE_CLASS(Color) CNAME},
-
-const std::map<std::string, Uint8*> color_map = {
-   GEN_COLORS(GEN_MAP_RECORD)
-};
-
 static int color_rgb(lua_State* L) {
   int r = luaL_checkint(L, 1);  // r
   int g = luaL_checkint(L, 2);  // g
@@ -132,4 +125,9 @@ void Color::registerScript(const NPString& table_name) {
   ScriptManager::registerLib(table_name, color_methods);
   ScriptManager::bindStaticVariables(table_name, "ColorMetaTable",
                                      color_getters, color_setters);
+}
+
+void Color::bindColorsReadonly(const NPString& objectName, const NPString& metaName) {
+    ScriptManager::bindStaticVariables(objectName, metaName,
+                                     color_getters, (ScriptVarBindRecord[]){{0,0}});
 }

@@ -11,7 +11,9 @@ class MenuConfig : public NoCopy {
 
   static void loadConfig();
 
-  static NPString* bar_solid_color;
+  static Uint8 bar_solid_color;
+  static Uint8 bar_border_color;
+  static NPString* font;
  
  private:
   friend class ScriptManager;

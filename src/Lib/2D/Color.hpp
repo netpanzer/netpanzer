@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __Color_hpp__
 #define __Color_hpp__
 
-#include <map>
 #include <SDL.h>
 
 #include "Core/CoreTypes.hpp"
@@ -99,13 +98,12 @@ class Color {
   static Uint8 gray160;
   static Uint8 gray192;
   static Uint8 gray224;
+  static void bindColorsReadonly(const NPString& objectName, const NPString& metaName);
 
  private:
   friend class ScriptManager;
   static void registerScript(const NPString& table_name);
 };  // end Color
-
-extern const std::map<std::string, Uint8*> color_map;
 
 #endif  // end __Color_hpp__
 
