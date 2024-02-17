@@ -7,7 +7,7 @@
 
 set -ev
 
-SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy ./netpanzer &
+SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy HOME=$PWD ./netpanzer &
 ./netpanzer &
 sleep 10s
 
