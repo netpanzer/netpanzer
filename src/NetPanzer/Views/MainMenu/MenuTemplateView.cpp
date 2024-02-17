@@ -187,9 +187,9 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea) {
 
     // clientArea.BltRoundRect(getClientRect(), 10,
     // Palette::darkGray256.getColorArray());
-    clientArea.FillRoundRect(getClientRect(), 10, Color::white);  // esc in game
-    clientArea.RoundRect(MenuRect, 10, Color::gray);
-    clientArea.FillRoundRect(MenuRect, 10, Color::white);
+    clientArea.FillRoundRect(getClientRect(), MenuConfig::client_radius, MenuConfig::client_solid_color);  // esc in game
+    clientArea.RoundRect(MenuRect, MenuConfig::client_radius, MenuConfig::client_border_color);
+    clientArea.FillRoundRect(MenuRect, MenuConfig::client_radius, MenuConfig::client_solid_color);
     // clientArea.drawWindowsBorder();
 
   } else {
@@ -203,8 +203,8 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea) {
     }
     //        clientArea.BltRoundRect(MenuRect, 10,
     //        Palette::gray256.getColorArray());
-    clientArea.FillRoundRect(MenuRect, 10, Color::white);
-    clientArea.RoundRect(MenuRect, 10, Color::gray);
+    clientArea.FillRoundRect(MenuRect, MenuConfig::client_radius, MenuConfig::client_solid_color);
+    clientArea.RoundRect(MenuRect, MenuConfig::client_radius, MenuConfig::client_border_color);
 
     static std::string text = Package::getFullyQualifiedName();
     clientArea.bltString(10, 580, text.c_str(), Color::gray);
@@ -231,8 +231,8 @@ void MenuTemplateView::doDrawM(Surface &viewArea,
 
     //        clientArea.BltRoundRect(getClientRect(), 10,
     //        Palette::gray256.getColorArray());
-    clientArea.FillRoundRect(getClientRect(), 10, Color::white);  // esc in game
-    clientArea.RoundRect(MenuRect, 10, Color::gray);
+    clientArea.FillRoundRect(getClientRect(), MenuConfig::client_radius, MenuConfig::client_solid_color);  // esc in game
+    clientArea.RoundRect(MenuRect, MenuConfig::client_radius, MenuConfig::client_border_color);
     clientArea.drawWindowsBorder();
 
   } else {
@@ -249,9 +249,9 @@ void MenuTemplateView::doDrawM(Surface &viewArea,
     
     clientArea.FillRoundRect(
           MenuRectStart,
-          3,
+          MenuConfig::bar_radius,
           MenuConfig::bar_solid_color);
-    clientArea.RoundRect(MenuRectStart, 3, Color::gray);
+    clientArea.RoundRect(MenuRectStart, MenuConfig::bar_radius, MenuConfig::bar_border_color);
 
     // I don't like them so I delete them!
     // titlePackedSurface.blt(clientArea, bodyTextRect.min.x, 390);
@@ -260,7 +260,7 @@ void MenuTemplateView::doDrawM(Surface &viewArea,
   }
 
   static std::string text = Package::getFullyQualifiedName();
-  clientArea.bltString(10, 580, text.c_str(), Color::gray);
+  clientArea.bltString(10, 580, text.c_str(), MenuConfig::menu_dbg_text_color);
 
   View::doDraw(viewArea, clientArea);
 }  // end doDrawM
@@ -274,8 +274,8 @@ void MenuTemplateView::doDrawAlt(Surface &viewArea,
 
     // clientArea.BltRoundRect(getClientRect(), 10,
     // Palette::gray256.getColorArray());
-    clientArea.FillRoundRect(getClientRect(), 10, Color::white);  // esc in game
-    clientArea.RoundRect(MenuRect, 10, Color::gray);
+    clientArea.FillRoundRect(getClientRect(), MenuConfig::client_radius, MenuConfig::client_solid_color);  // esc in game
+    clientArea.RoundRect(MenuRect, MenuConfig::client_radius, MenuConfig::client_border_color);
     // clientArea.drawWindowsBorder();
 
   } else {
@@ -289,8 +289,8 @@ void MenuTemplateView::doDrawAlt(Surface &viewArea,
     }
     //        clientArea.BltRoundRect(MenuRect, 10,
     //        Palette::gray256.getColorArray());
-    clientArea.FillRoundRect(MenuRect, 10, Color::white);  // gray
-    clientArea.RoundRect(MenuRect, 10, Color::gray);
+    clientArea.FillRoundRect(MenuRect, MenuConfig::client_radius, MenuConfig::client_solid_color);  // gray
+    clientArea.RoundRect(MenuRect, MenuConfig::client_radius, MenuConfig::client_border_color);
   }
 
   static std::string text = Package::getFullyQualifiedName();
@@ -314,10 +314,10 @@ void MenuTemplateView::doActivate() {
 // loadBackgroundSurface
 //---------------------------------------------------------------------------
 void MenuTemplateView::loadBackgroundSurface() {
-  doLoadBackgroundSurface("pics/backgrounds/menus/menu/defaultMB.bmp");
+  doLoadBackgroundSurface((std::string("pics/backgrounds/menus/menu/") + *MenuConfig::menu_background).c_str());
 }  // end MenuTemplateView::loadBackgroundSurface
 void MenuTemplateView::loadMainBackgroundSurface() {
-  doLoadBackgroundSurface("pics/backgrounds/menus/menu/defaultMBstart.bmp");
+  doLoadBackgroundSurface((std::string("pics/backgrounds/menus/menu/") + *MenuConfig::menu_start_background).c_str());
 }  // end MenuTemplateView::loadBackgroundSurface
 // doLoadBackgroundSurface
 //---------------------------------------------------------------------------
