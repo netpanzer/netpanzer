@@ -24,4 +24,4 @@ ways to edit the compose yml in this directory.
 
 You may alternatively wish to use from a specific release. You may edit the
 compose file to use a differet tag. The images are at
-https://hub.docker.com/repository/docker/andy5995/netpanzer/general
+https://github.com/netpanzer/netpanzer/pkgs/container/netpanzer
