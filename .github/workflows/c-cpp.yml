@@ -101,7 +101,11 @@ jobs:
     - name: Data install test
       if: ${{ matrix.build.data_install_test == 'true' }}
       run: |
+        unset NETPANZER_DATADIR
         cd _build
+        # want fail
+        $GITHUB_WORKSPACE/tests/test_data_install.sh || true
         meson install --skip-subprojects
         cd $INST_PREFIX_DIR/bin
+        # want pass
         $GITHUB_WORKSPACE/tests/test_data_install.sh
