@@ -31,7 +31,6 @@ jobs:
         build:
         - name: data-install-test-gcc
           os: ubuntu-22.04
-          data_install_test: true
         - name: ubuntu-22.04-gcc
           os: ubuntu-22.04
         - name: ubuntu-22.04-clang
@@ -99,7 +98,7 @@ jobs:
         meson test --suite=netpanzer -v
 
     - name: Data install test
-      if: ${{ matrix.build.data_install_test == 'true' }}
+      if: ${{ contains(matrix.build.name, 'data-install-test') }}
       run: |
         unset NETPANZER_DATADIR
         cd _build
