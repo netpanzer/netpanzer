@@ -1,4 +1,7 @@
-FROM andy5995/netpanzer:build-env-jammy-latest
+FROM ghcr.io/netpanzer/netpanzer:build-env-jammy-latest
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt update && apt -y upgrade
+
 RUN mkdir /netpanzer
 ADD meson* /netpanzer
 ADD data /netpanzer/data
@@ -20,6 +23,7 @@ RUN \
   meson install --skip-subprojects
 
 FROM ubuntu:jammy
+LABEL org.opencontainers.image.source=https://github.com/netpanzer/netpanzer
 COPY --from=0 /usr/bin/netpanzer /usr/bin
 COPY --from=0 /usr/share/netpanzer /usr/share/netpanzer
 COPY --from=0 /netpanzer/_build/po/* /usr/share/locale
@@ -37,8 +41,9 @@ RUN apt update &&   \
         libubsan1 \
         sudo
 
-RUN useradd -m npserver && passwd -d npserver
-RUN echo "npserver ALL=(ALL) ALL" >> /etc/sudoers
+RUN useradd -m npserver && passwd -d npserver && \
+  echo "npserver ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
 USER npserver
 WORKDIR /home/npserver
 

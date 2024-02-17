@@ -2,7 +2,7 @@ version: '3'
 
 services:
   netpanzer-server:
-    image: andy5995/netpanzer:latest
+    image: ghcr.io/netpanzer/netpanzer:latest
     container_name: netpanzer-server
     ports:
       - "3031:3031/tcp"

@@ -17,7 +17,7 @@ on:
     - cron: '30 11 * * 5'
 
 env:
-  REGISTRY_IMAGE: andy5995/netpanzer
+  REGISTRY_IMAGE: ghcr.io/netpanzer/netpanzer
 
 jobs:
   build-env:
@@ -55,12 +55,13 @@ jobs:
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      -
-        name: Login to Docker Hub
+
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          username: andy5995
-          password: ${{ secrets.UNCLE_ANDY_DOCKERHUB_ACCESS_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       -
         name: Build and push by digest
         id: build
@@ -123,12 +124,13 @@ jobs:
         with:
           images: ${{ env.REGISTRY_IMAGE }}
           tags: type=raw,value=${{ env.TAG }}
-      -
-        name: Login to Docker Hub
+
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          username: andy5995
-          password: ${{ secrets.UNCLE_ANDY_DOCKERHUB_ACCESS_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       -
         name: Create manifest list and push
         working-directory: /tmp/digests
