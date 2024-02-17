@@ -251,6 +251,8 @@ BaseGameManager* initialise(int argc, char** argv) {
     filesystem::addToSearchPath(dataDir.c_str());
   } else {
     LOGGER.warning("Data directory not specified! Game will only work if binary is in source root.");
+    if (!filesystem::exists("maps"))
+      exit(EXIT_FAILURE);
   }
 
 #ifdef __APPLE__

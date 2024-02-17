@@ -55,7 +55,12 @@ subdir('po')
 localedir = join_paths(get_option('prefix'), get_option('localedir'))
 conf.set_quoted('NP_LOCALEDIR', localedir)
 conf.set_quoted('PACKAGE_VERSION', meson.project_version())
-conf.set_quoted('NP_DATADIR', join_paths(get_option('prefix'), get_option('datadir')))
+conf.set_quoted('NP_DATADIR', join_paths(
+  get_option('prefix'),
+  get_option('datadir'),
+  meson.project_name())
+  )
+
 config_h = configure_file(output : 'config.h', configuration : conf)
 
 meson.add_devenv({'NETPANZER_DATADIR': join_paths(meson.project_source_root(), 'data')})
