@@ -1,5 +1,5 @@
-LABEL org.opencontainers.image.source=https://github.com/netpanzer/netpanzer
 FROM ubuntu:jammy
+LABEL org.opencontainers.image.source=https://github.com/netpanzer/netpanzer
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt upgrade -y && apt install -y \
         build-essential \
@@ -14,8 +14,8 @@ RUN apt update && apt upgrade -y && apt install -y \
         ninja-build \
         sudo
 
-RUN useradd -m npbuilder && passwd -d npbuilder
-RUN echo "npbuilder ALL=(ALL) ALL" >> /etc/sudoers
+RUN useradd -m npbuilder && passwd -d npbuilder && \
+  echo "npbuilder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 ENV DOCKER_NP_BUILD=TRUE
 
