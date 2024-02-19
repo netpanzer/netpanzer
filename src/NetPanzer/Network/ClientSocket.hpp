@@ -37,7 +37,7 @@ class ClientSocketObserver {
  protected:
   friend class ClientSocket;
   virtual void onClientConnected(ClientSocket *cso) = 0;
-  virtual void onClientDisconected(ClientSocket *cso, const char *msg) = 0;
+  virtual void onClientDisconnected(ClientSocket *cso, const char *msg) = 0;
 };
 
 class ClientSocket : public network::TCPSocketObserver {
@@ -114,7 +114,6 @@ class ClientSocket : public network::TCPSocketObserver {
   Uint8 encrypted;
   Uint8 encryptedb;
   Uint8 encrypted2;
-  Uint8 encryptedb2;
   /*
       Uint8 popc_0;
       Uint8 popc_0b;

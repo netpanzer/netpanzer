@@ -168,7 +168,7 @@ void NetworkServer::dropClient(ClientSocket *client) {
 
   if (i != client_list.end()) {
     // XXX hack
-    onClientDisconected(client, "dropped");
+    onClientDisconnected(client, "dropped");
   }
 }
 
@@ -180,7 +180,7 @@ void NetworkServer::niceDisconnect(ClientSocket *client) {
 
   if (i != client_list.end()) {
     // XXX hack
-    onClientDisconected(client, 0);
+    onClientDisconnected(client, 0);
   }
 }
 
@@ -196,7 +196,7 @@ void NetworkServer::kickClient(ClientSocket *client) {
     if (p) {
       p->setStateKicked();
     }
-    onClientDisconected(client, "kicked");
+    onClientDisconnected(client, "kicked");
   }
 }
 
@@ -258,8 +258,8 @@ void NetworkServer::onClientConnected(ClientSocket *s) {
   LOGGER.debug("NetworkServer: client connected [%d]", s->getId());
 }
 
-void NetworkServer::onClientDisconected(ClientSocket *s, const char *msg) {
-  LOGGER.debug("NetworkServer::onClientDisconected( %d, '%s')", s->getId(),
+void NetworkServer::onClientDisconnected(ClientSocket *s, const char *msg) {
+  LOGGER.debug("NetworkServer::onClientDisconnected( %d, '%s')", s->getId(),
                msg ? msg : "nice");
 
   bool cleandisconnect = false;
@@ -269,27 +269,27 @@ void NetworkServer::onClientDisconected(ClientSocket *s, const char *msg) {
     // player was connecting and dropped.
     ServerConnectDaemon::removeClientFromQueue(s);
     sendalert = false;
-    LOGGER.debug("NetworkServer::onClientDisconected player was connecting");
+    LOGGER.debug("NetworkServer::onClientDisconnected player was connecting");
   }
 
   if (NetworkInterface::receive_queue.isReady()) {
     unsigned long frontsave = NetworkInterface::receive_queue.front;
     while (NetworkInterface::receive_queue.isReady()) {
-      LOGGER.debug("NetworkServer::onClientDisconected there was a packet");
+      LOGGER.debug("NetworkServer::onClientDisconnected there was a packet");
       NetPacket packet;
 
       NetworkInterface::receive_queue.dequeue(&packet);
 
       if (packet.fromClient == s) {
         LOGGER.debug(
-            "NetworkServer::onClientDisconected the packet was from our "
+            "NetworkServer::onClientDisconnected the packet was from our "
             "friend");
         const NetMessage *netmessage = packet.getNetMessage();
         if (netmessage->message_class == _net_message_class_connect &&
             netmessage->message_id ==
                 _net_message_id_connect_netPanzer_client_disconnect) {
           LOGGER.debug(
-              "NetworkServer::onClientDisconected so is a clean disconnect");
+              "NetworkServer::onClientDisconnected so is a clean disconnect");
           cleandisconnect = true;
         }
       }

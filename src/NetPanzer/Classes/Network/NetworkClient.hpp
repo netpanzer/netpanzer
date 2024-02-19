@@ -36,7 +36,7 @@ class NetworkClient : public NetworkInterface, ClientSocketObserver {
   unsigned short connection_status;
 
   void onClientConnected(ClientSocket *s);
-  void onClientDisconected(ClientSocket *s, const char *msg);
+  void onClientDisconnected(ClientSocket *s, const char *msg);
 
  public:
   NetworkClient();

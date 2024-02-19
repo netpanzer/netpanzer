@@ -53,7 +53,7 @@ void NetworkClient::onClientConnected(ClientSocket *s) {
   sendMessage(&join_request, sizeof(ClientConnectJoinRequest));
 }
 
-void NetworkClient::onClientDisconected(ClientSocket *s, const char *msg) {
+void NetworkClient::onClientDisconnected(ClientSocket *s, const char *msg) {
   if (NetworkState::status == _network_state_bot)  // client bot only
   {
     // do nothing
