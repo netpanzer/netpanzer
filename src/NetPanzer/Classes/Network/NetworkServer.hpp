@@ -86,7 +86,7 @@ class NetworkServer : public NetworkInterface,
                                      const Address &fromaddr);
   void onSocketError(TCPListenSocket *so);
   void onClientConnected(ClientSocket *s);
-  void onClientDisconected(ClientSocket *s, const char *msg);
+  void onClientDisconnected(ClientSocket *s, const char *msg);
 
  private:
   TCPListenSocket *socket;

@@ -127,14 +127,15 @@ ClientSocket::~ClientSocket() {
 void ClientSocket::sendMessage(const void *data, size_t size) {
   if (socket) {
     if (sendpos + size > sizeof(sendbuffer)) {
-      observer->onClientDisconected(
+      observer->onClientDisconnected(
           this, sendpos ? "Send buffer full, need to disconnect"
                         : "Send data bigger than buffer, need to disconnect");
       return;
     }
 
     Uint16 *buf = (Uint16 *)(sendbuffer + sendpos);
-    *buf = htol16(size);
+    Uint16 sizeValue = htol16(size);
+    memcpy(buf, &sizeValue, sizeof(Uint16));
 
     Uint8 *bufb = (Uint8 *)(sendbuffer + sendpos);
 
@@ -146,12 +147,9 @@ void ClientSocket::sendMessage(const void *data, size_t size) {
     memcpy(&encrypted, buf + 1, 1);
     memcpy(&encryptedb, bufb + 3, 1);
     encrypted2 = encrypted;
-    encryptedb2 = encryptedb;
 
     encrypted2 ^= encryptKeySend;
     memcpy(buf + 1, &encrypted2, 1);
-    encryptedb2 ^= encryptKeySend;
-    memcpy(bufb + 3, &encryptedb2, 1);
 
     if (NetworkState::status == _network_state_server)  // server only
     {
@@ -219,7 +217,7 @@ void ClientSocket::onDataReceived(network::TCPSocket *so, const char *data,
 
     if (packetsize < sizeof(NetMessage)) {
       LOGGER.debug("Received buggy packet size (< min) [%d]", packetsize);
-      observer->onClientDisconected(this, "Received buggy packet size (< min)");
+      observer->onClientDisconnected(this, "Received buggy packet size (< min)");
       break;  // we are deleted
     }
 
@@ -227,7 +225,7 @@ void ClientSocket::onDataReceived(network::TCPSocket *so, const char *data,
     {
       LOGGER.debug("Received buggy packet size (> max) [from IP %s]",
                    cipstring);
-      observer->onClientDisconected(this, "Received buggy packet size (> max)");
+      observer->onClientDisconnected(this, "Received buggy packet size (> max)");
       // hardClose();
       break;  // we are deleted
     }
@@ -279,7 +277,7 @@ void ClientSocket::onDataReceived(network::TCPSocket *so, const char *data,
                 cipstring);
             // ChatInterface::serversay("Server blocked suspect attack
             // (external)!");
-            observer->onClientDisconected(this, "Network Manager striked!");
+            observer->onClientDisconnected(this, "Network Manager striked!");
             hardClose();
             break;
           }
@@ -310,7 +308,7 @@ void ClientSocket::onDataReceived(network::TCPSocket *so, const char *data,
                          cipstring);
             // ChatInterface::serversay("Server blocked suspect attack
             // (external)!");
-            observer->onClientDisconected(this, "Network Manager striked!");
+            observer->onClientDisconnected(this, "Network Manager striked!");
             hardClose();
             break;
           }
@@ -337,7 +335,7 @@ void ClientSocket::onDataReceived(network::TCPSocket *so, const char *data,
                            cipstring);
               // ChatInterface::serversay("Server blocked suspect attack
               // (external)!");
-              observer->onClientDisconected(this, "Network Manager striked!");
+              observer->onClientDisconnected(this, "Network Manager striked!");
 
               hardClose();
               break;
@@ -348,7 +346,7 @@ void ClientSocket::onDataReceived(network::TCPSocket *so, const char *data,
                            cipstring);
               // ChatInterface::serversay("Server blocked suspect attack
               // (external)!");
-              observer->onClientDisconected(this, "Network Manager striked!");
+              observer->onClientDisconnected(this, "Network Manager striked!");
 
               hardClose();
               break;
@@ -365,7 +363,7 @@ void ClientSocket::onDataReceived(network::TCPSocket *so, const char *data,
                     cipstring);
                 ChatInterface::serversay(
                     "Anti-Spam terminated a connection (chat abuse)!");
-                observer->onClientDisconected(this, "Network Manager striked!");
+                observer->onClientDisconnected(this, "Network Manager striked!");
 
                 hardClose();
                 break;
@@ -394,7 +392,7 @@ void ClientSocket::onDataReceived(network::TCPSocket *so, const char *data,
                 commandBurst = 0;
                 ChatInterface::serversay(
                     "Suspected cheater kicked (too many commands)!");
-                observer->onClientDisconected(this, "Anti-cheating striked!");
+                observer->onClientDisconnected(this, "Anti-cheating striked!");
                 //                                hardClose();
                 break;
               }
@@ -429,14 +427,14 @@ void ClientSocket::onDisconnected(network::TCPSocket *s) {
   (void)s;
   LOGGER.debug("ClientSocket: Disconnected id=%d", id);
   socket = 0;
-  observer->onClientDisconected(this, "Network connection closed");
+  observer->onClientDisconnected(this, "Network connection closed");
 }
 
 void ClientSocket::onSocketError(network::TCPSocket *so) {
   (void)so;
   LOGGER.warning("ClientSocket: Network connection error id=%d", id);
   socket = 0;
-  observer->onClientDisconected(this, "Network connection error");
+  observer->onClientDisconnected(this, "Network connection error");
 }
 
 std::string ClientSocket::getFullIPAddress() {

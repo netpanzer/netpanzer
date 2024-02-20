@@ -48,7 +48,7 @@ Uint16 NetMessageDecoder::decodeMessage(NetMessage** message) {
 
   Uint16 mlen_value;
   memcpy(&mlen_value, decode_message.data + offset, sizeof(Uint16));
-  unsigned int msg_len = ltoh16(mlen_value);
+  Uint16 msg_len = ltoh16(mlen_value);
 
   if (msg_len > size - sizeof(NetMessage) - offset) {
     LOGGER.warning("Malformed Multimessage!!");
