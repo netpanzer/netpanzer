@@ -165,7 +165,6 @@ if not sdl2_ttf_dep.found()
 endif
 deps += sdl2_ttf_dep
 
-sdl2_mixer_use_embedded = false
 sdl2_mixer_dep = dependency('SDL2_mixer', required: false)
 if not sdl2_mixer_dep.found()
   sdl2_mixer_dep = cc.find_library('SDL2_mixer', has_headers: 'SDL_mixer.h', required: false)
@@ -177,42 +176,9 @@ if not sdl2_mixer_dep.found()
       fallback: 'sdl2_mixer',
       default_options: ['default_library=static']
       )
-    sdl2_mixer_use_embedded = true
   endif
 endif
 deps += sdl2_mixer_dep
-
-# These will be built as optional dependencies of SDL2_mixer by default
-# if found on the system, but they are not required by NetPanzer. If SDL2_mixer was
-# found without using the fallback, chances are that it already has all its
-# dependencies.
-if sdl2_mixer_use_embedded
-  libogg_dep = dependency('ogg', required: false)
-  if not libogg_dep.found()
-    libogg_dep = cc.find_library('ogg', has_headers: 'ogg.h', required: false)
-    if not libogg_dep.found()
-      libogg_dep = dependency(
-        'ogg',
-        required: true,
-        fallback: 'ogg',
-        default_options: ['default_library=static'])
-    endif
-  endif
-  deps += libogg_dep
-
-  vorbis_dep = dependency('vorbis', required: false)
-  if not vorbis_dep.found()
-    vorbis_dep = cc.find_library('vorbis', has_headers: 'vorbisfile.h', required: false)
-    if not vorbis_dep.found()
-      vorbis_dep = dependency(
-        'vorbis',
-        required: true,
-        fallback: 'vorbis',
-        default_options: ['default_library=static'])
-    endif
-  endif
-  deps += vorbis_dep
-endif
 
 inc_dirs = [include_directories('.')]
 
