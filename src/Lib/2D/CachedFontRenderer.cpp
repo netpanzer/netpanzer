@@ -110,6 +110,7 @@ void CachedFontRenderer::cleanup() {
 
 #include "test.hpp"
 #include "CachedFontRenderer.hpp"
+#include "Interfaces/MenuConfig.hpp"
 
 void CachedFontRenderer::test_openFont(void) {
   CachedFontRenderer::initFont();
@@ -125,6 +126,8 @@ int main(int argc, char *argv[]) {
   Package::assignDataDir();
   filesystem::addToSearchPath(Package::getDataDir().c_str());
 
+  MenuConfig::menu_font = new std::string("GNUUnifont9FullHintInstrUCSUR.ttf");
+  MenuConfig::menu_font_size = 14;
   CachedFontRenderer::test_openFont();
 
   return 0;
