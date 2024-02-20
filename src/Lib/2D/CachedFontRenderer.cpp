@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 
+#include "Interfaces/MenuConfig.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/Log.hpp"
 
@@ -38,9 +39,9 @@ void CachedFontRenderer::initFont() {
   }
 
   // Quantico-Regular looked good too but some issues with some characters.
-  std::string absFontPath = std::string(filesystem::getRealName("fonts/GNUUnifont9FullHintInstrUCSUR.ttf"));
+  std::string absFontPath = std::string(filesystem::getRealName((std::string("fonts/") + *MenuConfig::menu_font).c_str()));
   LOGGER.warning("font path: %s", absFontPath.c_str());
-  font = TTF_OpenFont(absFontPath.c_str(), FONT_SIZE);
+  font = TTF_OpenFont(absFontPath.c_str(), MenuConfig::menu_font_size);
   if (font == NULL) {
     LOGGER.warning("CachedFontRenderer - cannot load font %s.", absFontPath.c_str());
     #ifndef TEST_LIB

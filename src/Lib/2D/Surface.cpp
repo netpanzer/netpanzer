@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 
 #include "2D/CachedFontRenderer.hpp"
+#include "Interfaces/MenuConfig.hpp"
 #include "Palette.hpp"
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
@@ -1629,7 +1630,7 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color,
 
     // Remove any spaces.
     while (string[length] == ' ') {
-      pos.x += FONT_WIDTH;  // TODO REMOVE
+      pos.x += MenuConfig::menu_font_size;  // TODO REMOVE
       length++;
     }
 
@@ -1651,7 +1652,7 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color,
 
     strBuf[strBufLength] = '\0';
 
-    if ((int)(pos.x + strlen(strBuf) * FONT_WIDTH) > rect.max.x) {
+    if ((int)(pos.x + strlen(strBuf) * MenuConfig::menu_font_size) > rect.max.x) {
       pos.x = rect.min.x;
       pos.y += gapSpace;
     }
@@ -1662,7 +1663,7 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color,
       return;
     }
 
-    pos.x += strlen(strBuf) * FONT_WIDTH;
+    pos.x += strlen(strBuf) * MenuConfig::menu_font_size;
 
     length += strBufLength;
   }

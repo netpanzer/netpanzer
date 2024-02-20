@@ -122,6 +122,9 @@ void PlayerGameManager::initializeVideoSubSystem() {
   LOGGER.info("Initializing video mode");
   sdlVideo = new SDLVideo();
   Screen = sdlVideo;
+  // Not great having to load menu config twice,
+  // but necessary to make font scaling work.
+  GameManager::loadMenuConfig();
   CachedFontRenderer::initFont();
   GameManager::setVideoMode();
 }

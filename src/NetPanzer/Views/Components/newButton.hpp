@@ -22,7 +22,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Color.hpp"
 #include "Button.hpp"
 #include "Component.hpp"
+#include "Interfaces/MenuConfig.hpp"
 #include "ViewGlobals.hpp"
+
 
 //--------------------------------------------------------------------------
 class newButton : public Button {
@@ -37,15 +39,15 @@ class newButton : public Button {
     label = Title;
     setTextColors(Color::white, Color::lightYellow, Color::darkGray);
     setExtraBorder();
-    borders[0][0] = Color::gray;
-    borders[0][1] = Color::black;
-    borders[1][0] = Color::gray;
-    borders[1][1] = Color::gray;
-    borders[2][0] = Color::gray;
-    borders[2][1] = Color::darkGray;
+    borders[0][0] = MenuConfig::button_normal_border;
+    borders[0][1] = MenuConfig::button_normal_highlight;
+    borders[1][0] = MenuConfig::button_hover_border;
+    borders[1][1] = MenuConfig::button_hover_highlight;
+    borders[2][0] = MenuConfig::button_pressed_border;
+    borders[2][1] = MenuConfig::button_pressed_highlight;
     Surface bnormal;
-    bnormal.loadBMP("pics/backgrounds/menus/buttons/default/page_green.bmp");
-    Surface spbutton(Surface::getTextLength(Title) + 20, 25, 1);
+    bnormal.loadBMP(("pics/backgrounds/menus/buttons/default/" + *MenuConfig::button_texture).c_str());
+    Surface spbutton(Surface::getTextLength(Title) + 20, MenuConfig::menu_font_size > 25 ? MenuConfig::menu_font_size : 25, 1);
     // spbutton.setFrame(0);
     if (down) bnormal.flipVertical();
     bnormal.blt(spbutton, 0, 0);
