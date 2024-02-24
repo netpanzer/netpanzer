@@ -1630,7 +1630,7 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color,
 
     // Remove any spaces.
     while (string[length] == ' ') {
-      pos.x += MenuConfig::menu_font_size;  // TODO REMOVE
+      pos.x += FONT_WIDTH;  // TODO REMOVE
       length++;
     }
 
@@ -1652,7 +1652,7 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color,
 
     strBuf[strBufLength] = '\0';
 
-    if ((int)(pos.x + strlen(strBuf) * MenuConfig::menu_font_size) > rect.max.x) {
+    if ((int)(pos.x + strlen(strBuf) * FONT_WIDTH) > rect.max.x) {
       pos.x = rect.min.x;
       pos.y += gapSpace;
     }
@@ -1663,7 +1663,7 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color,
       return;
     }
 
-    pos.x += strlen(strBuf) * MenuConfig::menu_font_size;
+    pos.x += strlen(strBuf) * FONT_WIDTH;
 
     length += strBufLength;
   }
