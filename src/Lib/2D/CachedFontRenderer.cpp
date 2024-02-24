@@ -38,7 +38,6 @@ void CachedFontRenderer::initFont() {
     exit(EXIT_FAILURE);
   }
 
-  // Quantico-Regular looked good too but some issues with some characters.
   std::string absFontPath = std::string(filesystem::getRealName((std::string("fonts/") + *MenuConfig::menu_font).c_str()));
   LOGGER.warning("font path: %s", absFontPath.c_str());
   font = TTF_OpenFont(absFontPath.c_str(), MenuConfig::menu_font_size);
