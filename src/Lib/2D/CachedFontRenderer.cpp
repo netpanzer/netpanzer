@@ -38,7 +38,7 @@ void CachedFontRenderer::initFont() {
     exit(EXIT_FAILURE);
   }
 
-  std::string absFontPath = std::string(filesystem::getRealName((std::string("fonts/") + *MenuConfig::menu_font).c_str()));
+  std::string absFontPath = std::string(filesystem::getRealName((*MenuConfig::menu_font).c_str()));
   LOGGER.warning("font path: %s", absFontPath.c_str());
   font = TTF_OpenFont(absFontPath.c_str(), MenuConfig::menu_font_size);
   if (font == NULL) {

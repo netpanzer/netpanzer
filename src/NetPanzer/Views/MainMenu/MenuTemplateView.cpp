@@ -314,10 +314,10 @@ void MenuTemplateView::doActivate() {
 // loadBackgroundSurface
 //---------------------------------------------------------------------------
 void MenuTemplateView::loadBackgroundSurface() {
-  doLoadBackgroundSurface((std::string("pics/backgrounds/menus/menu/") + *MenuConfig::menu_background).c_str());
+  doLoadBackgroundSurface((*MenuConfig::menu_background).c_str());
 }  // end MenuTemplateView::loadBackgroundSurface
 void MenuTemplateView::loadMainBackgroundSurface() {
-  doLoadBackgroundSurface((std::string("pics/backgrounds/menus/menu/") + *MenuConfig::menu_start_background).c_str());
+  doLoadBackgroundSurface((*MenuConfig::menu_start_background).c_str());
 }  // end MenuTemplateView::loadBackgroundSurface
 // doLoadBackgroundSurface
 //---------------------------------------------------------------------------
