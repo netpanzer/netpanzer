@@ -47,7 +47,7 @@ class newButton : public Button {
     borders[2][1] = MenuConfig::button_pressed_highlight;
     Surface bnormal;
     bnormal.loadBMP(("pics/backgrounds/menus/buttons/default/" + *MenuConfig::button_texture).c_str());
-    Surface spbutton(Surface::getTextLength(Title) + 20, MenuConfig::menu_font_size > 25 ? MenuConfig::menu_font_size : 25, 1);
+    Surface spbutton(Surface::getTextLength(Title) + 20, 25, 1);
     // spbutton.setFrame(0);
     if (down) bnormal.flipVertical();
     bnormal.blt(spbutton, 0, 0);
