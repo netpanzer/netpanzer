@@ -98,6 +98,7 @@ class Color {
   static Uint8 gray160;
   static Uint8 gray192;
   static Uint8 gray224;
+  static void bindColorsReadonly(const NPString& objectName, const NPString& metaName);
 
  private:
   friend class ScriptManager;

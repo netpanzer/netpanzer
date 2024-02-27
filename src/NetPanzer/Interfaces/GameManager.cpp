@@ -40,6 +40,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/Console.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/MenuConfig.hpp"
 #include "Interfaces/KeyboardInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/MapsManager.hpp"
@@ -146,6 +147,12 @@ void GameManager::loadPalette(const std::string& palette_name) {
 
 // ******************************************************************
 
+void GameManager::loadMenuConfig() {
+  MenuConfig::loadConfig();
+}
+
+// ******************************************************************
+
 void GameManager::setVideoMode() {
   iXY mode_res;
   iXY old_res =
@@ -171,6 +178,7 @@ void GameManager::setVideoMode() {
   Desktop::checkResolution(old_res, mode_res);
   Desktop::checkViewPositions(mode_res);
   loadPalette("netp");
+  loadMenuConfig();
 
   if (old_res == iXY(0, 0)) {
     // users can get annoyed when they see a black screen for half a minute

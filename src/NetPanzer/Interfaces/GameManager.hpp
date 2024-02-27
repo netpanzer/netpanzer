@@ -106,6 +106,8 @@ class GameManager {
 
   static void setVideoMode();
 
+  static void loadMenuConfig();
+  
   static void loadPalette(const std::string& palette_path);
 
   static void drawTextCenteredOnScreen(const char* string, unsigned char color);

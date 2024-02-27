@@ -63,6 +63,7 @@ src_basename = [
   'GameControlRulesDaemon.cpp',
   'ConsoleInterface.cpp',
   'GameConfig.cpp',
+  'MenuConfig.cpp',
   'BotGameManager.cpp',
   'ChatInterface.cpp',
   'MouseInterface.cpp',

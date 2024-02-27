@@ -26,9 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string>
 #include <unordered_map>
 
-#define FONT_SIZE 14
 #define FONT_WIDTH 14
-
 class RenderedText {
  public:
   SDL_Surface* sdlSurface;

@@ -29,53 +29,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Surface.hpp"
 #include "Util/FileSystem.hpp"
 
-/*******************************************************************/
-// BEGIN hacks to avoid compiling everything just for this converter
-
-typedef const struct s_ScriptVarBindRecord ScriptVarBindRecord;
-struct lua_State;
-struct luaL_Reg;
-
-class ScriptManager {
- public:
-  static void runFileInTable(const NPString &filename, const NPString &table);
-  static void registerLib(const NPString &libname, const luaL_Reg *functions);
-  static void bindStaticVariables(const NPString &objectName,
-                                  const NPString &metaName,
-                                  ScriptVarBindRecord *getters,
-                                  ScriptVarBindRecord *setters);
-};
-
-void ScriptManager::runFileInTable(const NPString &filename,
-                                   const NPString &table) {
-  return;
-}
-
-void ScriptManager::registerLib(const NPString &libname,
-                                const luaL_Reg *functions) {
-  return;
-}
-
-void ScriptManager::bindStaticVariables(const NPString &objectName,
-                                        const NPString &metaName,
-                                        ScriptVarBindRecord *getters,
-                                        ScriptVarBindRecord *setters) {
-  return;
-}
-
-class ScriptHelper {
- public:
-  static int get_byte(lua_State *L, void *v);
-  static int set_byte(lua_State *L, void *v);
-};
-
-int ScriptHelper::get_byte(lua_State *L, void *v) { return 0; }
-
-int ScriptHelper::set_byte(lua_State *L, void *v) { return 0; }
-
-// END hacks
-/*******************************************************************/
-
 int main(int argc, char *argv[]) {
   printf("bmp2pak for NetPanzer V 1.0\n");
   if (argc < 3) {

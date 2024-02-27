@@ -126,3 +126,8 @@ void Color::registerScript(const NPString& table_name) {
   ScriptManager::bindStaticVariables(table_name, "ColorMetaTable",
                                      color_getters, color_setters);
 }
+
+void Color::bindColorsReadonly(const NPString& objectName, const NPString& metaName) {
+    ScriptManager::bindStaticVariables(objectName, metaName,
+                                     color_getters, (ScriptVarBindRecord[]){{0,0}});
+}
