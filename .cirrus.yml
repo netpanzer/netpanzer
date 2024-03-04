@@ -13,9 +13,9 @@ filter_template: &filter_template
 
 freebsd_task:
   <<: *filter_template
-  name: FreeBSD 13.2
+  name: FreeBSD 14.0
   freebsd_instance:
-    image_family: freebsd-13-2
+    image_family: freebsd-14-0
   pkginstall_script:
     - pkg update -f
     - pkg install -y gettext meson ninja physfs pkgconf SDL2 sdl2_mixer sdl2_ttf
