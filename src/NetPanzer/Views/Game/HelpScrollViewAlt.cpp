@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Classes/WorldInputCmdProcessor.hpp"
 #include "GameView.hpp"
+#include "Localization.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Views/GameViewGlobals.hpp"
 
@@ -49,7 +50,7 @@ HelpScrollViewAlt::HelpScrollViewAlt() : SpecialButtonView() {
   insert("");
   insert("  LMC                              Selects a unit");
   insert(
-      "  LMH                              Makes a bouding box for unit "
+      "  LMH                              Makes a bounding box for unit "
       "selection");
   insert("  RMC                              De-selects all selected units");
   insert(
@@ -208,7 +209,7 @@ void HelpScrollViewAlt::doDraw(Surface &viewArea, Surface &clientArea) {
   drawHelpText(clientArea, 0, 0);
 
   clientArea.bltString(4, clientArea.getHeight() - Surface::getFontHeight(),
-                       "Note: Use the right mouse button to scroll quickly.",
+                       _("Note: Use the right mouse button to scroll quickly."),
                        Color::lightGray);
   // char strBuf[256];
   // sprintf(strBuf, "%d", scrollBar->getValue());

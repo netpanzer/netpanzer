@@ -146,7 +146,7 @@ void MenuTemplateView::initPreGameOptionButtons() {
                     new newButton("HOST", _("Host"), emptyPos, 0),
                     new newButton("OPTIONS", _("Options"), emptyPos, 0),
                     new newButton("CREDITS", "Credits", emptyPos, 0),
-                    new newButton("HELP", "Help", emptyPos, 0),
+                    new newButton("HELP", _("Help"), emptyPos, 0),
                 });
   addRightEnd(
           mainTopButtonsStartPos.y,
