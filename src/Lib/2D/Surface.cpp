@@ -666,7 +666,7 @@ void Surface::bltTransColorFromSDLSurface(SDL_Surface *source, int x, int y,
 
   for (unsigned int row = 0; row < numRows; row++) {
     for (unsigned int col = 0; col < pixelsPerRow; col++) {
-      if (*sPtr != 0) *dPtr = color;
+      if (*sPtr != 0) *dPtr = *sPtr;
       sPtr++;
       dPtr++;
     }
