@@ -521,7 +521,7 @@ void Surface::bltTrans(Surface &dest, int x, int y) const {
 //          are blitted in the specified color.
 //---------------------------------------------------------------------------
 void Surface::bltTransColor(Surface &dest, int x, int y,
-                            const Uint8 color) const {
+                            const PIX color) const {
   assert(getDoesExist());
   assert(dest.getDoesExist());
   assert(this != 0);
@@ -601,7 +601,7 @@ void Surface::bltTransColor(Surface &dest, int x, int y,
 }  // end Surface::bltTransC
 
 void Surface::bltTransColorFromSDLSurface(SDL_Surface *source, int x, int y,
-                                          const Uint8 color) const {
+                                          const PIX color) const {
   if (mem == 0) {
     return;  // TODO??? how?
   }
@@ -1323,7 +1323,7 @@ PIX Surface::getAverageColor() {
 unsigned int Surface::getFontHeight() {
   // TODO pass in string? some characters are taller than others
   SDL_Surface *font_surface =
-      CachedFontRenderer::render(".", Palette::color[0]);
+      CachedFontRenderer::render(".", Palette::color[0], Palette::color[0]);
   unsigned int height =
       font_surface->h +
       3;  // magic number works with GNUUnifont9FullHintInstrUCSUR font
@@ -1335,7 +1335,7 @@ unsigned int Surface::getTextWidth(const char *text) {
     return 0;
   }
   SDL_Surface *font_surface =
-      CachedFontRenderer::render(text, Palette::color[0]);
+      CachedFontRenderer::render(text, Palette::color[0], Palette::color[0]);
   if (!font_surface) {
     return 0;
   }
@@ -1361,7 +1361,7 @@ void Surface::renderText(const char *str, PIX color, PIX bgcolor) {
   if (!len) return;
 
   SDL_Surface *font_surface =
-      CachedFontRenderer::render(str, Palette::color[color]);
+      CachedFontRenderer::render(str, Palette::color[color], Palette::color[bgcolor]);
   if (!font_surface) {
     printf("Could not renderText() %s %s\n", str, SDL_GetError());
     return;
@@ -1388,13 +1388,13 @@ void Surface::renderText(const char *str, PIX color, PIX bgcolor) {
 //          calls to blitChar for each character of the string. Does not
 //          handle wrapping.
 //---------------------------------------------------------------------------
-void Surface::bltString(int x, int y, const char *str, const Uint8 &color) {
+void Surface::bltString(int x, int y, const char *str, const PIX &color, const PIX &blend_color) {
   int len = strlen(str);
   if (!len) {
     return;
   }
   SDL_Surface *font_surface =
-      CachedFontRenderer::render(str, Palette::color[color]);
+      CachedFontRenderer::render(str, Palette::color[color], Palette::color[blend_color]);
   if (!font_surface) {
     printf("Could not bltString() %s %s\n", str, SDL_GetError());
     return;
@@ -1405,19 +1405,19 @@ void Surface::bltString(int x, int y, const char *str, const Uint8 &color) {
 // bltStringShadowed
 //---------------------------------------------------------------------------
 void Surface::bltStringShadowed(int x, int y, char const *str,
-                                const Uint8 &textColor,
-                                const Uint8 &shadowColor) {
+                                const PIX &textColor,
+                                const PIX &shadowColor) {
   int len = strlen(str);
   if (!len) return;
   SDL_Surface *font_surface_back =
-      CachedFontRenderer::render(str, Palette::color[shadowColor]);
+      CachedFontRenderer::render(str, Palette::color[shadowColor], Palette::color[shadowColor]);
   if (!font_surface_back) {
     printf("Could not bltStringShadowed() %s %s\n", str, SDL_GetError());
     return;
   }
   bltTransColorFromSDLSurface(font_surface_back, x + 1, y + 1, shadowColor);
   SDL_Surface *font_surface_front =
-      CachedFontRenderer::render(str, Palette::color[textColor]);
+      CachedFontRenderer::render(str, Palette::color[textColor], Palette::color[shadowColor]);
   if (!font_surface_front) {
     printf("Could not bltStringShadowed() %s %s\n", str, SDL_GetError());
     return;
@@ -1430,11 +1430,11 @@ void Surface::bltStringShadowed(int x, int y, char const *str,
 // Purpose: Blits a string of text and centers it horizontally and vertically
 //          on the screen. Does not handle wrapping.
 //---------------------------------------------------------------------------
-void Surface::bltStringCenter(const char *str, PIX color) {
+void Surface::bltStringCenter(const char *str, PIX color, PIX blendColor) {
   int len = strlen(str);
   if (!len) return;
   SDL_Surface *font_surface =
-      CachedFontRenderer::render(str, Palette::color[color]);
+      CachedFontRenderer::render(str, Palette::color[color], Palette::color[blendColor]);
   if (!font_surface) {
     return;
   }
@@ -1444,11 +1444,11 @@ void Surface::bltStringCenter(const char *str, PIX color) {
       (getHeight() - std::min(font_surface->h, ((int)getHeight()))) / 2, color);
 }  // end Surface::bltStringCenter
 
-void Surface::bltStringCenterMin30(const char *str, PIX color) {
+void Surface::bltStringCenterMin30(const char *str, PIX color, PIX blendColor) {
   int len = strlen(str);
   if (!len) return;
   SDL_Surface *font_surface =
-      CachedFontRenderer::render(str, Palette::color[color]);
+      CachedFontRenderer::render(str, Palette::color[color], Palette::color[blendColor]);
   if (!font_surface) {
     printf("Could not bltStringCenterMin30() %s %s\n", str, SDL_GetError());
     return;
@@ -1468,7 +1468,7 @@ void Surface::bltStringShadowedCenter(const char *str, PIX textColor,
   int len = strlen(str);
   if (!len) return;
   SDL_Surface *font_surface_back =
-      CachedFontRenderer::render(str, Palette::color[shadowColor]);
+      CachedFontRenderer::render(str, Palette::color[shadowColor], Palette::color[shadowColor]);
   if (!font_surface_back) {
     printf("Could not bltStringShadowedCenter() %s %s\n", str, SDL_GetError());
     return;
@@ -1477,7 +1477,7 @@ void Surface::bltStringShadowedCenter(const char *str, PIX textColor,
   int y = (getHeight() - font_surface_back->h) / 2;
   bltTransColorFromSDLSurface(font_surface_back, x + 1, y + 1, shadowColor);
   SDL_Surface *font_surface_front =
-      CachedFontRenderer::render(str, Palette::color[textColor]);
+      CachedFontRenderer::render(str, Palette::color[textColor], Palette::color[shadowColor]);
   if (!font_surface_front) {
     printf("Could not bltStringShadowedCenter() %s %s\n", str, SDL_GetError());
     return;
@@ -1490,11 +1490,11 @@ void Surface::bltStringShadowedCenter(const char *str, PIX textColor,
 // Purpose: Blits the string centered inside the specified rectangle.
 //---------------------------------------------------------------------------
 void Surface::bltStringCenteredInRect(const iRect &rect, const char *str,
-                                      const PIX &color) {
+                                      const PIX &color, const PIX &blendColor) {
   int len = strlen(str);
   if (!len) return;
   SDL_Surface *font_surface =
-      CachedFontRenderer::render(str, Palette::color[color]);
+      CachedFontRenderer::render(str, Palette::color[color], Palette::color[blendColor]);
   if (!font_surface) {
     printf("Could not bltStringCenteredInRect() %s %s\n", str, SDL_GetError());
     return;
@@ -1609,7 +1609,7 @@ void Surface::drawWindowsBorder() {
 
 // bltStringInBox
 //--------------------------------------------------------------------------
-void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color,
+void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, PIX blendColor,
                              int gapSpace, bool drawBox) {
   if (drawBox) {
     drawRect(rect, Color::yellow);
@@ -1657,7 +1657,7 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color,
       pos.y += gapSpace;
     }
 
-    bltString(pos.x, pos.y, strBuf, color);
+    bltString(pos.x, pos.y, strBuf, color, blendColor);
 
     if (done) {
       return;

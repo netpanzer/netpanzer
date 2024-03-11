@@ -133,9 +133,9 @@ class Surface : public NoCopy {
 
   void blt(Surface &dest, int x, int y) const;
   void bltTrans(Surface &dest, int x, int y) const;
-  void bltTransColor(Surface &dest, int x, int y, const PIX color) const;
+  void bltTransColor(Surface &dest, int x, int y, PIX color) const;
   void bltTransColorFromSDLSurface(SDL_Surface *source, int x, int y,
-                                   const PIX color) const;
+                                   PIX color) const;
   void bltScale(const Surface &source, const iRect &destRect);
   void bltLookup(const iRect &destRect, const PIX table[]);
 
@@ -179,8 +179,8 @@ class Surface : public NoCopy {
   // Text rendering functions
   void renderText(const char *str, PIX color, PIX bgcolor);
 
-  void bltString(int x, int y, const char *str, const PIX &color);
-  void bltStringInBox(const iRect &rect, const char *string, PIX color,
+  void bltString(int x, int y, const char *str, const PIX &color, const PIX &blendColor);
+  void bltStringInBox(const iRect &rect, const char *string, PIX color, PIX blendColor,
                       int gapSpace = 14, bool drawBox = false);
 
   // Blit a shadowed string of text.
@@ -189,12 +189,12 @@ class Surface : public NoCopy {
 
   // Blits a string of text and centers it horizontally and vertically on the
   // screen.
-  void bltStringCenter(const char *string, PIX color);
-  void bltStringCenterMin30(const char *string, PIX color);
+  void bltStringCenter(const char *string, PIX color, PIX blendColor);
+  void bltStringCenterMin30(const char *string, PIX color, PIX blendColor);
   void bltStringShadowedCenter(const char *string, PIX foreground,
                                PIX background);
   void bltStringCenteredInRect(const iRect &rect, const char *string,
-                               const PIX &color);
+                               const PIX &color, const PIX &blendColor);
 
   void loadBMP(const char *fileName, bool needAlloc = true);
 

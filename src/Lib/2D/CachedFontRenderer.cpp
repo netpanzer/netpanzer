@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "CachedFontRenderer.hpp"
 
 #include <string>
+#include <optional>
 
 #include "Interfaces/MenuConfig.hpp"
 #include "Util/FileSystem.hpp"
@@ -30,7 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 TTF_Font *CachedFontRenderer::font = nullptr;
 Uint32 CachedFontRenderer::lastCleanedTick = 0;
 std::unordered_map<std::string, RenderedText>
-    CachedFontRenderer::rendered_surfaces = {};
+        CachedFontRenderer::rendered_surfaces = {};
 
 void CachedFontRenderer::initFont() {
   if (TTF_Init() < 0) {
@@ -43,11 +44,11 @@ void CachedFontRenderer::initFont() {
   font = TTF_OpenFont(absFontPath.c_str(), MenuConfig::menu_font_size);
   if (font == NULL) {
     LOGGER.warning("CachedFontRenderer - cannot load font %s.", absFontPath.c_str());
-    #ifndef TEST_LIB
-    exit (EXIT_FAILURE);
-    #else
+#ifndef TEST_LIB
+    exit(EXIT_FAILURE);
+#else
     return;
-    #endif
+#endif
   }
 
   TTF_SetFontStyle(CachedFontRenderer::font, TTF_STYLE_BOLD);
@@ -55,13 +56,16 @@ void CachedFontRenderer::initFont() {
 }
 
 std::string CachedFontRenderer::create_cache_key(const char *text,
-                                                 SDL_Color color) {
-  return std::string(text) + std::to_string(color.r) + std::to_string(color.g) +
-         std::to_string(color.b);
+                                                 SDL_Color color,
+                                                 SDL_Color blendColor) {
+  std::string result = std::string(text);
+  result += std::to_string(color.r) + std::to_string(color.g) + std::to_string(color.b);
+  result += std::to_string(blendColor.r) + std::to_string(blendColor.g) + std::to_string(blendColor.b);
+  return result;
 }
 
-SDL_Surface *CachedFontRenderer::render(const char *text, SDL_Color color) {
-  std::string key = create_cache_key(text, color);
+SDL_Surface *CachedFontRenderer::render(const char *text, SDL_Color color, SDL_Color blendColor) {
+  std::string key = create_cache_key(text, color, blendColor);
   auto it = rendered_surfaces.find(key);
   if (it != rendered_surfaces.end()) {
     // Return the cached surface
@@ -71,11 +75,11 @@ SDL_Surface *CachedFontRenderer::render(const char *text, SDL_Color color) {
 
   // If not found, render the text
   SDL_Surface *rendered_surface =
-      TTF_RenderUTF8_Solid(CachedFontRenderer::font, text, color);
+          TTF_RenderUTF8_Shaded(CachedFontRenderer::font, text, color, blendColor);
   if (rendered_surface) {
     // Store the rendered surface in the cache
-    RenderedText text(rendered_surface, SDL_GetTicks());
-    rendered_surfaces[key] = text;
+    RenderedText rendered_text(rendered_surface, SDL_GetTicks());
+    rendered_surfaces[key] = rendered_text;
   }
 
   return rendered_surface;
