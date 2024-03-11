@@ -182,7 +182,7 @@ void Choice::draw(Surface &dest) {
   // componentName.c_str(), componentActiveTextColor, Color::black);
 
   dest.bltString(position.x, pos.y + adjustedY + (choiceItemHeight / 3),
-                 componentName.c_str(), Color::black);
+                 componentName.c_str(), Color::black, componentBodyColor);
 
   getBounds(r);
 
@@ -199,7 +199,7 @@ void Choice::draw(Surface &dest) {
   if (!isOpen) {
     // s.bltStringShadowedCenter(choiceList[index].c_str(),
     // componentActiveTextColor, Color::black);
-    s.bltStringCenter(choiceList[index].c_str(), Color::black);
+    s.bltStringCenter(choiceList[index].c_str(), Color::black, componentBodyColor);
   } else {
     r = iRect(position.x, position.y, position.x + size.x,
               position.y + choiceItemHeight);
@@ -216,12 +216,12 @@ void Choice::draw(Surface &dest) {
       if (i == mouseover) {
         // Highlight the selected item.
         s.fill(componentActiveTextColor);
-        s.bltStringCenter(choiceList[i].c_str(), Color::black);
+        s.bltStringCenter(choiceList[i].c_str(), Color::black, componentBodyColor);
 
       } else {
         // s.bltStringShadowedCenter(choiceList[i].c_str(),
         // componentActiveTextColor, Color::black);
-        s.bltStringCenter(choiceList[i].c_str(), Color::black);
+        s.bltStringCenter(choiceList[i].c_str(), Color::black, componentBodyColor);
       }
 
       r.translate(iXY(0, choiceItemHeight));

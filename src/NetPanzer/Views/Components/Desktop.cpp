@@ -619,14 +619,15 @@ DesktopView::DesktopView() : View() {
 // doDraw
 //---------------------------------------------------------------------------
 void DesktopView::doDraw(Surface &viewArea, Surface &clientArea) {
-  viewArea.fill(Color::black);
+  const PIX bgColor = Color::black;
+  viewArea.fill(bgColor);
 
   int yOffset = 10;
   char strBuf[256];
 
   for (int i = 0; i < Desktop::getViewCount(); i++) {
     clientArea.bltString(0, yOffset, Desktop::getViewSearchName(i),
-                         Color::white);
+                         Color::white, bgColor);
 
     if (Desktop::getViewStatus(Desktop::getViewSearchName(i)) &
         STATUS_VISIBLE) {
@@ -636,7 +637,7 @@ void DesktopView::doDraw(Surface &viewArea, Surface &clientArea) {
       sprintf(strBuf, "INVISIBLE");
     }
 
-    clientArea.bltString(200, yOffset, strBuf, Color::white);
+    clientArea.bltString(200, yOffset, strBuf, Color::white, bgColor);
 
     yOffset += Surface::getFontHeight();
   }

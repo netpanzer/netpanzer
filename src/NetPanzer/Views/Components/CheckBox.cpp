@@ -36,7 +36,7 @@ void CheckBox::render() {
   }
 
   surface.bltString(14 + 4, (surface.getHeight() / 2) - (text.getHeight() / 2),
-                    label.c_str(), forcedtextColor);
+                    label.c_str(), forcedtextColor, componentBodyColor);
   // text.blt( surface, 14+2, (surface.getHeight()/2) - (text.getHeight()/2) );
   dirty = false;
 }

@@ -553,11 +553,11 @@ void ParticleInterface::testSimText(Surface &dest) {
 
   sprintf(strBuf, "particleSystemCount: %d",
           ParticleSystem2D::getParticleSystemCount());
-  dest.bltString(2, y, strBuf, Color::white);
+  dest.bltString(2, y, strBuf, Color::white, Color::white);
   y += yOffset;
 
   sprintf(strBuf, "particleCount:       %d", Particle2D::getFrameCount());
-  dest.bltString(2, y, strBuf, Color::white);
+  dest.bltString(2, y, strBuf, Color::white, Color::white);
 }
 
 //--------------------------------------------------------------------------

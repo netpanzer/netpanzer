@@ -387,19 +387,19 @@ void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea) {
   if (vsvUnitGenOn) {
     sprintf(strBuf, "%s", getUnitName(vsvSelectedUnit));
     clientArea.bltString(productionUnitPos.x, productionUnitPos.y, strBuf,
-                         color);
+                         color, componentBodyColor);
 
     sprintf(strBuf, "%01d:%02d/%01d:%02d", remaining_time / 60,
             remaining_time % 60, generation_time / 60, generation_time % 60);
 
-    clientArea.bltString(timeRequiredPos.x, timeRequiredPos.y, strBuf, color);
+    clientArea.bltString(timeRequiredPos.x, timeRequiredPos.y, strBuf, color, componentBodyColor);
   } else {
     sprintf(strBuf, "power off");
     clientArea.bltString(productionUnitPos.x, productionUnitPos.y, strBuf,
-                         color);
+                         color, componentBodyColor);
 
     sprintf(strBuf, "power off");
-    clientArea.bltString(timeRequiredPos.x, timeRequiredPos.y, strBuf, color);
+    clientArea.bltString(timeRequiredPos.x, timeRequiredPos.y, strBuf, color, componentBodyColor);
   }
 
   int unitPerPlayer = GameConfig::game_maxunits / GameConfig::game_maxplayers;
@@ -407,7 +407,7 @@ void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea) {
       strBuf, "%d/%d",
       int(UnitInterface::getUnitCount(PlayerInterface::getLocalPlayerIndex())),
       unitPerPlayer);
-  clientArea.bltString(unitsBuiltPos.x, unitsBuiltPos.y, strBuf, color);
+  clientArea.bltString(unitsBuiltPos.x, unitsBuiltPos.y, strBuf, color, componentBodyColor);
 
   drawUnitProfileInfo(clientArea, iXY(0, unitProfileDataY),
                       highlightedUnitType);
@@ -556,11 +556,11 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest) {
         checkMiniProductionRect2(outpostUserNameBuf, outpostNameBuf);
         dest.bltLookup(miniProductionRect,
                        Palette::darkGray256.getColorArray());
-        dest.bltString(pos.x, pos.y, c_str_outpostUserNameBuf, Color::cyan);
+        dest.bltString(pos.x, pos.y, c_str_outpostUserNameBuf, Color::cyan, Color::black);
         pos.y += 16;
-        dest.bltString(pos.x, pos.y, c_str_outpostNameBuf, Color::white);
+        dest.bltString(pos.x, pos.y, c_str_outpostNameBuf, Color::white, Color::black);
         pos.y += 16;
-        dest.bltString(pos.x, pos.y, "Production Off", Color::white);
+        dest.bltString(pos.x, pos.y, "Production Off", Color::white, Color::black);
       } else {
         // Objective is on.
 
@@ -576,14 +576,14 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest) {
         dest.bltLookup(miniProductionRect,
                        Palette::darkGray256.getColorArray());
 
-        dest.bltString(pos.x, pos.y, c_str_outpostUserNameBuf, Color::cyan);
+        dest.bltString(pos.x, pos.y, c_str_outpostUserNameBuf, Color::cyan, Color::black);
         pos.x += unitImages.getWidth();
         pos.y += 16;
-        dest.bltString(pos.x, pos.y, c_str_outpostNameBuf, Color::white);
+        dest.bltString(pos.x, pos.y, c_str_outpostNameBuf, Color::white, Color::black);
         pos.y += 16;
-        dest.bltString(pos.x, pos.y, productionUnitBuf, Color::white);
+        dest.bltString(pos.x, pos.y, productionUnitBuf, Color::white, Color::black);
         pos.y += 16;
-        dest.bltString(pos.x, pos.y, timeLeftBuf, Color::white);
+        dest.bltString(pos.x, pos.y, timeLeftBuf, Color::white, Color::black);
         pos.y += 16;
 
         // Draw the current production unit image.
@@ -594,10 +594,10 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest) {
       checkMiniProductionRect2(outpostUserNameBuf, outpostNameBuf);
       dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
       if (obj->occupying_player) {
-        dest.bltString(pos.x, pos.y, c_str_outpostUserNameBuf, Color::cyan);
+        dest.bltString(pos.x, pos.y, c_str_outpostUserNameBuf, Color::cyan, Color::black);
         pos.y += 16;
       }
-      dest.bltString(pos.x, pos.y, c_str_outpostNameBuf, Color::white);
+      dest.bltString(pos.x, pos.y, c_str_outpostNameBuf, Color::white, Color::black);
     }
   }
 

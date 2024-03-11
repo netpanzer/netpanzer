@@ -61,19 +61,19 @@ void cButton::createCenterText(iXY pos, int xSize, const char *nName,
   // Make the unselected button
   tempTopSurface.fill(componentBodyColor);
   tempTopSurface.drawButtonBorder(topLeftBorderColor, bottomRightBorderColor);
-  tempTopSurface.bltStringCenter(nName, componentInActiveTextColor);
+  tempTopSurface.bltStringCenter(nName, componentInActiveTextColor, componentBodyColor);
 
   // Make the mouse-over button
   tempTopSurface.setFrame(1);
   tempTopSurface.fill(componentBodyColor);
   tempTopSurface.drawButtonBorder(topLeftBorderColor, bottomRightBorderColor);
-  tempTopSurface.bltStringCenter(nName, componentFocusTextColor);
+  tempTopSurface.bltStringCenter(nName, componentFocusTextColor, componentBodyColor);
 
   // Make the selected button
   tempTopSurface.setFrame(2);
   tempTopSurface.fill(componentBodyColor);
   tempTopSurface.drawButtonBorder(bottomRightBorderColor, topLeftBorderColor);
-  tempTopSurface.bltStringCenter(nName, componentActiveTextColor);
+  tempTopSurface.bltStringCenter(nName, componentActiveTextColor, componentBodyColor);
 
   // Save the button name.
   setName(nName);

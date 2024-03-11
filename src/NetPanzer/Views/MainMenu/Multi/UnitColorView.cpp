@@ -127,7 +127,7 @@ void UnitColorView::doDraw(Surface &viewArea, Surface &clientArea) {
   sprintf(strBuf, "%1.3f of %1.3f", grayPercent, maxPercent);
   clientArea.bltString(
       2, fuckingSurface.getHeight() - Surface::getFontHeight() - 1, strBuf,
-      Color::white);
+      Color::white, Color::black); // TODO proper bg color
 
   View::doDraw(viewArea, clientArea);
 

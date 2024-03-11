@@ -25,6 +25,6 @@ void Label::draw(Surface &dest) {
     dest.bltStringShadowed(position.x, position.y, text.c_str(), foreground,
                            componentBodyColor);
   } else {
-    dest.bltString(position.x, position.y, text.c_str(), foreground);
+    dest.bltString(position.x, position.y, text.c_str(), foreground, componentBodyColor);
   }
 }

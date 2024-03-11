@@ -121,7 +121,7 @@ void AreYouSureResignView::doDraw(Surface &viewArea, Surface &clientArea) {
   // viewArea.drawButtonBorder(r, Color::lightGreen, Color::darkGreen);
 
   viewArea.bltStringCenterMin30("Are you sure you wish to Resign?",
-                                Color::white);
+                                Color::white, componentBodyColor);
 
   View::doDraw(viewArea, clientArea);
 }  // end AreYouSureResignView::doDraw

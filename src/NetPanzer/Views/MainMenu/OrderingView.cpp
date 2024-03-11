@@ -36,6 +36,6 @@ void OrderingView::doDraw(Surface &viewArea, Surface &clientArea) {
   MenuTemplateView::doDraw(viewArea, clientArea);
 
   clientArea.bltString(bodyTextRect.min.x, bodyTextRect.min.y,
-                       "Skip!  Waiting on you!", Color::white);
+                       "Skip!  Waiting on you!", Color::white, Color::black);
 
 }  // end OrderingView::doDraw

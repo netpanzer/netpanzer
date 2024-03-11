@@ -50,7 +50,7 @@ void Button::render() {
   }
 
   if (label.length()) {
-    surface.bltStringCenter(label.c_str(), textColors[bstate]);
+    surface.bltStringCenter(label.c_str(), textColors[bstate], componentBodyColor);
   }
 
   dirty = false;

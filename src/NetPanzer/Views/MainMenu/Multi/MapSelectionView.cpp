@@ -123,9 +123,9 @@ void MapSelectionView::doDraw(Surface &viewArea, Surface &clientArea) {
     int result = loadMaps();
 
     if (result == 0) {
-      clientArea.bltStringCenter("No Maps Found", Color::white);
+      clientArea.bltStringCenter("No Maps Found", Color::white, Color::black);
     } else if (result == 1) {
-      clientArea.bltStringCenter("Outpost file error", Color::white);
+      clientArea.bltStringCenter("Outpost file error", Color::white, Color::black);
     }
   }
 

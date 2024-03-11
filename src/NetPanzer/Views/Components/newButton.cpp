@@ -29,6 +29,6 @@ void newButton::render() {
     bimage.bltTrans(surface, 1, 1);
   }
   surface.RoundRect(surface.getRect(), 3, borders[bstate][0]);
-  surface.bltStringCenter(label.c_str(), textColors[bstate]);
+  surface.bltStringCenter(label.c_str(), textColors[bstate], borders[bstate][0]);
   dirty = false;
 }

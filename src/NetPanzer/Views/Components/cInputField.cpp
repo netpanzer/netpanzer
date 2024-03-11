@@ -291,7 +291,7 @@ void cInputField::draw(Surface &dest) {
   inputFieldSurface.drawButtonBorder(topLeftBorderColor, Color::gray64);
   inputFieldSurface.bltString(
       4, 2, destString + strDisplayStart,
-      Color::white);  // forced lightGray instead of global
+      Color::white, Color::black);  // forced lightGray instead of global
   inputFieldSurface.blt(dest, pos.x, pos.y);
 }  // draw
 
@@ -300,7 +300,8 @@ void cInputField::draw(Surface &dest) {
 void cInputField::drawHighlighted(Surface &dest) {
   checkCursor();
 
-  inputFieldSurface.fill(Color::black);
+  const PIX bgColor = Color::black;
+  inputFieldSurface.fill(bgColor);
   inputFieldSurface.drawButtonBorder(Color::darkGray, Color::white);
   inputFieldSurface.bltStringShadowed(4, 2, destString + strDisplayStart,
                                       Color::white, Color::darkGray);
@@ -316,7 +317,7 @@ void cInputField::drawHighlighted(Surface &dest) {
         (size_t)0);
     int charWidth = Surface::getTextWidth(" ");
     inputFieldSurface.bltString(cursorPos * charWidth + (charWidth / 2), 2, "_",
-                                Color::red);
+                                Color::red, bgColor);
   }
 
   inputFieldSurface.blt(dest, pos.x, pos.y);

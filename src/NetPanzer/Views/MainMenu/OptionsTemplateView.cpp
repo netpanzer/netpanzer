@@ -351,7 +351,7 @@ void OptionsTemplateView::doDraw(Surface &viewArea, Surface &clientArea) {
   y += yOffset * 7;
 
   sprintf(strBuf, "%d %%", int((float(getScrollRate()) / 10000.0f * 100.0f)));
-  tempSurface.bltStringCenter(strBuf, meterTextColor);
+  tempSurface.bltStringCenter(strBuf, meterTextColor, Color::white);
   tempSurface.blt(clientArea, x, y);
   y += yOffset * 2;
 
@@ -361,7 +361,7 @@ void OptionsTemplateView::doDraw(Surface &viewArea, Surface &clientArea) {
   tempSurface.drawButtonBorder(meterTopLeftBorderColor,
                                meterBottomRightBorderColor);
   sprintf(strBuf, "%d %%", getSoundVolume());
-  tempSurface.bltStringCenter(strBuf, meterTextColor);
+  tempSurface.bltStringCenter(strBuf, meterTextColor, Color::white);
   tempSurface.blt(clientArea, x, y);
 
   // Music Volume
@@ -370,7 +370,7 @@ void OptionsTemplateView::doDraw(Surface &viewArea, Surface &clientArea) {
   tempSurface.drawButtonBorder(meterTopLeftBorderColor,
                                meterBottomRightBorderColor);
   sprintf(strBuf, "%d %%", getMusicVolume());
-  tempSurface.bltStringCenter(strBuf, meterTextColor);
+  tempSurface.bltStringCenter(strBuf, meterTextColor, Color::white);
   tempSurface.blt(clientArea, x, y);
 }  // end VisualsView::doDraw
 
