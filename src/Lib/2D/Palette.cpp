@@ -304,7 +304,7 @@ void Palette::loadACT(const std::string& newname) {
 
 // findNearestColor
 //---------------------------------------------------------------------------
-// Purpose: Walks through the palette and finds the nearest mathcing color
+// Purpose: Walks through the palette and finds the nearest matching color
 //          index.
 //---------------------------------------------------------------------------
 Uint8 Palette::findNearestColor(int r, int g, int b,
