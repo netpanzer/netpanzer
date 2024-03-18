@@ -302,13 +302,22 @@ void Palette::loadACT(const std::string& newname) {
   }
 }  // end Palette::loadACT
 
+std::unordered_map<uint32_t, Uint8> Palette::nearestColorCache = {};
+
 // findNearestColor
 //---------------------------------------------------------------------------
 // Purpose: Walks through the palette and finds the nearest matching color
-//          index.
+//          index. It caches all mappings.
 //---------------------------------------------------------------------------
 Uint8 Palette::findNearestColor(int r, int g, int b,
                                 const bool& ignoreIndexZero) {
+  uint32_t key = (r << 24) | (g << 16) | (b << 8) | ignoreIndexZero;
+
+  auto it = nearestColorCache.find(key);
+  if (it != nearestColorCache.end()) {
+    return it->second;
+  }
+
   int bestDist = 10000000;
   int best = 0;
   int start = ignoreIndexZero ? 1 : 0;
@@ -324,6 +333,8 @@ Uint8 Palette::findNearestColor(int r, int g, int b,
       best = i;
     }
   }
+
+  nearestColorCache[key] = best;
 
   return best;
 
