@@ -265,7 +265,7 @@ void OptionsTemplateView::initButtons() {
 
   y += yOffset;
   x = xTextStart;
-  add(new Label(x, y + 3, "Scroll Rate:", windowTextColor));
+  add(new Label(x, y + 3, "Scroll Rate:", windowTextColor, componentBodyColor));
   x += optionsMeterStartX;
   addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "",
                       bDecreaseScrollRate);
@@ -281,7 +281,7 @@ void OptionsTemplateView::initButtons() {
 
   y += yOffset;
   x = xTextStart;
-  add(new Label(x, y, "Sound Status:", windowTextColor));
+  add(new Label(x, y, "Sound Status:", windowTextColor, componentBodyColor));
   checkBoxSoundEnabled = new CheckBox();
   checkBoxSoundEnabled->setLabel(GameConfig::sound_enable ? "Enabled"
                                                           : "Disabled");
@@ -293,7 +293,7 @@ void OptionsTemplateView::initButtons() {
   y += yOffset;
 
   x = xTextStart;
-  add(new Label(x, y + 3, "Sound Volume:", windowTextColor));
+  add(new Label(x, y + 3, "Sound Volume:", windowTextColor, componentBodyColor));
   x += optionsMeterStartX;
   addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "",
                       bDecreaseSoundVolume);
@@ -304,7 +304,7 @@ void OptionsTemplateView::initButtons() {
 
   y += yOffset;
   x = xTextStart;
-  add(new Label(x, y, "Music Status:", windowTextColor));
+  add(new Label(x, y, "Music Status:", windowTextColor, componentBodyColor));
   checkBoxMusicEnabled = new CheckBox();
   checkBoxMusicEnabled->setLabel(GameConfig::sound_music ? "Enabled"
                                                          : "Disabled");
@@ -316,7 +316,7 @@ void OptionsTemplateView::initButtons() {
   y += yOffset;
 
   x = xTextStart;
-  add(new Label(x, y + 3, "Music Volume:", windowTextColor));
+  add(new Label(x, y + 3, "Music Volume:", windowTextColor, componentBodyColor));
   x += optionsMeterStartX;
   addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "",
                       bDecreaseMusicVolume);
