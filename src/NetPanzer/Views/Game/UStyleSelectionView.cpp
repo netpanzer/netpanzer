@@ -74,7 +74,7 @@ void UStyleSelectionView::init() {
   int y = flagStartOffset.y;
 
   const char* statBuf = "Unit Style Selection";
-  add(new Label(x - 5, y, statBuf, Color::lightGray, Color::lightGray, false));
+  add(new Label(x - 5, y, statBuf, Color::lightGray, Color::gray, false));
 
   std::stringstream pnum;
 
@@ -88,7 +88,7 @@ void UStyleSelectionView::init() {
   std::string pdata;
   pdata = "(available: " + pnum.str() + ")";
   const NPString varBuf = pdata;
-  add(new Label(x + 18, y + 16, varBuf, Color::lightGray, Color::lightGray,
+  add(new Label(x + 18, y + 16, varBuf, Color::lightGray, Color::gray,
                 false));
 
   const NPString b_arrow = ">>                       <<";
@@ -101,7 +101,7 @@ void UStyleSelectionView::init() {
                                       iXY(x, y + 32 + 28 * (i + 1))));
       if (i == rstyle_mem) {
         add(new Label(x - 20, y + 36 + 28 * (i + 1), b_arrow, Color::lightGray,
-                      Color::lightGray, false));
+                      Color::gray, false));
       }
     }
 
@@ -112,7 +112,7 @@ void UStyleSelectionView::init() {
                                       iXY(x, y + 32 + 28 * (i + 1))));
       if (i == rstyle_mem) {
         add(new Label(x - 20, y + 36 + 28 * (i + 1), b_arrow, Color::lightGray,
-                      Color::lightGray, false));
+                      Color::red, false));
       }
     }
   }
