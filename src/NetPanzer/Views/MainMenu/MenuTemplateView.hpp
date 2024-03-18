@@ -54,6 +54,7 @@ class MenuTemplateView : public RMouseHackView {
 
   void initInGameOptionButtons();
   void initPreGameOptionButtons();
+  void drawVersionNumber(Surface &clientArea);
 
   virtual void initButtons();
 

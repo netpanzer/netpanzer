@@ -21,6 +21,7 @@ class MenuConfig : public NoCopy {
 
   static NPString* menu_background;
   static NPString* menu_start_background;
+  static Uint8 menu_start_background_color;
   static NPString* menu_font;
   static Uint8 menu_dbg_text_color;
   static int menu_font_size;

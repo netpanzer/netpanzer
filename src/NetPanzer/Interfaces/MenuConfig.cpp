@@ -18,6 +18,7 @@ Uint8 MenuConfig::client_border_color = 0;
 
 NPString* MenuConfig::menu_background = NULL;
 NPString* MenuConfig::menu_start_background = NULL;
+Uint8 MenuConfig::menu_start_background_color = NULL;
 NPString* MenuConfig::menu_font = NULL;
 Uint8 MenuConfig::menu_dbg_text_color = 0;
 int MenuConfig::menu_font_size = 0;
