@@ -617,7 +617,7 @@ void Surface::bltTransColorFromSDLSurface(SDL_Surface *source, int x, int y) con
   unsigned int pixelsPerRow = source->w;
   unsigned int numRows = source->h;
 
-  // Working with 8-bit palettized surface
+  // Working with 8-bit palatalized surface
   Uint8 *sPtr = (Uint8 *)source->pixels;
   Uint8 *dPtr = (Uint8 *)mem;
 
