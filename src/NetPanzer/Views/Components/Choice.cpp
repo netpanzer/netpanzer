@@ -216,7 +216,7 @@ void Choice::draw(Surface &dest) {
       if (i == mouseover) {
         // Highlight the selected item.
         s.fill(componentActiveTextColor);
-        s.bltStringCenter(choiceList[i].c_str(), Color::black, componentBodyColor);
+        s.bltStringCenter(choiceList[i].c_str(), Color::black, componentActiveTextColor);
 
       } else {
         // s.bltStringShadowedCenter(choiceList[i].c_str(),
