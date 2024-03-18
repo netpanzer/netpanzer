@@ -11,6 +11,15 @@ project(
     ]
   )
 
+script = join_paths(meson.source_root(), 'support', 'scripts', 'get_version.sh')
+# Create a custom target to run the script and write output to the file
+custom_target('get_version',
+    output: 'RELEASE_VERSION',
+    command: script,
+    capture: true,
+    build_by_default: true
+)
+
 # Setup compiler.
 cxx = meson.get_compiler('cpp')
 cc = meson.get_compiler('c')
