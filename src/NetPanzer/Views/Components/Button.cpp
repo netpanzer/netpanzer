@@ -50,7 +50,7 @@ void Button::render() {
   }
 
   if (label.length()) {
-    surface.bltStringCenter(label.c_str(), textColors[bstate], componentBodyColor);
+    surface.bltStringCenter(label.c_str(), textColors[bstate], textBlendColor > -1 ? textBlendColor : componentBodyColor);
   }
 
   dirty = false;
@@ -110,6 +110,7 @@ Button *Button::createSpecialButton(std::string cname, std::string label,
   b->setLabel(label);
   b->setLocation(loc);
   b->setTextColors(Color::lightGray, Color::white, Color::white);
+  b->setTextBlendColor(Color::red);
 
   return b;
 }

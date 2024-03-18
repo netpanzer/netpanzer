@@ -35,6 +35,7 @@ class Button : public Component {
 
   PIX borders[3][2];
   PIX textColors[3];
+  PIX textBlendColor = -1;
 
   Surface bimage;
 
@@ -66,6 +67,10 @@ class Button : public Component {
     textColors[BNORMAL] = normal;
     textColors[BOVER] = over;
     textColors[BPRESSED] = pressed;
+  }
+
+  void setTextBlendColor(PIX color) {
+    textBlendColor = color;
   }
 
   void setLabel(const std::string &l) {
