@@ -62,7 +62,7 @@ void Separator::draw(Surface &dest) {
   // dest.drawLine(position.x, position.y+2, position.x+20, position.y+2,
   // Color::gray);
   dest.bltStringShadowed(position.x + 25, text_y, text.c_str(), foreground,
-                         Color::gray);
+                         componentBodyColor);
   int lentxt = 30 + dest.getTextLength(text);
   dest.drawLine(position.x + lentxt, position.y + 3, xend, position.y + 3,
                 foreground);
