@@ -90,14 +90,17 @@ EndRoundView::EndRoundView() : SpecialButtonView() {
 //---------------------------------------------------------------------------
 void EndRoundView::doDraw(Surface& viewArea, Surface& clientArea) {
   unsigned int flagHeight = ResourceManager::getFlag(0)->getHeight();
+  const PIX winnerBackColor = Color::red;
   clientArea.BltRoundRect(RectWinner, 14, Palette::darkGray256.getColorArray());
-  clientArea.FillRoundRect(RectWinner, 14, Color::red);
+  clientArea.FillRoundRect(RectWinner, 14, winnerBackColor);
   clientArea.RoundRect(RectWinner, 14, Color::gray);
 
+  const PIX tableHeaderBackColor = Color::gray;
   clientArea.BltRoundRect(RectStates, 14, Palette::darkGray256.getColorArray());
-  clientArea.RoundRect(RectStates, 14, Color::gray);
+  clientArea.RoundRect(RectStates, 14, tableHeaderBackColor);
 
-  drawPlayerStats(clientArea, flagHeight);
+  const PIX nextGameBlendColor = Color::black;
+  drawPlayerStats(clientArea, flagHeight, winnerBackColor, tableHeaderBackColor, nextGameBlendColor);
 
   View::doDraw(viewArea, clientArea);
 }  // end doDraw
@@ -138,7 +141,7 @@ class StatesSortByGoals {
 //---------------------------------------------------------------------------
 // Purpose:
 //---------------------------------------------------------------------------
-void EndRoundView::drawPlayerStats(Surface& dest, unsigned int flagHeight) {
+void EndRoundView::drawPlayerStats(Surface& dest, unsigned int flagHeight, PIX winnerBlendColor, PIX tableHeaderBlendColor, PIX nextGameBlendColor) {
   char statBuf[256];
 
   states.clear();
@@ -169,7 +172,7 @@ void EndRoundView::drawPlayerStats(Surface& dest, unsigned int flagHeight) {
   const PlayerState* Winner = states.front();
   snprintf(statBuf, sizeof(statBuf), "Winner is %s",
            Winner->getName().substr(0, 20).c_str());
-  dest.bltStringCenteredInRect(RectWinner, statBuf, Color::white);
+  dest.bltStringCenteredInRect(RectWinner, statBuf, Color::white, winnerBlendColor);
 
   int cur_line_pos =
       TABLE_START + ((ENTRY_HEIGHT - Surface::getFontHeight()) / 2);
@@ -177,7 +180,7 @@ void EndRoundView::drawPlayerStats(Surface& dest, unsigned int flagHeight) {
   Surface* flag = 0;
   int cur_state = 0;
 
-  dest.bltString(0, cur_line_pos, table_header, Color::gray);
+  dest.bltString(0, cur_line_pos, table_header, Color::gray, tableHeaderBlendColor);
   cur_line_pos += ENTRY_HEIGHT;
   flag_pos += ENTRY_HEIGHT;
   ++cur_state;
@@ -219,7 +222,7 @@ void EndRoundView::drawPlayerStats(Surface& dest, unsigned int flagHeight) {
     flag_pos += ENTRY_HEIGHT;
     ++cur_state;
   }
-  dest.bltString(5, cur_line_pos + 2, "Next game will start soon...", Color::yellow);
+  dest.bltString(5, cur_line_pos + 2, "Next game will start soon...", Color::yellow, nextGameBlendColor);
 }
 
 void EndRoundView::lMouseDown(const iXY& pos) {

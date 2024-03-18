@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdio.h>
 
 #include <string>
+#include <unordered_map>
 
 #include "Color.hpp"
 #include "ColorTable.hpp"
@@ -32,6 +33,7 @@ class Palette {
  private:
   static float brightness;
   static std::string name;
+  static std::unordered_map<uint32_t, Uint8> nearestColorCache;
 
  public:
   Palette();

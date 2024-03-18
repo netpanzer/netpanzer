@@ -282,7 +282,7 @@ void HostOptionsView::doDraw(Surface &viewArea, Surface &clientArea) {
 
   clientArea.bltString(4, clientArea.getHeight() - Surface::getFontHeight(),
                        "Note: Use the right mouse button to scroll quickly.",
-                       windowTextColor);
+                       windowTextColor, Color::white);
 
   // if (!Desktop::getVisible("GameView")) {
   // }
@@ -477,7 +477,7 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos) {
   tempSurface.drawButtonBorder(meterTopLeftBorderColor,
                                meterBottomRightBorderColor);
   sprintf(strBuf, "%d", getCurMaxPlayersCount());
-  tempSurface.bltStringCenter(strBuf, meterTextColor);
+  tempSurface.bltStringCenter(strBuf, meterTextColor, Color::white);
   tempSurface.blt(dest, x, y);
 
   // Game Max Unit Count
@@ -487,7 +487,7 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos) {
                                meterBottomRightBorderColor);
   sprintf(strBuf, "%d - %d max per player", getCurMaxUnitCount(),
           getCurMaxUnitCount() / getCurMaxPlayersCount());
-  tempSurface.bltStringCenter(strBuf, meterTextColor);
+  tempSurface.bltStringCenter(strBuf, meterTextColor, Color::white);
   tempSurface.blt(dest, x, y);
   /*
       // Respawn Unit Count
@@ -530,7 +530,7 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos) {
   } else {
     sprintf(strBuf, "Map Data Needed");
   }
-  tempSurface.bltStringCenter(strBuf, meterTextColor);
+  tempSurface.bltStringCenter(strBuf, meterTextColor, Color::white);
   tempSurface.blt(dest, x, y);
 
   y += yOffset;
@@ -538,7 +538,7 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos) {
   tempSurface.drawButtonBorder(meterTopLeftBorderColor,
                                meterBottomRightBorderColor);
   sprintf(strBuf, "%d:%d", getTimeLimitHours(), getTimeLimitMinutes());
-  tempSurface.bltStringCenter(strBuf, meterTextColor);
+  tempSurface.bltStringCenter(strBuf, meterTextColor, Color::white);
   tempSurface.blt(dest, x, y);
 
   y += yOffset;
@@ -546,7 +546,7 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos) {
   tempSurface.drawButtonBorder(meterTopLeftBorderColor,
                                meterBottomRightBorderColor);
   sprintf(strBuf, "%d Frags", getFragLimit());
-  tempSurface.bltStringCenter(strBuf, meterTextColor);
+  tempSurface.bltStringCenter(strBuf, meterTextColor, Color::white);
   tempSurface.blt(dest, x, y);
 
   /*

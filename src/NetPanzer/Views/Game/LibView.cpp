@@ -159,48 +159,48 @@ void LibView::drawSurfaceInfo(Surface &dest, iXY pos) {
 
   char strBuf[256];
 
-  dest.bltString(pos.x, pos.y, "-- Surface Info --", Color::green);
+  dest.bltString(pos.x, pos.y, "-- Surface Info --", Color::green, Color::black);
   pos.y += yOffset;
 
   sprintf(strBuf, "Alive Count: %d", Surface::getTotalSurfaceCount());
-  dest.bltString(pos.x, pos.y, strBuf, Color::white);
+  dest.bltString(pos.x, pos.y, strBuf, Color::white, Color::black);
   pos.y += yOffset;
 
   sprintf(strBuf, "Mem: %d b, %d k, %3.2f MG", Surface::getTotalByteCount(),
           Surface::getTotalByteCount() / 1024,
           float(Surface::getTotalByteCount()) / 1024.0f / 1024.0f);
-  dest.bltString(pos.x, pos.y, strBuf, Color::white);
+  dest.bltString(pos.x, pos.y, strBuf, Color::white, Color::black);
   pos.y += yOffset;
 
-  dest.bltString(pos.x, pos.y, "-- Packed Surface Info --", Color::green);
+  dest.bltString(pos.x, pos.y, "-- Packed Surface Info --", Color::green, Color::black);
   pos.y += yOffset;
 
   sprintf(strBuf, "Alive Count: %d", PackedSurface::getTotalSurfaceCount());
-  dest.bltString(pos.x, pos.y, strBuf, Color::white);
+  dest.bltString(pos.x, pos.y, strBuf, Color::white, Color::black);
   pos.y += yOffset;
 
   sprintf(strBuf, "Draw Count:  %d", PackedSurface::totalDrawCount);
-  dest.bltString(pos.x, pos.y, strBuf, Color::white);
+  dest.bltString(pos.x, pos.y, strBuf, Color::white, Color::black);
   pos.y += yOffset;
 
   sprintf(strBuf, "Mem: %d b, %d k, %3.2f MG",
           PackedSurface::getTotalByteCount(),
           PackedSurface::getTotalByteCount() / 1024,
           float(PackedSurface::getTotalByteCount()) / 1024.0f / 1024.0f);
-  dest.bltString(pos.x, pos.y, strBuf, Color::white);
+  dest.bltString(pos.x, pos.y, strBuf, Color::white, Color::black);
   pos.y += yOffset;
 
-  dest.bltString(pos.x, pos.y, "-- ColorTable Info --", Color::green);
+  dest.bltString(pos.x, pos.y, "-- ColorTable Info --", Color::green, Color::black);
   pos.y += yOffset;
 
   sprintf(strBuf, "Count:     %d", ColorTable::getTotalColorArrayCount());
-  dest.bltString(pos.x, pos.y, strBuf, Color::white);
+  dest.bltString(pos.x, pos.y, strBuf, Color::white, Color::black);
   pos.y += yOffset;
 
   sprintf(strBuf, "Mem: %d b, %d k, %3.2f MG", ColorTable::getTotalByteCount(),
           ColorTable::getTotalByteCount() / 1024,
           float(ColorTable::getTotalByteCount()) / 1024.0f / 1024.0f);
-  dest.bltString(pos.x, pos.y, strBuf, Color::white);
+  dest.bltString(pos.x, pos.y, strBuf, Color::white, Color::black);
   pos.y += yOffset;
 }
 
@@ -211,34 +211,34 @@ void LibView::drawParticleInfo(Surface &dest, iXY pos) {
 
   char strBuf[256];
 
-  dest.bltString(pos.x, pos.y, "-- Particle Info --", Color::green);
+  dest.bltString(pos.x, pos.y, "-- Particle Info --", Color::green, Color::black);
   pos.y += yOffset;
 
-  dest.bltString(pos.x, pos.y, "This frame count", Color::yellow);
+  dest.bltString(pos.x, pos.y, "This frame count", Color::yellow, Color::black);
   pos.y += yOffset;
 
   sprintf(strBuf, "Particle Systems: %d",
           ParticleSystem2D::getParticleSystemCount());
-  dest.bltString(pos.x + xOffset, pos.y, strBuf, Color::white);
+  dest.bltString(pos.x + xOffset, pos.y, strBuf, Color::white, Color::black);
   pos.y += yOffset;
 
   sprintf(strBuf, "Particles:        %d", Particle2D::getFrameCount());
-  dest.bltString(pos.x + xOffset, pos.y, strBuf, Color::white);
+  dest.bltString(pos.x + xOffset, pos.y, strBuf, Color::white, Color::black);
   pos.y += yOffset;
 
-  dest.bltString(pos.x, pos.y, "Peak count", Color::yellow);
+  dest.bltString(pos.x, pos.y, "Peak count", Color::yellow, Color::black);
   pos.y += yOffset;
 
   sprintf(strBuf, "Particle Systems: %d",
           ParticleSystem2D::getPeakParticleSystemCount());
-  dest.bltString(pos.x + xOffset, pos.y, strBuf, Color::white);
+  dest.bltString(pos.x + xOffset, pos.y, strBuf, Color::white, Color::black);
   pos.y += yOffset;
 
   sprintf(strBuf, "Particles:        %d", Particle2D::getPeakCount());
-  dest.bltString(pos.x + xOffset, pos.y, strBuf, Color::white);
+  dest.bltString(pos.x + xOffset, pos.y, strBuf, Color::white, Color::black);
   pos.y += yOffset;
 
-  dest.bltString(pos.x, pos.y, "Crater info", Color::yellow);
+  dest.bltString(pos.x, pos.y, "Crater info", Color::yellow, Color::black);
   pos.y += yOffset;
 
   float hitCount;
@@ -249,28 +249,28 @@ void LibView::drawParticleInfo(Surface &dest, iXY pos) {
 
   sprintf(strBuf, "Cache Miss:                %d (%%%2.2f)", int(missCount),
           100.0f * (missCount / (hitCount + missCount)));
-  dest.bltString(pos.x + xOffset, pos.y, strBuf, Color::white);
+  dest.bltString(pos.x + xOffset, pos.y, strBuf, Color::white, Color::black);
   pos.y += yOffset;
 
   sprintf(strBuf, "Cache Hit:                 %d (%%%2.2f)", int(hitCount),
           100.0f * (hitCount / (hitCount + missCount)));
-  dest.bltString(pos.x + xOffset, pos.y, strBuf, Color::white);
+  dest.bltString(pos.x + xOffset, pos.y, strBuf, Color::white, Color::black);
   pos.y += yOffset;
 
   missCount = ParticleInterface::getExplosionFlameFlashCullMissCount();
   hitCount = ParticleInterface::getExplosionFlameFlashCullHitCount();
 
-  dest.bltString(pos.x, pos.y, "Cull info", Color::yellow);
+  dest.bltString(pos.x, pos.y, "Cull info", Color::yellow, Color::black);
   pos.y += yOffset;
 
   sprintf(strBuf, "Explosion Flame Flash Miss:%d (%%%2.2f)", int(missCount),
           100.0f * (missCount / (hitCount + missCount)));
-  dest.bltString(pos.x + xOffset, pos.y, strBuf, Color::white);
+  dest.bltString(pos.x + xOffset, pos.y, strBuf, Color::white, Color::black);
   pos.y += yOffset;
 
   sprintf(strBuf, "Explosion Flame Flash Hit: %d (%%%2.2f)", int(hitCount),
           100.0f * (hitCount / (hitCount + missCount)));
-  dest.bltString(pos.x + xOffset, pos.y, strBuf, Color::white);
+  dest.bltString(pos.x + xOffset, pos.y, strBuf, Color::white, Color::black);
   pos.y += yOffset;
 
   missCount = ParticleInterface::getMuzzleSystemCullMissCount();
@@ -278,12 +278,12 @@ void LibView::drawParticleInfo(Surface &dest, iXY pos) {
 
   sprintf(strBuf, "Muzzle System Miss:        %d (%%%2.2f)", int(missCount),
           100.0f * (missCount / (hitCount + missCount)));
-  dest.bltString(pos.x + xOffset, pos.y, strBuf, Color::white);
+  dest.bltString(pos.x + xOffset, pos.y, strBuf, Color::white, Color::black);
   pos.y += yOffset;
 
   sprintf(strBuf, "Muzzle System Hit:         %d (%%%2.2f)", int(hitCount),
           100.0f * (hitCount / (hitCount + missCount)));
-  dest.bltString(pos.x + xOffset, pos.y, strBuf, Color::white);
+  dest.bltString(pos.x + xOffset, pos.y, strBuf, Color::white, Color::black);
   pos.y += yOffset;
 }
 
@@ -308,19 +308,19 @@ void LibView::drawEnvironmentInfo(Surface &dest, iXY pos) {
 
   char strBuf[256];
 
-  dest.bltString(pos.x, pos.y, "-- Environment Info --", Color::green);
+  dest.bltString(pos.x, pos.y, "-- Environment Info --", Color::green, Color::black);
   pos.y += yOffset;
 
   int windSpeed = GameConfig::game_windspeed;
   sprintf(strBuf, "Wind:   %s (%d pix/sec)",
           HostOptionsView::windSpeedString.c_str(), windSpeed);
-  dest.bltString(pos.x, pos.y, strBuf, Color::yellow);
+  dest.bltString(pos.x, pos.y, strBuf, Color::yellow, componentBodyColor);
   pos.y += yOffset;
 
   int cloudCount = GameConfig::game_cloudcoverage;
   sprintf(strBuf, "Clouds: %s (%d allocated)",
           HostOptionsView::cloudCoverageString.c_str(), cloudCount);
-  dest.bltString(pos.x, pos.y, strBuf, Color::yellow);
+  dest.bltString(pos.x, pos.y, strBuf, Color::yellow, componentBodyColor);
   pos.y += yOffset;
 
 }  // end LibView::drawEnvironmentInfo

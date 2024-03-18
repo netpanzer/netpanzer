@@ -62,71 +62,72 @@ void TipsView::doDraw(Surface &viewArea, Surface &clientArea) {
 
   // resizeClientArea(40 * 8 , 40);
 
-  clientArea.fill(Color::lightGray);
+  const PIX bgColor = Color::lightGray;
+  clientArea.fill(bgColor);
 
   switch (tipnumber) {
     case 0:
       clientArea.bltString(
           4, Surface::getFontHeight(),
           "Missing maps? Download them from netpanzer.info website.",
-          Color::darkGray);
+          Color::darkGray, bgColor);
       clientArea.bltString(4, Surface::getFontHeight() + 12,
                            "Then unzip the content in your 'maps' folder.",
-                           Color::darkGray);
+                           Color::darkGray, bgColor);
       break;
 
     case 1:
       clientArea.bltString(
           4, Surface::getFontHeight(),
           "You can download many flag packages from netpanzer.info.",
-          Color::darkGray);
+          Color::darkGray, bgColor);
       clientArea.bltString(
           4, Surface::getFontHeight() + 12,
           "Then copy/paste the flags you like in your 'flag' folder.",
-          Color::darkGray);
+          Color::darkGray, bgColor);
       clientArea.bltString(4, Surface::getFontHeight() + 24,
-                           "Or you can make your own flags!", Color::darkGray);
+                           "Or you can make your own flags!", Color::darkGray, bgColor);
       break;
 
     case 2:
       clientArea.bltString(
           4, Surface::getFontHeight(),
           "When in game: press Enter to chat with other players.",
-          Color::darkGray);
+          Color::darkGray, bgColor);
       clientArea.bltString(4, Surface::getFontHeight() + 12,
                            "Or press TAB key to check the game status.",
-                           Color::darkGray);
+                           Color::darkGray, bgColor);
       break;
     case 3:
       clientArea.bltString(4, Surface::getFontHeight(),
                            "You can pick a server from the in-game Lobby.",
-                           Color::darkGray);
+                           Color::darkGray, bgColor);
       clientArea.bltString(
           4, Surface::getFontHeight() + 12,
           "Or You can manually specify the IP address of the server.",
-          Color::darkGray);
+          Color::darkGray, bgColor);
       break;
     case 4:
       clientArea.bltString(
           4, Surface::getFontHeight(),
           "Check the Help section for a detailed list of commands.",
-          Color::darkGray);
+          Color::darkGray, bgColor);
       clientArea.bltString(4, Surface::getFontHeight() + 12,
                            "When in game you can access it through F1 key.",
-                           Color::darkGray);
+                           Color::darkGray, bgColor);
       break;
 
     case 5:
       clientArea.bltString(4, Surface::getFontHeight(),
                            "By pressing Ctrl key + left mouse button you can "
                            "shoot while moving.",
-                           Color::darkGray);
+                           Color::darkGray, bgColor);
       clientArea.bltString(4, Surface::getFontHeight() + 12,
                            "Always keep moving while shooting.",
-                           Color::darkGray);
+                           Color::darkGray, bgColor);
       clientArea.bltString(4, Surface::getFontHeight() + 24,
                            "That makes harder for others to hit your tanks!",
-                           Color::darkGray);
+                           Color::darkGray, bgColor);
       break;
 
     default:

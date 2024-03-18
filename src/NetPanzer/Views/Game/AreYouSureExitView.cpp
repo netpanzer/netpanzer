@@ -77,7 +77,7 @@ void AreYouSureExitView::doDraw(Surface &viewArea, Surface &clientArea) {
   // viewArea.drawButtonBorder(r, Color::lightGreen, Color::darkGreen);
 
   viewArea.bltStringCenterMin30("Are you sure you wish to exit netPanzer?",
-                                Color::white);
+                                Color::white, Color::darkGray);
 
   View::doDraw(viewArea, clientArea);
 }  // end AreYouSureExitView::doDraw

@@ -209,7 +209,7 @@ void HelpScrollViewAlt::doDraw(Surface &viewArea, Surface &clientArea) {
 
   clientArea.bltString(4, clientArea.getHeight() - Surface::getFontHeight(),
                        "Note: Use the right mouse button to scroll quickly.",
-                       Color::lightGray);
+                       Color::lightGray, componentBodyColor);
   // char strBuf[256];
   // sprintf(strBuf, "%d", scrollBar->getValue());
   // clientArea.bltStringCenter(strBuf, Color::red);
@@ -237,7 +237,7 @@ void HelpScrollViewAlt::drawHelpText(Surface &dest, const int &, const int &) {
   for (int i = topViewableItem; i < topViewableItem + maxViewableItems; i++) {
     dest.bltString(1,
                    6 + curIndex * (TEXT_GAP_SPACE + Surface::getFontHeight()),
-                   text[i].c_str(), color);
+                   text[i].c_str(), color, componentBodyColor);
     curIndex++;
   }
   //}

@@ -70,14 +70,15 @@ void LoadingView::doDraw(Surface& viewArea, Surface& clientArea) {
 void LoadingView::render() {
   dirty = false;
 
-  surface.fill(Color::black);
+  const PIX bgColor = Color::black;
+  surface.fill(bgColor);
 
   int ypos = surface.getHeight() - Surface::getFontHeight();
   int fontHeight = Surface::getFontHeight();
 
   std::list<std::string>::reverse_iterator i = lines.rbegin();
   while (i != lines.rend() && ypos > -fontHeight) {
-    surface.bltString(0, ypos, (*i).c_str(), Color::white);
+    surface.bltString(0, ypos, (*i).c_str(), Color::white, bgColor);
     i++;
     ypos -= fontHeight;
   }

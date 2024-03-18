@@ -206,8 +206,7 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea) {
     clientArea.FillRoundRect(MenuRect, MenuConfig::client_radius, MenuConfig::client_solid_color);
     clientArea.RoundRect(MenuRect, MenuConfig::client_radius, MenuConfig::client_border_color);
 
-    static std::string text = Package::getFullyQualifiedName();
-    clientArea.bltString(10, 580, text.c_str(), Color::gray);
+    drawVersionNumber(clientArea);
     // I don't like them so I delete them!
     // titlePackedSurface.blt(clientArea, bodyTextRect.min.x, 390);
     // titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x,
@@ -259,11 +258,14 @@ void MenuTemplateView::doDrawM(Surface &viewArea,
     // bodyTextRect.max.y-50, Palette::colorTable6040);
   }
 
-  static std::string text = Package::getFullyQualifiedName();
-  clientArea.bltString(10, 580, text.c_str(), MenuConfig::menu_dbg_text_color);
-
+  drawVersionNumber(clientArea);
   View::doDraw(viewArea, clientArea);
 }  // end doDrawM
+
+void MenuTemplateView::drawVersionNumber(Surface &clientArea) {
+  static std::string text = Package::getFullyQualifiedName();
+  clientArea.bltString(10, 580, text.c_str(), MenuConfig::menu_dbg_text_color, MenuConfig::menu_start_background_color);
+}
 
 void MenuTemplateView::doDrawAlt(Surface &viewArea,
                                  Surface &clientArea)  // help view
@@ -293,9 +295,7 @@ void MenuTemplateView::doDrawAlt(Surface &viewArea,
     clientArea.RoundRect(MenuRect, MenuConfig::client_radius, MenuConfig::client_border_color);
   }
 
-  static std::string text = Package::getFullyQualifiedName();
-  clientArea.bltString(10, 590, text.c_str(), Color::gray);
-
+  drawVersionNumber(clientArea);
   View::doDraw(viewArea, clientArea);
 }  // end doDraw
 

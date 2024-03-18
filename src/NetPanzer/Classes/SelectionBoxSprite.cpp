@@ -137,7 +137,7 @@ void UnitSelectionBox::blit(Surface *surface, const iRect &world_win) {
     if (playerName.length() >
         0) {  // XXX dirty trick, I don't center the text, just "by hand"
       surface->bltString(min_abs.x + FLAG_WIDTH + 2, min_abs.y - FLAG_HEIGHT,
-                         playerName.c_str(), Color::gray224);
+                         playerName.c_str(), Color::gray224, Color::darkGray);
     }
   }
 

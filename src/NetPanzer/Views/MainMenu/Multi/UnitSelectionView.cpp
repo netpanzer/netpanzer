@@ -53,7 +53,7 @@ UnitSelectionView::UnitSelectionView() : View() {
 void UnitSelectionView::doDraw(Surface &viewArea, Surface &clientArea) {
   char strBuf[256];
   sprintf(strBuf, "%d", scrollBar->getValue());
-  clientArea.bltStringCenter(strBuf, Color::white);
+  clientArea.bltStringCenter(strBuf, Color::white, Color::black); // TODO blend color
 
   View::doDraw(viewArea, clientArea);
 

@@ -42,7 +42,7 @@ using std::swap;
 //---------------------------------------------------------------------------
 // Purpose: Orders a pair of (x,y) coordinates
 //---------------------------------------------------------------------------
-template <class T>
+template<class T>
 inline void orderCoords(T &a, T &b) {
   if (a > b) swap(a, b);
 }  // end orderCoords
@@ -52,7 +52,7 @@ inline void orderCoords(T &a, T &b) {
 // Purpose: Orders a 2 pairs of (x,y) coordinates, making sure x1 <= x2 and y1
 // <= y2.
 //---------------------------------------------------------------------------
-template <class T>
+template<class T>
 inline void orderCoords(T &x1, T &y1, T &x2, T &y2) {
   if (x1 > x2) swap(x1, x2);
   if (y1 > y2) swap(y1, y2);
@@ -68,14 +68,14 @@ inline void orderCoords(iRect &bounds) {
 }  // end orderCoords
 
 class BitmapFileHeader {
- public:
-  Uint16 bfType;
-  Uint32 bfSize;
-  Uint16 bfReserved1;
-  Uint16 bfReserved2;
-  Uint32 bfOffBits;
+public:
+    Uint16 bfType;
+    Uint32 bfSize;
+    Uint16 bfReserved1;
+    Uint16 bfReserved2;
+    Uint32 bfOffBits;
 
-  BitmapFileHeader(filesystem::ReadFile *file);
+    BitmapFileHeader(filesystem::ReadFile *file);
 };
 
 BitmapFileHeader::BitmapFileHeader(filesystem::ReadFile *file) {
@@ -91,20 +91,20 @@ BitmapFileHeader::BitmapFileHeader(filesystem::ReadFile *file) {
 #define BI_RLE4 2L
 
 class BitmapInfoHeader {
- public:
-  Uint32 biSize;
-  Uint32 biWidth;
-  Uint32 biHeight;
-  Uint16 biPlanes;
-  Uint16 biBitCount;
-  Uint32 biCompression;
-  Uint32 biSizeImage;
-  Uint32 biXPelsPerMeter;
-  Uint32 biYPelsPerMeter;
-  Uint32 biClrUsed;
-  Uint32 biClrImportant;
+public:
+    Uint32 biSize;
+    Uint32 biWidth;
+    Uint32 biHeight;
+    Uint16 biPlanes;
+    Uint16 biBitCount;
+    Uint32 biCompression;
+    Uint32 biSizeImage;
+    Uint32 biXPelsPerMeter;
+    Uint32 biYPelsPerMeter;
+    Uint32 biClrUsed;
+    Uint32 biClrImportant;
 
-  BitmapInfoHeader(filesystem::ReadFile *file);
+    BitmapInfoHeader(filesystem::ReadFile *file);
 };
 
 BitmapInfoHeader::BitmapInfoHeader(filesystem::ReadFile *file) {
@@ -225,7 +225,7 @@ void Surface::alloc(unsigned int w, unsigned int h, int nframes) {
   size_t requestedBytes = getPitch() * getHeight() * sizeof(PIX) * nframes;
 
   if (requestedBytes > 0) {
-    frame0 = (PIX *)malloc(requestedBytes);
+    frame0 = (PIX *) malloc(requestedBytes);
 
     if (frame0 == 0) throw Exception("out of memory while allocating surface.");
 
@@ -267,12 +267,12 @@ void Surface::setTo(const Surface &source, iRect bounds) {
   myMem = false;
   frame0 = source.pixPtr(bounds.min.x, bounds.min.y);
   mem = frame0;
-  if ((unsigned int)bounds.max.x > source.getWidth())
+  if ((unsigned int) bounds.max.x > source.getWidth())
     twidth = source.getWidth() - bounds.min.x;
   else
     twidth = bounds.getSizeX();
 
-  if ((unsigned int)bounds.max.y > source.getHeight())
+  if ((unsigned int) bounds.max.y > source.getHeight())
     theight = source.getHeight() - bounds.min.y;
   else
     theight = bounds.getSizeY();
@@ -364,7 +364,7 @@ void Surface::blt(Surface &dest, int x, int y) const {
 
   // Trivial clipping rejection - no overlap.
   // Also will jump out immediately if either image has zero size.
-  if (x >= (int)dest.getWidth() || y >= (int)dest.getHeight()) return;
+  if (x >= (int) dest.getWidth() || y >= (int) dest.getHeight()) return;
 
   int end_x = x + getWidth();
   int end_y = y + getHeight();
@@ -391,21 +391,21 @@ void Surface::blt(Surface &dest, int x, int y) const {
   // CLIP RIGHT
   // This subtracts only the portion hanging over the right edge of the
   // destination Surface
-  if ((unsigned int)end_x > dest.getWidth())
+  if ((unsigned int) end_x > dest.getWidth())
     pixelsPerRow -= end_x - dest.getWidth();
 
   // CLIP TOP
   if (y < 0) {
     numRows += y;
-    sPtr -= y * (int)getPitch();
+    sPtr -= y * (int) getPitch();
   } else {
-    dPtr += y * (int)dest.getPitch();
+    dPtr += y * (int) dest.getPitch();
   }
 
   // CLIP BOTTOM
   // This subtracts only the portion hanging over the bottom edge of the
   // destination Surface
-  if ((unsigned int)end_y > dest.getHeight())
+  if ((unsigned int) end_y > dest.getHeight())
     numRows -= end_y - dest.getHeight();
 
   // Now, Check to make sure I actually have something
@@ -447,7 +447,7 @@ void Surface::bltTrans(Surface &dest, int x, int y) const {
 
   // Trivial clipping rejection - no overlap.
   // Also will jump out immediately if either image has zero size.
-  if (x >= (int)dest.getWidth() || y >= (int)dest.getHeight()) return;
+  if (x >= (int) dest.getWidth() || y >= (int) dest.getHeight()) return;
 
   int end_x = x + getWidth();
   int end_y = y + getHeight();
@@ -474,21 +474,21 @@ void Surface::bltTrans(Surface &dest, int x, int y) const {
   // CLIP RIGHT
   // This subtracts only the portion hanging over the right edge of the
   // destination Surface
-  if ((unsigned int)end_x > dest.getWidth())
+  if ((unsigned int) end_x > dest.getWidth())
     pixelsPerRow -= end_x - dest.getWidth();
 
   // CLIP TOP
   if (y < 0) {
     numRows += y;
-    sPtr -= y * (int)getPitch();
+    sPtr -= y * (int) getPitch();
   } else {
-    dPtr += y * (int)dest.getPitch();
+    dPtr += y * (int) dest.getPitch();
   }
 
   // CLIP BOTTOM
   // This subtracts only the portion hanging over the bottom edge of the
   // destination Surface
-  if ((unsigned int)end_y > dest.getHeight())
+  if ((unsigned int) end_y > dest.getHeight())
     numRows -= end_y - dest.getHeight();
 
   // Now, Check to make sure I actually have something
@@ -521,7 +521,7 @@ void Surface::bltTrans(Surface &dest, int x, int y) const {
 //          are blitted in the specified color.
 //---------------------------------------------------------------------------
 void Surface::bltTransColor(Surface &dest, int x, int y,
-                            const Uint8 color) const {
+                            const PIX color) const {
   assert(getDoesExist());
   assert(dest.getDoesExist());
   assert(this != 0);
@@ -534,7 +534,7 @@ void Surface::bltTransColor(Surface &dest, int x, int y,
 
   // Trivial clipping rejection - no overlap.
   // Also will jump out immediately if either image has zero size.
-  if (x >= (int)dest.getWidth() || y >= (int)dest.getHeight()) return;
+  if (x >= (int) dest.getWidth() || y >= (int) dest.getHeight()) return;
 
   int end_x = x + getWidth();
   int end_y = y + getHeight();
@@ -561,21 +561,21 @@ void Surface::bltTransColor(Surface &dest, int x, int y,
   // CLIP RIGHT
   // This subtracts only the portion hanging over the right edge of the
   // destination Surface
-  if ((unsigned int)end_x > dest.getWidth())
+  if ((unsigned int) end_x > dest.getWidth())
     pixelsPerRow -= end_x - dest.getWidth();
 
   // CLIP TOP
   if (y < 0) {
     numRows += y;
-    sPtr -= y * (int)getPitch();
+    sPtr -= y * (int) getPitch();
   } else {
-    dPtr += y * (int)dest.getPitch();
+    dPtr += y * (int) dest.getPitch();
   }
 
   // CLIP BOTTOM
   // This subtracts only the portion hanging over the bottom edge of the
   // destination Surface
-  if ((unsigned int)end_y > dest.getHeight())
+  if ((unsigned int) end_y > dest.getHeight())
     numRows -= end_y - dest.getHeight();
 
   // Now, Check to make sure I actually have something
@@ -600,18 +600,15 @@ void Surface::bltTransColor(Surface &dest, int x, int y,
   }
 }  // end Surface::bltTransC
 
-void Surface::bltTransColorFromSDLSurface(SDL_Surface *source, int x, int y,
-                                          const Uint8 color) const {
+void Surface::bltTransColorFromSDLSurface(SDL_Surface *source, int x, int y) const {
   if (mem == 0) {
-    return;  // TODO??? how?
+    return;
   }
   assert(getDoesExist());
   assert(source != 0);
   assert(mem != 0);
 
-  // Trivial clipping rejection - no overlap.
-  // Also will jump out immediately if either image has zero size.
-  if (x >= (int)getWidth() || y >= (int)getHeight()) return;
+  if (x >= (int) getWidth() || y >= (int) getHeight()) return;
 
   int end_x = x + source->w;
   int end_y = y + source->h;
@@ -620,28 +617,19 @@ void Surface::bltTransColorFromSDLSurface(SDL_Surface *source, int x, int y,
   unsigned int pixelsPerRow = source->w;
   unsigned int numRows = source->h;
 
-  PIX *sPtr =
-      (PIX *)source->pixels;  // Pointer to source Surface start of memory.
-  PIX *dPtr = mem;            // Pointer to destination Surface start of memory.
+  // Working with 8-bit palatalized surface
+  Uint8 *sPtr = (Uint8 *)source->pixels;
+  Uint8 *dPtr = (Uint8 *)mem;
 
-  // Check for partial clip, calculate number of pixels
-  // per row to copy, and number of rows to copy.  Adjust
-  // sPtr and dPtr.
-
-  // CLIP LEFT
   if (x < 0) {
-    pixelsPerRow += x;  // This will subtract the neg. x value.
-    sPtr += -x;         // This will move the sPtr to x = 0, from the neg. x.
+    pixelsPerRow += x;
+    sPtr += -x;
   } else {
     dPtr += x;
   }
 
-  // CLIP RIGHT
-  // This subtracts only the portion hanging over the right edge of the
-  // destination Surface
   if ((unsigned int)end_x > getWidth()) pixelsPerRow -= end_x - getWidth();
 
-  // CLIP TOP
   if (y < 0) {
     numRows += y;
     sPtr -= y * source->pitch;
@@ -649,24 +637,24 @@ void Surface::bltTransColorFromSDLSurface(SDL_Surface *source, int x, int y,
     dPtr += y * (int)getPitch();
   }
 
-  // CLIP BOTTOM
-  // This subtracts only the portion hanging over the bottom edge of the
-  // destination Surface
   if ((unsigned int)end_y > getHeight()) numRows -= end_y - getHeight();
 
-  // Now, Check to make sure I actually have something
-  // to draw.  I should - because I checked for trivial
-  // rejection first.  These asserts just make sure
-  // my clipping is working...
   assert(pixelsPerRow > 0);
   assert(numRows > 0);
+
+  SDL_Color *sourcePaletteColors = source->format->palette->colors;
 
   int srcAdjustment = source->pitch - pixelsPerRow;
   int destAdjustment = getPitch() - pixelsPerRow;
 
   for (unsigned int row = 0; row < numRows; row++) {
     for (unsigned int col = 0; col < pixelsPerRow; col++) {
-      if (*sPtr != 0) *dPtr = color;
+      Uint8 index = *sPtr;
+      if (index != 0) { // Assuming you want to skip the transparent/background pixels
+        const SDL_Color pixColor = sourcePaletteColors[index];
+        Uint8 gamePaletteIndex = Palette::findNearestColor(pixColor.r, pixColor.g, pixColor.b, true);
+        *dPtr = gamePaletteIndex;
+      }
       sPtr++;
       dPtr++;
     }
@@ -674,7 +662,8 @@ void Surface::bltTransColorFromSDLSurface(SDL_Surface *source, int x, int y,
     sPtr += srcAdjustment;
     dPtr += destAdjustment;
   }
-}  // end Surface::bltTransColorFromSDLSurface
+
+}
 
 // drawHLine
 //---------------------------------------------------------------------------
@@ -685,7 +674,7 @@ void Surface::drawHLine(int x1, int y, int x2, const PIX &color) {
   assert(this != 0);
 
   // Check for trivial rejection
-  if (y < 0 || x2 <= 0 || y >= (int)getHeight() || x1 >= (int)getWidth())
+  if (y < 0 || x2 <= 0 || y >= (int) getHeight() || x1 >= (int) getWidth())
     return;
 
   assert(mem != 0);
@@ -694,7 +683,7 @@ void Surface::drawHLine(int x1, int y, int x2, const PIX &color) {
   orderCoords(x1, x2);
 
   unsigned length = x2 - x1;
-  PIX *ptr = mem + y * (int)getPitch();
+  PIX *ptr = mem + y * (int) getPitch();
 
   // CLIP LEFT
   if (x1 < 0) {
@@ -704,7 +693,7 @@ void Surface::drawHLine(int x1, int y, int x2, const PIX &color) {
   }
 
   // CLIP RIGHT
-  if (x2 >= (int)getWidth()) length -= (x2 - getWidth());
+  if (x2 >= (int) getWidth()) length -= (x2 - getWidth());
 
   memset(ptr, color, length * sizeof(PIX));
 
@@ -719,7 +708,7 @@ void Surface::drawVLine(int x, int y1, int y2, const PIX &color) {
   assert(this != 0);
 
   // Check for trivial rejection
-  if (x < 0 || y2 <= 0 || x >= (int)getWidth() || y1 >= (int)getHeight())
+  if (x < 0 || y2 <= 0 || x >= (int) getWidth() || y1 >= (int) getHeight())
     return;
 
   assert(mem != 0);
@@ -731,9 +720,9 @@ void Surface::drawVLine(int x, int y1, int y2, const PIX &color) {
   if (y1 < 0) y1 = 0;
 
   // CLIP BOTTOM
-  if (y2 >= (int)getHeight()) y2 = getHeight() - 1;
+  if (y2 >= (int) getHeight()) y2 = getHeight() - 1;
 
-  PIX *ptr = mem + y1 * (int)getPitch() + x;
+  PIX *ptr = mem + y1 * (int) getPitch() + x;
 
   int width = y2 - y1;
 
@@ -784,20 +773,20 @@ void Surface::fillRect(iRect bounds, const PIX &color) {
   // if (bounds.max < 0 || bounds.min >= pix) return;
   if (bounds.max.x < 0) return;
   if (bounds.max.y < 0) return;
-  if (bounds.min.x >= (int)getWidth()) return;
-  if (bounds.min.y >= (int)getHeight()) return;
+  if (bounds.min.x >= (int) getWidth()) return;
+  if (bounds.min.y >= (int) getHeight()) return;
 
   // Check for clipping
   if (bounds.min.x < 0) bounds.min.x = 0;
   if (bounds.min.y < 0) bounds.min.y = 0;
-  if (bounds.max.x > (int)getWidth()) bounds.max.x = getWidth();
-  if (bounds.max.y > (int)getHeight()) bounds.max.y = getHeight();
+  if (bounds.max.x > (int) getWidth()) bounds.max.x = getWidth();
+  if (bounds.max.y > (int) getHeight()) bounds.max.y = getHeight();
 
   iXY diff;
   diff = (bounds.max - bounds.min);
 
   // Set memory to the top-left pixel of the rectangle.
-  PIX *ptr = mem + bounds.min.y * (int)getPitch() + bounds.min.x;
+  PIX *ptr = mem + bounds.min.y * (int) getPitch() + bounds.min.x;
 
   for (int y = 0; y < diff.y; y++) {
     // Lay the horizontal strip.
@@ -823,16 +812,16 @@ void Surface::drawRect(iRect bounds, const PIX &color) {
     return;
   else if (bounds.max.y < 0)
     return;
-  else if (bounds.min.x >= (int)getWidth())
+  else if (bounds.min.x >= (int) getWidth())
     return;
-  else if (bounds.min.y >= (int)getHeight())
+  else if (bounds.min.y >= (int) getHeight())
     return;
 
   // Check for clipping
   if (bounds.min.x < 0) bounds.min.x = 0;
   if (bounds.min.y < 0) bounds.min.y = 0;
-  if (bounds.max.x >= (int)getWidth()) bounds.max.x = getWidth() - 1;
-  if (bounds.max.y >= (int)getHeight()) bounds.max.y = getHeight() - 1;
+  if (bounds.max.x >= (int) getWidth()) bounds.max.x = getWidth() - 1;
+  if (bounds.max.y >= (int) getHeight()) bounds.max.y = getHeight() - 1;
 
   drawHLine(bounds.min.x, bounds.min.y, bounds.max.x, color);
   drawHLine(bounds.min.x, bounds.max.y, bounds.max.x + 1, color);
@@ -992,8 +981,8 @@ void Surface::rotate(int angle) {
           int xSource = int((x * cosAngle - y * sinAngle) + center_x);
           int ySource = int((y * cosAngle + x * sinAngle) + center_y);
 
-          if ((xSource >= 0) && ((unsigned int)xSource < getWidth()) &&
-              (ySource >= 0) && ((unsigned int)ySource < getHeight())) {
+          if ((xSource >= 0) && ((unsigned int) xSource < getWidth()) &&
+              (ySource >= 0) && ((unsigned int) ySource < getHeight())) {
             tempSurface.putPixel(index % getWidth(), index / getHeight(),
                                  getPixel(xSource, ySource));
           } else {
@@ -1097,8 +1086,8 @@ void Surface::bltLookup(const iRect &destRect, const PIX table[]) {
   assert(mem != 0);
 
   iXY min = destRect.min + offset;
-  if (min.x >= (int)getWidth()) return;
-  if (min.y >= (int)getHeight()) return;
+  if (min.x >= (int) getWidth()) return;
+  if (min.y >= (int) getHeight()) return;
 
   iXY max = destRect.max + offset;
   if (max.x <= 0) return;
@@ -1107,13 +1096,13 @@ void Surface::bltLookup(const iRect &destRect, const PIX table[]) {
   // Clip destination rectangle
   if (min.x < 0) min.x = 0;
   if (min.y < 0) min.y = 0;
-  if (max.x >= (int)getWidth()) max.x = getWidth();
-  if (max.y >= (int)getHeight()) max.y = getHeight();
+  if (max.x >= (int) getWidth()) max.x = getWidth();
+  if (max.y >= (int) getHeight()) max.y = getHeight();
 
   size_t pixelsPerRow = max.x - min.x;
   size_t numRows = max.y - min.y;
 
-  PIX *dRow = mem + min.y * (int)getPitch() + min.x;
+  PIX *dRow = mem + min.y * (int) getPitch() + min.x;
 
   for (size_t yCount = 0; yCount < numRows; yCount++) {
     for (size_t x = 0; x < pixelsPerRow; x++) dRow[x] = table[dRow[x]];
@@ -1131,8 +1120,8 @@ void Surface::bltScale(const Surface &source, const iRect &destRect) {
   iXY min = destRect.min + source.offset;
   iXY max = destRect.max + source.offset;
 
-  if (min.x >= (int)getWidth()) return;
-  if (min.y >= (int)getHeight()) return;
+  if (min.x >= (int) getWidth()) return;
+  if (min.y >= (int) getHeight()) return;
 
   // Something is overlapping, so we need to verify that both
   // surfaces are valid.
@@ -1149,9 +1138,9 @@ void Surface::bltScale(const Surface &source, const iRect &destRect) {
 
   // Compute source deltas
   int xSrcDelta =
-      int((float(source.getWidth()) / float(max.x - min.x)) * 65536.0);
+          int((float(source.getWidth()) / float(max.x - min.x)) * 65536.0);
   int ySrcDelta =
-      int((float(source.getHeight()) / float(max.y - min.y)) * 65536.0);
+          int((float(source.getHeight()) / float(max.y - min.y)) * 65536.0);
 
   PIX *dRow = mem;  // Pointer to the destination Surface
 
@@ -1164,7 +1153,7 @@ void Surface::bltScale(const Surface &source, const iRect &destRect) {
   }
 
   // CLIP RIGHT
-  if (max.x > (int)getWidth()) {
+  if (max.x > (int) getWidth()) {
     pixelsPerRow -= max.x - getWidth();
   }
 
@@ -1173,11 +1162,11 @@ void Surface::bltScale(const Surface &source, const iRect &destRect) {
     numRows += min.y;
     srcY -= min.y * ySrcDelta;
   } else {
-    dRow += (min.y * (int)getPitch());
+    dRow += (min.y * (int) getPitch());
   }
 
   // CLIP BOTTOM
-  if (max.y > (int)getHeight()) {
+  if (max.y > (int) getHeight()) {
     numRows -= max.y - getHeight();
   }
 
@@ -1186,9 +1175,9 @@ void Surface::bltScale(const Surface &source, const iRect &destRect) {
   if (numRows <= 0) return;
 
 #if 0
-    int stepAndDecCount = (xSrcDelta << 16) | 0xffff;
-    int stepWholePart = xSrcDelta >> 16;
-    int srcX1FracWithCount = (srcX1 << 16) | pixelsPerRow;
+  int stepAndDecCount = (xSrcDelta << 16) | 0xffff;
+  int stepWholePart = xSrcDelta >> 16;
+  int srcX1FracWithCount = (srcX1 << 16) | pixelsPerRow;
 #endif
 
   float xdelta = float(source.getWidth()) / float(max.x - min.x);
@@ -1196,12 +1185,12 @@ void Surface::bltScale(const Surface &source, const iRect &destRect) {
     const PIX *sRow = source.pixPtr(0, srcY >> 16) + (srcX1 >> 16);
 
 #if 0
-        bltScaleSpan(dRow, sRow, srcX1FracWithCount, stepAndDecCount, stepWholePart);
+    bltScaleSpan(dRow, sRow, srcX1FracWithCount, stepAndDecCount, stepWholePart);
 #else
     // XXX: WARNING SLOW CODE
     float sPos = 0;
     for (size_t x = 0; x < pixelsPerRow; x++) {
-      dRow[x] = sRow[(size_t)sPos];
+      dRow[x] = sRow[(size_t) sPos];
       sPos += xdelta;
     }
 #endif
@@ -1239,10 +1228,10 @@ void Surface::shrinkWrap() {
     for (unsigned int y = 0; y < getHeight(); y++) {
       for (unsigned int x = 0; x < getWidth(); x++) {
         if (getPixel(x, y) != 0) {
-          if (x < (unsigned int)bounds.min.x) {
+          if (x < (unsigned int) bounds.min.x) {
             bounds.min.x = x;
           }
-          if (x > (unsigned int)bounds.max.x) {
+          if (x > (unsigned int) bounds.max.x) {
             bounds.max.x = x;
           }
         }
@@ -1253,10 +1242,10 @@ void Surface::shrinkWrap() {
     for (unsigned int x = 0; x < getWidth(); x++) {
       for (unsigned int y = 0; y < getHeight(); y++) {
         if (getPixel(x, y) != 0) {
-          if (y < (unsigned int)bounds.min.y) {
+          if (y < (unsigned int) bounds.min.y) {
             bounds.min.y = y;
           }
-          if (y > (unsigned int)bounds.max.y) {
+          if (y > (unsigned int) bounds.max.y) {
             bounds.max.y = y;
           }
         }
@@ -1323,10 +1312,10 @@ PIX Surface::getAverageColor() {
 unsigned int Surface::getFontHeight() {
   // TODO pass in string? some characters are taller than others
   SDL_Surface *font_surface =
-      CachedFontRenderer::render(".", Palette::color[0]);
+          CachedFontRenderer::render(".", Palette::color[0], Palette::color[0]);
   unsigned int height =
-      font_surface->h +
-      3;  // magic number works with GNUUnifont9FullHintInstrUCSUR font
+          font_surface->h +
+          3;  // magic number works with GNUUnifont9FullHintInstrUCSUR font
   return height;
 }
 
@@ -1335,7 +1324,7 @@ unsigned int Surface::getTextWidth(const char *text) {
     return 0;
   }
   SDL_Surface *font_surface =
-      CachedFontRenderer::render(text, Palette::color[0]);
+          CachedFontRenderer::render(text, Palette::color[0], Palette::color[0]);
   if (!font_surface) {
     return 0;
   }
@@ -1361,7 +1350,7 @@ void Surface::renderText(const char *str, PIX color, PIX bgcolor) {
   if (!len) return;
 
   SDL_Surface *font_surface =
-      CachedFontRenderer::render(str, Palette::color[color]);
+          CachedFontRenderer::render(str, Palette::color[color], Palette::color[bgcolor]);
   if (!font_surface) {
     printf("Could not renderText() %s %s\n", str, SDL_GetError());
     return;
@@ -1370,7 +1359,7 @@ void Surface::renderText(const char *str, PIX color, PIX bgcolor) {
   unsigned int need_height = font_surface->h;
 
   if (frame0 != 0) {
-    if (getWidth() != need_width || getHeight() != need_height) {
+    if (getWidth() < need_width || getHeight() < need_height) {
       free();
       create(need_width, need_height, 1);
     }
@@ -1379,7 +1368,7 @@ void Surface::renderText(const char *str, PIX color, PIX bgcolor) {
   }
 
   drawRect(iRect(0, 0, getWidth(), getHeight()), bgcolor);
-  bltTransColorFromSDLSurface(font_surface, 0, 0, color);
+  bltTransColorFromSDLSurface(font_surface, 0, 0);
 }
 
 // bltString
@@ -1388,41 +1377,41 @@ void Surface::renderText(const char *str, PIX color, PIX bgcolor) {
 //          calls to blitChar for each character of the string. Does not
 //          handle wrapping.
 //---------------------------------------------------------------------------
-void Surface::bltString(int x, int y, const char *str, const Uint8 &color) {
+void Surface::bltString(int x, int y, const char *str, const PIX &color, const PIX &blend_color) {
   int len = strlen(str);
   if (!len) {
     return;
   }
   SDL_Surface *font_surface =
-      CachedFontRenderer::render(str, Palette::color[color]);
+          CachedFontRenderer::render(str, Palette::color[color], Palette::color[blend_color]);
   if (!font_surface) {
     printf("Could not bltString() %s %s\n", str, SDL_GetError());
     return;
   }
-  bltTransColorFromSDLSurface(font_surface, x, y, color);
+  bltTransColorFromSDLSurface(font_surface, x, y);
 }  // end Surface::bltString
 
 // bltStringShadowed
 //---------------------------------------------------------------------------
 void Surface::bltStringShadowed(int x, int y, char const *str,
-                                const Uint8 &textColor,
-                                const Uint8 &shadowColor) {
+                                const PIX &textColor,
+                                const PIX &shadowColor) {
   int len = strlen(str);
   if (!len) return;
   SDL_Surface *font_surface_back =
-      CachedFontRenderer::render(str, Palette::color[shadowColor]);
+          CachedFontRenderer::render(str, Palette::color[shadowColor], Palette::color[shadowColor]);
   if (!font_surface_back) {
     printf("Could not bltStringShadowed() %s %s\n", str, SDL_GetError());
     return;
   }
-  bltTransColorFromSDLSurface(font_surface_back, x + 1, y + 1, shadowColor);
+  bltTransColorFromSDLSurface(font_surface_back, x + 1, y + 1);
   SDL_Surface *font_surface_front =
-      CachedFontRenderer::render(str, Palette::color[textColor]);
+          CachedFontRenderer::render(str, Palette::color[textColor], Palette::color[shadowColor]);
   if (!font_surface_front) {
     printf("Could not bltStringShadowed() %s %s\n", str, SDL_GetError());
     return;
   }
-  bltTransColorFromSDLSurface(font_surface_front, x, y, textColor);
+  bltTransColorFromSDLSurface(font_surface_front, x, y);
 }  // end Surface::bltStringShadowed
 
 // bltStringCenter
@@ -1430,32 +1419,32 @@ void Surface::bltStringShadowed(int x, int y, char const *str,
 // Purpose: Blits a string of text and centers it horizontally and vertically
 //          on the screen. Does not handle wrapping.
 //---------------------------------------------------------------------------
-void Surface::bltStringCenter(const char *str, PIX color) {
+void Surface::bltStringCenter(const char *str, PIX color, PIX blendColor) {
   int len = strlen(str);
   if (!len) return;
   SDL_Surface *font_surface =
-      CachedFontRenderer::render(str, Palette::color[color]);
+          CachedFontRenderer::render(str, Palette::color[color], Palette::color[blendColor]);
   if (!font_surface) {
     return;
   }
   bltTransColorFromSDLSurface(
-      font_surface,
-      (getWidth() - std::min(font_surface->w, ((int)getWidth()))) / 2,
-      (getHeight() - std::min(font_surface->h, ((int)getHeight()))) / 2, color);
+          font_surface,
+          (getWidth() - std::min(font_surface->w, ((int) getWidth()))) / 2,
+          (getHeight() - std::min(font_surface->h, ((int) getHeight()))) / 2);
 }  // end Surface::bltStringCenter
 
-void Surface::bltStringCenterMin30(const char *str, PIX color) {
+void Surface::bltStringCenterMin30(const char *str, PIX color, PIX blendColor) {
   int len = strlen(str);
   if (!len) return;
   SDL_Surface *font_surface =
-      CachedFontRenderer::render(str, Palette::color[color]);
+          CachedFontRenderer::render(str, Palette::color[color], Palette::color[blendColor]);
   if (!font_surface) {
     printf("Could not bltStringCenterMin30() %s %s\n", str, SDL_GetError());
     return;
   }
   bltTransColorFromSDLSurface(font_surface,
                               (getWidth() - (font_surface->w)) / 2,
-                              (getHeight() - font_surface->h) / 2 - 30, color);
+                              (getHeight() - font_surface->h) / 2 - 30);
 }  // end Surface::bltStringCenter
 
 // bltStringShadowedCenter
@@ -1468,21 +1457,21 @@ void Surface::bltStringShadowedCenter(const char *str, PIX textColor,
   int len = strlen(str);
   if (!len) return;
   SDL_Surface *font_surface_back =
-      CachedFontRenderer::render(str, Palette::color[shadowColor]);
+          CachedFontRenderer::render(str, Palette::color[shadowColor], Palette::color[shadowColor]);
   if (!font_surface_back) {
     printf("Could not bltStringShadowedCenter() %s %s\n", str, SDL_GetError());
     return;
   }
   int x = (getWidth() - font_surface_back->w) / 2;
   int y = (getHeight() - font_surface_back->h) / 2;
-  bltTransColorFromSDLSurface(font_surface_back, x + 1, y + 1, shadowColor);
+  bltTransColorFromSDLSurface(font_surface_back, x + 1, y + 1);
   SDL_Surface *font_surface_front =
-      CachedFontRenderer::render(str, Palette::color[textColor]);
+          CachedFontRenderer::render(str, Palette::color[textColor], Palette::color[shadowColor]);
   if (!font_surface_front) {
     printf("Could not bltStringShadowedCenter() %s %s\n", str, SDL_GetError());
     return;
   }
-  bltTransColorFromSDLSurface(font_surface_front, x, y, textColor);
+  bltTransColorFromSDLSurface(font_surface_front, x, y);
 }  // end Surface::bltStringShadowedCenter
 
 // bltStringCenteredInRect
@@ -1490,18 +1479,18 @@ void Surface::bltStringShadowedCenter(const char *str, PIX textColor,
 // Purpose: Blits the string centered inside the specified rectangle.
 //---------------------------------------------------------------------------
 void Surface::bltStringCenteredInRect(const iRect &rect, const char *str,
-                                      const PIX &color) {
+                                      const PIX &color, const PIX &blendColor) {
   int len = strlen(str);
   if (!len) return;
   SDL_Surface *font_surface =
-      CachedFontRenderer::render(str, Palette::color[color]);
+          CachedFontRenderer::render(str, Palette::color[color], Palette::color[blendColor]);
   if (!font_surface) {
     printf("Could not bltStringCenteredInRect() %s %s\n", str, SDL_GetError());
     return;
   }
   int x = rect.min.x + (rect.getSizeX() - font_surface->w) / 2;
   int y = rect.min.y + (rect.getSizeY() - font_surface->h) / 2;
-  bltTransColorFromSDLSurface(font_surface, x, y, color);
+  bltTransColorFromSDLSurface(font_surface, x, y);
 }  // end Surface::bltStringCenteredInRect
 
 // create
@@ -1554,8 +1543,8 @@ void Surface::loadBMP(const char *fileName, bool needAlloc) {
 
     } else {
       // Check and make sure the picture will fit
-      if (getWidth() < (unsigned long)info_header.biWidth ||
-          getHeight() < (unsigned long)info_header.biHeight)
+      if (getWidth() < (unsigned long) info_header.biWidth ||
+          getHeight() < (unsigned long) info_header.biHeight)
         throw Exception("Not enough memory to load BMP image %s", fileName);
     }
 
@@ -1609,7 +1598,7 @@ void Surface::drawWindowsBorder() {
 
 // bltStringInBox
 //--------------------------------------------------------------------------
-void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color,
+void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, PIX blendColor,
                              int gapSpace, bool drawBox) {
   if (drawBox) {
     drawRect(rect, Color::yellow);
@@ -1652,12 +1641,12 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color,
 
     strBuf[strBufLength] = '\0';
 
-    if ((int)(pos.x + strlen(strBuf) * FONT_WIDTH) > rect.max.x) {
+    if ((int) (pos.x + strlen(strBuf) * FONT_WIDTH) > rect.max.x) {
       pos.x = rect.min.x;
       pos.y += gapSpace;
     }
 
-    bltString(pos.x, pos.y, strBuf, color);
+    bltString(pos.x, pos.y, strBuf, color, blendColor);
 
     if (done) {
       return;
@@ -1793,16 +1782,16 @@ void Surface::RoundRect(iRect rect, int radius, PIX color) {
     return;
   else if (rect.max.y < 0)
     return;
-  else if (rect.min.x >= (int)getWidth())
+  else if (rect.min.x >= (int) getWidth())
     return;
-  else if (rect.min.y >= (int)getHeight())
+  else if (rect.min.y >= (int) getHeight())
     return;
 
   // Check for clipping
   if (rect.min.x < 0) rect.min.x = 0;
   if (rect.min.y < 0) rect.min.y = 0;
-  if (rect.max.x >= (int)getWidth()) rect.max.x = getWidth() - 1;
-  if (rect.max.y >= (int)getHeight()) rect.max.y = getHeight() - 1;
+  if (rect.max.x >= (int) getWidth()) rect.max.x = getWidth() - 1;
+  if (rect.max.y >= (int) getHeight()) rect.max.y = getHeight() - 1;
 
   drawHLine(rect.min.x + radius, rect.min.y, rect.max.x - radius, color);
   drawHLine(rect.min.x + radius, rect.max.y, rect.max.x + 1 - radius, color);
@@ -1826,7 +1815,7 @@ void Surface::RoundRect(iRect rect, int radius, PIX color) {
              color);  // up left corner
     putPixel((rect.min.x + radius) - y, (rect.min.y + radius) - x,
              color);  // up left corner
-                      //
+    //
     if (d < 0)
       d = d + (4 * x) + 6;
     else {
@@ -1853,20 +1842,20 @@ void Surface::FillRoundRect(iRect rect, int radius, PIX color) {
     return;
   else if (rect.max.y < 0)
     return;
-  else if (rect.min.x >= (int)getWidth())
+  else if (rect.min.x >= (int) getWidth())
     return;
-  else if (rect.min.y >= (int)getHeight())
+  else if (rect.min.y >= (int) getHeight())
     return;
 
   // Check for clipping
   if (rect.min.x < 0) rect.min.x = 0;
   if (rect.min.y < 0) rect.min.y = 0;
-  if (rect.max.x >= (int)getWidth()) rect.max.x = getWidth() - 1;
-  if (rect.max.y >= (int)getHeight()) rect.max.y = getHeight() - 1;
+  if (rect.max.x >= (int) getWidth()) rect.max.x = getWidth() - 1;
+  if (rect.max.y >= (int) getHeight()) rect.max.y = getHeight() - 1;
 
   fillRect(
-      iRect(rect.min.x, rect.min.y + radius, rect.max.x, rect.max.y - radius),
-      color);
+          iRect(rect.min.x, rect.min.y + radius, rect.max.x, rect.max.y - radius),
+          color);
 
   while (y >= x) {
     drawHLine((rect.min.x + radius) - x, (rect.min.y + radius) - y,
@@ -1898,16 +1887,16 @@ void Surface::BltRoundRect(iRect rect, int radius, const PIX table[]) {
     return;
   else if (rect.max.y < 0)
     return;
-  else if (rect.min.x >= (int)getWidth())
+  else if (rect.min.x >= (int) getWidth())
     return;
-  else if (rect.min.y >= (int)getHeight())
+  else if (rect.min.y >= (int) getHeight())
     return;
 
   // Check for clipping
   if (rect.min.x < 0) rect.min.x = 0;
   if (rect.min.y < 0) rect.min.y = 0;
-  if (rect.max.x >= (int)getWidth()) rect.max.x = getWidth() - 1;
-  if (rect.max.y >= (int)getHeight()) rect.max.y = getHeight() - 1;
+  if (rect.max.x >= (int) getWidth()) rect.max.x = getWidth() - 1;
+  if (rect.max.y >= (int) getHeight()) rect.max.y = getHeight() - 1;
 
   bltLookup(iRect(rect.min.x, rect.min.y + radius, rect.max.x,
                   rect.max.y - radius + 1),
@@ -1942,7 +1931,7 @@ void Surface::bltHLine(int x1, int y, int x2, const PIX table[]) {
   assert(this != 0);
 
   // Check for trivial rejection
-  if (y < 0 || x2 <= 0 || y >= (int)getHeight() || x1 >= (int)getWidth())
+  if (y < 0 || x2 <= 0 || y >= (int) getHeight() || x1 >= (int) getWidth())
     return;
 
   assert(mem != 0);
@@ -1951,7 +1940,7 @@ void Surface::bltHLine(int x1, int y, int x2, const PIX table[]) {
   orderCoords(x1, x2);
 
   unsigned length = x2 - x1;
-  PIX *ptr = mem + y * (int)getPitch();
+  PIX *ptr = mem + y * (int) getPitch();
 
   // CLIP LEFT
   if (x1 < 0) {
@@ -1961,7 +1950,7 @@ void Surface::bltHLine(int x1, int y, int x2, const PIX table[]) {
   }
 
   // CLIP RIGHT
-  if (x2 >= (int)getWidth()) length -= (x2 - getWidth());
+  if (x2 >= (int) getWidth()) length -= (x2 - getWidth());
 
   for (size_t x = 0; x < length; x++) ptr[x] = table[ptr[x]];
 

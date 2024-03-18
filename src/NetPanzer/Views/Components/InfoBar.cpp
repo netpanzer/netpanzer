@@ -109,9 +109,9 @@ void InfoBar::draw(Surface &dest) {
 
   int posx = position.x + 2 + 4;
   int posy = position.y + 2;
-  dest.bltStringShadowed(posx, posy, titles, titles_color, Color::black);
-  dest.bltStringShadowed(posx, posy, bars, bars_color, Color::black);
-  dest.bltStringShadowed(posx, posy, buf, format_color, Color::black);
+  dest.bltStringShadowed(posx, posy, titles, titles_color, Color::darkGray);
+  dest.bltStringShadowed(posx, posy, bars, bars_color, Color::darkGray);
+  dest.bltStringShadowed(posx, posy, buf, format_color, Color::darkGray);
 
   if (bar_on) {
     float getUpLastPing = PlayerInterface::getLocalPlayer()->getUpLastPing();
@@ -144,16 +144,16 @@ void InfoBar::draw(Surface &dest) {
     dest.bltLookup(r2, Palette::darkGray256.getColorArray());
 
     dest.bltStringShadowed(pos2x + 2 + 4, pos2y + 1, titles2, titles_color2,
-                           Color::black);
+                           Color::darkGray);
     dest.bltStringShadowed(pos2x + 2 + 4, pos2y + 1, bars2, bars_color2,
-                           Color::black);
+                           Color::darkGray);
     if (getUpLastPing == 0 && getDownLastPing == 0) {
       // do nothing
       dest.bltStringShadowed(pos2x + 2 + 4, pos2y + 1, buf2alt, format_color2,
-                             Color::black);
+                             Color::darkGray);
     } else {
       dest.bltStringShadowed(pos2x + 2 + 4, pos2y + 1, buf2, format_color2,
-                             Color::black);
+                             Color::darkGray);
     }
   }
 }

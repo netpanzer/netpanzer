@@ -116,7 +116,8 @@ masterserver::ServerList ServerListView::getViewModel() {
 }
 
 void ServerListView::doDraw(Surface& windowArea, Surface& clientArea) {
-  clientArea.fill(Color::black);
+  const PIX bgColor = Color::black;
+  clientArea.fill(bgColor);
 
   if (queryThread && queryThread->isRunning()) {
     queryThread->checkTimeOuts();
@@ -131,7 +132,7 @@ void ServerListView::doDraw(Surface& windowArea, Surface& clientArea) {
     } else {
       msg = "Resolving masterserver address";
     }
-    clientArea.bltString(0, 0, msg, Color::white);
+    clientArea.bltString(0, 0, msg, Color::white, bgColor);
     View::doDraw(windowArea, clientArea);
     return;
   }
@@ -141,15 +142,15 @@ void ServerListView::doDraw(Surface& windowArea, Surface& clientArea) {
     const masterserver::ServerInfo& server = *serverPtr;
 
     if (server.status == masterserver::ServerInfo::QUERYING) {
-      clientArea.bltString(0, y, server.address.c_str(), Color::gray);
-      clientArea.bltString(140, y, "querying...", Color::gray);
+      clientArea.bltString(0, y, server.address.c_str(), Color::gray, bgColor);
+      clientArea.bltString(140, y, "querying...", Color::gray, bgColor);
     } else if (server.status == masterserver::ServerInfo::TIMEOUT) {
-      clientArea.bltString(0, y, server.address.c_str(), Color::gray);
-      clientArea.bltString(140, y, "timeout", Color::gray);
+      clientArea.bltString(0, y, server.address.c_str(), Color::gray, bgColor);
+      clientArea.bltString(140, y, "timeout", Color::gray, bgColor);
     } else if (server.protocol != NETPANZER_PROTOCOL_VERSION) {
-      clientArea.bltString(0, y, server.address.c_str(), Color::gray);
+      clientArea.bltString(0, y, server.address.c_str(), Color::gray, bgColor);
       clientArea.bltString(140, y, getNetpanzerProtocolMessage(server.protocol),
-                           Color::gray);
+                           Color::gray, bgColor);
     } else {
       std::stringstream playerstr;
       playerstr << server.players << "/" << server.maxplayers;
@@ -180,10 +181,10 @@ void ServerListView::doDraw(Surface& windowArea, Surface& clientArea) {
         lock_image.blt(clientArea, 0, y);
       }
 
-      clientArea.bltString(8, y, ssn, textcolor);
-      clientArea.bltString(350, y, playerstr.str().c_str(), textcolor);
-      clientArea.bltString(400, y, server.map.c_str(), textcolor);
-      clientArea.bltString(550, y, pingstr.str().c_str(), textcolor);
+      clientArea.bltString(8, y, ssn, textcolor, bgColor);
+      clientArea.bltString(350, y, playerstr.str().c_str(), textcolor, bgColor);
+      clientArea.bltString(400, y, server.map.c_str(), textcolor, bgColor);
+      clientArea.bltString(550, y, pingstr.str().c_str(), textcolor, bgColor);
     }
 
     y += Surface::getFontHeight();

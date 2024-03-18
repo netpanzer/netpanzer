@@ -170,15 +170,16 @@ void View::drawTitle(Surface &viewArea) {
   Surface s;
   s.setTo(viewArea, r);
 
-  s.fill(getActive() ? activeWindowTitleBodyColor
-                     : inactiveWindowTitleBodyColor);
+  const PIX bgColor = getActive() ? activeWindowTitleBodyColor
+                     : inactiveWindowTitleBodyColor;
+  s.fill(bgColor);
 
   char strBuf[256];
 
   sprintf(strBuf, "%s%s", title, subTitle);
 
   s.bltStringCenter(strBuf, getActive() ? activeWindowTitleTextColor
-                                        : inactiveWindowTitleTextColor);
+                                        : inactiveWindowTitleTextColor, bgColor);
 
   if (getResize()) {
     {
@@ -1123,13 +1124,14 @@ void View::drawStatus(Surface &dest) {
 
   Surface s;
   s.setTo(dest, r);
-  s.fill(Color::gray192);
+  const PIX bgColor = Color::gray192;
+  s.fill(bgColor);
 
   // Draw the status text.
-  if (statusText != 0) {
+  if (statusText != nullptr) {
     int pos = (DEFAULT_STATUS_BAR_HEIGHT - Surface::getFontHeight()) >> 1;
 
-    s.bltString(pos, pos, statusText, Color::black);
+    s.bltString(pos, pos, statusText, Color::black, bgColor);
   }
 }  // end View::drawStatus
 

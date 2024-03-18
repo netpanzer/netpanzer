@@ -18,6 +18,7 @@ Uint8 MenuConfig::client_border_color = 0;
 
 NPString* MenuConfig::menu_background = NULL;
 NPString* MenuConfig::menu_start_background = NULL;
+Uint8 MenuConfig::menu_start_background_color = 0;
 NPString* MenuConfig::menu_font = NULL;
 Uint8 MenuConfig::menu_dbg_text_color = 0;
 int MenuConfig::menu_font_size = 0;
@@ -62,6 +63,7 @@ static const ScriptVarBindRecord client_setters[] = {
 static const ScriptVarBindRecord menu_getters[] = {
     {"background", GETSVTYPE_STRING, &MenuConfig::menu_background},
     {"start_background", GETSVTYPE_STRING, &MenuConfig::menu_start_background},
+    {"start_background_color", GETSVTYPE_BYTE, &MenuConfig::menu_start_background_color},
     {"font", GETSVTYPE_STRING, &MenuConfig::menu_font},
     {"dbg_text_color", GETSVTYPE_BYTE, &MenuConfig::menu_dbg_text_color},
     {"font_size", GETSVTYPE_BYTE, &MenuConfig::menu_font_size},
@@ -71,6 +73,7 @@ static const ScriptVarBindRecord menu_getters[] = {
 static const ScriptVarBindRecord menu_setters[] = {
     {"background", SETSVTYPE_STRING, &MenuConfig::menu_background},
     {"start_background", SETSVTYPE_STRING, &MenuConfig::menu_start_background},
+    {"start_background_color", SETSVTYPE_BYTE, &MenuConfig::menu_start_background_color},
     {"font", SETSVTYPE_STRING, &MenuConfig::menu_font},
     {"dbg_text_color", SETSVTYPE_BYTE, &MenuConfig::menu_dbg_text_color},
     {"font_size", SETSVTYPE_BYTE, &MenuConfig::menu_font_size},

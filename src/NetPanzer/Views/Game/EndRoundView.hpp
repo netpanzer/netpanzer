@@ -31,7 +31,7 @@ class EndRoundView : public SpecialButtonView {
  private:
   int viewableMessageCount;
   enum { ITEM_GAP_SPACE = 10 };
-  void drawPlayerStats(Surface &dest, unsigned int flagHeight);
+  void drawPlayerStats(Surface &dest, unsigned int flagHeight, PIX winnerBlendColor, PIX tableHeaderBlendColor, PIX nextGameBlendColor);
 
   Surface allyImage;
   Surface allyRequestImage;

@@ -41,12 +41,12 @@ class CachedFontRenderer {
  private:
   static Uint32 lastCleanedTick;
   static std::unordered_map<std::string, RenderedText> rendered_surfaces;
-  static std::string create_cache_key(const char* text, SDL_Color color);
+  static std::string create_cache_key(const char* text, SDL_Color color, SDL_Color backColor);
   static TTF_Font* font;
 
  public:
   static void initFont();
-  static SDL_Surface* render(const char* text, SDL_Color color);
+  static SDL_Surface* render(const char* text, SDL_Color color, SDL_Color blendColor);
   static void cleanup();
 
   static void test_openFont(void);
