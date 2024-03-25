@@ -57,15 +57,18 @@ void CachedFontRenderer::initFont() {
 
 std::string CachedFontRenderer::create_cache_key(const char *text,
                                                  SDL_Color color,
-                                                 SDL_Color blendColor) {
+                                                 SDL_Color blendColor,
+                                                 bool wrapped,
+                                                 int wrapLength) {
   std::string result = std::string(text);
   result += std::to_string(color.r) + std::to_string(color.g) + std::to_string(color.b);
   result += std::to_string(blendColor.r) + std::to_string(blendColor.g) + std::to_string(blendColor.b);
+  result += std::to_string(wrapped) + std::to_string(wrapLength);
   return result;
 }
 
-SDL_Surface *CachedFontRenderer::render(const char *text, SDL_Color color, SDL_Color blendColor) {
-  std::string key = create_cache_key(text, color, blendColor);
+SDL_Surface *CachedFontRenderer::render(const char *text, SDL_Color color, SDL_Color blendColor, bool wrapped, int wrapLength) {
+  std::string key = create_cache_key(text, color, blendColor, wrapped, wrapLength);
   auto it = rendered_surfaces.find(key);
   if (it != rendered_surfaces.end()) {
     // Return the cached surface
@@ -74,8 +77,9 @@ SDL_Surface *CachedFontRenderer::render(const char *text, SDL_Color color, SDL_C
   }
 
   // If not found, render the text
-  SDL_Surface *rendered_surface =
-          TTF_RenderUTF8_Shaded(CachedFontRenderer::font, text, color, blendColor);
+  SDL_Surface *rendered_surface = wrapped
+          ? TTF_RenderUTF8_Shaded_Wrapped(CachedFontRenderer::font, text, color, blendColor, wrapLength)
+          : TTF_RenderUTF8_Shaded(CachedFontRenderer::font, text, color, blendColor);
   if (rendered_surface) {
     // Store the rendered surface in the cache
     RenderedText rendered_text(rendered_surface, SDL_GetTicks());
@@ -83,6 +87,14 @@ SDL_Surface *CachedFontRenderer::render(const char *text, SDL_Color color, SDL_C
   }
 
   return rendered_surface;
+}
+
+SDL_Surface *CachedFontRenderer::render(const char *text, SDL_Color color, SDL_Color blendColor) {
+  return render(text, color, blendColor, false, 0);
+}
+
+SDL_Surface *CachedFontRenderer::renderWrapped(const char *text, SDL_Color color, SDL_Color blendColor, int wrapLength) {
+  return render(text, color, blendColor, true, wrapLength);
 }
 
 void CachedFontRenderer::cleanup() {
