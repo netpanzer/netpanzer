@@ -271,6 +271,7 @@ src_basename = [
   'Components/MiniMap.cpp',
   'Components/ScrollBar.cpp',
   'Components/newButton.cpp',
+  'Components/ScrollableText.cpp',
   'Game/MiniMapView.cpp',
   'Game/EndRoundView.cpp',
   'Game/GameView.cpp',
