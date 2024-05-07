@@ -17,14 +17,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ScrollableText.hpp"
 
 void ScrollableText::render() {
-  surface->blt(textSurface, 0, offsetY);
+  surface.blt(*textSurface, 0, offsetY);
+  upButton->draw(surface);
+  downButton->draw(surface);
 }
 
-void ScrollableText::actionPerformed(mMouseEvent me) {
-  if ((me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED) ||
-      (me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED)) {
-    if (me.getSource() == upButton) {
-    } else if (me.getSource() == downButton) {
-    }
-  }
-}
+//void ScrollableText::actionPerformed(mMouseEvent me) {
+//  if ((me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED) ||
+//      (me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED)) {
+//    if (me.getSource() == upButton) {
+//    } else if (me.getSource() == downButton) {
+//    }
+//  }
+//}

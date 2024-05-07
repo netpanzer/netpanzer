@@ -24,11 +24,10 @@ class ScrollableText : public Component {
 public:
     ScrollableText(std::string text, int wrapLength) : Component(), offsetY(0) {
       iXY buttonSize(20, 20);
-      iXY buttonPos(getClientRect().getSizeX() - buttonSize.x, 0);
+      iXY buttonPos(size.x - buttonSize.x, 0);
 
       textSurface = new Surface();
       textSurface->bltStringWrapped(0, 0, text.c_str(), Color::black, componentBodyColor, wrapLength);
-      add(textSurface);
 
       upButton = new Button("upButton");
       upButton->setLabel("+");
@@ -36,17 +35,15 @@ public:
       upButton->setSize(buttonSize.x, buttonSize.y);
       upButton->setNormalBorder();
       upButton->setTextColors(Color::darkGray, Color::red, Color::gray);
-      add(upButton);
 
-      buttonPos = iXY(getClientRect().getSizeX() - buttonSize.x,
-                      getClientRect().getSizeY() - buttonSize.y);
+      buttonPos = iXY(size.x - buttonSize.x,
+                      size.y - buttonSize.y);
       downButton = new Button("downButton");
       downButton->setLabel("-");
       downButton->setLocation(buttonPos.x, buttonPos.y);
       downButton->setSize(buttonSize.x, buttonSize.y);
       downButton->setNormalBorder();
       downButton->setTextColors(Color::darkGray, Color::red, Color::gray);
-      add(downButton);
     }
 
 protected:
