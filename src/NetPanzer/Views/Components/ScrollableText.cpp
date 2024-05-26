@@ -16,7 +16,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "ScrollableText.hpp"
 
-void ScrollableText::render() {
+void ScrollableText::draw(Surface &dest) {
+//  iRect r(drawMin, drawMin + size);
+  surface.setTo(dest);
   surface.blt(*textSurface, 0, offsetY);
   upButton->draw(surface);
   downButton->draw(surface);

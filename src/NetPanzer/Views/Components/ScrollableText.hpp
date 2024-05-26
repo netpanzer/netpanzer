@@ -55,7 +55,8 @@ protected:
 
 public:
     virtual void actionPerformed(const mMouseEvent &me);
-    void render();
+    void draw(Surface &dest);
+    virtual void render() {}
 };
 
 

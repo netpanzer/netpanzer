@@ -93,7 +93,7 @@ void CreditsScrollView::doDraw(Surface &viewArea, Surface &clientArea) {
 // drawHelpText
 //--------------------------------------------------------------------------
 void CreditsScrollView::drawHelpText(Surface &dest, const int &, const int &) {
-  scrollableText->render();
+  scrollableText->draw(dest);
 }
 
 // doActivate
