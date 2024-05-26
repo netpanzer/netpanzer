@@ -53,10 +53,9 @@ protected:
     Button *upButton;
     Button *downButton;
 
-    void render();
-
 public:
     virtual void actionPerformed(const mMouseEvent &me);
+    void render();
 };
 
 

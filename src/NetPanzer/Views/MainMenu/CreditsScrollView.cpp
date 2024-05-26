@@ -93,17 +93,15 @@ void CreditsScrollView::doDraw(Surface &viewArea, Surface &clientArea) {
 // drawHelpText
 //--------------------------------------------------------------------------
 void CreditsScrollView::drawHelpText(Surface &dest, const int &, const int &) {
-  PIX color = Color::black;
-  int curIndex = 0;
-  for (int i = topViewableItem; i < topViewableItem + maxViewableItems; i++) {
-    dest.bltString(1,
-                   6 + curIndex * (TEXT_GAP_SPACE + Surface::getFontHeight()),
-                   text[i].c_str(), color, Color::white);
-    curIndex++;
-  }
+  scrollableText->render();
 }
 
 // doActivate
 //--------------------------------------------------------------------------
 void CreditsScrollView::doActivate() { /* empty */
+}
+
+void CreditsScrollView::actionPerformed(mMouseEvent me) {
+  // TODO
+  // TODO why not const &?
 }

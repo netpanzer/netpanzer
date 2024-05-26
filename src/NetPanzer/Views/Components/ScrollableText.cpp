@@ -22,11 +22,11 @@ void ScrollableText::render() {
   downButton->draw(surface);
 }
 
-//void ScrollableText::actionPerformed(mMouseEvent me) {
+void ScrollableText::actionPerformed(const mMouseEvent &me) {
 //  if ((me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED) ||
 //      (me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED)) {
 //    if (me.getSource() == upButton) {
 //    } else if (me.getSource() == downButton) {
 //    }
 //  }
-//}
+}
