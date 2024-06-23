@@ -27,9 +27,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/Button.hpp"
 #include "Views/Components/ScrollBar.hpp"
 #include "Views/MainMenu/SpecialButtonView.hpp"
+#include "MenuTemplateView.hpp"
 
 //---------------------------------------------------------------------------
-class CreditsScrollView : public SpecialButtonView {
+class CreditsScrollView : public MenuTemplateView {
  protected:
   ScrollableText *scrollableText;
   void drawHelpText(Surface &dest, const int &x, const int &y);

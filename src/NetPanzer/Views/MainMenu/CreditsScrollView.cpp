@@ -22,9 +22,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/ScrollableText.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "package.hpp"
+#include "MenuTemplateView.hpp"
+
 // #include "Classes/WorldInputCmdProcessor.hpp"
 //---------------------------------------------------------------------------
-CreditsScrollView::CreditsScrollView() : SpecialButtonView() {
+CreditsScrollView::CreditsScrollView() : MenuTemplateView() {
   setSearchName("CreditsScrollView");
   setTitle("Credits Information");
   setSubTitle("");
@@ -81,13 +83,10 @@ CreditsScrollView::CreditsScrollView() : SpecialButtonView() {
 //---------------------------------------------------------------------------
 
 void CreditsScrollView::doDraw(Surface &viewArea, Surface &clientArea) {
+//  MenuTemplateView::doDraw(viewArea, clientArea);
   drawHelpText(clientArea, 0, 0);
 
-  clientArea.bltString(4, clientArea.getHeight() - Surface::getFontHeight(),
-                       "Note: Use the right mouse button to scroll quickly.",
-                       windowTextColor, Color::white);
-
-  View::doDraw(viewArea, clientArea);
+//  View::doDraw(viewArea, clientArea);
 }
 
 // drawHelpText

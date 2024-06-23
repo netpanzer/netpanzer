@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 void ScrollableText::draw(Surface &dest) {
   surface.setTo(dest);
-  textSurface->blt(surface, 0, offsetY);
+  textSurface->bltTrans(surface, 0, offsetY);
   upButton->draw(surface);
   downButton->draw(surface);
 }
