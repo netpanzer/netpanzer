@@ -1410,18 +1410,6 @@ void Surface::bltStringWrapped(int x, int y, const char *str, const PIX &color, 
     return;
   }
 
-  unsigned int need_width = font_surface->w;
-  unsigned int need_height = font_surface->h;
-
-  if (frame0 != 0) {
-    if (getWidth() < need_width || getHeight() < need_height) {
-      free();
-      create(need_width, need_height, 1);
-    }
-  } else {
-    create(need_width, need_height, 1);
-  }
-
   bltTransColorFromSDLSurface(font_surface, x, y);
 }  // end Surface::bltStringWrapped
 
