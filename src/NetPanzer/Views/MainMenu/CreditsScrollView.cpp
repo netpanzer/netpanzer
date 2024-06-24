@@ -83,10 +83,7 @@ CreditsScrollView::CreditsScrollView() : MenuTemplateView() {
 //---------------------------------------------------------------------------
 
 void CreditsScrollView::doDraw(Surface &viewArea, Surface &clientArea) {
-//  MenuTemplateView::doDraw(viewArea, clientArea);
   drawHelpText(clientArea, 0, 0);
-
-//  View::doDraw(viewArea, clientArea);
 }
 
 // drawHelpText
