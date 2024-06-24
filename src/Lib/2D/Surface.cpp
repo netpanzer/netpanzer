@@ -1422,8 +1422,6 @@ void Surface::bltStringWrapped(int x, int y, const char *str, const PIX &color, 
     create(need_width, need_height, 1);
   }
 
-//  drawRect(iRect(0, 0, getWidth(), getHeight()), blend_color); // TODO remove line if not needed
-
   bltTransColorFromSDLSurface(font_surface, x, y);
 }  // end Surface::bltStringWrapped
 

@@ -639,7 +639,7 @@ iRect View::getClientRect() const {
 
 // mouseMove
 //---------------------------------------------------------------------------
-// Purpse: Changes the current highlighted button and checks for mouseEnter
+// Purpose: Changes the current highlighted button and checks for mouseEnter
 //         and mouseExit status.
 //---------------------------------------------------------------------------
 void View::mouseMove(const iXY &prevPos, const iXY &newPos) {

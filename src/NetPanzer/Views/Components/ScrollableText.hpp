@@ -19,15 +19,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Button.hpp"
 #include "Component.hpp"
+#include "View.hpp"
 
 class ScrollableText : public Component {
 public:
-    ScrollableText(std::string text, int wrapLength) : Component(), offsetY(0) {
+    ScrollableText(View* view, std::string inputText, iRect inputRect) : Component(), offsetY(0) {
+      position.zero();
+      text = inputText;
+      rect = inputRect;
+      offsetY = 0;
       iXY buttonSize(20, 20);
-      iXY buttonPos(size.x - buttonSize.x, 0);
-
-      textSurface = new Surface();
-      textSurface->bltStringWrapped(0, 0, text.c_str(), Color::black, componentBodyColor, wrapLength);
+      iXY buttonPos(inputRect.getSize().x - buttonSize.x, 0);
 
       upButton = new Button("upButton");
       upButton->setLabel("+");
@@ -35,27 +37,33 @@ public:
       upButton->setSize(buttonSize.x, buttonSize.y);
       upButton->setNormalBorder();
       upButton->setTextColors(Color::darkGray, Color::red, Color::gray);
+      view->add(upButton); // TODO support component hierarchy in View.cpp mouseMove()
 
-      buttonPos = iXY(size.x - buttonSize.x,
-                      size.y - buttonSize.y);
+      buttonPos = iXY(inputRect.getSize().x - buttonSize.x,
+                      inputRect.getSize().y - buttonSize.y);
       downButton = new Button("downButton");
       downButton->setLabel("-");
       downButton->setLocation(buttonPos.x, buttonPos.y);
       downButton->setSize(buttonSize.x, buttonSize.y);
       downButton->setNormalBorder();
       downButton->setTextColors(Color::darkGray, Color::red, Color::gray);
+      view->add(downButton); // TODO support component hierarchy in View.cpp mouseMove()
     }
 
 protected:
     int offsetY;
-    Surface *textSurface;
+    std::string text;
+    iRect rect;
+    Surface* lastSurface;
 
     Button *upButton;
     Button *downButton;
 
 public:
     virtual void actionPerformed(const mMouseEvent &me);
+
     void draw(Surface &dest);
+
     virtual void render() {}
 };
 

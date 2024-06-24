@@ -15,19 +15,30 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "ScrollableText.hpp"
+#include "MouseEvent.hpp"
+#include "ViewGlobals.hpp"
 
 void ScrollableText::draw(Surface &dest) {
   surface.setTo(dest);
-  textSurface->bltTrans(surface, 0, offsetY);
+  dest.bltStringWrapped(0, offsetY * -1, text.c_str(), Color::black, componentBodyColor, rect.getSizeX());
   upButton->draw(surface);
   downButton->draw(surface);
+  lastSurface = &dest;
 }
 
 void ScrollableText::actionPerformed(const mMouseEvent &me) {
-//  if ((me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED) ||
-//      (me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED)) {
-//    if (me.getSource() == upButton) {
-//    } else if (me.getSource() == downButton) {
-//    }
-//  }
+  if ((me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED) ||
+      (me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED)) {
+    if (me.getSource() == upButton) {
+      if (offsetY > 0) {
+        offsetY -= 10;
+//        draw(*lastSurface);
+      }
+    } else if (me.getSource() == downButton) {
+      if (offsetY < rect.getSizeY()) {
+        offsetY += 10;
+//        draw(*lastSurface);
+      }
+    }
+  }
 }
