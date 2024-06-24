@@ -23,7 +23,6 @@ void ScrollableText::draw(Surface &dest) {
   dest.bltStringWrapped(0, offsetY * -1, text.c_str(), Color::black, componentBodyColor, rect.getSizeX());
   upButton->draw(surface);
   downButton->draw(surface);
-  lastSurface = &dest;
 }
 
 void ScrollableText::actionPerformed(const mMouseEvent &me) {

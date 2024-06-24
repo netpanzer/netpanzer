@@ -54,7 +54,6 @@ protected:
     int offsetY;
     std::string text;
     iRect rect;
-    Surface* lastSurface;
 
     Button *upButton;
     Button *downButton;
