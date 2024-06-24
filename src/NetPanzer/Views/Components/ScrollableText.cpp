@@ -27,17 +27,14 @@ void ScrollableText::draw(Surface &dest) {
 }
 
 void ScrollableText::actionPerformed(const mMouseEvent &me) {
-  if ((me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED) ||
-      (me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED)) {
+  if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED) {
     if (me.getSource() == upButton) {
       if (offsetY > 0) {
         offsetY -= 10;
-//        draw(*lastSurface);
       }
     } else if (me.getSource() == downButton) {
       if (offsetY < rect.getSizeY()) {
         offsetY += 10;
-//        draw(*lastSurface);
       }
     }
   }
