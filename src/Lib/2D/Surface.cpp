@@ -1391,6 +1391,28 @@ void Surface::bltString(int x, int y, const char *str, const PIX &color, const P
   bltTransColorFromSDLSurface(font_surface, x, y);
 }  // end Surface::bltString
 
+// bltStringWrapped
+//---------------------------------------------------------------------------
+// Purpose: Blits the specified string of text to the screen by making
+//          calls to blitChar for each character of the string. Wraps after
+//          specified wrapLength. Similar to renderText() it will create
+//          or resize the underlying surface as needed.
+//---------------------------------------------------------------------------
+void Surface::bltStringWrapped(int x, int y, const char *str, const PIX &color, const PIX &blend_color, int wrapLength) {
+  int len = strlen(str);
+  if (!len) {
+    return;
+  }
+  SDL_Surface *font_surface =
+          CachedFontRenderer::renderWrapped(str, Palette::color[color], Palette::color[blend_color], wrapLength);
+  if (!font_surface) {
+    printf("Could not bltStringWrapped() %s %s\n", str, SDL_GetError());
+    return;
+  }
+
+  bltTransColorFromSDLSurface(font_surface, x, y);
+}  // end Surface::bltStringWrapped
+
 // bltStringShadowed
 //---------------------------------------------------------------------------
 void Surface::bltStringShadowed(int x, int y, char const *str,
