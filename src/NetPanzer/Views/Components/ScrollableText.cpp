@@ -29,11 +29,11 @@ void ScrollableText::actionPerformed(const mMouseEvent &me) {
   if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED) {
     if (me.getSource() == upButton) {
       if (offsetY > 0) {
-        offsetY -= 10;
+        offsetY -= 20;
       }
     } else if (me.getSource() == downButton) {
       if (offsetY < rect.getSizeY()) {
-        offsetY += 10;
+        offsetY += 20;
       }
     }
   }
