@@ -30,13 +30,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class HelpScrollView : public MenuTemplateView {
  protected:
   ScrollableText *scrollableText;
-  void drawHelpText(Surface &dest, const int &x, const int &y);
 
  public:
   HelpScrollView();
   virtual void doDraw(Surface &windowArea, Surface &clientArea);
   virtual void actionPerformed(mMouseEvent me);
   virtual void doActivate();
+  static std::string getHelpText();
 };  // end HelpScrollView
 
 #endif  // end __HelpScrollView_hpp__

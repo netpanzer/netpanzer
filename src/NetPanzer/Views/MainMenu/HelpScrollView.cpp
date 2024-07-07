@@ -19,9 +19,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "HelpScrollView.hpp"
 
 #include "../Game/GameView.hpp"
-#include "Views/Components/Desktop.hpp"
-#include "Views/GameViewGlobals.hpp"
-#include "Views/Components/ScrollableText.hpp"
+#include "../Components/Desktop.hpp"
+#include "../GameViewGlobals.hpp"
+#include "../Components/ScrollableText.hpp"
 #include "MenuTemplateView.hpp"
 
 //  HelpScrollView
@@ -36,11 +36,17 @@ HelpScrollView::HelpScrollView() : MenuTemplateView() {
 
   moveTo(bodyTextRect.min);
   resize(bodyTextRect.getSize());
-  // moveTo(iXY(0, 0));
-  // resize(iXY(800, 600));
 
-  // TODO - with new variable spaced font support - render two columns - keys on
-  // left and descriptions on right.
+
+  scrollableText = new ScrollableText(this, HelpScrollView::getHelpText(), bodyTextRect);
+
+}  // end HelpScrollView::HelpScrollView
+
+void HelpScrollView::doDraw(Surface &viewArea, Surface &clientArea) {
+  scrollableText->draw(clientArea);
+}
+
+std::string HelpScrollView::getHelpText() {
   std::string help = ""
   "Key"
   "\n"
@@ -144,27 +150,11 @@ HelpScrollView::HelpScrollView() : MenuTemplateView() {
   "  /server listprofiles..............List available profiles\n"
   "  /server kick [player number]......Kick a given player\n"
   "  /server baselimit [max bases].....Show/set the max bases number per player\n"
-  "  /server gamepass [password].......Show/set game connection password\n";
+  "  /server gamepass [password].......Show/set game connection password";
 
-  scrollableText = new ScrollableText(this, help, bodyTextRect);
-
-}  // end HelpScrollView::HelpScrollView
-
-// doDraw
-//---------------------------------------------------------------------------
-
-void HelpScrollView::doDraw(Surface &viewArea, Surface &clientArea) {
-  drawHelpText(clientArea, 0, 0);
+  return help;
 }
 
-// drawHelpText
-//--------------------------------------------------------------------------
-void HelpScrollView::drawHelpText(Surface &dest, const int &, const int &) {
-  scrollableText->draw(dest);
-}
-
-// doActivate
-//--------------------------------------------------------------------------
 void HelpScrollView::doActivate() { /* empty */
 }
 
