@@ -16,11 +16,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "ScrollableText.hpp"
 #include "MouseEvent.hpp"
-#include "ViewGlobals.hpp"
 
 void ScrollableText::draw(Surface &dest) {
   surface.setTo(dest);
-  dest.bltStringWrapped(0, offsetY * -1, text.c_str(), Color::black, componentBodyColor, rect.getSizeX());
+  dest.bltStringWrapped(0, offsetY * -1, text.c_str(), color, blend_color, rect.getSizeX());
   upButton->draw(surface);
   downButton->draw(surface);
 }

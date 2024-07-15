@@ -38,7 +38,7 @@ HelpScrollViewAlt::HelpScrollViewAlt() : View() {
   moveTo(bodyTextRect.min);
   resize(bodyTextRect.getSize());
 
-  scrollableText = new ScrollableText(this, HelpScrollView::getHelpText(), bodyTextRect);
+  scrollableText = new ScrollableText(this, HelpScrollView::getHelpText(), bodyTextRect, Color::white, Color::black);
 }  // end HelpScrollView::HelpScrollView
 
 void HelpScrollViewAlt::doDraw(Surface &viewArea, Surface &clientArea) {

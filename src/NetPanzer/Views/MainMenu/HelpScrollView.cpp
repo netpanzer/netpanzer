@@ -38,7 +38,7 @@ HelpScrollView::HelpScrollView() : MenuTemplateView() {
   resize(bodyTextRect.getSize());
 
 
-  scrollableText = new ScrollableText(this, HelpScrollView::getHelpText(), bodyTextRect);
+  scrollableText = new ScrollableText(this, HelpScrollView::getHelpText(), bodyTextRect, Color::black, componentBodyColor);
 
 }  // end HelpScrollView::HelpScrollView
 

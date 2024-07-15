@@ -75,7 +75,7 @@ CreditsScrollView::CreditsScrollView() : MenuTemplateView() {
                         "\n"
                         "0.8.7 Release:\n"
                         "Fulvio Testi (fu), Guido Ueffing (Lohengrin)";
-  scrollableText = new ScrollableText(this, credits, bodyTextRect);
+  scrollableText = new ScrollableText(this, credits, bodyTextRect, componentTextColor, componentBodyColor);
 
 }
 

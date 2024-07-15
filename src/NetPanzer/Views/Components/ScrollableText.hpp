@@ -23,13 +23,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class ScrollableText : public Component {
 public:
-    ScrollableText(View* view, std::string inputText, iRect inputRect) : Component(), offsetY(0) {
+    ScrollableText(View* view, std::string input_text, iRect input_rect, const PIX input_color, const PIX input_blend_color) : Component(), offsetY(0) {
       position.zero();
-      text = inputText;
-      rect = inputRect;
+      text = input_text;
+      rect = input_rect;
+      color = input_color;
+      blend_color = input_blend_color;
       offsetY = 0;
       iXY buttonSize(20, 20);
-      iXY buttonPos(inputRect.getSize().x - buttonSize.x, 0);
+      iXY buttonPos(input_rect.getSize().x - buttonSize.x, 0);
 
       upButton = new Button("upButton");
       upButton->setLabel("+");
@@ -39,8 +41,8 @@ public:
       upButton->setTextColors(Color::darkGray, Color::red, Color::gray);
       view->add(upButton); // TODO support component hierarchy in View.cpp mouseMove()
 
-      buttonPos = iXY(inputRect.getSize().x - buttonSize.x,
-                      inputRect.getSize().y - buttonSize.y);
+      buttonPos = iXY(input_rect.getSize().x - buttonSize.x,
+                      input_rect.getSize().y - buttonSize.y);
       downButton = new Button("downButton");
       downButton->setLabel("-");
       downButton->setLocation(buttonPos.x, buttonPos.y);
@@ -54,6 +56,8 @@ protected:
     int offsetY;
     std::string text;
     iRect rect;
+    PIX color;
+    PIX blend_color;
 
     Button *upButton;
     Button *downButton;
