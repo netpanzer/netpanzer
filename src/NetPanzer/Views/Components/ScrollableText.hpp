@@ -54,6 +54,7 @@ public:
 
 protected:
     int offsetY;
+    int maxY;
     std::string text;
     iRect rect;
     PIX color;

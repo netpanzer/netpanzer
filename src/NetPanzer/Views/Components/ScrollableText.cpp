@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 void ScrollableText::draw(Surface &dest) {
   surface.setTo(dest);
-  dest.bltStringWrapped(0, offsetY * -1, text.c_str(), color, blend_color, rect.getSizeX());
+  maxY = dest.bltStringWrapped(0, offsetY * -1, text.c_str(), color, blend_color, rect.getSizeX());
   upButton->draw(surface);
   downButton->draw(surface);
 }
@@ -31,7 +31,7 @@ void ScrollableText::actionPerformed(const mMouseEvent &me) {
         offsetY -= 20;
       }
     } else if (me.getSource() == downButton) {
-      if (offsetY < rect.getSizeY()) {
+      if (offsetY < maxY) {
         offsetY += 20;
       }
     }
