@@ -56,6 +56,7 @@ jobs:
           pkg-config \
           sdl2_ttf \
           sdl2_mixer
+        brew link --force gettext
 
     - name: Build
       run: |
