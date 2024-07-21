@@ -31,8 +31,6 @@ jobs:
         build:
         - name: macos
           os: macos-latest
-        - name: macos-no-deps
-          os: macos-latest
 
     runs-on: ${{ matrix.build.os }}
     env:
@@ -48,7 +46,6 @@ jobs:
         echo '${{ toJSON(matrix) }}'
 
     - name: Install dependencies
-      if: ${{ ! contains(matrix.build.name, 'no-deps') }}
       run: |
         brew update
         brew install \
@@ -62,7 +59,7 @@ jobs:
 
     - name: Build
       run: |
-        ./setup-build.sh _build -Dnls=${{ ! contains(matrix.build.name, 'no-deps') }}
+        ./setup-build.sh _build
         ninja -v -C _build
 
     - name: Test
