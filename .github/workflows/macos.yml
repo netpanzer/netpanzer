@@ -65,12 +65,14 @@ jobs:
         echo 'export PATH="/usr/local/opt/ninja/bin:$PATH"' >> $GITHUB_ENV
         echo 'export LDFLAGS="-L/usr/local/opt/gettext/lib"' >> $GITHUB_ENV
         echo 'export CPPFLAGS="-I/usr/local/opt/gettext/include"' >> $GITHUB_ENV
+        echo 'export PKG_CONFIG_PATH="/usr/local/opt/gettext/lib/pkgconfig"' >> $GITHUB_ENV
 
     - name: Build
       run: |
         export PATH="/usr/local/opt/gettext/bin:/usr/local/opt/meson/bin:/usr/local/opt/ninja/bin:$PATH"
         export LDFLAGS="-L/usr/local/opt/gettext/lib"
         export CPPFLAGS="-I/usr/local/opt/gettext/include"
+        export PKG_CONFIG_PATH="/usr/local/opt/gettext/lib/pkgconfig"
         echo "PATH=$PATH"
         which meson
         ./setup-build.sh _build
@@ -79,5 +81,6 @@ jobs:
     - name: Test
       run: |
         export PATH="/usr/local/opt/gettext/bin:/usr/local/opt/meson/bin:/usr/local/opt/ninja/bin:$PATH"
+        export PKG_CONFIG_PATH="/usr/local/opt/gettext/lib/pkgconfig"
         cd _build
         meson test --suite=netpanzer -v
