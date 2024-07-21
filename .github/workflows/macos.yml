@@ -64,9 +64,13 @@ jobs:
         echo 'export LDFLAGS="-L/usr/local/opt/gettext/lib"' >> $GITHUB_ENV
         echo 'export CPPFLAGS="-I/usr/local/opt/gettext/include"' >> $GITHUB_ENV
 
+    - name: Ensure meson and ninja are in PATH
+      run: |
+        echo 'export PATH="/usr/local/opt/meson/bin:/usr/local/opt/ninja/bin:$PATH"' >> $GITHUB_ENV
+
     - name: Build
       env:
-        PATH: "/usr/local/opt/gettext/bin:$PATH"
+        PATH: "/usr/local/opt/gettext/bin:/usr/local/opt/meson/bin:/usr/local/opt/ninja/bin:$PATH"
         LDFLAGS: "-L/usr/local/opt/gettext/lib"
         CPPFLAGS: "-I/usr/local/opt/gettext/include"
       run: |
