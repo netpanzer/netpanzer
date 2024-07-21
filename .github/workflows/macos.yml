@@ -52,13 +52,13 @@ jobs:
       run: |
         brew update
         brew install \
+          meson \
+          ninja \
           gettext \
           physfs \
           pkg-config \
           sdl2_ttf \
           sdl2_mixer
-
-    - run: pip3 install meson ninja
 
     - name: Build
       run: |
