@@ -60,12 +60,23 @@ jobs:
 
     - name: Set environment variables for gettext and tools
       run: |
-        echo 'export PATH="/usr/local/opt/gettext/bin:$PATH"' >> $GITHUB_ENV
-        echo 'export PATH="/usr/local/opt/meson/bin:$PATH"' >> $GITHUB_ENV
-        echo 'export PATH="/usr/local/opt/ninja/bin:$PATH"' >> $GITHUB_ENV
+        echo 'export PATH="/usr/local/opt/gettext/bin:/usr/local/opt/meson/bin:/usr/local/opt/ninja/bin:$PATH"' >> $GITHUB_ENV
         echo 'export LDFLAGS="-L/usr/local/opt/gettext/lib"' >> $GITHUB_ENV
         echo 'export CPPFLAGS="-I/usr/local/opt/gettext/include"' >> $GITHUB_ENV
         echo 'export PKG_CONFIG_PATH="/usr/local/opt/gettext/lib/pkgconfig"' >> $GITHUB_ENV
+
+    - name: Verify gettext installation
+      run: |
+        export PATH="/usr/local/opt/gettext/bin:/usr/local/opt/meson/bin:/usr/local/opt/ninja/bin:$PATH"
+        export LDFLAGS="-L/usr/local/opt/gettext/lib"
+        export CPPFLAGS="-I/usr/local/opt/gettext/include"
+        export PKG_CONFIG_PATH="/usr/local/opt/gettext/lib/pkgconfig"
+        echo "PATH=$PATH"
+        echo "LDFLAGS=$LDFLAGS"
+        echo "CPPFLAGS=$CPPFLAGS"
+        echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
+        ls /usr/local/opt/gettext/lib
+        ls /usr/local/opt/gettext/include
 
     - name: Build
       run: |
@@ -73,8 +84,6 @@ jobs:
         export LDFLAGS="-L/usr/local/opt/gettext/lib"
         export CPPFLAGS="-I/usr/local/opt/gettext/include"
         export PKG_CONFIG_PATH="/usr/local/opt/gettext/lib/pkgconfig"
-        echo "PATH=$PATH"
-        which meson
         ./setup-build.sh _build
         ninja -v -C _build
 
