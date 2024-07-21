@@ -81,8 +81,6 @@ jobs:
         echo "LDFLAGS=$LDFLAGS"
         echo "CPPFLAGS=$CPPFLAGS"
         echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
-        ls "$GETTEXT_PREFIX/lib"
-        ls "$GETTEXT_PREFIX/include"
 
     - name: Build
       run: |
