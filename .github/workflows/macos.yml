@@ -60,22 +60,24 @@ jobs:
 
     - name: Set environment variables for gettext and tools
       run: |
-        echo 'export PATH="/usr/local/opt/gettext/bin:/usr/local/opt/meson/bin:/usr/local/opt/ninja/bin:$PATH"' >> $GITHUB_ENV
+        echo 'export PATH="/usr/local/opt/gettext/bin:$PATH"' >> $GITHUB_ENV
+        echo 'export PATH="/usr/local/opt/meson/bin:$PATH"' >> $GITHUB_ENV
+        echo 'export PATH="/usr/local/opt/ninja/bin:$PATH"' >> $GITHUB_ENV
         echo 'export LDFLAGS="-L/usr/local/opt/gettext/lib"' >> $GITHUB_ENV
         echo 'export CPPFLAGS="-I/usr/local/opt/gettext/include"' >> $GITHUB_ENV
 
     - name: Build
-      env:
-        PATH: "/usr/local/opt/gettext/bin:/usr/local/opt/meson/bin:/usr/local/opt/ninja/bin:$PATH"
-        LDFLAGS: "-L/usr/local/opt/gettext/lib"
-        CPPFLAGS: "-I/usr/local/opt/gettext/include"
       run: |
+        export PATH="/usr/local/opt/gettext/bin:/usr/local/opt/meson/bin:/usr/local/opt/ninja/bin:$PATH"
+        export LDFLAGS="-L/usr/local/opt/gettext/lib"
+        export CPPFLAGS="-I/usr/local/opt/gettext/include"
+        echo "PATH=$PATH"
+        which meson
         ./setup-build.sh _build
         ninja -v -C _build
 
     - name: Test
-      env:
-        PATH: "/usr/local/opt/gettext/bin:/usr/local/opt/meson/bin:/usr/local/opt/ninja/bin:$PATH"
       run: |
+        export PATH="/usr/local/opt/gettext/bin:/usr/local/opt/meson/bin:/usr/local/opt/ninja/bin:$PATH"
         cd _build
         meson test --suite=netpanzer -v
