@@ -65,6 +65,10 @@ jobs:
         echo 'export CPPFLAGS="-I/usr/local/opt/gettext/include"' >> $GITHUB_ENV
 
     - name: Build
+      env:
+        PATH: "/usr/local/opt/gettext/bin:$PATH"
+        LDFLAGS: "-L/usr/local/opt/gettext/lib"
+        CPPFLAGS: "-I/usr/local/opt/gettext/include"
       run: |
         ./setup-build.sh _build
         ninja -v -C _build
