@@ -58,15 +58,11 @@ jobs:
           sdl2_mixer
         brew link --force gettext
 
-    - name: Set environment variables for gettext
+    - name: Set environment variables for gettext and tools
       run: |
-        echo 'export PATH="/usr/local/opt/gettext/bin:$PATH"' >> $GITHUB_ENV
+        echo 'export PATH="/usr/local/opt/gettext/bin:/usr/local/opt/meson/bin:/usr/local/opt/ninja/bin:$PATH"' >> $GITHUB_ENV
         echo 'export LDFLAGS="-L/usr/local/opt/gettext/lib"' >> $GITHUB_ENV
         echo 'export CPPFLAGS="-I/usr/local/opt/gettext/include"' >> $GITHUB_ENV
-
-    - name: Ensure meson and ninja are in PATH
-      run: |
-        echo 'export PATH="/usr/local/opt/meson/bin:/usr/local/opt/ninja/bin:$PATH"' >> $GITHUB_ENV
 
     - name: Build
       env:
@@ -78,6 +74,8 @@ jobs:
         ninja -v -C _build
 
     - name: Test
+      env:
+        PATH: "/usr/local/opt/gettext/bin:/usr/local/opt/meson/bin:/usr/local/opt/ninja/bin:$PATH"
       run: |
         cd _build
         meson test --suite=netpanzer -v
