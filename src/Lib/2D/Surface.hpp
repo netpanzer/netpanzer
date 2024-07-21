@@ -179,6 +179,7 @@ class Surface : public NoCopy {
   void renderText(const char *str, PIX color, PIX bgcolor);
 
   void bltString(int x, int y, const char *str, const PIX &color, const PIX &blendColor);
+  int bltStringWrapped(int x, int y, const char *str, const PIX &color, const PIX &blendColor, int wrapLength);
   void bltStringInBox(const iRect &rect, const char *string, PIX color, PIX blendColor,
                       int gapSpace = 14, bool drawBox = false);
 
