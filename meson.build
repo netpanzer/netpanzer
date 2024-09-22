@@ -97,13 +97,14 @@ if not phyfs_dep.found()
 endif
 deps += phyfs_dep
 
-sdl2_dep = dependency('SDL2', required: false)
+sdl2_dep = dependency('SDL2', version: '>=2.0.18', required: false)
 if not sdl2_dep.found()
   sdl2_dep = cc.find_library('SDL2', has_headers: 'SDL.h', required: false)
   if not sdl2_dep.found()
     # This will use the fallback
     sdl2_dep = dependency(
       'sdl2',
+      version: '>=2.0.18',
       required: true,
       fallback: 'sdl2',
       default_options: 'default_library=static')
@@ -128,7 +129,7 @@ if platform_is_windows
 endif
 # Don't add to deps, but add it to netpanzer_dep when the dependency is declared
 
-sdl2_ttf_dep = dependency('SDL2_ttf', required: false)
+sdl2_ttf_dep = dependency('SDL2_ttf', version: '>=2.1', required: false)
 if not sdl2_ttf_dep.found()
   sdl2_ttf_dep = cc.find_library('SDL2_ttf', has_headers: 'SDL_ttf.h', required: false)
   if not sdl2_ttf_dep.found()
@@ -154,9 +155,9 @@ if not sdl2_ttf_dep.found()
     endif
     deps += freetype2_dep
 
-    # Now use the sdl2_ttf fallback
     sdl2_ttf_dep = dependency(
       'sdl2_ttf',
+      version: '>=2.1',
       required: true,
       fallback: 'sdl2_ttf',
       default_options: ['default_library=static']

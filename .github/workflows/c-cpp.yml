@@ -29,6 +29,8 @@ jobs:
       fail-fast: true
       matrix:
         build:
+        - name: ubuntu-20.04-gcc
+          os: ubuntu-20.04  # supported until >= April 2025
         - name: data-install-test-gcc
           os: ubuntu-22.04
         - name: ubuntu-22.04-gcc
