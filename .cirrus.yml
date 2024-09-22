@@ -42,7 +42,7 @@ macos_task:
   <<: *filter_template
   name: macOS arm64
   macos_instance:
-    image: ghcr.io/cirruslabs/macos-ventura-xcode:latest
+    image: ghcr.io/cirruslabs/macos-runner:sonoma
   pkginstall_script:
     - brew update
     - brew install gettext meson ninja physfs sdl2 sdl2_ttf sdl2_mixer
