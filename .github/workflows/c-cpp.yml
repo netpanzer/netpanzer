@@ -29,6 +29,8 @@ jobs:
       fail-fast: true
       matrix:
         build:
+        - name: ubuntu-20.04-gcc
+          os: ubuntu-20.04  # supported until >= April 2025
         - name: data-install-test-gcc
           os: ubuntu-22.04
         - name: ubuntu-22.04-gcc
@@ -70,10 +72,17 @@ jobs:
         sudo apt update
         sudo apt upgrade -y
         sudo apt install -y \
-          meson \
-          ninja-build \
           python3 \
           python3-setuptools
+        if [ "${{ contains(matrix.build.name, '20.04') }}" = "false" ]; then
+          sudo apt install -y \
+          meson \
+          ninja-build
+        else
+          sudo apt install -y python3-pip
+          python -m pip install --upgrade pip
+          pip install meson ninja
+        fi
 
     - if: ${{ ! contains(matrix.build.name, 'no-deps') }}
       run: |

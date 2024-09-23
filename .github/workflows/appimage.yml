@@ -17,6 +17,7 @@ on:
     paths:
     - '**/appimage.yml'
     - '**/AppRun'
+    - '**/make-appimage.sh'
 
 env:
   VERSION: ${{ inputs.version }}
