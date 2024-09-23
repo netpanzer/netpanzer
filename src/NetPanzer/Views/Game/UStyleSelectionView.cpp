@@ -162,7 +162,7 @@ void UStyleSelectionView::onComponentClicked(Component* c) {
 
   if (NetworkState::status == _network_state_server)  // server only
   {
-    for (unsigned char i = 0; i < GameConfig::getUnitStylesNum(); i++) {
+    for (unsigned short i = 0; i < GameConfig::getUnitStylesNum(); i++) {
       if (GameConfig::getUnitStyle(i) == scustyle) {
         rstyle = i;
       }
@@ -171,7 +171,7 @@ void UStyleSelectionView::onComponentClicked(Component* c) {
     // scustyle.c_str(), GameConfig::getUnitStylesNum());
 
   } else {
-    for (unsigned char i = 0; i < GameManager::ststylesnum; i++) {
+    for (unsigned short i = 0; i < GameManager::ststylesnum; i++) {
       if (GameManager::stlist[i] == scustyle) {
         rstyle = i;
       }
