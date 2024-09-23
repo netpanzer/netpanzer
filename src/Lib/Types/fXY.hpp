@@ -81,7 +81,7 @@ class fXY {
   double mag() const;
   float mag2() const { return x * x + y * y; }
 
-  double getArea() const { return x * y; }
+  double getArea() const { return static_cast<double>(x) * y; }
 };
 
 //---------------------------------------------------------------------------
