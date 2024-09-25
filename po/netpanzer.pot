@@ -8,327 +8,50 @@ msgid ""
 msgstr ""
 "Project-Id-Version: netpanzer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-28 03:36-0600\n"
+"POT-Creation-Date: 2024-09-24 19:19-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: src/NetPanzer/Views/MainMenu/Multi/HostJoinTemplateView.cpp:97
 msgid "Play"
 msgstr ""
 
-#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:143
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:144
 msgid "Main"
 msgstr ""
 
-#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:144
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:145
 msgid "Join"
 msgstr ""
 
-#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:145
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:146
 msgid "Host"
 msgstr ""
 
-#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:146
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:147
 msgid "Options"
 msgstr ""
 
-#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:148
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:149
 msgid "Help"
 msgstr ""
 
-#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:150
-#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:158
-#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:160
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:154
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:163
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:165
 #: src/NetPanzer/Views/Game/AreYouSureExitView.cpp:46
 #: src/NetPanzer/Views/Game/ResignView.cpp:72
 msgid "Exit netPanzer"
 msgstr ""
 
-#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:163
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:168
 msgid "Close Options"
 msgstr ""
 
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:43
-msgid "Key"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:45
-msgid "  LMC = Left Mouse Click"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:46
-msgid "  RMC = Right Mouse Click"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:47
-msgid "  RMH = Right Mouse Hold"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:50
-msgid "Unit Related"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:52
-msgid "  LMC..............................Selects a unit"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:54
-msgid ""
-"  LMH..............................Makes a bounding box for unit selection"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:55
-msgid "  RMC..............................De-selects all selected units"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:57
-msgid ""
-"  LMC + Ctrl.......................Directs (force/manual) fire of a unit"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:58
-msgid "  LMC + Shift, LMC + Ctrl..........Add unit to selection"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:59
-msgid "  Ctrl + [0..9]....................Define a group of units"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:60
-msgid "  [0..9]...........................Recall a group of units"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:61
-msgid "  [0..9] (2 times).................Center view on a group of units"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:67
-msgid "  RMH..............................Fast map scroll"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:73
-msgid "Game Related"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:76
-msgid "  LMC + 'A'........................Allies with the clicked unit's team"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:77
-msgid "  ESC..............................In game menus"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:80
-msgid "Outpost Related"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:82
-msgid "  'O'..............................Toggles outpost names"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:83
-msgid "  LMC on captured outpost..........Displays the outpost view"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:84
-msgid "  mouse drag on captured outpost...Select unit spawn point"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:87
-msgid "Chat Related"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:89
-msgid "  Enter............................Send message to all"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:90
-msgid "  'T'..............................Send message to allies"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:91
-msgid "  'C'..............................Send count down message"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:94
-msgid "View Related"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:96
-msgid "  F1...............................Help View"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:97
-msgid "  'U'..............................Toggles Unit selection window"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:98
-msgid "  'B'..............................Toggles Flag selection window"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:99
-msgid "  'D'..............................Damage View"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:100
-msgid "  'F'..............................Flag View"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:101
-msgid "  'M'..............................Toggles Map View"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:102
-msgid "  Shift + 'M'......................Toggles a Bigger Map View"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:103
-msgid "  'N'..............................Name View"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:104
-msgid "  TAB..............................Rank View"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:105
-msgid "  RMH + mouse movement.............Moves any view on the screen"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:106
-msgid "  RMH + [1 - 5]....................Sets the background drawing mode"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:109
-msgid "Mini Map View Related"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:112
-msgid "  RMH + [1 - 7].............Sets the blending level of the minimap"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:113
-msgid "  RMH + [+ or -]...................Scales the size of the minimap"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:117
-msgid "System Related"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:119
-msgid "  ALT + Enter......................Toggles Fullscreen/Windowed mode"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:120
-msgid "  F9...............................BMP screen shot"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:123
-msgid "Scripting"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:126
-msgid "Client Related"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:128
-msgid "  /listcommands.....................List of available commands"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:129
-msgid "  /countdown [timeout in seconds]...Generate a countdown"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:130
-msgid "  /quit.............................Quit the game"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:131
-msgid "  /help.............................Show Help window (same 'F1')"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:133
-msgid "  /say [your talk]..................Send message to all (same 'Enter'"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:135
-msgid ""
-"  /teamsay [your talk]..............Send message to allies (same Ctrl + 'A')"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:137
-msgid "Server Related"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:140
-msgid ""
-"  /server listcommands..............List of Gameserver available commands"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:142
-msgid "  /server adminlogin [password].....Gameserver admin login"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:143
-msgid "  /server unitspawnlist [list]......List/set spawn units (number)"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:144
-msgid "  /server unitprofiles [list].......List/set spawn units (types)"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:145
-msgid "  /server help......................Show Help window (same 'F1')"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:146
-msgid "  /server map [map name]............Restart game with the given map"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:148
-msgid ""
-"  /server autokick [timeout]........Show/set autokick for inactive players"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:149
-msgid "  /server flagtimer [timeout].......Show/set flag change timer"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:150
-msgid "  /server countdown [timeout].......Generate a countdown (same 'c')"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:151
-msgid "  /server say [your talk]...........Server say something in chat"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:153
-msgid ""
-"  /server listplayers...............List players with the assigned number"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:154
-msgid "  /server listprofiles..............List available profiles"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:155
-msgid "  /server kick [player number]......Kick a given player"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:157
-msgid ""
-"  /server baselimit [max bases].....Show/set the max bases number per player"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:159
-msgid "  /server gamepass [password].......Show/set game connection password"
-msgstr ""
-
-#: src/NetPanzer/Views/Game/HelpScrollView.cpp:207
-#: src/NetPanzer/Views/Game/HelpScrollViewAlt.cpp:211
-msgid "Note: Use the right mouse button to scroll quickly."
+#: src/NetPanzer/Views/Game/HelpScrollViewAlt.cpp:33
+msgid "Help Information"
 msgstr ""
