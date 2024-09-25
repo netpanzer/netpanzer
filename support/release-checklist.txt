@@ -2,8 +2,6 @@
 
 meson.build
 support/scripts/prep-appimage.sh
-SConstruct
-
 
 Remove from meson default options:
 
@@ -17,7 +15,9 @@ they should be disabled. Having that enabled slows the game down a bit.
 
 ## Translations
 
-TBD
+(In the build directory)
+meson compile netpanzer-pot
+meson compile netpanzer-update-po
 
 ## ChangeLog
 

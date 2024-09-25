@@ -1,15 +1,14 @@
 # German translations for netpanzer package.
 # Copyright (C) 2024 THE netpanzer'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the netpanzer package.
-# Andy <arch_stanton5995@proton.me>, 2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: netpanzer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-24 17:57-0600\n"
+"POT-Creation-Date: 2024-09-24 19:19-0500\n"
 "PO-Revision-Date: 2024-01-23 00:57-0600\n"
-"Last-Translator: Andy Alt<arch_stanton5995@proton.me>\n"
+"Last-Translator: ChatGPT\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,31 +19,289 @@ msgstr ""
 msgid "Play"
 msgstr "Spiel"
 
-#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:143
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:144
 msgid "Main"
 msgstr "Haupt"
 
-#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:144
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:145
 msgid "Join"
 msgstr "Beitreten"
 
-#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:145
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:146
 msgid "Host"
 msgstr "Host"
 
-#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:146
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:147
 msgid "Options"
 msgstr "Optionen"
 
-#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:150
-#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:158
-#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:160
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:149
+msgid "Help"
+msgstr "Hilfe"
+
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:154
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:163
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:165
 #: src/NetPanzer/Views/Game/AreYouSureExitView.cpp:46
 #: src/NetPanzer/Views/Game/ResignView.cpp:72
 msgid "Exit netPanzer"
-msgstr ""
+msgstr "NetPanzer beenden"
 
-#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:163
+#: src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp:168
 #, fuzzy
 msgid "Close Options"
 msgstr "Optionen"
+
+#: src/NetPanzer/Views/Game/HelpScrollViewAlt.cpp:33
+msgid "Help Information"
+msgstr ""
+
+#~ msgid "Key"
+#~ msgstr "Taste"
+
+#~ msgid "  LMC = Left Mouse Click"
+#~ msgstr "  LMC = Linksklick"
+
+#~ msgid "  RMC = Right Mouse Click"
+#~ msgstr "  RMC = Rechtsklick"
+
+#~ msgid "  RMH = Right Mouse Hold"
+#~ msgstr "  RMH = Rechtsklick halten"
+
+#~ msgid "Unit Related"
+#~ msgstr "Einheitenbezogen"
+
+#~ msgid "  LMC..............................Selects a unit"
+#~ msgstr "  LMC..............................Wählt eine Einheit aus"
+
+#~ msgid ""
+#~ "  LMH..............................Makes a bounding box for unit selection"
+#~ msgstr ""
+#~ "  LMH..............................Erstellt eine Begrenzung für die "
+#~ "Auswahl von Einheiten"
+
+#~ msgid "  RMC..............................De-selects all selected units"
+#~ msgstr ""
+#~ "  RMC..............................Deselektiert alle ausgewählten "
+#~ "Einheiten"
+
+#~ msgid ""
+#~ "  LMC + Ctrl.......................Directs (force/manual) fire of a unit"
+#~ msgstr ""
+#~ "  LMC + Strg.......................Leitet (erzwungener/manueller) Angriff "
+#~ "einer Einheit"
+
+#~ msgid "  LMC + Shift, LMC + Ctrl..........Add unit to selection"
+#~ msgstr ""
+#~ "  LMC + Umschalttaste, LMC + Strg..........Fügt Einheit zur Auswahl hinzu"
+
+#~ msgid "  Ctrl + [0..9]....................Define a group of units"
+#~ msgstr ""
+#~ "  Strg + [0..9]....................Definiert eine Gruppe von Einheiten"
+
+#~ msgid "  [0..9]...........................Recall a group of units"
+#~ msgstr ""
+#~ "  [0..9]...........................Ruft eine Gruppe von Einheiten ab"
+
+#~ msgid "  [0..9] (2 times).................Center view on a group of units"
+#~ msgstr ""
+#~ "  [0..9] (2 Mal).................Zentriert die Ansicht auf eine Gruppe "
+#~ "von Einheiten"
+
+#~ msgid "  RMH..............................Fast map scroll"
+#~ msgstr "  RMH..............................Schnelles Karten-Scrollen"
+
+#~ msgid "Game Related"
+#~ msgstr "Spielbezogen"
+
+#~ msgid ""
+#~ "  LMC + 'A'........................Allies with the clicked unit's team"
+#~ msgstr ""
+#~ "  LMC + 'A'........................Alliierte mit dem Team der "
+#~ "angeklickten Einheit"
+
+#~ msgid "  ESC..............................In game menus"
+#~ msgstr "  ESC..............................In den Spielmenüs"
+
+#~ msgid "Outpost Related"
+#~ msgstr "Außenpostenbezogen"
+
+#~ msgid "  'O'..............................Toggles outpost names"
+#~ msgstr "  'O'..............................Schaltet Außenpostennamen um"
+
+#~ msgid "  LMC on captured outpost..........Displays the outpost view"
+#~ msgstr ""
+#~ "  LMC auf erobertem Außenposten..........Zeigt die Ansicht des "
+#~ "Außenpostens an"
+
+#~ msgid "  mouse drag on captured outpost...Select unit spawn point"
+#~ msgstr ""
+#~ "  Maus ziehen auf erobertem Außenposten...Wählt den Punkt für die "
+#~ "Einheitenspawnauswahl"
+
+#~ msgid "Chat Related"
+#~ msgstr "Chatbezogen"
+
+#~ msgid "  Enter............................Send message to all"
+#~ msgstr "  Enter............................Sendet eine Nachricht an alle"
+
+#~ msgid "  'T'..............................Send message to allies"
+#~ msgstr ""
+#~ "  'T'..............................Sendet eine Nachricht an Verbündete"
+
+#~ msgid "  'C'..............................Send count down message"
+#~ msgstr "  'C'..............................Sendet eine Countdown-Nachricht"
+
+#~ msgid "View Related"
+#~ msgstr "Ansichtsbezogen"
+
+#~ msgid "  F1...............................Help View"
+#~ msgstr "  F1...............................Hilfe-Ansicht"
+
+#~ msgid "  'U'..............................Toggles Unit selection window"
+#~ msgstr ""
+#~ "  'U'..............................Schaltet das Einheiten-Auswahlfenster "
+#~ "um"
+
+#~ msgid "  'B'..............................Toggles Flag selection window"
+#~ msgstr ""
+#~ "  'B'..............................Schaltet das Flaggen-Auswahlfenster um"
+
+#~ msgid "  'D'..............................Damage View"
+#~ msgstr "  'D'..............................Schadensansicht"
+
+#~ msgid "  'F'..............................Flag View"
+#~ msgstr "  'F'..............................Flaggenansicht"
+
+#~ msgid "  'M'..............................Toggles Map View"
+#~ msgstr "  'M'..............................Schaltet die Kartenansicht um"
+
+#~ msgid "  Shift + 'M'......................Toggles a Bigger Map View"
+#~ msgstr ""
+#~ "  Umschalttaste + 'M'......................Schaltet eine größere "
+#~ "Kartenansicht um"
+
+#~ msgid "  'N'..............................Name View"
+#~ msgstr "  'N'..............................Namensansicht"
+
+#~ msgid "  TAB..............................Rank View"
+#~ msgstr "  TAB..............................Rangansicht"
+
+#~ msgid "  RMH + mouse movement.............Moves any view on the screen"
+#~ msgstr ""
+#~ "  RMH + Mausbewegung.............Bewegt jede Ansicht auf dem Bildschirm"
+
+#~ msgid "  RMH + [1 - 5]....................Sets the background drawing mode"
+#~ msgstr ""
+#~ "  RMH + [1 - 5]....................Setzt den Hintergrundzeichnungsmodus"
+
+#~ msgid "Mini Map View Related"
+#~ msgstr "Mini-Kartenansicht-bezogen"
+
+#~ msgid "  RMH + [1 - 7].............Sets the blending level of the minimap"
+#~ msgstr "  RMH + [1 - 7].............Setzt den Mischungsgrad der Mini-Karte"
+
+#~ msgid "  RMH + [+ or -]...................Scales the size of the minimap"
+#~ msgstr ""
+#~ "  RMH + [+ oder -]...................Skaliert die Größe der Mini-Karte"
+
+#~ msgid "System Related"
+#~ msgstr "Systembezogen"
+
+#~ msgid "  ALT + Enter......................Toggles Fullscreen/Windowed mode"
+#~ msgstr ""
+#~ "  ALT + Enter......................Schaltet zwischen Vollbild- und "
+#~ "Fenstermodus um"
+
+#~ msgid "  F9...............................BMP screen shot"
+#~ msgstr "  F9...............................BMP-Bildschirmfoto"
+
+#~ msgid "Scripting"
+#~ msgstr "Skripting"
+
+#~ msgid "Client Related"
+#~ msgstr "Clientbezogen"
+
+#~ msgid "  /listcommands.....................List of available commands"
+#~ msgstr "  /listcommands.....................Liste der verfügbaren Befehle"
+
+#~ msgid "  /countdown [timeout in seconds]...Generate a countdown"
+#~ msgstr "  /countdown [Timeout in Sekunden]...Erzeugt einen Countdown"
+
+#~ msgid "  /quit.............................Quit the game"
+#~ msgstr "  /quit.............................Beendet das Spiel"
+
+#~ msgid "  /help.............................Show Help window (same 'F1')"
+#~ msgstr ""
+#~ "  /help.............................Zeigt das Hilfe-Fenster an (gleich "
+#~ "'F1')"
+
+#~ msgid ""
+#~ "  /say [your talk]..................Send message to all (same 'Enter'"
+#~ msgstr ""
+#~ "  /say [Ihre Nachricht]..................Sendet eine Nachricht an alle "
+#~ "(gleich 'Enter')"
+
+#~ msgid ""
+#~ "  /teamsay [your talk]..............Send message to allies (same Ctrl + "
+#~ "'A')"
+#~ msgstr ""
+#~ "  /teamsay [Ihre Nachricht]..............Sendet eine Nachricht an "
+#~ "Verbündete (gleich Strg + 'A')"
+
+#~ msgid "Server Related"
+#~ msgstr "Serverbezogen"
+
+#~ msgid ""
+#~ "  /server listcommands..............List of Gameserver available commands"
+#~ msgstr ""
+#~ "  /server listcommands..............Liste der verfügbaren Befehle des "
+#~ "Spiel-Servers"
+
+#~ msgid "  /server adminlogin [password].....Gameserver admin login"
+#~ msgstr ""
+#~ "  /server adminlogin [Passwort].....Anmeldung als Administrator am Spiele-"
+#~ "Server"
+
+#~ msgid "  /server unitspawnlist [list]......List/set spawn units (number)"
+#~ msgstr ""
+#~ "  /server unitspawnlist [Liste]......Listet/Festlegt Spawneinheiten "
+#~ "(Nummer)"
+
+#~ msgid "  /server unitprofiles [list].......List/set spawn units (types)"
+#~ msgstr ""
+#~ "  /server unitprofiles [Liste].......Listet/Festlegt Spawneinheiten "
+#~ "(Typen)"
+
+#, fuzzy
+#~ msgid "  /server help......................Show Help window (same 'F1')"
+#~ msgstr ""
+#~ "  /help.............................Zeigt das Hilfe-Fenster an (gleich "
+#~ "'F1')"
+
+#, fuzzy
+#~ msgid "  /server countdown [timeout].......Generate a countdown (same 'c')"
+#~ msgstr "  /countdown [Timeout in Sekunden]...Erzeugt einen Countdown"
+
+#, fuzzy
+#~ msgid "  /server say [your talk]...........Server say something in chat"
+#~ msgstr ""
+#~ "  /say [Ihre Nachricht]..................Sendet eine Nachricht an alle "
+#~ "(gleich 'Enter')"
+
+#, fuzzy
+#~ msgid ""
+#~ "  /server listplayers...............List players with the assigned number"
+#~ msgstr ""
+#~ "  /server listcommands..............Liste der verfügbaren Befehle des "
+#~ "Spiel-Servers"
+
+#, fuzzy
+#~ msgid "  /server listprofiles..............List available profiles"
+#~ msgstr ""
+#~ "  /server listcommands..............Liste der verfügbaren Befehle des "
+#~ "Spiel-Servers"
+
+#~ msgid "Note: Use the right mouse button to scroll quickly."
+#~ msgstr ""
+#~ "Hinweis: Verwenden Sie die rechte Maustaste, um schnell zu scrollen."
