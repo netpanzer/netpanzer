@@ -2136,7 +2136,7 @@ void Vehicle::updateState() {
         smolderWaitMin = (float(100 - percent) / 100.0) +
                          (float(100 - percent) / 100.0) * 0.3;
 
-        if (NetworkState::status == _network_state_server) {
+        if (NetworkState::status != _network_state_server) {
           ParticleInterface::addUnitDamagePuffParticle(unit_state);
         }
 
