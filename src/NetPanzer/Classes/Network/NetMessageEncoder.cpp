@@ -41,7 +41,7 @@ bool NetMessageEncoder::encodeMessage(NetMessage* message, size_t size) {
   }
 
   Uint16* buf = (Uint16*)(encode_message.data + offset);
-  Uint16 msg_len = htol16(size);
+  alignas(2) Uint16 msg_len = htol16(size);
 
   // write message size
   memcpy(buf, &msg_len, sizeof(Uint16));
