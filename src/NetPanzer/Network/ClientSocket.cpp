@@ -134,9 +134,8 @@ void ClientSocket::sendMessage(const void *data, size_t size) {
     }
 
     Uint16 *buf = (Uint16 *)(sendbuffer + sendpos);
-    *buf = htol16(size);
-//    Uint16 sizeValue = htol16(size);
-//    memcpy(buf, &sizeValue, sizeof(Uint16));
+    Uint16 sizeValue = htol16(size);
+    memcpy(buf, &sizeValue, sizeof(Uint16));
 
     Uint8 *bufb = (Uint8 *)(sendbuffer + sendpos);
 
