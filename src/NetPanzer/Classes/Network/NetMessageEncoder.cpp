@@ -40,14 +40,11 @@ bool NetMessageEncoder::encodeMessage(NetMessage* message, size_t size) {
     return false;
   }
 
-  Uint16* buf = (Uint16*)(encode_message.data + offset);
-  Uint16 msg_len = htol16(size);
+  Uint16* mlen = (Uint16*)(encode_message.data + offset);
+  *mlen = htol16(size);
 
-  // write message size
-  memcpy(buf, &msg_len, sizeof(Uint16));
-  // write message
-  memcpy(buf + 1, message, size);
+  memcpy(mlen + 1, message, size);
 
-  offset += size + sizeof(Uint16);
+  offset += size + 2;
   return true;
 }
