@@ -165,12 +165,14 @@ void UnitInterface::sendMessage(const UnitMessage* message,
 void UnitInterface::removeUnit(Units::iterator i) {
   UnitBase* unit = i->second;
 
-  // unit explosion particles
-  ParticleInterface::addHit(unit->unit_state);
+  if (NetworkState::status != _network_state_server) {
+    // unit explosion particles
+    ParticleInterface::addHit(unit->unit_state);
 
-  // unit explosion sound
-  sound->playAmbientSound(
-      "expl", WorldViewInterface::getCameraDistance(unit->unit_state.location));
+    // unit explosion sound
+    sound->playAmbientSound(
+        "expl", WorldViewInterface::getCameraDistance(unit->unit_state.location));
+  }
 
   // delete the unit
   unit_bucket_array.deleteUnitBucketPointer(unit->id,
