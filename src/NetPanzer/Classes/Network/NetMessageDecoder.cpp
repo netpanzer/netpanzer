@@ -57,7 +57,7 @@ Uint16 NetMessageDecoder::decodeMessage(NetMessage** message) {
 
   *message = (NetMessage*)(decode_message.data + offset + sizeof(Uint16));
 
-  offset += msg_len + 2;
+  offset += msg_len + sizeof(Uint16);
 
   return msg_len;
 }
