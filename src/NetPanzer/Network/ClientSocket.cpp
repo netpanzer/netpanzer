@@ -148,9 +148,12 @@ void ClientSocket::sendMessage(const void *data, size_t size) {
     memcpy(&encrypted, buf + 1, 1);
     memcpy(&encryptedb, bufb + 3, 1);
     encrypted2 = encrypted;
+    encryptedb2 = encryptedb;
 
     encrypted2 ^= encryptKeySend;
     memcpy(buf + 1, &encrypted2, 1);
+    encryptedb2 ^= encryptKeySend;
+    memcpy(bufb + 3, &encryptedb2, 1);
 
     if (NetworkState::status == _network_state_server)  // server only
     {

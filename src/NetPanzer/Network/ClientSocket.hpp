@@ -114,6 +114,7 @@ class ClientSocket : public network::TCPSocketObserver {
   Uint8 encrypted;
   Uint8 encryptedb;
   Uint8 encrypted2;
+  Uint8 encryptedb2;
   /*
       Uint8 popc_0;
       Uint8 popc_0b;
