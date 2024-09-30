@@ -95,13 +95,15 @@ void ShellWeapon::fsmFlight() {
         fsmFlight_state = _fsmFlight_idle;
         lifecycle_status = _lifecycle_weapon_in_active;
 
-        // SFX
-        sound->playAmbientSound(
-            "hit", WorldViewInterface::getCameraDistance(location));
+        if (NetworkState::status != _network_state_server) {
+          // SFX
+          sound->playAmbientSound(
+              "hit", WorldViewInterface::getCameraDistance(location));
 
-        // **  Particle Shit
-        iXY loc = iXY(location.x, location.y);
-        ParticleInterface::addMiss(loc, Weapon::owner_type_id);
+          // Particles
+          iXY loc = iXY(location.x, location.y);
+          ParticleInterface::addMiss(loc, Weapon::owner_type_id);
+        }
         end_cycle = true;
       } break;
     }

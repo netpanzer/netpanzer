@@ -118,12 +118,14 @@ void MissleWeapon::fsmFlight() {
         fsmFlight_state = _fsmFlight_idle;
         lifecycle_status = _lifecycle_weapon_in_active;
 
-        // SFX
-        sound->playAmbientSound(
-            "hit", WorldViewInterface::getCameraDistance(location));
+        if (NetworkState::status != _network_state_server) {
+          // SFX
+          sound->playAmbientSound(
+              "hit", WorldViewInterface::getCameraDistance(location));
 
-        // **  Particle Shit
-        ParticleInterface::addMiss(location, Weapon::owner_type_id);
+          // Particles
+          ParticleInterface::addMiss(location, Weapon::owner_type_id);
+        }
         end_cycle = true;
       } break;
     }

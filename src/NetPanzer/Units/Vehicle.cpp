@@ -512,7 +512,7 @@ unsigned short Vehicle::mapXYtoOrientation(unsigned long square,
 
 unsigned short Vehicle::shortestRotation(AngleInt &angle, long goal_angle,
                                          long *delta) {
-  long delta_plus, delta_minus;
+  long delta_plus, delta_minus = 0;
 
   if (goal_angle > angle.angle_int)
     delta_plus = (goal_angle) - (angle.angle_int);
@@ -2136,7 +2136,9 @@ void Vehicle::updateState() {
         smolderWaitMin = (float(100 - percent) / 100.0) +
                          (float(100 - percent) / 100.0) * 0.3;
 
-        ParticleInterface::addUnitDamagePuffParticle(unit_state);
+        if (NetworkState::status != _network_state_server) {
+          ParticleInterface::addUnitDamagePuffParticle(unit_state);
+        }
 
         smolderWait = 0.0f;
       }
