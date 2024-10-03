@@ -82,7 +82,7 @@ void SocketBase::create() {
   if (state == RESOLVED) {
     sockfd = socket(PF_INET, addr.socktype, addr.protocol);
 
-    LOGGER.debug("SocketBase:: Create [%s:%lld] socket",
+    LOGGER.debug("SocketBase:: Create [%s:%d] socket",
                  (addr.socktype == SOCK_STREAM) ? "tcp" : "udp", sockfd);
 
     if (sockfd == INVALID_SOCKET) {
