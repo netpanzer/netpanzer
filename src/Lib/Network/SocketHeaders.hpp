@@ -51,11 +51,10 @@
 
 #define SETMAXFD(d, o)
 
-typedef SOCKET platform_socket_t;
+#define SOCKET_FORMAT "%llu"
 #define NULL_SOCKET (SOCKET)(0)
 
 #else
-
 #include <arpa/inet.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -67,6 +66,7 @@ typedef SOCKET platform_socket_t;
 #include <unistd.h>
 
 typedef int SOCKET;
+#define SOCKET_FORMAT "%d"
 #define SOCKET_ERROR -1
 #define INVALID_SOCKET -1
 #define NULL_SOCKET -2
