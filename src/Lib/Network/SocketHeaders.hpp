@@ -51,6 +51,7 @@
 
 #define SETMAXFD(d, o)
 
+#define SOCKET_FORMAT "%llu"
 #define NULL_SOCKET (SOCKET)(0)
 
 #else
@@ -65,6 +66,7 @@
 #include <unistd.h>
 
 typedef int SOCKET;
+#define SOCKET_FORMAT "%d"
 #define SOCKET_ERROR -1
 #define INVALID_SOCKET -1
 #define NULL_SOCKET -2
