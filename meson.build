@@ -368,7 +368,7 @@ if host_sys == 'emscripten'
     endif
 
     netpanzer = static_library('netpanzer-full',
-        link_whole : lib_netpanzer,
+        link_whole : libnetpanzer,
     )
 
     netpanzer_html = custom_target(em_link_outputs[0],
