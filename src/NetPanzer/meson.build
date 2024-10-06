@@ -220,14 +220,14 @@ src_basename = [
   'SDLSound.cpp'
 ]
 foreach file : src_basename
-  src += [join_paths(meson.source_root(), 'System', file)]
+  src += [join_paths(meson.current_source_dir(), 'System', file)]
 endforeach
 
 src_basename = [
   'ResourceManager.cpp',
 ]
 foreach file : src_basename
-  src += [join_paths(meson.source_root(), 'Resources', file)]
+  src += [join_paths(meson.current_source_dir(), 'Resources', file)]
 endforeach
 
 src_basename = [
