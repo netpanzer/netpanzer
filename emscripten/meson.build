@@ -4,9 +4,7 @@ em_shell = files('web.html')
 if host_machine.system() == 'emscripten'
     install_data(
         files(
-#            'background.webp',
-#            'scythe.webp',
-#            'favicon.ico',
+            # TODO static files will go here
         ),
         install_dir : bindir,
         install_tag : 'runtime',
