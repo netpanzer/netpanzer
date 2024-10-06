@@ -185,6 +185,215 @@ inc_dirs = [include_directories('.')]
 
 subdir('src')
 
+if host_sys == 'emscripten'
+    if get_option('b_staticpic')
+        warning('b_staticpic is not compatible with the LLVM WebAssembly backend')
+    endif
+
+    # Asyncify instrumentation is very overzealous by default.
+    # This crazy list is not exhaustive, but still helps us reduce code size quite a bit.
+    # Link with -s ASYNCIFY_ADVISE to see what gets instrumented.
+    asyncify_ignore = [
+        '*printf',
+        'AlphaApplyFilter',
+        'ApplyInverseTransforms',
+        'Bezier_*',
+        'DecodeImageData',
+        'DoUVTransform',
+        'EmitFancyRGB',
+        'EmitRescaledAlphaRGB',
+        'EmitRescaledRGB',
+        'EmitSampledRGB',
+        'Emscripten_*',
+        'FT_*',
+        'FlushRenderCommands',
+        'ReconstructRow',
+        'SDL_*',
+        'T1_*',
+        'TT_*',
+        'VP8*',
+        'VP8ExitCritical',
+        'WebP*',
+        'ZSTD_*',
+        '__*',
+        '__ftello_unlocked',
+        '__fwritex',
+        '__shgetc',
+        '__toread',
+        '__vfprintf_internal',
+        '_dynarray_*',
+        '_ht_*',
+        '_netpanzer_log*',
+        '_text_draw',
+        'af_*',
+        'afm_*',
+        'apply_kerning',
+        'astream_*',
+        'basist*',
+        'camera3d_*',
+        'cf2_*',
+        'cff_*',
+        'deflate*',
+        'fbmgr_*',
+        'fclose',
+        'fread',
+        'ft_*',
+        'gamepad_*',
+        'get_glyph',
+        'gl33_*',
+        'glcommon_*',
+        'gles30_*',
+        'hash_bucket',
+        'ht_*',
+        'inflate*',
+        'log_*',
+        'log_internal',
+        'op_get_next_page',
+        'op_seek_helper',
+        'pfr_*',
+        'pixmap_*',
+        'png_*',
+        'printf_core',
+        'px_*',
+        'qsort',
+        'sfnt_*',
+        'sift',
+        'stdio_*',
+        'strtox',
+        't1_*',
+        't42_*',
+        'tt_*',
+        'vfs_decref',
+        'wrapper_cmp',
+    ]
+
+    em_debug = get_option('debug')
+    em_link_outputs = []
+    em_link_output_suffixes = ['html', 'wasm', 'js']  # first element is significant
+    em_data_dir = get_option('datadir')
+    em_common_args = []
+    em_link_args = [
+        '-O@0@'.format(get_option('optimization')),
+        '-s', 'ALLOW_MEMORY_GROWTH=1',
+        '-s', 'ASYNCIFY_REMOVE=@0@'.format(','.join(asyncify_ignore)),
+        '-s', 'AUTO_ARCHIVE_INDEXES=0',
+        '-s', 'AUTO_JS_LIBRARIES=0',
+        '-s', 'AUTO_NATIVE_LIBRARIES=0',
+        '-s', 'DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=["$autoResumeAudioContext"]',
+        '-s', 'DYNAMIC_EXECUTION=0',
+        '-s', 'ENVIRONMENT=web',
+        '-s', 'EXIT_RUNTIME=0',
+        '-s', 'EXPORTED_FUNCTIONS=["_main", "_vfs_sync_callback"]',
+        '-s', 'EXPORTED_RUNTIME_METHODS=["ccall"]',
+        '-s', 'FETCH',
+        '-s', 'FETCH_SUPPORT_INDEXEDDB=0',
+        '-s', 'FILESYSTEM=1',
+        '-s', 'FORCE_FILESYSTEM=1',
+        '-s', 'GL_ENABLE_GET_PROC_ADDRESS',
+        '-s', 'GL_POOL_TEMP_BUFFERS=0',
+        '-s', 'GL_PREINITIALIZED_CONTEXT=1',
+        '-s', 'GL_SUPPORT_AUTOMATIC_ENABLE_EXTENSIONS=0',
+        '-s', 'GL_SUPPORT_SIMPLE_ENABLE_EXTENSIONS=0',
+        '-s', 'IGNORE_MISSING_MAIN=0',
+        '-s', 'INITIAL_MEMORY=268435456',
+        '-s', 'LLD_REPORT_UNDEFINED',
+        '-s', 'MAX_WEBGL_VERSION=2',
+        '-s', 'MIN_WEBGL_VERSION=2',
+        '-s', 'MODULARIZE=0',
+        '-s', 'STACK_SIZE=1MB',
+        '-s', 'STRICT_JS=1',
+        '-s', 'SUPPORT_BIG_ENDIAN=1',
+        '-s', 'WASM=1',
+        '-lGL',
+        '-legl.js',
+        '-lidbfs.js',
+        '-lwebgl.js',
+        '-lhtml5',   # NOTE: SDL dependency; should be fixed there
+    ]
+
+#    em_link_args += subproject('???').get_variable('???_external_link_args')
+
+    if em_debug
+        em_link_output_suffixes += ['wasm.map']
+        em_link_args += [
+            '--profiling',
+            '-g3',
+            '-gsource-map',
+            '--source-map-base', meson.get_external_property('source_map_base', 'http://0.0.0.0:6931/'),
+            '-s', 'ASSERTIONS=2',
+            '-s', 'GL_ASSERTIONS=1',
+            '-s', 'GL_DEBUG=1',
+            '-s', 'GL_TRACK_ERRORS=1',
+        ]
+    else
+        em_link_args += [
+            '-g0',
+            '-s', 'ASSERTIONS=0',
+            '-s', 'GL_TRACK_ERRORS=0',
+        ]
+
+        if get_option('optimization') != '0'
+            em_link_args += ['--closure', '1']
+        endif
+    endif
+
+    foreach suffix : em_link_output_suffixes
+        em_link_outputs += ['@0@.@1@'.format('netpanzer', suffix)]
+    endforeach
+
+    meson_link_whole_is_broken = meson.version().version_compare('>1.1.0')
+
+    if meson_link_whole_is_broken
+        warning('Installing private static library to work around a Meson bug: https://github.com/mesonbuild/meson/issues/12638')
+    endif
+
+    version_deps = []
+    libnetpanzer = static_library('netpanzer', src, version_deps,
+        dependencies : deps,
+#        c_pch : 'pch/netpanzer_pch.h',
+        c_args : [em_common_args, get_option('c_args')],
+        install : meson_link_whole_is_broken,
+        install_dir : '.',
+        install_tag : 'trash',
+        # Explicitly give it a predictable name, in case we have to remove it via install script
+        name_prefix : 'lib',
+        name_suffix : 'a',
+    )
+
+    if meson_link_whole_is_broken
+        meson.add_install_script(
+            post_install_remove_command, 'lib' + libnetpanzer.name() + '.a',
+            install_tag : 'trash',
+        )
+    endif
+
+    netpanzer = static_library('netpanzer-full',
+        link_whole : lib_netpanzer,
+    )
+
+    netpanzer_html = custom_target(em_link_outputs[0],
+        command : [
+            meson.get_compiler('cpp').cmd_array(),
+            netpanzer,
+            '--pre-js', em_preamble,
+            '--shell-file', em_shell,
+            get_option('c_args'),
+            get_option('c_link_args'),
+            em_common_args,
+            em_link_args,
+            '-o', '@OUTPUT0@',
+        ],
+        build_by_default : true,
+        output : em_link_outputs,
+        install : true,
+        install_dir : bindir,
+        install_tag : 'runtime',
+        console : true,
+    )
+
+    bindist_deps += netpanzer_html
+endif
+
 subdir('src/tools')
 exe = executable(
   'netpanzer',

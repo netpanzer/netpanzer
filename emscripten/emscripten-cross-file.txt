@@ -1,0 +1,15 @@
+[binaries]
+c = 'emcc'
+cpp = 'em++'
+ar = 'emar'
+strip = 'llvm-strip'
+pkgconfig = 'false'
+
+[host_machine]
+system = 'emscripten'
+cpu_family = 'wasm32'
+cpu = 'wasm32'
+endian = 'little'
+
+[properties]
+needs_exe_wrapper = true
