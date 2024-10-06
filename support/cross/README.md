@@ -18,4 +18,4 @@ On Linux (or any other system but Windows, since it's a cross-build)
 
 ## aarch64 Linux
 
-    meson setup --cross-file=support/cross/aarch64-linux-gcc.txt build-aarch64
+    meson setup --cross-file=support/cross/aarch64-linux-gcc.txt -Db_sanitize=none build-aarch64
