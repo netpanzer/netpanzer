@@ -335,7 +335,7 @@ foreach file : src_basename
   src += [join_paths(meson.source_root(), 'src/Lib/Types', file)]
 endforeach
 
-src += ['Core/NetworkGlobals.cpp']
+src += [join_paths(meson.current_source_dir(), 'Core/NetworkGlobals.cpp')]
 
 lib_netpanzer = both_libraries(
   'netpanzer',
