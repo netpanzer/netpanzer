@@ -349,7 +349,7 @@ if host_sys == 'emscripten'
 
     version_deps = []
     libnetpanzer = static_library('netpanzer', src, version_deps,
-        dependencies : deps,
+        dependencies : netpanzer_dep_static,
 #        c_pch : 'pch/netpanzer_pch.h',
         c_args : [em_common_args, get_option('c_args')],
         install : meson_link_whole_is_broken,
