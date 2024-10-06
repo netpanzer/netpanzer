@@ -62,6 +62,10 @@ The scripts take the same options as `meson setup`, which you can view by:
 
     meson help setup
 
+## Cross-Compiling
+
+See [support/cross/README.md](support/cross/README.md)
+
 ## Installing
 
 Common options to use before installing netpanzer:

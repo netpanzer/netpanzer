@@ -39,9 +39,16 @@ jobs:
           os: ubuntu-22.04
         - name: ubuntu-no-deps-gcc
           os: ubuntu-22.04
+        - name: cross-aarch64-gcc
+          os: ubuntu-22.04
+          cross-file: 'support/cross/aarch64-linux-gcc.txt'
+        - name: cross-x86_64-w64-mingw32-gcc
+          os: ubuntu-22.04
+          cross-file: 'support/cross/x86_64-w64-mingw32.txt'
 
     runs-on: ${{ matrix.build.os }}
     env:
+      MESON_OPTS: '_build'
       NETPANZER_DATADIR: ${{ github.workspace }}/data
       INST_PREFIX_DIR: ${{ github.workspace }}/inst_test
     steps:
@@ -69,8 +76,11 @@ jobs:
 
     - name: Install dependencies
       run: |
-        sudo apt update
-        sudo apt upgrade -y
+        # comment out these first three lines. If the runner is updated often
+        # often enough, there probably won't be a need to upgrade
+        #sudo apt update
+        #sudo apt remove -y firefox # save a little time during upgrade
+        #sudo apt upgrade -y
         sudo apt install -y \
           python3 \
           python3-setuptools
@@ -82,6 +92,30 @@ jobs:
           sudo apt install -y python3-pip
           python -m pip install --upgrade pip
           pip install meson ninja
+        fi
+        if [ -n "${{ matrix.build.cross-file }}" ]; then
+          if [ "${{ contains(matrix.build.cross-file, 'linux') }}" == "true" ]; then
+            sudo apt install -y \
+              g++-aarch64-linux-gnu \
+              gettext:amd64 \
+              libc6-dev-arm64-cross \
+              liblua5.1-dev:amd64 \
+              libphysfs-dev:amd64 \
+              libsdl2-dev:amd64 \
+              libsdl2-ttf-dev:amd64 \
+              libsdl2-mixer-dev:amd64
+          else
+            # When using the mingw-w64 from Ubuntu Jammy, the sdl2 build fails
+            # fatal error: d3d12sdklayers.h: No such file or directory
+            # I found a discussion and fix at https://github.com/doitsujin/dxvk/issues/3328
+            sudo apt purge --autoremove mingw-w64
+            sudo apt install -y wget
+            wget https://github.com/mstorsjo/llvm-mingw/releases/download/20230320/llvm-mingw-20230320-ucrt-ubuntu-18.04-x86_64.tar.xz
+            tar xf llvm-mingw-20230320-ucrt-ubuntu-18.04-x86_64.tar.xz
+            PATH="$PWD/llvm-mingw-20230320-ucrt-ubuntu-18.04-x86_64/bin:$PATH" LD_LIBRARY_PATH="$PWD/llvm-mingw-20230320-ucrt-ubuntu-18.04-x86_64/lib"
+            echo "PATH=${PATH}" >> $GITHUB_ENV
+            echo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}" >> $GITHUB_ENV
+          fi
         fi
 
     - if: ${{ ! contains(matrix.build.name, 'no-deps') }}
@@ -96,15 +130,28 @@ jobs:
 
     - name: Setup
       run: |
-        ./setup-build.sh _build -Dprefix=$INST_PREFIX_DIR -Dnls=$want_nls
+        MESON_OPTS="$MESON_OPTS -Dprefix=$INST_PREFIX_DIR -Dnls=$want_nls"
+        if [ -n "${{ matrix.build.cross-file }}" ]; then
+          # ASAN libs for other architectures won't be available (unless we use
+          # emulation or install an appropriate toolchain so we disable sanitize
+          # https://github.com/google/sanitizers/wiki/AddressSanitizer
+          MESON_OPTS="$MESON_OPTS --cross-file ${{ matrix.build.cross-file }} -Db_sanitize=none"
+        fi
+        ./setup-build.sh $MESON_OPTS
 
     - name: Meson build
       run: ninja -C _build
 
+    - if: ${{ contains(matrix.build.cross-file, 'w64') }}
+      run: test -f _build/netpanzer.exe
+
     - name: Test
       run: |
-        cd _build
-        meson test --suite=netpanzer -v
+        # cross builds won't run on an amd64 runner without emulation
+        if [ -z "${{ matrix.build.cross-file }}" ]; then
+          cd _build
+          meson test --suite=netpanzer -v
+        fi
 
     - name: Data install test
       if: ${{ contains(matrix.build.name, 'data-install-test') }}
