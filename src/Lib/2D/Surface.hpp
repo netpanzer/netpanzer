@@ -223,12 +223,12 @@ class Surface : public NoCopy {
   void bltHLine(int x1, int y, int x2, const PIX table[]);
 
   void frameToBuffer(Uint8 *dest, size_t dest_len) {
-    size_t frame_len = getPitch() * getHeight();
+    size_t frame_len = static_cast<size_t>(getPitch()) * getHeight();
     memcpy(dest, mem, std::min(frame_len, dest_len));
   }
 
   void bufferToFrame(const Uint8 *src, const size_t src_len) {
-    size_t frame_len = getPitch() * getHeight();
+    size_t frame_len = static_cast<size_t>(getPitch()) * getHeight();
     memcpy(mem, src, std::min(frame_len, src_len));
   }
   bool isInBounds(unsigned int x, unsigned int y) const;
