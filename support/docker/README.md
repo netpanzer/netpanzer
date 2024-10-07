@@ -3,9 +3,9 @@
 ## Run NetPanzer in a container
 
 Copy docker-compose.yml and the opt directory to anywhere you like, such as
-`$HOME/.local/netpanzer/docker`
+`$HOME/.local/netpanzer`
 
-Edit $HOME/.local/netpanzer/docker/opt/config/server.cfg` as desired. See
+Edit $HOME/.local/netpanzer/opt/config/server.cfg` as desired. See
 [SERVER-HOWTO.md](https://github.com/netpanzer/netpanzer/blob/master/docs/SERVER-HOWTO.md)
 if you need help with the options.
 
@@ -17,6 +17,11 @@ docker-compose.yml, use
 To kill the server:
 
     docker-compose down
+
+If you wish to run a bot in the container after it's started:
+
+    docker exec --user npserver -it netpanzer-server netpanzer \
+        -b localhost:3031 --game_config=.netpanzer/config/khan.cfg
 
 Also see the [docker compose
 docs](https://docs.docker.com/compose/features-uses/) for more options and
