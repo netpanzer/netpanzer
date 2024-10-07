@@ -8,6 +8,7 @@ services:
       - "3031:3031/tcp"
       - "3031:3031/udp"
     command: netpanzer -d
+    user: npserver
     volumes:
       - ./opt:/home/npserver/.netpanzer
     restart: unless-stopped
