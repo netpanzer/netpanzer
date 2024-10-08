@@ -37,6 +37,10 @@ jobs:
           os: ubuntu-22.04
         - name: ubuntu-22.04-clang
           os: ubuntu-22.04
+        - name: ubuntu-24.04-gcc # Ubuntu Noble
+          os: ubuntu-24.04
+        - name: ubuntu-24.04-clang
+          os: ubuntu-24.04
         - name: ubuntu-no-deps-gcc
           os: ubuntu-22.04
         - name: cross-aarch64-gcc
