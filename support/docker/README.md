@@ -26,7 +26,7 @@ To kill the server:
 If you wish to run a bot in the container after it's started:
 
     docker exec --user npserver -it netpanzer-server \
-        netpanzer -b localhost:3031 --game_config=.netpanzer/config/khan.cfg
+        netpanzer -b localhost:3031 --game_config=.netpanzer/config/bot-khan.cfg
 
 Also see the [docker compose
 docs](https://docs.docker.com/compose/features-uses/) for more options and
