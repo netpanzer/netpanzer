@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+    <link rel="preload" href="netpanzer.wasm" as="fetch" crossorigin/>
+    <title>NetPanzer — Web version</title>
+    <style>
+        body {
+            background-image: url('background.webp');
+            background-color: #111111;
+            background-repeat: no-repeat;
+            background-position: 50% 50%;
+            background-size: cover;
+            color: #eeeeee;
+            height: 100%;
+            margin: 0px;
+            padding: 0px;
+            position: absolute;
+            top: 0px;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+        }
+
+        html {
+            background-color: #000000;
+            height: 100%;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .emscripten {
+            padding-right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+
+        textarea.emscripten {
+            font-family: monospace;
+            width: 100%;
+            resize: none;
+            background: none;
+            border: 0px none;
+            color: #eeeeee;
+            overflow: overlay;
+            margin: 0px;
+        }
+
+        div.emscripten {
+            text-align: center;
+        }
+
+        div.emscripten_border {
+            border: 0px none;
+        }
+
+        a {
+            color: #6789bf;
+        }
+
+        div.header {
+            padding: 0px 16px;
+            text-align: center;
+        }
+
+        div.footer {
+            text-align: center;
+            position: absolute;
+            bottom: 16px;
+            width: 100%;
+        }
+
+        div.centered {
+            position: absolute;
+            bottom: 50%;
+            left: 0;
+            right: 0;
+            transform: translateY(50%);
+            background-color: #000000C0;
+            padding: 16px 0px;
+            z-index: 1;
+        }
+
+        /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+        canvas.emscripten {
+            border: 0px none;
+            background-color: none;
+        }
+
+        #spinner {
+            overflow: visible;
+            padding-bottom: 16px;
+        }
+
+        #progress {
+            margin: 4px;
+        }
+
+        #logContainer {
+            width: 80%;
+            margin: auto;
+        }
+
+        #logToggleContainer {
+            display: /* inline-block */ none;
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0.5;
+        }
+
+        progress {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            border: 0px none;
+            background-color: #eee;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+        }
+
+        progress::-webkit-progress-bar {
+            background-color: #eee;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+        }
+
+        progress::-webkit-progress-value {
+            background-image:
+                -webkit-linear-gradient(top, rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0.25)),
+                -webkit-linear-gradient(left, #5c7da8, #6db0ed);
+
+            border-radius: 5px;
+            background-size: 35px 20px, 100% 100%, 100% 100%;
+        }
+
+        progress::-moz-progress-bar {
+            background-image:
+                -moz-linear-gradient(top, rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0.25)),
+                -moz-linear-gradient(left, #5c7da8, #6db0ed);
+
+            border-radius: 5px;
+            background-size: 35px 20px, 100% 100%, 100% 100%;
+        }
+
+        div.spinner {
+            height: 75px;
+            width: 75px;
+            margin: 0px auto;
+        }
+
+        img.spinner {
+            height: 75px;
+            width: 75px;
+            margin: 4px auto;
+            -webkit-animation: rotation 0.8s linear infinite;
+            -moz-animation: rotation 0.8s linear infinite;
+            -o-animation: rotation 0.8s linear infinite;
+            animation: rotation 0.6s linear infinite;
+            border: 0px none;
+        }
+
+        @-webkit-keyframes rotation {
+            from { -webkit-transform: rotate(0deg); }
+            to { -webkit-transform: rotate(360deg); }
+        }
+
+        @-moz-keyframes rotation {
+            from { -moz-transform: rotate(0deg); }
+            to { -moz-transform: rotate(360deg); }
+        }
+
+        @-o-keyframes rotation {
+            from { -o-transform: rotate(0deg); }
+            to { -o-transform: rotate(360deg); }
+        }
+
+        @keyframes rotation {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h3>Note: this web port is experimental and may not perform as well as the original game, which you can&nbsp;<a href="https://taisei-project.org/download">download here</a>.</h3>
+    </div>
+    <div class="centered">
+        <div class="spinner" id="spinner"><img src="scythe.webp" class="spinner"/></div>
+        <div class="emscripten" id="status">Game is now downloading, please wait...</div>
+        <div class="emscripten">
+            <progress value="0" max="100" id="progress" ></progress>
+        </div>
+        <div class="emscripten_border" id="canvasContainer" hidden>
+            <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
+        </div>
+        <div id="logToggleContainer" hidden>
+            <input type="checkbox" name="logToggle" id="logToggle" onclick="toggleLog()"/>
+            <label for="logToggle"> Show log</label>
+        </div>
+        <div id="logContainer" hidden>
+            <textarea class="emscripten" id="output" rows="12" readonly></textarea>
+        </div>
+    </div>
+    <!--<script type="text/javascript" src="webgl-debug.js"></script>-->
+    {{{ SCRIPT }}}
+</body>
+</html>
