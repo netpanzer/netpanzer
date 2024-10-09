@@ -207,6 +207,16 @@ install_subdir(
   strip_directory : true
   )
 
+install_data(
+  files(
+    'README.md',
+    'CONTRIBUTING.md',
+    'COPYING.txt',
+    'docs/SERVER-HOWTO.md',
+    ),
+  install_dir : get_option('docdir')
+  )
+
 if get_option('build_tests')
   subdir('tests')
 endif

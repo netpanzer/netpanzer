@@ -1,3 +1,5 @@
+option('docdir', type : 'string', value : 'share/doc/netpanzer',
+       description : 'directory where the documentation should be installed to')
 option('build_tests',
   type : 'boolean',
   value : 'true',
