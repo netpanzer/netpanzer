@@ -33,7 +33,9 @@ jobs:
         include:
           - name: data-install-test
             ubuntu: 22.04
-            cc: gcc
+
+          - name: no-deps
+            ubuntu: 22.04
 
     runs-on: ubuntu-${{ matrix.ubuntu }}
     env:
@@ -47,7 +49,7 @@ jobs:
 
     - name: Prepare variables
       run: |
-        if [ "${{ matrix.cc }}" = "gcc" ]; then
+        if [ "${{ matrix.cc }}" = "gcc" ] || [ -z "${{ matrix.cc }}" ]; then
           CC=gcc
           CXX=g++
         else
