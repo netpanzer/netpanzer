@@ -28,27 +28,20 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        name: [standard, data-install-test, no-deps, cross-aarch64, cross-x86_64-w64-mingw32]
-        ubuntu: [20.04, 22.04, 24.04, ubuntu-latest]
+        name: [standard]
+        ubuntu: [20.04, 22.04, 24.04]
         cc: [gcc, clang]
         include:
           - name: data-install-test
-            ubuntu: ubuntu-latest
-            cc: gcc
-
+            ubuntu: 22.04
           - name: no-deps
             ubuntu: 22.04
-            cc: gcc
-
           - name: cross-aarch64
             ubuntu: 22.04
             cross-file: 'support/cross/aarch64-linux-gcc.txt'
-            cc: gcc
-
           - name: cross-x86_64-w64-mingw32
             ubuntu: 22.04
             cross-file: 'support/cross/x86_64-w64-mingw32.txt'
-            cc: gcc
 
     runs-on: ubuntu-${{ matrix.ubuntu }}
     env:
@@ -62,7 +55,7 @@ jobs:
 
     - name: Prepare variables
       run: |
-        if [ "${{ matrix.cc }}" = "gcc" ]; then
+        if [ "${{ matrix.cc }}" = "gcc" ] || [ -z "${{ matrix.cc }}" ]; then
           CC=gcc
           CXX=g++
         else
