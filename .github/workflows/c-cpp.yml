@@ -28,6 +28,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
+          name: Standard
           ubuntu: [20.04, 22.04, 24.04]
           cc: [gcc, clang]
           include:
