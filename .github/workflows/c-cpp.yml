@@ -28,25 +28,24 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-          name: Standard
           ubuntu: [20.04, 22.04, 24.04]
           cc: [gcc, clang]
           include:
-            - name: data-install-test
-              ubuntu: 22.04
+            - ubuntu: 22.04
+              name: data-install-test
               cc: gcc
 
-            - name: no-deps
-              ubuntu: 22.04
+            - ubuntu: 22.04
+              name: no-deps
               cc: gcc
 
-            - name: cross-aarch64
-              ubuntu: 22.04
+            - ubuntu: 22.04
+              name: cross-aarch64
               cross-file: 'support/cross/aarch64-linux-gcc.txt'
               cc: gcc
 
-            - name: cross-x86_64-w64-mingw32
-              ubuntu: 22.04
+            - ubuntu: 22.04
+              name: cross-x86_64-w64-mingw32
               cross-file: 'support/cross/x86_64-w64-mingw32.txt'
               cc: gcc
 
