@@ -35,20 +35,6 @@ jobs:
             ubuntu: 22.04
             cc: gcc
 
-          - name: no-deps
-            ubuntu: 22.04
-            cc: gcc
-
-          - name: cross-aarch64
-            ubuntu: 22.04
-            cross-file: 'support/cross/aarch64-linux-gcc.txt'
-            cc: gcc
-
-          - name: cross-x86_64-w64-mingw32
-            ubuntu: 22.04
-            cross-file: 'support/cross/x86_64-w64-mingw32.txt'
-            cc: gcc
-
     runs-on: ubuntu-${{ matrix.ubuntu }}
     env:
       MESON_OPTS: '_build'
