@@ -17,6 +17,7 @@ on:
     branches: master
     paths:
     - 'src/**/**'
+    - 'support/**/*.cpp'
     - 'setup-build.*'
     - '**meson.build'
     - 'subprojects/*.wrap'
@@ -24,33 +25,27 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.build.name }}
+    name: ${{ matrix.name }}-Ubuntu-${{ matrix.ubuntu }}-${{ matrix.cc }}
     strategy:
       fail-fast: true
       matrix:
-        build:
-        - name: ubuntu-20.04-gcc
-          os: ubuntu-20.04  # supported until >= April 2025
-        - name: data-install-test-gcc
-          os: ubuntu-22.04
-        - name: ubuntu-22.04-gcc
-          os: ubuntu-22.04
-        - name: ubuntu-22.04-clang
-          os: ubuntu-22.04
-        - name: ubuntu-24.04-gcc # Ubuntu Noble
-          os: ubuntu-24.04
-        - name: ubuntu-24.04-clang
-          os: ubuntu-24.04
-        - name: ubuntu-no-deps-gcc
-          os: ubuntu-22.04
-        - name: cross-aarch64-gcc
-          os: ubuntu-22.04
-          cross-file: 'support/cross/aarch64-linux-gcc.txt'
-        - name: cross-x86_64-w64-mingw32-gcc
-          os: ubuntu-22.04
-          cross-file: 'support/cross/x86_64-w64-mingw32.txt'
+        name: [standard]
+        # 20.04 supported until >= April 2025
+        ubuntu: [20.04, 22.04, 24.04]
+        cc: [gcc, clang]
+        include:
+          - name: data-install-test
+            ubuntu: 22.04
+          - name: no-deps
+            ubuntu: 22.04
+          - name: cross-aarch64
+            ubuntu: 22.04
+            cross-file: 'support/cross/aarch64-linux-gcc.txt'
+          - name: cross-x86_64-w64-mingw32
+            ubuntu: 22.04
+            cross-file: 'support/cross/x86_64-w64-mingw32.txt'
 
-    runs-on: ${{ matrix.build.os }}
+    runs-on: ubuntu-${{ matrix.ubuntu }}
     env:
       MESON_OPTS: '_build'
       NETPANZER_DATADIR: ${{ github.workspace }}/data
@@ -62,7 +57,7 @@ jobs:
 
     - name: Prepare variables
       run: |
-        if [ "${{ contains(matrix.build.name, 'gcc') }}" = "true" ]; then
+        if [ "${{ matrix.cc }}" = "gcc" ] || [ -z "${{ matrix.cc }}" ]; then
           CC=gcc
           CXX=g++
         else
@@ -71,7 +66,7 @@ jobs:
         fi
         echo "CC=$CC" >> $GITHUB_ENV
         echo "CXX=$CXX" >> $GITHUB_ENV
-        echo "want_nls=${{ ! contains(matrix.build.name, 'no-deps') }}" >> $GITHUB_ENV
+        echo "want_nls=${{ ! contains(matrix.name, 'no-deps') }}" >> $GITHUB_ENV
 
     - name: Show info
       run: |
@@ -88,7 +83,7 @@ jobs:
         sudo apt install -y \
           python3 \
           python3-setuptools
-        if [ "${{ contains(matrix.build.name, '20.04') }}" = "false" ]; then
+        if [ "${{ matrix.ubuntu }}" != "20.04" ]; then
           sudo apt install -y \
           meson \
           ninja-build
@@ -97,8 +92,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install meson ninja
         fi
-        if [ -n "${{ matrix.build.cross-file }}" ]; then
-          if [ "${{ contains(matrix.build.cross-file, 'linux') }}" == "true" ]; then
+        if [ -n "${{ matrix.cross-file }}" ]; then
+          if [ "${{ contains(matrix.cross-file, 'linux') }}" == "true" ]; then
             sudo apt install -y \
               g++-aarch64-linux-gnu \
               gettext:amd64 \
@@ -122,7 +117,7 @@ jobs:
           fi
         fi
 
-    - if: ${{ ! contains(matrix.build.name, 'no-deps') }}
+    - if: ${{ ! contains(matrix.name, 'no-deps') }}
       run: |
         sudo apt install -y \
           gettext \
@@ -135,30 +130,30 @@ jobs:
     - name: Setup
       run: |
         MESON_OPTS="$MESON_OPTS -Dprefix=$INST_PREFIX_DIR -Dnls=$want_nls"
-        if [ -n "${{ matrix.build.cross-file }}" ]; then
+        if [ -n "${{ matrix.cross-file }}" ]; then
           # ASAN libs for other architectures won't be available (unless we use
           # emulation or install an appropriate toolchain so we disable sanitize
           # https://github.com/google/sanitizers/wiki/AddressSanitizer
-          MESON_OPTS="$MESON_OPTS --cross-file ${{ matrix.build.cross-file }} -Db_sanitize=none"
+          MESON_OPTS="$MESON_OPTS --cross-file ${{ matrix.cross-file }} -Db_sanitize=none"
         fi
         ./setup-build.sh $MESON_OPTS
 
     - name: Meson build
       run: ninja -C _build
 
-    - if: ${{ contains(matrix.build.cross-file, 'w64') }}
+    - if: ${{ contains(matrix.cross-file, 'w64') }}
       run: test -f _build/netpanzer.exe
 
     - name: Test
       run: |
         # cross builds won't run on an amd64 runner without emulation
-        if [ -z "${{ matrix.build.cross-file }}" ]; then
+        if [ -z "${{ matrix.cross-file }}" ]; then
           cd _build
           meson test --suite=netpanzer -v
         fi
 
     - name: Data install test
-      if: ${{ contains(matrix.build.name, 'data-install-test') }}
+      if: ${{ contains(matrix.name, 'data-install-test') }}
       run: |
         unset NETPANZER_DATADIR
         cd _build
