@@ -5,12 +5,18 @@ RUN apt update && apt -y upgrade
 RUN mkdir /netpanzer
 ADD meson* /netpanzer
 ADD data /netpanzer/data
-ADD docs /netpanzer/docs
 ADD po /netpanzer/po
 ADD src /netpanzer/src
 ADD subprojects /netpanzer/subprojects
 ADD tests /netpanzer/tests
 ADD --chmod=700 setup-build.sh /netpanzer
+
+# Add docs from the root directory. These will get installed when
+# 'meson install' is run
+ADD README.md /netpanzer
+ADD COPYING.txt /netpanzer
+ADD CONTRIBUTING.md /netpanzer
+ADD docs/SERVER-HOWTO.md /netpanzer/docs/
 
 RUN \
   cd /netpanzer && \
