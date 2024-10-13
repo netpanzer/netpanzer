@@ -207,6 +207,7 @@ install_subdir(
   strip_directory : true
   )
 
+# Check the Dockerfile when updating this
 install_data(
   files(
     'README.md',
