@@ -107,6 +107,10 @@ void BitArray::clearBit(unsigned long x, unsigned long y) {
 
 //************************************************************************
 bool BitArray::getBit(unsigned long x, unsigned long y) {
+  if (x >= x_size || y >= y_size) {
+    return false;
+  }
+
   unsigned long index;
   unsigned char shift;
   unsigned char mask = 1;
@@ -116,6 +120,10 @@ bool BitArray::getBit(unsigned long x, unsigned long y) {
   shift = (unsigned char)(7 - (index & (unsigned long)7));
   index = index >> 3;
   mask = (mask << shift);
+
+  if (index > size) {
+    return false;
+  }
 
   value = array[index] & mask;
 
