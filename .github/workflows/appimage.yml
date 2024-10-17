@@ -54,7 +54,7 @@ jobs:
         -e HOSTUID=$(id -u) \
         -e VERSION \
         -v $GITHUB_WORKSPACE:/workspace \
-        -w /workspace andy5995/linuxdeploy:latest support/appimage/make-appimage.sh
+        -w /workspace andy5995/linuxdeploy:v2-focal support/appimage/make-appimage.sh
         # Docs for this container are at
         # https://github.com/andy5995/linuxdeploy-build-helper-container
 
