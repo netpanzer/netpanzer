@@ -5,13 +5,15 @@ on:
     branches: coverity_scan
 
 jobs:
-  ubuntu:
+  coverity:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     - name: Install Dependencies
       run: |
-        sudo apt update && sudo apt upgrade -y
+        sudo apt update
+        sudo apt remove -y firefox # save a little time during upgrade
+        sudo apt upgrade -y
         sudo apt install -y \
           liblua5.1-0-dev \
           libphysfs-dev \
@@ -31,7 +33,8 @@ jobs:
         # For example, a GitHub project will look like "gentoo/pax-utils".
         #
         # Default: ${{ github.repository }}
-        project: 'netpanzer/netpanzer'
+        # project: 'netpanzer/netpanzer'
+        project: 'Netpanzer'
 
         # Secret project token for accessing this project in Coverity Scan.
         #
@@ -58,7 +61,7 @@ jobs:
         # previous "token" section for more information.
         #
         # REQUIRED.
-        email: ${{ secrets.COVERITY_SCAN_TOKEN }}
+        email: ${{ secrets.COVERITY_EMAIL_TOKEN }}
 
         # Which Coverity Scan language pack to download.
         #
