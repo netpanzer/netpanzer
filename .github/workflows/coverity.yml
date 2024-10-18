@@ -36,6 +36,7 @@ jobs:
         #
         # Default: ${{ github.repository }}
         # project: 'netpanzer/netpanzer'
+        project: 'Netpanzer'
 
         # Secret project token for accessing this project in Coverity Scan.
         #
