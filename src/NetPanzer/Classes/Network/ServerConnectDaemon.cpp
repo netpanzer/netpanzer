@@ -607,6 +607,7 @@ class StateUnitSync : public State<T> {
     sync_end += 1;
 
     ConnectProcessStateMessage state_mesg;
+    state_mesg.InitPercentState();
     state_mesg.setMessageEnum(_connect_state_message_sync_units);
     connect_client->sendMessage(&state_mesg,
                                 sizeof(ConnectProcessStateMessage));

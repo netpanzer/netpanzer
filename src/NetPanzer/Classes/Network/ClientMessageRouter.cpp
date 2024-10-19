@@ -114,6 +114,7 @@ void ClientMessageRouter::routeMessages() {
                                        packet.size);
 
       NetPacket pp;
+      pp.size = 0;
       pp.fromPlayer = packet.fromPlayer;
       pp.fromClient = packet.fromClient;
 

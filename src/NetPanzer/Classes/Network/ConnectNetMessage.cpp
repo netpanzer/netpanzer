@@ -159,11 +159,11 @@ void ConnectMesgServerGameSettings::setTimeLimit(Sint32 timeLimit) {
 }
 
 time_t ConnectMesgServerGameSettings::getElapsedTime() const {
-  return (time_t)ltoh32((Uint32)elapsed_time);
+  return (time_t)ltoh32((Uint64)elapsed_time);
 }
 
 void ConnectMesgServerGameSettings::setElapsedTime(time_t elapsedTime) {
-  elapsed_time = (time_t)htol32((Uint32)elapsedTime);
+  elapsed_time = (time_t)htol32((Uint64)elapsedTime);
 }
 
 Sint32 ConnectMesgServerGameSettings::getFlagTime() const {
