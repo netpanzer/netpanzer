@@ -165,17 +165,9 @@ void cInputField::setInputFieldString(cInputFieldString *string) {
 // setExcludedCharacters
 //--------------------------------------------------------------------------
 void cInputField::setExcludedCharacters(const char *exChars) {
-  if (excludedCharacters) {
-    delete[] excludedCharacters;
-    excludedCharacters = 0;
-  }
-  excludedCharacters = new char[strlen(exChars) + 1];
-  if (excludedCharacters == 0) {
-    throw Exception(
-        "ERROR: Unable to allocate cInputField excludedCharacters.");
-  }
+  char excludedCharacters[strlen(exChars) + 1];
+  snprintf(excludedCharacters, sizeof excludedCharacters, "%s", exChars);
 
-  strcpy(excludedCharacters, exChars);
 }  // setExcludedCharacters
 
 // addChar
