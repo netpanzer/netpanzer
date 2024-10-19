@@ -136,6 +136,12 @@ jobs:
         fi
         ./setup-build.sh $MESON_OPTS
 
+    - name: with-lto
+      if: ${{ matrix.name == 'standard' && matrix.cc == 'gcc' && matrix.ubuntu == '24.04' }}
+      run: |
+        cd _build
+        meson configure -Db_lto=true
+
     - name: Meson build
       run: ninja -C _build
 
