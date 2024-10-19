@@ -152,6 +152,7 @@ class ConnectProcessStateMessage : public NetMessage {
 
  public:
   ConnectProcessStateMessage();
+  void InitPercentState() { percent_complete = 0; }
   Uint8 getMessageEnum() const { return message_enum; }
   void setMessageEnum(Uint8 message) { message_enum = message; }
   Uint8 getPercentComplete() const { return percent_complete; }

@@ -124,6 +124,7 @@ void ServerMessageRouter::routeMessages() {
                                        temp_packet.size);
 
       NetPacket packet;
+      packet.size = 0;
       packet.fromPlayer = temp_packet.fromPlayer;
       packet.fromClient = temp_packet.fromClient;
 
