@@ -20,6 +20,9 @@ extra_flags = [
 #  '-Wformat-security',
 #  '-Wformat-overflow=2',
   '-Wno-shadow',
+  '-Werror=odr',
+  '-Werror=lto-type-mismatch',
+  '-Werror=strict-aliasing',
 #  '-Wstrict-overflow=5'
 # '-Wconversion'
   ]

@@ -20,6 +20,7 @@ foreach case : test_cases
       '-DMESON_SOURCE_ROOT="@0@"'.format(meson.project_source_root())
       ],
     win_subsystem: 'console',
+    override_options: ['b_lto=false']
   )
 
   test(

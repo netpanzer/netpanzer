@@ -34,6 +34,9 @@ jobs:
         ubuntu: [20.04, 22.04, 24.04]
         cc: [gcc, clang]
         include:
+          - name: with-lto
+            ubuntu: latest
+            options: '-Db_lto=true'
           - name: data-install-test
             ubuntu: 22.04
           - name: no-deps
@@ -134,7 +137,7 @@ jobs:
           # https://github.com/google/sanitizers/wiki/AddressSanitizer
           MESON_OPTS="$MESON_OPTS --cross-file ${{ matrix.cross-file }} -Db_sanitize=none"
         fi
-        ./setup-build.sh $MESON_OPTS
+        ./setup-build.sh $MESON_OPTS ${{ matrix.options }}
 
     - name: Meson build
       run: ninja -C _build
