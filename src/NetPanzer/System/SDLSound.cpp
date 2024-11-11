@@ -35,6 +35,7 @@
 #include "Util/FileSystem.hpp"
 #include "Util/Log.hpp"
 #include "Util/NTimer.hpp"
+#include "Interfaces/MapInterface.hpp"
 
 #if (SDL_MIXER_MAJOR_VERSION > 1) || (SDL_MIXER_MINOR_VERSION > 2) || \
     ((SDL_MIXER_MINOR_VERSION == 2) && (SDL_MIXER_PATCHLEVEL >= 6))
@@ -132,14 +133,19 @@ void SDLSound::playSound(const char *name) {
  * @param distance mag2 distance
  */
 void SDLSound::playAmbientSound(const char *name, long distance) {
+//  printf("playAmbientSound %s %ld\n", name, distance);
   SoundData *sdata = findChunk(name);
   if (sdata) {
     if (sdata->last_played.isTimeOut()) {
-      int newVolume = getSoundVolume(distance);
-//      printf("playing %s at distance %ld and volume %d\n", name, distance, newVolume);
-      Mix_VolumeChunk(sdata->getData(), newVolume);
+      const int newVolumeFromDistance = getSoundVolume(distance);
+      const int newVolumeFromDistanceScaled = newVolumeFromDistance > 0
+              ? static_cast<int>(static_cast<float>(newVolumeFromDistance) * ((float) GameConfig::sound_effectsvol / 100.f))
+              : 0;
+
+//      printf("playing %s at distance %ld and volume %d\n", name, distance, newVolumeFromDistanceScaled);
+      Mix_VolumeChunk(sdata->getData(), newVolumeFromDistanceScaled);
       if (Mix_PlayChannel(-1, sdata->getData(), 0) == -1) {
-        // LOG (("Couldn't play sound '%s': %s", name, Mix_GetError()));
+//         LOG (("Couldn't play sound '%s': %s", name, Mix_GetError()));
       }
       sdata->last_played.reset();
     } else {
@@ -177,23 +183,24 @@ void SDLSound::stopChannel(int channel) {
 }
 //-----------------------------------------------------------------
 int SDLSound::getSoundVolume(long distance) {
+  const int max_distance = MapInterface::getWidth();
   // 0 to 2 800x600 screen widths away--
   if ((distance < 640000)) return MIX_MAX_VOLUME;
 
   // 2 to 4 800x600 screen widths away--
-  if ((distance < 10240000)) return int(0.2 * MIX_MAX_VOLUME);
+  if ((distance < 10240000)) return int(0.7 * MIX_MAX_VOLUME);
 
   // 4 to 8 800x600 screen widths away--
-  if ((distance < 40960000)) return int(0.1 * MIX_MAX_VOLUME);
+  if ((distance < 40960000)) return int(0.5 * MIX_MAX_VOLUME);
 
   // 8 to 12 800x600 screen widths away--
-  if ((distance < 92760000)) return int(0.05 * MIX_MAX_VOLUME);
+  if ((distance < 92760000)) return int(0.2 * MIX_MAX_VOLUME);
 
   // 12 to 16 800x600 screen widths away--
-  if ((distance < 163840000)) return int(0.02 * MIX_MAX_VOLUME);
+  if ((distance < 163840000)) return int(0.1 * MIX_MAX_VOLUME);
 
   // anything further away--
-  return 0;
+  return int(0.05 * MIX_MAX_VOLUME); // better to have some background noise rather than nothing
 }
 //-----------------------------------------------------------------
 /**
@@ -240,10 +247,10 @@ std::string SDLSound::getIdName(const char *filename) {
 
 void SDLSound::setSoundVolume(unsigned int volume) {
   if (volume > 100) volume = 100;
-  unsigned int sdlvol = (volume * 100) / MIX_MAX_VOLUME;
+  const unsigned int sdlVol = (volume * 100) / MIX_MAX_VOLUME;
   chunks_t::iterator i = m_chunks.begin();
   while (i != m_chunks.end()) {
-    Mix_VolumeChunk(i->second->getData(), sdlvol);
+    Mix_VolumeChunk(i->second->getData(), sdlVol);
     ++i;
   }
 }
