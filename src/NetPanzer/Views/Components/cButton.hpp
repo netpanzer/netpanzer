@@ -31,10 +31,7 @@ class Surface;
 class cButton : public NoCopy {
  public:
   cButton() { reset(); }
-  ~cButton() {
-    if (name != 0) free(name);
-    if (toolTip != 0) free(toolTip);
-  }
+  ~cButton() {}
 
   typedef void (*ITEM_FUNC)(void);
 
@@ -44,11 +41,11 @@ class cButton : public NoCopy {
   PackedSurface bottomSurface;
 
   iRect getBounds() const { return bounds; }
-  const char *getName() const { return name; }
+  const std::string getName() const { return name; }
   bool getIsSelected() const { return isSelected; }
-  const char *getToolTip() const { return toolTip; }
+  const std::string getToolTip() const { return toolTip; }
 
-  void createPacked(const iXY &pos, PackedSurface &source, const char *toolTip,
+  void createPacked(const iXY &pos, PackedSurface &source, const std::string &toolTip,
                     ITEM_FUNC leftClickFunc);
 
   void createCenterText(iXY pos, int xSize, const char *nName,
@@ -69,8 +66,8 @@ class cButton : public NoCopy {
 
  private:
   iRect bounds;
-  char *toolTip;
-  char *name;
+  std::string toolTip;
+  std::string name;
 
   void reset();
 

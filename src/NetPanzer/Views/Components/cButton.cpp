@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ViewGlobals.hpp"
 
 void cButton::createPacked(const iXY &pos, PackedSurface &source,
-                           const char *toolTip, ITEM_FUNC leftClickFunc) {
+                           const std::string &toolTip, ITEM_FUNC leftClickFunc) {
   Surface tempTopSurface(source.getWidth(), source.getHeight(),
                          source.getFrameCount());
 
@@ -37,8 +37,7 @@ void cButton::createPacked(const iXY &pos, PackedSurface &source,
 
   topSurface.pack(tempTopSurface);
 
-  cButton::toolTip = strdup(toolTip);
-  assert(toolTip != 0);
+  cButton::toolTip = toolTip;
   cButton::bounds = iRect(pos.x, pos.y, pos.x + tempTopSurface.getWidth(),
                           pos.y + tempTopSurface.getHeight());
   cButton::leftClickFunc = leftClickFunc;
@@ -77,11 +76,9 @@ void cButton::createCenterText(iXY pos, int xSize, const char *nName,
 
   // Save the button name.
   setName(nName);
-  assert(name != 0);
 
   // Save the button tool tip.
-  toolTip = strdup(nToolTip);
-  assert(toolTip != 0);
+  std::string toolTip(nToolTip);
 
   // Save the bounds of the button.
   bounds = iRect(pos.x, pos.y, pos.x + tempTopSurface.getWidth(),
@@ -100,8 +97,8 @@ void cButton::createCenterText(iXY pos, int xSize, const char *nName,
 // RESET
 //---------------------------------------------------------------------------
 void cButton::reset() {
-  toolTip = 0;
-  name = 0;
+  toolTip = "";
+  name = "";
   isSelected = false;
   leftClickFunc = 0;
   rightClickFunc = 0;
@@ -110,7 +107,7 @@ void cButton::reset() {
 // SET NAME
 //---------------------------------------------------------------------------
 void cButton::setName(const char *buttonName) {
-  name = strdup(buttonName);
+  std::string name(buttonName);
   if (buttonName == 0)
     throw Exception("ERROR: Unable to allocate button name: %s", buttonName);
 }  // end SET NAME
