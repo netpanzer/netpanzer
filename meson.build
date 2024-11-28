@@ -83,14 +83,18 @@ if not lua_dep.found()
       )
   endif
 endif
-deps += lua_dep
 
-phyfs_dep = dependency('physfs', required: false)
-if not phyfs_dep.found()
-  phyfs_dep = cc.find_library('physfs', has_headers: 'physfs.h', required: false)
-  if not phyfs_dep.found()
+# Included by np libraries where needed
+# If added to the global 'deps' var, all tests fail when building with 'sanitize' and
+# using the lua wrap instead linking to system lua.
+# deps += lua_dep
+
+physfs_dep = dependency('physfs', required: false)
+if not physfs_dep.found()
+  physfs_dep = cc.find_library('physfs', has_headers: 'physfs.h', required: false)
+  if not physfs_dep.found()
     # This will use the fallback
-    phyfs_dep = dependency(
+    physfs_dep = dependency(
       'physfs',
       required: true,
       fallback: 'physfs',
@@ -98,7 +102,7 @@ if not phyfs_dep.found()
       )
   endif
 endif
-deps += phyfs_dep
+deps += physfs_dep
 
 sdl2_dep = dependency('SDL2', version: '>=2.0.18', required: false)
 if not sdl2_dep.found()
