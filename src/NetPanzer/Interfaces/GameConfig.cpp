@@ -478,6 +478,7 @@ GameConfig::~GameConfig() = default;
 void GameConfig::loadConfig() {
 
   ScriptManager::loadConfigFile(luaconfigfile, "config", this->usePhysFS);
+  saveConfig();
 
   if (player_name->length() == 0) {
     std::stringstream default_player;
