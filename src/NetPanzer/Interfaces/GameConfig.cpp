@@ -527,7 +527,9 @@ void GameConfig::saveConfig() {
     return;
   }
 
-  OFileStream out(usePhysFS ? filesystem::getRealName(luaconfigfile.c_str()).c_str() : luaconfigfile.c_str());
+  const char* path = usePhysFS ? filesystem::getRealName(luaconfigfile.c_str()).c_str() : luaconfigfile.c_str();
+  LOGGER.info("Writing config to: %s", path);
+  OFileStream out(path);
   out << lua_tostring(L, -1) << std::endl;
   lua_pop(L, 1);
   LOGGER.info("Config saved.");
