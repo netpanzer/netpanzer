@@ -307,7 +307,7 @@ void ScriptManager::runFileInTable(const NPString& filename,
 void ScriptManager::loadConfigFile(const NPString& filename,
                                    const NPString& table, const bool usePhysFS) {
   const char* path = usePhysFS ? filesystem::getRealName(filename.c_str()).c_str() : filename.c_str();
-  LOGGER.info("Reading config %s", path);
+  LOGGER.info("Reading config %s from name %s. usePhysFS=%d", path, filename.c_str(), usePhysFS);
   int r = luaL_loadfile(luavm,path);
 
   if (r) {
