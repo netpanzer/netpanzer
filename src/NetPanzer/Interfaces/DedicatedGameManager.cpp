@@ -77,7 +77,7 @@ void DedicatedGameManager::shutdownVideoSubSystem() {
 
 //-----------------------------------------------------------------
 void DedicatedGameManager::initializeGameConfig(const std::string& configfile) {
-  if (configfile == "")
+  if (configfile.empty())
     gameconfig = new GameConfig("/config/server.cfg");
   else
     gameconfig = new GameConfig(configfile);
