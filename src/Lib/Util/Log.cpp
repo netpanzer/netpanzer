@@ -49,7 +49,7 @@ const int Logger::LEVEL_WARNING = 4;
  * Default log level is INFO.
  */
 Logger::Logger() {
-  m_logLevel = LEVEL_WARNING;
+  m_logLevel = LEVEL_INFO;
   m_logfile = 0;
   used_size = 0;
 }
