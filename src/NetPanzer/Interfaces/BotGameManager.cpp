@@ -86,7 +86,7 @@ void BotGameManager::initializeGameConfig(const std::string& configfile) {
   if (configfile == "")
     gameconfig = new GameConfig("/config/bot.cfg");
   else
-    gameconfig = new GameConfig(configfile, false);
+    gameconfig = new GameConfig(configfile);
 }
 
 void BotGameManager::initializeVideoSubSystem() {

@@ -446,7 +446,7 @@ void GameConfig::registerScript(const NPString& table_name) {
                                      bot_getters, bot_setters);
 }
 
-GameConfig::GameConfig(const std::string& luaconfigfile, bool usePhysFS)
+GameConfig::GameConfig(const std::string& luaconfigfile)
     // VariableName("Name", value [, minimum, maximum])
     : hostorjoin("hostorjoin", _game_session_join, 0, _game_session_last - 1),
       quickConnect("quickconnect", false),
@@ -455,7 +455,6 @@ GameConfig::GameConfig(const std::string& luaconfigfile, bool usePhysFS)
 
 {
   this->luaconfigfile = luaconfigfile;
-  this->usePhysFS = usePhysFS;
 
   std::stringstream default_player;
   default_player << "Player" << (rand() % 1000);
@@ -477,7 +476,7 @@ GameConfig::~GameConfig() = default;
 
 void GameConfig::loadConfig() {
 
-  ScriptManager::loadConfigFile(luaconfigfile, "config", this->usePhysFS);
+  ScriptManager::loadConfigFile(luaconfigfile, "config");
 
   if (player_name->length() == 0) {
     std::stringstream default_player;
@@ -527,8 +526,8 @@ void GameConfig::saveConfig() {
     return;
   }
 
-  const char* path = usePhysFS ? filesystem::getRealName(luaconfigfile.c_str()).c_str() : luaconfigfile.c_str();
-  LOGGER.warning("Writing config to: %s from %s. usePhysFS=%d", path, luaconfigfile.c_str(), usePhysFS);
+  const char* path = luaconfigfile.c_str();
+  LOGGER.warning("Writing config to %s ", path);
   OFileStream out(path);
   out << lua_tostring(L, -1) << std::endl;
   lua_pop(L, 1);

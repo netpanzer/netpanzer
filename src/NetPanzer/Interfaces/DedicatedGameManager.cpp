@@ -80,7 +80,7 @@ void DedicatedGameManager::initializeGameConfig(const std::string& configfile) {
   if (configfile == "")
     gameconfig = new GameConfig("/config/server.cfg");
   else
-    gameconfig = new GameConfig(configfile, false);
+    gameconfig = new GameConfig(configfile);
 }
 //-----------------------------------------------------------------
 void DedicatedGameManager::initializeInputDevices() {

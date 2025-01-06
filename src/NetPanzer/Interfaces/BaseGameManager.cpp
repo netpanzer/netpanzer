@@ -80,8 +80,7 @@ void BaseGameManager::shutdownSoundSubSystem() {
 }
 //-----------------------------------------------------------------
 void BaseGameManager::initializeGameConfig(const std::string& configfile) {
-  gameconfig = new GameConfig(configfile.empty() ? "/config/client.cfg" : configfile,
-                              configfile.empty());
+  gameconfig = new GameConfig(configfile.empty() ? "/config/client.cfg" : configfile);
 
   // cleanup/saving of game config is done in main and depends on shutdown
   // process

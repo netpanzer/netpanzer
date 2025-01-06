@@ -116,7 +116,7 @@ class Section;
 
 class GameConfig : public NoCopy {
  public:
-  GameConfig(const std::string& luaconfigfile, bool usePhysFS = true);
+  GameConfig(const std::string& luaconfigfile);
   ~GameConfig();
 
   void loadConfig();
@@ -328,7 +328,6 @@ class GameConfig : public NoCopy {
   static void registerScript(const NPString& table_name);
 
   std::string luaconfigfile;
-  bool usePhysFS;
 
   PIX colorEnumToPix(int color_enum) const {
     switch (color_enum) {

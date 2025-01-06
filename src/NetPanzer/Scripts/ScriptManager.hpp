@@ -44,7 +44,6 @@ class ScriptManager {
 
   static void runFileInTable(const NPString& filename, const NPString& table);
   static void loadConfigFile(const NPString& filename, const NPString& table);
-  static void loadConfigFile(const NPString& filename, const NPString& table, const bool usePhysFS = false);
   static bool loadSimpleConfig(const NPString& filename);
 
   static lua_State* getLuavm() { return luavm; }
