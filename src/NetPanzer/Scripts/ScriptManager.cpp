@@ -306,6 +306,7 @@ void ScriptManager::runFileInTable(const NPString& filename,
 
 void ScriptManager::loadConfigFile(const NPString& filename,
                                    const NPString& table) {
+  LOGGER.info("BEGIN loadConfigFile %s", filename.c_str());
   const char* path = filesystem::getRealName(filename.c_str()).c_str();
   LOGGER.info("Reading config from %s", path);
   int r = luaL_loadfile(luavm,path);
