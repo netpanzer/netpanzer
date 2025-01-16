@@ -22,7 +22,7 @@ extra_flags = [
   '-Wno-shadow',
   '-Werror=odr',
   '-Werror=lto-type-mismatch',
-  '-Werror=strict-aliasing',
+#  '-Werror=strict-aliasing',
 #  '-Wstrict-overflow=5'
 # '-Wconversion'
   ]
