@@ -18,33 +18,33 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __SERVERLISTVIEW_HPP__
 #define __SERVERLISTVIEW_HPP__
 
-#include "Views/Components/View.hpp"
 #include "MasterServer/ServerInfo.hpp"
 #include "MasterServer/ServerList.hpp"
 #include "MasterServer/ServerQueryThread.hpp"
+#include "Views/Components/View.hpp"
 
-class ServerListView : public View
-{
-public:
-    ServerListView();
-    virtual ~ServerListView();
+class ServerListView : public View {
+ public:
+  ServerListView();
+  virtual ~ServerListView();
 
-    void refresh();
-    void endQuery();
-        
-    virtual void doDraw(Surface& windowArea, Surface& clientArea);
-    virtual int lMouseUp(const iXY& up_pos, const iXY& down_pos);
+  void refresh();
+  void endQuery();
+  masterserver::ServerList getViewModel();
 
-private:
-    masterserver::ServerList serverlist;
-    masterserver::ServerQueryThread* queryThread;
+  virtual void doDraw(Surface& windowArea, Surface& clientArea);
+  virtual int lMouseUp(const iXY& up_pos, const iXY& down_pos);
 
-    Surface lock_image;
+ private:
+  masterserver::ServerList serverlist;
+  masterserver::ServerQueryThread* queryThread;
 
-    static void buttonRefresh();
+  Surface lock_image;
+  Surface auth_image;
+
+  static void buttonRefresh();
 };
 
-extern ServerListView* serverlistview; // XXX ugly
+extern ServerListView* serverlistview;  // XXX ugly
 
 #endif
-

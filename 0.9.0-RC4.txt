@@ -1,0 +1,216 @@
+RELEASE Notes
+
+
+NETPANZER 0.9.0 - Release Candidate 4
+
+
+Third candidate release (there will be others before official release) of forthcoming netPanzer 0.9.0 (War Of The Worlds).
+
+
+
+Download binaries here (Windows and Linux): https://sourceforge.net/projects/netpanzer/files/dev/
+
+
+Source at:  https://sourceforge.net/projects/netpanzer/
+
+(be sure to checkout 'dev' branch)
+
+
+Please report bugs in netpanzer.info forum. I need your feedback. Thank You!
+
+
+April, 4, 2017
+
+Fulvio Testi aka 'fu'
+
+
+
+
+-------------------------------------------------------------
+
+
+
+
+The following is a list of the main FIXES/NEW FEATURES in this Development Release:
+
+
+  XXX RC4 XXX
+
+
+  - new extra top info bar with live ping stats to and from gameserver (toggle it with F7)
+
+  - newly refactored bots - 2 types now:
+    bot class = 1 (aka the 'Zombie' Bot) is the original bot revisited (much better shooting and after taking max bases allowed it attacks the enemies)
+    bot_class = 2 (aka the 'Fighter' Bot) is the new Bot for duels. He follows you through the map...
+    for each bot you can choose bot_allied = true or false -> that bot will ask to ally to other bots in game...
+    for each bot you can set action_speed = [from 1 to 7] - this is the power level of bots...
+    (a third bot type who conquer outposts while talking about politics and religion is in preparation... hehe)
+
+  - the new ASTOUNDING 'Desert' tileset/mapstyle by Silvestre (expect more surprises from him soon) !
+
+  - a new 'mapstyle' button in Host panel so you can change mapstyle locally without editing config files. Good for testing mapstyles.
+
+  - network scrambling is now default, if for some reason you want to deactivate it you can run the server in DEBUG mode (option -g). 
+
+  - added icons in ranking TAB that show if player is human or bot (must add a captcha soon..) - also the 'mute' icons have been replaced.
+    
+
+
+  ... and many changes 'under the hood' like the elimination of some memory leaks (both on runtime and on exit), correction of some bugs on restart and other stuff in preparation of new features.
+
+
+
+  P.S. Next RC could be the last trial before official release...
+
+
+
+
+
+-----------------------------
+
+
+
+  FROM RC3
+
+
+
+- While re-writing the encryption part in RC2 (btw now it actually works), I ended up disabling the anti-spam system... now it's back to its place.
+
+- I totally re-factored the unit style selection system. It worked fine, but it was highy inefficient both in terms of network and memory.
+  Now it is optimized. You will probably notice that the connection time is shorter...
+
+- Added 'Abandon' button in base unit selection window - now you can disown outposts. Note: 'This' means just that outpost,
+  while 'All' means all of your outposts.
+
+- In the global destruct powerup (a red one), the unlucky player now loses all of his outposts too.
+
+
+- fixed visualization of names in outposts (owners, outpost names, units in production etc). Now they are responsive based on string length. 
+ 
+
+- I deleted a timer in the input management - it could have been an advantage for those unfair player who use tools to bypass it...
+  You might notice a slightly better reaction time for movements and shooting.
+
+- I applied a (actually stupid) patch in the pathfinding code and it seems that the negative effect of pathfinding panic (the infamous 'node unreachable' messages in server)
+  with tanks slowing down and blocking are now HIGHLY REDUCED! Not tested much, but if it's gonna be true you guys will have to pay me a beer to say the least ;-)  
+
+
+
+-----------------------------
+
+
+
+  FROM RC2:
+
+- Ok admittedly the scrambler didn't work as expected in RC1. This time should work correctly.
+  If it is so, this might be THE END OF CHEATING (no more Cheat Engine, packet editors etc.) as we know it in netpanzer. Let's wait and see...
+
+- The flag change network message has been added to the anti-spam list (no more pseudo-animated flags)
+
+- Added a 'mute' button in Ranking Tab (an 'M' at the end of each line). Somebody is saying terrible things about you in game? Don't get angry, just MUTE him!
+  You will not hear anything from him anymore (including chat, ally chat, ally chat requests)! :D   
+
+- Powerups (there were many suggestions). I decided to add many other global unit powerups - which affect ALL player's units.
+  As they are more powerful they also are more rare (the powerup thunderbolt is RED in this case - btw made by Silvestre).
+  This is the probability table now: 50% single units powerups, 30% bonus units powerups, 20% global unit powerups.
+  The global unit powerups are: global repair, global speed +20%, global firepower +20%, global reload -20%, global destruct
+
+- Added mapstyle 'Desert' - a beautiful artwork by Silvestre.
+
+
+
+-------------------------
+
+
+
+  FROM RC1:
+
+  
+- multi unit styles (the famous set by Nessie+others made by me)
+
+  unit styles are chosen once connected to a gameserver. A new window appears. You can toggle that window with 'u' key. By clicking on a unit style you're redirected to flags window.
+  Until you have chosen a flag you can always go back and change your selection. For example you might want to see what style of unit the other players have chosen before selecting yours.
+  The styles available in gameserver are set in server.cfg  
+
+
+- multi map styles (quick/cheap but funny color filtering of our only tileset)
+
+  mapstyle (that you can set in server.cfg) can be one of the following: SummerDay (the original one), IcyWinter, Moonlight, Scorched and Martian. 
+  
+  
+- powerups refactored
+
+  unit properties can finally change dinamically and are sinced through the network - remember those powerups like "unit speed powerup" that never worked? Well now are fully operational.   
+  the new bonuses are: unit speed powerup (50% faster every hit), firepower, reload, weapon range, superunit (a unit with the best of all other units) and global repair (all your units get repaired instantly)   
+
+
+- LAST MINUTE FIX! I just noticed that after a restart powerups don't appear anymore on clients screens (if they were already connected before). And that was a pity now that powerups finally work!
+  The problem seems to affect previous versions too. So there is now a fix (but has to be verified) - and in general the 'restarting' phase needs more coding work... 
+
+
+- bots are back!
+
+  did you miss them? Hehe! It's now actually possible to write much more 'smart' bots as the client (or the Bot) has got all the information synced with gameserver.
+  My bet is that the most fun will soon come from AI here in netpanzer! You can allow bots in your gameserver in server.cfg.
+
+
+- new game modes
+
+  game mode 3 (objective AND frag limit) - you must have both to win; game mode 4 (frag limit OR time limit) - whichever happens first.
+  the objective percentage, frag limit and time are shown correctly in the top game bar. 
+
+
+- new respawn type
+
+  respawtype = 2 (random alternative) - It's random but never 2 consecutive respawns in the same spot.
+
+
+- network data 'scrambled'
+
+  not exactly an ecryption, as the cipher adopted here is trivial and only some bytes are encoded but...
+  since a new key is generated by gameserver every 30 secs a random data stream is created and IMHO this could be enough to make most packet sniffers/editors around ineffective.
+  (after all we are targeting lamers)
+
+
+- player names sanitized
+
+  finally no more 'Joe' and 'Joe ' that appear both in game as 'Joe'! Player names are trimmed, multiple spaces and non printable characters eliminated.
+  chars allowed are alphanumeric + a subset of ASCII printable chars (99% of already registered nicknames should be ok).
+    
+
+- SHIFT + m now toggles a bigger map.
+
+
+- Radar is now always on. Since it was trivial to make it so by changing a couple of lines in the source... 
+
+
+
+
+
+And many others minor undocumented changes and fixes.
+
+A better list will be added on official release. 
+
+
+
+The new unit styles are: original, danisch, desert, metro, night, nva, platane, surpat, tiger, woodland, nva2, platane2, scorched, martian
+
+The new tileset styles (or mapstyle) are (note the capital letters): SummerDay, IcyWinter, Moonlight, Scorched, Martian
+
+New in server.cfg: 
+
+- game.bots_allowed = false (or true)
+- game.mapstyle = "[string]"
+
+game.gametype can now be also 3 (objective AND frag limit) or 4 (fraglimit OR timelimit)
+
+game.respawntype can now be also 2 (random alt) 
+
+
+
+
+-------------------------------------------------------------
+
+
+
+

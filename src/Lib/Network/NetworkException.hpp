@@ -22,14 +22,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <exception>
 #include <string>
 
-class NetworkException : public std::exception
-{
-protected:
-    std::string errormsg;
-public:
-    NetworkException(const std::string& s) : errormsg(s) {};
-    virtual ~NetworkException() throw() {};
-    virtual const char * what() const throw() { return errormsg.c_str(); };
+class NetworkException : public std::exception {
+ protected:
+  std::string errormsg;
+
+ public:
+  NetworkException(const std::string& s) : errormsg(s){};
+  virtual ~NetworkException(){};
+  virtual const char* what() const throw() { return errormsg.c_str(); };
 };
 
 #endif

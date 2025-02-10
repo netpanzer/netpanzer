@@ -1,0 +1,27 @@
+.idea
+.sconsign.dblite
+AppDir
+build
+netpanzer
+pak2bmp
+bmp2pak
+# For some IDEs
+cmake-build-debug
+# For building.
+support/icon/npicon.o
+*.dll
+*.o
+*.log
+
+subprojects/**
+!subprojects/packagecache/
+!subprojects/packagecache/**
+
+# wrap files required
+!subprojects/**/*.wrap
+/subprojects/libpng.wrap
+/subprojects/packagecache/libpng-1.6.37-3-wrap.zip
+/subprojects/packagecache/libpng-1.6.37.tar.gz
+/subprojects/packagecache/zlib-1.2.11-5-wrap.zip
+/subprojects/packagecache/zlib-1.2.11.tar.gz
+/subprojects/zlib.wrap

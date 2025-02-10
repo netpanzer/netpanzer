@@ -19,49 +19,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __HelpScrollViewAlt_hpp__
 #define __HelpScrollViewAlt_hpp__
 
-#include <vector>
 #include <string>
+#include <vector>
 
-#include "Views/MainMenu/SpecialButtonView.hpp"
 #include "2D/Surface.hpp"
-#include "Views/Components/ScrollBar.hpp"
 #include "Views/Components/Button.hpp"
+#include "Views/Components/ScrollBar.hpp"
+#include "Views/Components/View.hpp"
+#include "Views/Components/ScrollableText.hpp"
 
 //---------------------------------------------------------------------------
-class HelpScrollViewAlt : public SpecialButtonView
-{
-protected:
-    int columns;
-    int rows;
+class HelpScrollViewAlt : public View {
+ protected:
+  ScrollableText *scrollableText;
 
-    int  maxYOffset;
-    void drawHelpText(Surface &dest, const int &x, const int &y);
+ public:
+  HelpScrollViewAlt();
 
-    ScrollBar *scrollBar;
-    std::vector<std::string> text;
+  virtual void doDraw(Surface &windowArea, Surface &clientArea);
+  virtual void actionPerformed(mMouseEvent me);
+  virtual void doActivate();
+  virtual void processEvents();
 
-    enum { TEXT_GAP_SPACE = 3 };
-    void insert(const char *string);
+};  // end HelpScrollView
 
-    Button * upButton;
-    Button * downButton;
-
-    int maxViewableItems;
-    int topViewableItem;
-
-public:
-    HelpScrollViewAlt();
-    virtual ~HelpScrollViewAlt()
-    {
-        delete scrollBar;
-    }
-
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
-    virtual void actionPerformed(mMouseEvent me);
-    virtual void doActivate();
-    virtual void processEvents();
-
-}
-; // end HelpScrollView
-
-#endif // end __HelpScrollView_hpp__
+#endif  // end __HelpScrollView_hpp__

@@ -1,0 +1,17 @@
+hitpoints =  450;
+attack =  80;
+reload =  40;
+range =  20;
+regen =  35;
+defend_range =  15;
+speed_rate =  14;
+speed_factor =  2;
+image =  "pics/menus/vehicleSelectionView/bear.bmp"
+bodysprite =  "BearHNSD.pak"
+bodyshadow =  "BearHSSD.pak"
+turretsprite =  "BearTNSD.pak"
+turretshadow =  "BearTSSD.pak"
+soundselected =  "mt-selected"
+soundfire =  "mt-fire"
+weapon =  "SHELL"
+boundbox =  60

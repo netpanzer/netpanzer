@@ -24,20 +24,20 @@ class NetMessage;
 class NetPacket;
 class UMesgAICommand;
 
-class NetPacketDebugger
-{
-public:
-    static void logPacket(const char* domain, const NetPacket* packet);
-    static void logMessage(const char* domain, const NetMessage* message);
+class NetPacketDebugger {
+ public:
+  static void logPacket(const char* domain, const NetPacket* packet);
+  static void logMessage(const char* domain, const NetMessage* message);
 
-private:
-    static void logTerminalMessage(std::ostream& stream, const NetMessage* message);
-    static void logAICommand(std::ostream& str, const UMesgAICommand& command);
-    static void logMultiMessage(std::ostream& str, const NetMessage* message);
-    static void logUnitMessage(std::ostream& log, const NetMessage* message);
-    static void logUnitOpcodeMessage(std::ostream& log, const NetMessage* message);
-    static void logConnectMessage(std::ostream& log, const NetMessage* message);
+ private:
+  static void logTerminalMessage(std::ostream& stream,
+                                 const NetMessage* message);
+  static void logAICommand(std::ostream& str, const UMesgAICommand& command);
+  static void logMultiMessage(std::ostream& str, const NetMessage* message);
+  static void logUnitMessage(std::ostream& log, const NetMessage* message);
+  static void logUnitOpcodeMessage(std::ostream& log,
+                                   const NetMessage* message);
+  static void logConnectMessage(std::ostream& log, const NetMessage* message);
 };
 
 #endif
-

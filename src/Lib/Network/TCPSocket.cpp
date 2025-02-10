@@ -16,118 +16,91 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "TCPSocket.hpp"
 
 #include <sstream>
 #include <stdexcept>
 
-#include "SocketHeaders.hpp"
 #include "Address.hpp"
-#include "TCPSocket.hpp"
+#include "SocketHeaders.hpp"
 #include "Util/Log.hpp"
 
+namespace network {
 
-namespace network
-{
-
-TCPSocket::TCPSocket(SOCKET fd, const Address& newaddr, TCPSocketObserver *o)
-    throw(NetworkException)
-    : SocketBase(fd,newaddr), observer(o)
-{
-    // nothing, socket is added to SocketManager because is already connected.
+TCPSocket::TCPSocket(SOCKET fd, const Address &newaddr, TCPSocketObserver *o)
+    : SocketBase(fd, newaddr), observer(o) {
+  // nothing, socket is added to SocketManager because is already connected.
 }
 
-TCPSocket::TCPSocket(const std::string &host, const std::string &port, TCPSocketObserver *o)
-    throw(NetworkException)
-    : SocketBase(), observer(o)
-{
-    Address a(true, false);
-    a.setParams(host, port);
-    setAddress(a);
+TCPSocket::TCPSocket(const std::string &host, const std::string &port,
+                     TCPSocketObserver *o)
+    : SocketBase(), observer(o) {
+  Address a(true, false);
+  a.setParams(host, port);
+  setAddress(a);
 }
 
-TCPSocket::TCPSocket(const Address& address, TCPSocketObserver *o)
-    throw(NetworkException)
-    : SocketBase(address,true), observer(o)
-{
-#ifdef _WIN32
-    setNoDelay();
-    doConnect();
+TCPSocket::TCPSocket(const Address &address, TCPSocketObserver *o)
+    : SocketBase(address, true), observer(o) {
+#if defined _WIN32 || defined __MINGW32__
+  setNoDelay();
+  doConnect();
 #else
-    doConnect();
-    setNoDelay();
-#endif
-
-}
-
-TCPSocket::~TCPSocket()
-{ }
-
-void
-TCPSocket::onResolved()
-{
-    SocketBase::onResolved();
-    create();
-    setNonBlocking();
-    setConfigured();
-#ifdef _WIN32
-    setNoDelay();
-    doConnect();
-#else
-    doConnect();
-    setNoDelay();
+  doConnect();
+  setNoDelay();
 #endif
 }
 
-void
-TCPSocket::destroy()
-{
-    observer=0;
-    doClose();
+TCPSocket::~TCPSocket() {}
+
+void TCPSocket::onResolved() {
+  SocketBase::onResolved();
+  create();
+  setNonBlocking();
+  setConfigured();
+#if defined _WIN32 || defined __MINGW32__
+  setNoDelay();
+  doConnect();
+#else
+  doConnect();
+  setNoDelay();
+#endif
 }
 
-size_t
-TCPSocket::send(const void* data, size_t size) throw(NetworkException)
-{
-    int res = doSend(data,size);
-    if (!res && !observer) // disconnected
-        return size; // as is disconnected, avoid catching of unsend data
-    return res;
+void TCPSocket::destroy() {
+  observer = 0;
+  doClose();
 }
 
-void
-TCPSocket::onConnected()
-{
-    SocketBase::onConnected();
-    if (observer)
-        observer->onConnected(this);
+size_t TCPSocket::send(const void *data, size_t size) {
+  int res = doSend(data, size);
+  if (!res && !observer)  // disconnected
+    return size;          // as is disconnected, avoid catching of unsend data
+  return res;
 }
 
-void
-TCPSocket::onDisconected()
-{
-    if (observer)
-        observer->onDisconected(this);
-    destroy();
+void TCPSocket::onConnected() {
+  SocketBase::onConnected();
+  if (observer) observer->onConnected(this);
 }
 
-void
-TCPSocket::onDataReady()
-{
-    char buffer[4096];
-    int len;
-    do {
-        len = doReceive(buffer,sizeof(buffer));
-        if (len && observer)
-            observer->onDataReceived(this, buffer,len);
-    } while (len && observer);
+void TCPSocket::onDisconected() {
+  if (observer) observer->onDisconnected(this);
+  destroy();
 }
 
-void
-TCPSocket::onSocketError()
-{
-    if (observer)
-        observer->onSocketError(this);
-    destroy();
+void TCPSocket::onDataReady() {
+  char buffer[4096];
+  int len;
+  do {
+    len = doReceive(buffer, sizeof(buffer));
+    if (len && observer) observer->onDataReceived(this, buffer, len);
+  } while (len && observer);
 }
 
+void TCPSocket::onSocketError() {
+  if (observer) observer->onSocketError(this);
+  destroy();
 }
+
+}  // namespace network
