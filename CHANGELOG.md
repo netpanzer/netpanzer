@@ -54,24 +54,24 @@ helped with some artwork and testing, and has a group in Brazil that occasionall
 ## Other Changes
 * Gameplay: Deleted a timer in the input management - it could have been an advantage for those unfair player who use tools to bypass it... by @futes
 * UI: Updated server list to hide old incompatible servers. It still shows *newer* incompatible servers to encourage upgrading.
-* UI: added icons in ranking TAB that show if player is human or bot (must add a captcha soon..) - also the 'mute' icons have been replaced. by @futes
-* Servers: Anti Cheat Improvements - see README for new setting. The `game.anticheat` setting has been replaced.
+* UI: added icons in ranking TAB that show if player is human or bot (must add a captcha soon..) - also the 'mute' icons have been replaced. by @futes 
+* UI: Improved support for other languages than just English (more characters than just ASCII supported now).
+* Core: Fixed c++17 compatibility (errors, some warnings). Build targets c++17 now.
+* Core: Network layer improvements (fixed catching some exceptions by-value instead of by-ref, fixes some potential memory issues reported by valgrind). 
+* Core: Added netpanzer.io to master server list.
+* Core: Memory leak fixes by @futes
+* Server: Anti Cheat Improvements - see README for new setting. The `game.anticheat` setting has been replaced.
+* Server: Added ability to disable interactive console to run server as daemon.
+* Server: Network scrambling is now default, if for some reason you want to deactivate it you can run the server in DEBUG mode (option -g) by @futes
+* Server: New config: game.bots_allowed = false (or true)
+* Server: New config: game.mapstyle = "[string]"
+* Server: New config: game.gametype can now be also 3 (objective AND frag limit) or 4 (fraglimit OR timelimit)
 * Build: Switching to the Meson build system. by @andy5995 
 * Build: Documentation improvements. by @andy5995 @winrid 
 * Build: Can now compile for MacOS by @andy5995 
 * Build: Can now build and run server from Docker by @andy5995 
 * Build: Introducing new "data dir" concept by @andy5995 
-* Server: Added ability to disable interactive console to run server as daemon. 
-* Core: Fixed c++17 compatibility (errors, some warnings). Build targets c++17 now.
-* Core: Network layer improvements (fixed catching some exceptions by-value instead of by-ref, fixes some potential memory issues reported by valgrind). 
-* Core: Added netpanzer.io to master server list. 
 * Build: Able to compile on windows with MingW
-* UI: Improved support for other languages than just English (more characters than just ASCII supported now).
-* Network scrambling is now default, if for some reason you want to deactivate it you can run the server in DEBUG mode (option -g) by @futes
-* Core: Memory leak fixes by @futes
-* Server: New config: game.bots_allowed = false (or true)
-* Server: New config: game.mapstyle = "[string]"
-* Server: New config: game.gametype can now be also 3 (objective AND frag limit) or 4 (fraglimit OR timelimit)
 
 
 
