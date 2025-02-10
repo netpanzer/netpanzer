@@ -44,12 +44,12 @@ helped with some artwork and testing, and has a group in Brazil that occasionall
 * Gameplay: Bots now pick a random flag instead of a blank image.
 * Gameplay: Pathfinding improvements to greatly reduce "node unreachable" messages from server. by @futes
 * Gameplay: You might notice a slightly better reaction time for movements and shooting. by @futes
-* Core: Fixed crashing if one master server is not available when hosting a game. by @winrid
 * UI: Potential crash when deleting/editing text in text input fields. by @andy5995 
+* UI: Fixes for a crash during resolution selection when list is too large to fit on screen.
+* Core: Fixed crashing if one master server is not available when hosting a game. by @winrid
 * Core: Fix Game Config Not Saving by @winrid in https://github.com/netpanzer/netpanzer/pull/86
 * Core: Fixes server using player.name instead of server.name config for dedicated servers by @winrid in https://github.com/netpanzer/netpanzer/pull/139
 * Core: Fixes Random Crash by @winrid in https://github.com/netpanzer/netpanzer/pull/187
-* UI: Fixes for a crash during resolution selection when list is too large to fit on screen.
 
 ## Other Changes
 * Gameplay: Deleted a timer in the input management - it could have been an advantage for those unfair player who use tools to bypass it... by @futes
