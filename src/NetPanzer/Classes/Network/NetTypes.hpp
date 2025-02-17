@@ -20,55 +20,39 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Util/Endian.hpp"
 
-namespace net
-{
+namespace net {
 
 typedef Uint8 UInt8;
 typedef Sint8 Int8;
 
-class UInt32
-{
-private:
-    Uint32 val;
-public:
-    UInt32(Uint32 val)
-    {
-        *this = val;
-    }
+class UInt32 {
+ private:
+  Uint32 val;
 
-    operator Uint32() const
-    {
-        return ltoh32(val);
-    }
-    void operator=(Uint32 val)
-    {
-        this->val = htol32(val);
-        return val;
-    }
+ public:
+  UInt32(Uint32 val) { *this = val; }
+
+  operator Uint32() const { return ltoh32(val); }
+  void operator=(Uint32 val) {
+    this->val = htol32(val);
+    return val;
+  }
 } __attribute__((packed));
 
-class UInt16
-{
-private:
-    Uint16 val;
-public:
-    UInt32(Uint16 val)
-    {
-        *this = val;
-    }
+class UInt16 {
+ private:
+  Uint16 val;
 
-    operator Uint16() const
-    {
-        return ltoh16(val);
-    }
-    void operator=(Uint16 val)
-    {
-        this->val = htol16(val);
-        return val;
-    }
+ public:
+  UInt32(Uint16 val) { *this = val; }
+
+  operator Uint16() const { return ltoh16(val); }
+  void operator=(Uint16 val) {
+    this->val = htol16(val);
+    return val;
+  }
 } __attribute__((packed));
 
-} // end of namespace net
+}  // end of namespace net
 
 #endif
-

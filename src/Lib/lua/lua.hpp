@@ -3,9 +3,9 @@
 // <<extern "C">> not supplied automatically because Lua also compiles as C++
 
 extern "C" {
-#include "lua/lua.h"
-#include "lua/lualib.h"
-#include "lua/lauxlib.h"
+#include <lauxlib.h>
+#include <lua.h>
+#include <lualib.h>
 }
 
-extern lua_State * globalLuaState;
+extern lua_State* globalLuaState;
