@@ -38,7 +38,7 @@ newer version will be more accessible to you.
 
 ### Latest Download
 
-[You can download the latest version here.](https://github.com/netpanzer/netpanzer/releases/tag/0.9.0-RC-6)
+[You can download the latest version here.](https://github.com/netpanzer/netpanzer/releases)
 
 [Weekly Linux AppImage is available here.](https://github.com/netpanzer/netpanzer/releases/tag/appimage-weekly)
 
