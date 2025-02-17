@@ -34,7 +34,7 @@ Note: If you only are able to get v0.8.7 from your distribution, change the
     server.masterservers = "netpanzer.io"
 
 One we release our next official version, this will be done automatically and the
-newer version will be more accessible to you. **Do not leave the old master sever in your config** or else the game will
+newer version will be more accessible to you. **Do not leave the old master server in your config** or else the game will
 crash, as 0.8.7 has a bug causing it to segfault if any servers are not available. We've fixed this in 0.9.0.
 
 ### Latest Download
