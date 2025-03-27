@@ -16,51 +16,40 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #include "TCPListenSocket.hpp"
+
 #include "Util/Log.hpp"
 
-namespace network
-{
-    
-TCPListenSocket::TCPListenSocket(const Address& newaddr, TCPListenSocketObserver *o)
-    : SocketBase(newaddr,true), observer(o)
-{
-    setReuseAddr();
-    bindSocket();
-    doListen();
+namespace network {
+
+TCPListenSocket::TCPListenSocket(const Address &newaddr,
+                                 TCPListenSocketObserver *o)
+    : SocketBase(newaddr, true), observer(o) {
+  setReuseAddr();
+  bindSocket();
+  doListen();
 }
 
-void
-TCPListenSocket::destroy()
-{
-    doClose();
+void TCPListenSocket::destroy() { doClose(); }
+
+void TCPListenSocket::onSocketError() {
+  if (observer) observer->onSocketError(this);
 }
 
-void
-TCPListenSocket::onSocketError()
-{
-    if ( observer )
-        observer->onSocketError(this);
-}
-
-void
-TCPListenSocket::onDataReady()
-{
-    Address newaddr;
-    SOCKET newsock;
-    TCPSocketObserver * newobserver;
-    try {
-        while ( (newsock=doAccept(newaddr)) != INVALID_SOCKET) {
-            newobserver = observer->onNewConnection(this, newaddr);
-            TCPSocket * newcon = new TCPSocket(newsock,newaddr,newobserver);
-            newcon->setNoDelay();
-            newcon->onConnected();
-        }
-    } catch (NetworkException e) {
-        LOGGER.warning("Error Accepting new connections: '%s'", e.what());
+void TCPListenSocket::onDataReady() {
+  Address newaddr;
+  SOCKET newsock;
+  TCPSocketObserver *newobserver;
+  try {
+    while ((newsock = doAccept(newaddr)) != INVALID_SOCKET) {
+      newobserver = observer->onNewConnection(this, newaddr);
+      TCPSocket *newcon = new TCPSocket(newsock, newaddr, newobserver);
+      newcon->setNoDelay();
+      newcon->onConnected();
     }
+  } catch (NetworkException &e) {
+    LOGGER.warning("Error Accepting new connections: '%s'", e.what());
+  }
 }
 
-
-}
+}  // namespace network

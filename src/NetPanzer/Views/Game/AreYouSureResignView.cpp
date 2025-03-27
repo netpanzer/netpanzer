@@ -16,133 +16,130 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #include "AreYouSureResignView.hpp"
-#include "Views/Components/Desktop.hpp"
-#include "Views/Components/Button.hpp"
-#include "Interfaces/GameManager.hpp"
-#include "Particles/ParticleSystem2D.hpp"
-#include "Particles/Particle2D.hpp"
-#include "Views/MainMenu/MenuTemplateView.hpp"
-#include "System/Sound.hpp"
-#include "Classes/ScreenSurface.hpp"
+
 #include "2D/Palette.hpp"
+#include "Classes/ScreenSurface.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/GameManager.hpp"
+#include "Particles/Particle2D.hpp"
+#include "Particles/ParticleSystem2D.hpp"
+#include "System/Sound.hpp"
+#include "UStyleSelectionView.hpp"
+#include "Units/UnitProfileInterface.hpp"
+#include "Views/Components/Button.hpp"
+#include "Views/Components/Desktop.hpp"
+#include "Views/GameViewGlobals.hpp"
+#include "Views/MainMenu/MenuTemplateView.hpp"
 #include "Views/MainMenu/OptionsTemplateView.hpp"
 
-#include "Views/GameViewGlobals.hpp"
-
-
 //---------------------------------------------------------------------------
-static void bYES()
-{
-    if(gameconfig->quickConnect == true) {
-        GameManager::exitNetPanzer();
-        return;
-    }
+static void bYES() {
+  if (gameconfig->quickConnect == true) {
+    GameManager::exitNetPanzer();
+    return;
+  }
 
-      //GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
-      //sprintf(MenuTemplateView::currentMultiView, "GetSessionView");
+  // GameManager::drawTextCenteredOnScreen("Loading Main View...",
+  // Color::white); sprintf(MenuTemplateView::currentMultiView,
+  // "GetSessionView");
 
-    // Vlad put all code in here for shutdown.
-    //----------------------
-    GameManager::quitNetPanzerGame();
-    //----------------------
+  // Vlad put all code in here for shutdown.
+  //----------------------
+  GameManager::quitNetPanzerGame();
+  //----------------------
 
-    // Swap to the menu resolution.
-    //GameManager::setVideoMode(iXY(640, 480), false);
+  // Swap to the menu resolution.
+  // GameManager::setVideoMode(iXY(640, 480), false);
 
-      //GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
+  // GameManager::drawTextCenteredOnScreen("Loading Main View...",
+  // Color::white);
 
-    // Must remove the gameView first so that the initButtons detects that
-    // and loads the correct buttons.
-    Desktop::setVisibilityAllWindows(false);
+  // Must remove the gameView first so that the initButtons detects that
+  // and loads the correct buttons.
+  Desktop::setVisibilityAllWindows(false);
 
-    Desktop::setVisibility("MainView", true);
+  // cleaning some vectors and resetting stuff - important on restart!
+  UnitProfileInterface::cleaning();
+  GameManager::cleaning();
+  UnitProfileSprites::clearProfiles();
+  UnitProfileInterface::clearProfiles();
 
-    View *v = Desktop::getView("OptionsView");
+  UStyleSelectionView::rstyle_mem = 0;
 
-    if (v != 0)
-    {
-        ((OptionsTemplateView *)v)->initButtons();
-        ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-    }
+  Desktop::setVisibility("MainView", true);
 
+  View *v = Desktop::getView("OptionsView");
 
+  if (v != 0) {
+    ((OptionsTemplateView *)v)->initButtons();
+    ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
+  }
 }
 
 //---------------------------------------------------------------------------
-static void bNO()
-{
-    Desktop::setVisibility("AreYouSureResignView", false);
-    //Desktop::setVisibility("ResignView", true);
+static void bNO() {
+  Desktop::setVisibility("AreYouSureResignView", false);
+  // Desktop::setVisibility("ResignView", true);
 }
 
 // AreYouSureResignView
 //---------------------------------------------------------------------------
-AreYouSureResignView::AreYouSureResignView() : SpecialButtonView()
-{
-    setSearchName("AreYouSureResignView");
-    setTitle("Resign");
-    setSubTitle("");
-    loaded = false;
-	} // end AreYouSureResignView::AreYouSureResignView
+AreYouSureResignView::AreYouSureResignView() : SpecialButtonView() {
+  setSearchName("AreYouSureResignView");
+  setTitle("Resign");
+  setSubTitle("");
+  loaded = false;
+}  // end AreYouSureResignView::AreYouSureResignView
 
 // init
 //---------------------------------------------------------------------------
-void AreYouSureResignView::init()
-{
-    removeAllButtons();
+void AreYouSureResignView::init() {
+  removeAllButtons();
 
-    setBordered(false);
-    setAllowResize(false);
-    setDisplayStatusBar(false);
+  setBordered(false);
+  setAllowResize(false);
+  setDisplayStatusBar(false);
 
-    //moveTo(iXY(0, 0));
-    //resize(iXY(800, 600));
-    moveTo(bodyTextRect.min);
-    resize(bodyTextRect.getSize());
+  // moveTo(iXY(0, 0));
+  // resize(iXY(800, 600));
+  moveTo(bodyTextRect.min);
+  resize(bodyTextRect.getSize());
 
-    int x = (getClientRect().getSize().x - (141 * 2 + 20)) / 2;
-    int y = getClientRect().getSize().y/2 + 10;
-    add( Button::createSpecialButton( "YES", "YES", iXY(x, y)) );
-    x += 136 + 20;
-    add( Button::createSpecialButton( "NO", "NO", iXY(x, y)) );
-    loaded = true;
-} // end AreYouSureResignView::init
+  int x = (getClientRect().getSize().x - (141 * 2 + 20)) / 2;
+  int y = getClientRect().getSize().y / 2 + 10;
+  add(Button::createSpecialButton("YES", "YES", iXY(x, y)));
+  x += 136 + 20;
+  add(Button::createSpecialButton("NO", "NO", iXY(x, y)));
+  loaded = true;
+}  // end AreYouSureResignView::init
 
 // doDraw
 //---------------------------------------------------------------------------
-void AreYouSureResignView::doDraw(Surface &viewArea, Surface &clientArea)
-{
-    viewArea.bltLookup(getClientRect(), Palette::darkGray256.getColorArray());
-    //viewArea.drawButtonBorder(r, Color::lightGreen, Color::darkGreen);
+void AreYouSureResignView::doDraw(Surface &viewArea, Surface &clientArea) {
+  viewArea.bltLookup(getClientRect(), Palette::darkGray256.getColorArray());
+  // viewArea.drawButtonBorder(r, Color::lightGreen, Color::darkGreen);
 
-    viewArea.bltStringCenterMin30("Are you sure you wish to Resign?", Color::white);
+  viewArea.bltStringCenterMin30("Are you sure you wish to Resign?",
+                                Color::white, Color::darkGray);
 
-    View::doDraw(viewArea, clientArea);
-} // end AreYouSureResignView::doDraw
+  View::doDraw(viewArea, clientArea);
+}  // end AreYouSureResignView::doDraw
 
 // doActivate
 //---------------------------------------------------------------------------
-void AreYouSureResignView::doActivate()
-{
-    if ( ! loaded )
-    {
-	init();
-    }
-    Desktop::setActiveView(this);
-} // end AreYouSureResignView::doActivate
+void AreYouSureResignView::doActivate() {
+  if (!loaded) {
+    init();
+  }
+  Desktop::setActiveView(this);
+}  // end AreYouSureResignView::doActivate
 
-void AreYouSureResignView::onComponentClicked(Component* c)
-{
-    string cname = c->getName();
-    if ( !cname.compare("Button.YES") )
-    {
-        bYES();
-    }
-    else if ( !cname.compare("Button.NO") )
-    {
-        bNO();
-    }
+void AreYouSureResignView::onComponentClicked(Component *c) {
+  std::string cname = c->getName();
+  if (!cname.compare("Button.YES")) {
+    bYES();
+  } else if (!cname.compare("Button.NO")) {
+    bNO();
+  }
 }

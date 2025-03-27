@@ -17,50 +17,45 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "HelpView.hpp"
-#include "Views/Components/Desktop.hpp"
 
+#include "Views/Components/Desktop.hpp"
 #include "Views/Game/GameView.hpp"
 #include "Views/GameViewGlobals.hpp"
 
-//#include "Interfaces/GameManager.hpp"
-//#include "Interfaces/GameConfig.hpp"
-
+// #include "Interfaces/GameManager.hpp"
+// #include "Interfaces/GameConfig.hpp"
 
 // HelpView
 //---------------------------------------------------------------------------
-HelpView::HelpView() : MenuTemplateView()
-{
-    setSearchName("HelpView");
-    setTitle("Help Information");
-    setSubTitle("");
-    //setVisible(true);
-} // end HelpView::HelpView
+HelpView::HelpView() : MenuTemplateView() {
+  setSearchName("HelpView");
+  setTitle("Help Information");
+  setSubTitle("");
+  setAllowResize(false);
+  setAllowMove(false);
+  // setVisible(true);
+}  // end HelpView::HelpView
 
 // doDraw
 //---------------------------------------------------------------------------
-void HelpView::doDraw(Surface &viewArea, Surface &clientArea)
-{
-    MenuTemplateView::doDrawAlt(viewArea, clientArea);
+void HelpView::doDraw(Surface &viewArea, Surface &clientArea) {
+  MenuTemplateView::doDrawAlt(viewArea, clientArea);
 }
- // end HelpView::doDraw
+// end HelpView::doDraw
 
 // doActivate
 //---------------------------------------------------------------------------
-void HelpView::doActivate()
-{
-    MenuTemplateView::doActivate();
-    Desktop::setVisibilityNoDoAnything("HelpScrollView", true);
-} // end HelpView::doActivate
+void HelpView::doActivate() {
+  MenuTemplateView::doActivate();
+  Desktop::setVisibilityNoDoAnything("HelpScrollView", true);
+}  // end HelpView::doActivate
 
 // doDeactivate
 //---------------------------------------------------------------------------
-void HelpView::doDeactivate()
-{
-} // end HelpView::doDeactivate
+void HelpView::doDeactivate() {}  // end HelpView::doDeactivate
 
 // loadTitleSurface
 //---------------------------------------------------------------------------
-void HelpView::loadTitleSurface()
-{
-    doLoadTitleSurface("helpTitle");
-} // end HelpView::loadTitleSurface
+void HelpView::loadTitleSurface() {
+  // doLoadTitleSurface("helpTitle");
+}  // end HelpView::loadTitleSurface

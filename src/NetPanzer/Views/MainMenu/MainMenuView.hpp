@@ -18,17 +18,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __MainMenuView_hpp__
 #define __MainMenuView_hpp__
 
-#include "Views/Components/View.hpp"
 #include "2D/Surface.hpp"
+#include "Views/Components/View.hpp"
 #include "Views/MainMenu/MenuTemplateView.hpp"
 
 //--------------------------------------------------------------------------
-class MainMenuView : public MenuTemplateView
-{
-public:
-    MainMenuView();
-    //virtual void drawMBack();
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
-}; // end MainMenuView
+class MainMenuView : public MenuTemplateView {
+ public:
+  MainMenuView();
+  // virtual void drawMBack();
+  virtual void doDraw(Surface &windowArea, Surface &clientArea);
+};  // end MainMenuView
 
-#endif // end __MainMenuView_hpp__
+#endif  // end __MainMenuView_hpp__

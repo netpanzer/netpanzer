@@ -19,30 +19,31 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NTIMER_HPP_
 #define _NTIMER_HPP_
 
-#include "SDL.h"
+#include <SDL.h>
 
-class NTimer
-{
-public:
-    NTimer() : starttime(0), timeout(0) {}
-    NTimer(Uint32 t) : starttime(0), timeout(t) {}
-    
-    inline void reset()              { starttime = SDL_GetTicks(); }
-    inline void reset(Uint32 t)      { starttime = t; }
-    
-    inline Uint32 getStartTime()     { return starttime; }
+class NTimer {
+ public:
+  NTimer() : starttime(0), timeout(0) {}
+  NTimer(Uint32 t) : starttime(0), timeout(t) {}
 
-    inline void setTimeOut(Uint32 t) { timeout = t; }
+  inline void reset() { starttime = SDL_GetTicks(); }
+  inline void reset(Uint32 t) { starttime = t; }
 
-    inline Uint32 getTimeOut()       { return timeout; }
-    
-    inline bool isTimeOut() { return (starttime+timeout)<SDL_GetTicks(); }
-    inline bool isTimeOut(Uint32 t) { return (starttime+timeout)<t; }
-    inline bool checkWithTimeOut(Uint32 tout) { return (starttime+tout)<SDL_GetTicks(); }
-    
-private:
-    Uint32 starttime;
-    Uint32 timeout;
+  inline Uint32 getStartTime() { return starttime; }
+
+  inline void setTimeOut(Uint32 t) { timeout = t; }
+
+  inline Uint32 getTimeOut() { return timeout; }
+
+  inline bool isTimeOut() { return (starttime + timeout) < SDL_GetTicks(); }
+  inline bool isTimeOut(Uint32 t) { return (starttime + timeout) < t; }
+  inline bool checkWithTimeOut(Uint32 tout) {
+    return (starttime + tout) < SDL_GetTicks();
+  }
+
+ private:
+  Uint32 starttime;
+  Uint32 timeout;
 };
 
-#endif // _NTIMER_HPP_
+#endif  // _NTIMER_HPP_

@@ -17,44 +17,40 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "Core/NetworkGlobals.hpp"
+
 #include <cstddef>
 
-struct version_data
-{
-    int protocol;
-    const char * text;
+struct version_data {
+  int protocol;
+  const char* text;
 };
 
-struct version_data older_versions[] =
-{
-    (struct version_data){ 1019, "This server requires older netpanzer 0.8.2" },
-    (struct version_data){ 1030, "This server requires older netpanzer 0.8.3" },
-    (struct version_data){ 1105, "This server requires older netpanzer 0.8.4" },
-    (struct version_data){ 1122, "This server requires older netpanzer 0.8.7" }
-     // this is valid for future
+struct version_data older_versions[] = {
+    (struct version_data){1019, "This server requires older netpanzer 0.8.2"},
+    (struct version_data){1030, "This server requires older netpanzer 0.8.3"},
+    (struct version_data){1105, "This server requires older netpanzer 0.8.4"},
+    (struct version_data){1122, "This server requires older netpanzer 0.8.7"}
+
+    // this is valid for future
 };
 
-#define NUM_OLD_VERSIONS (sizeof(older_versions)/sizeof(version_data))
+#define NUM_OLD_VERSIONS (sizeof(older_versions) / sizeof(version_data))
 
-const char * getNetpanzerProtocolMessage(const int protocol)
-{
-    for ( size_t n = 0; n < NUM_OLD_VERSIONS; n++)
-    {
-        if ( older_versions[n].protocol == protocol )
-        {
-            return older_versions[n].text;
-        }
+const char* getNetpanzerProtocolMessage(const int protocol) {
+  for (size_t n = 0; n < NUM_OLD_VERSIONS; n++) {
+    if (older_versions[n].protocol == protocol) {
+      return older_versions[n].text;
     }
+  }
 
-    if ( protocol < older_versions[0].protocol )
-    {
-        return "The server is a very old netpanzer version, cannot use";
-    }
+  if (protocol < older_versions[0].protocol) {
+    return "The server is a very old netpanzer version, cannot use";
+  }
 
-    if ( protocol < older_versions[NUM_OLD_VERSIONS-1].protocol )
-    {
-        return "This server is an older development version, cannot use";
-    }
+  if (protocol < older_versions[NUM_OLD_VERSIONS - 1].protocol) {
+    return "This server is an older development version, cannot use";
+  }
 
-    return "This server is a newer netpanzer, please check http://www.netpanzer.org";
+  return "This server requires a newer version of NetPanzer, checkout "
+         "www.netpanzer.info";
 }

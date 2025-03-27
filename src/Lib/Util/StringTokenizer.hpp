@@ -23,35 +23,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /** a class that splits a string into multiple tokens that are separated by a
  * \ delimiter character
  */
-class StringTokenizer
-{
-public:
-    StringTokenizer(const std::string& newbuffer, char newtoken)
-        : buffer(newbuffer), token(newtoken), pos(0)
-    {
-    }
+class StringTokenizer {
+ public:
+  StringTokenizer(const std::string& newbuffer, char newtoken)
+      : buffer(newbuffer), token(newtoken), pos(0) {}
 
-    std::string getNextToken()
-    {
-        if(pos >= buffer.length())
-            return "";
+  std::string getNextToken() {
+    if (pos >= buffer.length()) return "";
 
-        // skip \ chars
-        while(pos < buffer.length() && buffer[pos] == token)
-            ++pos;
-        std::string::size_type start = pos;
-        // search next \ char
-        while(pos < buffer.length() && buffer[pos] != token)
-            ++pos;
-        
-        return std::string(buffer, start, pos-start);
-    }
+    // skip \ chars
+    while (pos < buffer.length() && buffer[pos] == token) ++pos;
+    std::string::size_type start = pos;
+    // search next \ char
+    while (pos < buffer.length() && buffer[pos] != token) ++pos;
 
-private:
-    const std::string& buffer;
-    char token;
-    std::string::size_type pos;
+    return std::string(buffer, start, pos - start);
+  }
+
+ private:
+  const std::string& buffer;
+  char token;
+  std::string::size_type pos;
 };
 
 #endif
-

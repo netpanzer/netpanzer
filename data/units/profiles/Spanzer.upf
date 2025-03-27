@@ -1,0 +1,17 @@
+hitpoints =  60;
+attack =  15;
+reload =  20;
+range =  10;
+regen =  20;
+defend_range =  8;
+speed_rate =  22;
+speed_factor =  4;
+image =  "pics/menus/vehicleSelectionView/scout.bmp";
+bodysprite =  "SpahHNSD.pak"
+bodyshadow =  "SpahHSSD.pak"
+turretsprite =  "SpahTNSD.pak"
+turretshadow =  "SpahTSSD.pak"
+soundselected =  "yessir"
+soundfire =  "lt-fire"
+weapon =  "SHELL"
+boundbox =  40

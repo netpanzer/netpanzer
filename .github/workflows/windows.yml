@@ -1,0 +1,77 @@
+name: Windows
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: master
+    paths:
+    - 'src/**/**'
+    - 'support/**/*.cpp'
+    - '**meson.build'
+    - 'setup-build.*'
+    - 'subprojects/*.wrap'
+    - '**/windows.yml'
+  pull_request:
+    branches: master
+    paths:
+    - 'src/**/**'
+    - '**meson.build'
+    - 'setup-build.*'
+    - 'subprojects/*.wrap'
+    - '**/windows.yml'
+
+jobs:
+  build:
+    name: ${{ matrix.build.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        build:
+          - os: windows-2022
+
+    runs-on: ${{ matrix.build.os }}
+    env:
+      NETPANZER_DATADIR: ${{ github.workspace }}/data
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Show info
+        run: |
+          echo '${{ toJSON(matrix) }}'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Python Dependencies
+        run: pip install meson ninja
+
+      - name: Install MinGW
+        uses: egor-tensin/setup-mingw@v2
+        with:
+          version: 12.2.0
+
+      - name: Setup
+        run: |
+          .\setup-build.bat _build
+
+      - name: Build
+        run: |
+          cd _build
+          ninja -v
+
+      - name: Test
+        run: |
+          cd _build
+          meson test --suite=netpanzer -v
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: netpanzer_winbin
+          path: ${{ github.workspace }}/_build/*.exe

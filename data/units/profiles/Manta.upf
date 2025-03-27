@@ -1,0 +1,17 @@
+hitpoints =  350;
+attack =  50;
+reload =  35;
+range =  15;
+regen =  30;
+defend_range =  12;
+speed_rate =  20;
+speed_factor =  4;
+image =  "pics/menus/vehicleSelectionView/manta.bmp"
+bodysprite =  "MantHNSD.pak"
+bodyshadow =  "MantHSSD.pak"
+turretsprite =  "MantTNSD.pak"
+turretshadow =  "MantTSSD.pak"
+soundselected =  "lt-selected"
+soundfire =  "lt-fire"
+weapon =  "SHELL"
+boundbox =  40

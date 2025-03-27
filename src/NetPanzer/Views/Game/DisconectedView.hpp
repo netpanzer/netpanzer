@@ -19,24 +19,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _DISCONECTEDVIEW_HPP
 #define _DISCONECTEDVIEW_HPP
 
-#include "Views/MainMenu/SpecialButtonView.hpp"
-#include "2D/Surface.hpp"
 #include <string>
 
+#include "2D/Surface.hpp"
+#include "Views/MainMenu/SpecialButtonView.hpp"
+
 //---------------------------------------------------------------------------
-class DisconectedView : public SpecialButtonView
-{
-private:
-    void init();
-    static void buttonOk();
-    std::string disconectMsg;
+class DisconectedView : public SpecialButtonView {
+ private:
+  void init();
+  static void buttonOk();
+  std::string disconectMsg;
 
-public:
-    DisconectedView();
+ public:
+  DisconectedView();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
-    virtual void doActivate();
-    void setMsg(const char * msg) { disconectMsg=msg; }
+  virtual void doDraw(Surface &windowArea, Surface &clientArea);
+  virtual void doActivate();
+  void setMsg(const char *msg) { disconectMsg = msg; }
 };
 
 #endif
