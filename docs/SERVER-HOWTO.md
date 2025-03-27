@@ -14,8 +14,8 @@ First, we'll download the game server and start it, to test:
 
     cd
     mkdir netpanzer && cd netpanzer
-    wget https://github.com/netpanzer/netpanzer/releases/download/0.9.0-RC-6/netpanzer-linux-0.9.0-RC6-portable.tar.gz
-    tar -xvf netpanzer-linux-0.9.0-RC6-portable.tar.gz
+    wget https://github.com/netpanzer/netpanzer/releases/download/v0.9.0/netpanzer-0.9.0-linux-x86.tar.gz
+    tar -xvf netpanzer-0.9.0-linux-x86.tar.gz
     mkdir -p ~/.netpanzer/config
     echo "server.interactive_console = false" > ~/.netpanzer/config/server.cfg
     ./netpanzer -d
