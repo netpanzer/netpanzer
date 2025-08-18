@@ -41,7 +41,7 @@ jobs:
         fi
 
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - if: ${{ ! contains(matrix.platform, 'amd64') }}
       uses: docker/setup-qemu-action@v3

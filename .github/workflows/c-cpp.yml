@@ -54,7 +54,7 @@ jobs:
       NETPANZER_DATADIR: ${{ github.workspace }}/data
       INST_PREFIX_DIR: ${{ github.workspace }}/inst_test
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
       with:
         submodules: false
 
