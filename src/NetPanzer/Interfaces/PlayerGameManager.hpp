@@ -49,6 +49,8 @@ class PlayerGameManager : public BaseGameManager {
 
   virtual bool launchNetPanzerGame();
 
+  virtual bool needsParticles() const { return true; }
+
   void launchMultiPlayerGame();
   void quitGame();
 

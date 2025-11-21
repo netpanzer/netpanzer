@@ -29,7 +29,9 @@ WindParticle2D::WindParticle2D(const fXYZ &pos, float windScale /* = 1.0f */)
 // WindParticle2D::sim
 //--------------------------------------------------------------------------
 void WindParticle2D::sim() {
-  pos += (Physics::wind.getDisplacement() * windScale);
+  fXYZ displacement = Physics::wind.getDisplacement();
+  displacement *= windScale;
+  pos += displacement;
 
   Particle2D::sim();
 }  // end WindParticle2D::sim

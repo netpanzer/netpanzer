@@ -61,6 +61,9 @@ class BaseGameManager {
 
   virtual bool launchNetPanzerGame() = 0;
 
+  /// Returns true if this game manager needs particle effects (visual only)
+  virtual bool needsParticles() const { return false; }
+
  private:
   void loadGameData();
   void sleeping();

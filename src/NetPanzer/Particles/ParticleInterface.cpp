@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // #include "GroundExplosionParticle2D.hpp"
 // #include "GroundExplosionParticleSystem2D.hpp"
 #include "CloudParticle2D.hpp"
+#include "Interfaces/BaseGameManager.hpp"
 #include "Interfaces/KeyboardInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Physics.hpp"
@@ -562,6 +563,8 @@ void ParticleInterface::testSimText(Surface &dest) {
 
 //--------------------------------------------------------------------------
 void ParticleInterface::addHit(const UnitState &unitState) {
+  if (!gamemanager->needsParticles()) return;
+
   ExplosionSystem e;
 
   float randomness = 1.0f;  // Particle2D::getScale(0.8f, 0.4f);
@@ -702,6 +705,8 @@ float ParticleInterface::getFrameRateAdjustment() {
 
 //--------------------------------------------------------------------------
 void ParticleInterface::addMiss(const iXY &worldPos, Uint8 unitType) {
+  if (!gamemanager->needsParticles()) return;
+
   /*
     short hit_points;
     short attack_factor;
@@ -855,6 +860,8 @@ void ParticleInterface::addMissleExplosion(const iXY &worldPos) {
 void ParticleInterface::addMuzzlePuff(const fXYZ &worldPos,
                                       const fXYZ &direction, int frame,
                                       Uint8 unitType) {
+  if (!gamemanager->needsParticles()) return;
+
   // Cull out any muzzle puffs which are far away.
   if (Particle2D::getFarAway(worldPos)) {
     gMuzzleSystemCullHitCount++;
@@ -959,6 +966,8 @@ void ParticleInterface::rebuildUnitParticleData() {
 // Purpose: Add dirt puffs under the units.
 //--------------------------------------------------------------------------
 void ParticleInterface::addMoveDirtPuff(const UnitState &unitState) {
+  if (!gamemanager->needsParticles()) return;
+
   fXYZ pos(unitState.location.x, 0, unitState.location.y);
 
   int isFarAway = Particle2D::getFarAway(pos);
