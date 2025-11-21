@@ -20,6 +20,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __Particle2D_hpp__
 #define __Particle2D_hpp__
 
+#include <vector>
+
 #include "Classes/Sprite.hpp"
 #include "Classes/SpriteSorter.hpp"
 #include "ParticleSystemGlobals.hpp"
@@ -103,9 +105,8 @@ class Particle2D {
   SpritePacked packedSurface;        // My graphic.
   SpritePacked packedSurfaceShadow;  // My shadow's graphic.
 
-  static Particle2D *const zParticle2D;  // The list-loop particle.
-  Particle2D *next;                      // Next in the list.
-  Particle2D *prev;                      // Previous in the list.
+  static std::vector<Particle2D*> particles;  // Vector of all active particles
+  size_t vectorIndex;  // Index of this particle in the vector (-1 if not in vector)
 
 };  // end Particle2D
 

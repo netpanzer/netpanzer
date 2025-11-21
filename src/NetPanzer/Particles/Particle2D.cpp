@@ -24,10 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "Util/TimerInterface.hpp"
 
-static Particle2D theRealZParticle2D(fXYZ(0, 0, 0));
-Particle2D *const Particle2D::zParticle2D = &theRealZParticle2D;
-
 // Static variables.
+std::vector<Particle2D*> Particle2D::particles;
 int Particle2D::frameCount = 0;
 int Particle2D::peakCount = 0;
 int Particle2D::bltTo = BLT_TO_SPRITE_SORTER;
@@ -40,13 +38,8 @@ Particle2D::Particle2D(const fXYZ &pos) {
   reset();
 
   Particle2D::pos = pos;
-
-  if (this == zParticle2D) {
-    prev = next = zParticle2D;
-  } else {
-    prev = next = 0;
-    insertMe();
-  }
+  vectorIndex = static_cast<size_t>(-1);
+  insertMe();
 }  // end Particle2D
 
 // ~Particle2D
@@ -74,18 +67,15 @@ void Particle2D::reset() {
 
 // insertMe
 //---------------------------------------------------------------------------
-// Purpose: Inserts a new particle into the list.
+// Purpose: Inserts a new particle into the vector.
 //---------------------------------------------------------------------------
 void Particle2D::insertMe() {
-  // If we're inserting, we should not already be in the list.
-  assert(prev == 0);
-  assert(next == 0);
+  // If we're inserting, we should not already be in the vector
+  assert(vectorIndex == static_cast<size_t>(-1));
 
-  // Insert me into the list
-  prev = zParticle2D;
-  next = zParticle2D->next;
-  zParticle2D->next = this;
-  next->prev = this;
+  // Add to vector
+  vectorIndex = particles.size();
+  particles.push_back(this);
 
   frameCount++;
 
@@ -96,14 +86,20 @@ void Particle2D::insertMe() {
 
 // removeMe
 //---------------------------------------------------------------------------
-// Purpose: Removes the particle from the list.
+// Purpose: Removes the particle from the vector using swap-and-pop.
 //---------------------------------------------------------------------------
 void Particle2D::removeMe() {
-  // removeMe from the list
-  if (prev != 0) prev->next = next;
-  if (next != 0) next->prev = prev;
+  // Check if we're actually in the vector
+  if (vectorIndex == static_cast<size_t>(-1)) return;
 
-  prev = next = this;
+  // Swap with last element and pop (O(1) removal)
+  size_t lastIndex = particles.size() - 1;
+  if (vectorIndex != lastIndex) {
+    particles[vectorIndex] = particles[lastIndex];
+    particles[vectorIndex]->vectorIndex = vectorIndex;
+  }
+  particles.pop_back();
+  vectorIndex = static_cast<size_t>(-1);
 
   frameCount--;
 
@@ -112,42 +108,29 @@ void Particle2D::removeMe() {
 // removeAll
 //---------------------------------------------------------------------------
 void Particle2D::removeAll() {
-  // Go through and remove all the particles.
-  Particle2D *e = zParticle2D->next;
-  Particle2D *nextPtr;
-
-  while (e != zParticle2D) {
-    nextPtr = e->next;
-    delete e;
-    e = nextPtr;
+  // Delete all particles in the vector
+  for (Particle2D* particle : particles) {
+    delete particle;
   }
+  particles.clear();
 }  // end Particle2D::removeAll
 
 // simAll
 //---------------------------------------------------------------------------
 void Particle2D::simAll() {
-  // Go through and simulate all the particles.
-  Particle2D *e = zParticle2D->next;
-  Particle2D *nextPtr;
-
-  while (e != zParticle2D) {
-    nextPtr = e->next;
-    e->sim();
-    e = nextPtr;
+  // Iterate backwards so that swap-and-pop during deletion doesn't affect unprocessed particles
+  for (size_t i = particles.size(); i > 0; --i) {
+    Particle2D* particle = particles[i - 1];
+    particle->sim();
   }
 }  // end Particle2D::simAll
 
 // drawAll
 //---------------------------------------------------------------------------
 void Particle2D::drawAll(const Surface &clientArea, SpriteSorter &sorter) {
-  // Go through and draw all the particles.
-  Particle2D *e = zParticle2D->next;
-  Particle2D *nextPtr;
-
-  while (e != zParticle2D) {
-    nextPtr = e->next;
-    e->draw(clientArea, sorter);
-    e = nextPtr;
+  // Iterate through all particles in the vector
+  for (Particle2D* particle : particles) {
+    particle->draw(clientArea, sorter);
   }
 }  // end Particle2D::drawAll
 

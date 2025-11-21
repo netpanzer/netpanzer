@@ -31,19 +31,19 @@ struct fXYZ {
 
   static const fXYZ ZERO;
 
-  fXYZ(float x = 0, float y = 0, float z = 0) {
+  fXYZ(float x = 0, float y = 0, float z = 0) noexcept {
     this->x = x;
     this->y = y;
     this->z = z;
   }
 
-  fXYZ(const fXYZ &a) {
+  fXYZ(const fXYZ &a) noexcept {
     x = a.x;
     y = a.y;
     z = a.z;
   }
 
-  fXYZ &operator=(const fXYZ &a) {
+  fXYZ &operator=(const fXYZ &a) noexcept {
     x = a.x;
     y = a.y;
     z = a.z;
@@ -57,45 +57,45 @@ struct fXYZ {
       return false;
   }
 
-  fXYZ &operator+=(const fXYZ &a) {
+  fXYZ &operator+=(const fXYZ &a) noexcept {
     x += a.x;
     y += a.y;
     z += a.z;
     return *this;
   }
-  fXYZ &operator-=(const fXYZ &a) {
+  fXYZ &operator-=(const fXYZ &a) noexcept {
     x -= a.x;
     y -= a.y;
     z -= a.z;
     return *this;
   }
-  fXYZ &operator*=(float a) {
+  fXYZ &operator*=(float a) noexcept {
     x *= a;
     y *= a;
     z *= a;
     return *this;
   }
-  fXYZ &operator*=(const fXYZ &a) {
+  fXYZ &operator*=(const fXYZ &a) noexcept {
     x *= a.x;
     y *= a.y;
     z *= a.z;
     return *this;
   }
-  fXYZ &operator/=(float a) {
+  fXYZ &operator/=(float a) noexcept {
     x /= a;
     y /= a;
     z /= a;
     return *this;
   }
 
-  fXYZ operator+(const fXYZ &a) const {
+  fXYZ operator+(const fXYZ &a) const noexcept {
     return fXYZ(x + a.x, y + a.y, z + a.z);
   }
-  fXYZ operator-(const fXYZ &a) const {
+  fXYZ operator-(const fXYZ &a) const noexcept {
     return fXYZ(x - a.x, y - a.y, z - a.z);
   }
-  fXYZ operator*(float a) const { return fXYZ(x * a, y * a, z * a); }
-  fXYZ operator/(float a) const { return fXYZ(x / a, y / a, z / a); }
+  fXYZ operator*(float a) const noexcept { return fXYZ(x * a, y * a, z * a); }
+  fXYZ operator/(float a) const noexcept { return fXYZ(x / a, y / a, z / a); }
 
   double mag() const { return sqrt(x * x + y * y + z * z); }
   double mag2() const { return x * x + y * y + z * z; }

@@ -211,8 +211,10 @@ void BaseGameManager::simLoop() {
 
   Physics::sim();
 
-  ParticleSystem2D::simAll();
-  Particle2D::simAll();
+  if (needsParticles()) {
+    ParticleSystem2D::simAll();
+    Particle2D::simAll();
+  }
 
   ScriptManager::setDoubleValue("game.frametime",
                                 TimerInterface::getTimeSlice());
