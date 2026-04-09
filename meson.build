@@ -110,7 +110,7 @@ if not sdl2_dep.found()
       version: '>=2.0.18',
       required: true,
       fallback: 'sdl2',
-      default_options: 'default_library=static')
+      default_options: ['default_library=static', 'test=false'])
   endif
 endif
 deps += sdl2_dep
