@@ -1,3 +1,7 @@
+paktool_deps = [
+  nputil_dep,
+  np2D_dep,
+  ]
 paktool = ['bmp2pak', 'pak2bmp']
 
 foreach tool : paktool
@@ -5,7 +9,7 @@ foreach tool : paktool
     tool,
     tool + '.cpp',
     win_subsystem: 'console',
-    dependencies: (platform_is_windows ? netpanzer_dep_static : netpanzer_dep_shared),
+    dependencies: paktool_deps,
     link_args: ldflags,
     install : false
   )
