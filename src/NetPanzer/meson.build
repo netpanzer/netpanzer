@@ -4,7 +4,7 @@ src_basename = [
   'package.cpp'
 ]
 foreach file : src_basename
-  src += [join_paths('../Lib', file)]
+  src += [join_paths(meson.source_root(), 'src/Lib', file)]
 endforeach
 
 src_basename = [
@@ -13,7 +13,7 @@ src_basename = [
   'BotTaskList.cpp'
 ]
 foreach file : src_basename
-  src += [join_paths('Bot', file)]
+  src += [join_paths(meson.current_source_dir(), 'Bot', file)]
 endforeach
 
 src_basename = [
@@ -21,7 +21,7 @@ src_basename = [
   'Objective.cpp',
 ]
 foreach file : src_basename
-  src += [join_paths('Objectives', file)]
+  src += [join_paths(meson.current_source_dir(), 'Objectives', file)]
 endforeach
 
 src_basename = [
@@ -29,7 +29,7 @@ src_basename = [
   'ClientSocket.cpp'
 ]
 foreach file : src_basename
-  src += [join_paths('Network', file)]
+  src += [join_paths(meson.current_source_dir(), 'Network', file)]
 endforeach
 
 src_basename = [
@@ -44,7 +44,7 @@ src_basename = [
   'UnitInterface.cpp'
 ]
 foreach file : src_basename
-  src += [join_paths('Units', file)]
+  src += [join_paths(meson.current_source_dir(), 'Units', file)]
 endforeach
 
 src_basename = [
@@ -73,7 +73,7 @@ src_basename = [
   'BaseGameManager.cpp'
 ]
 foreach file : src_basename
-  src += [join_paths('Interfaces', file)]
+  src += [join_paths(meson.current_source_dir(), 'Interfaces', file)]
 endforeach
 
 src_basename = [
@@ -107,7 +107,7 @@ src_basename = [
   'ChunkTrajectoryParticle2D.cpp'
 ]
 foreach file : src_basename
-  src += [join_paths('Particles', file)]
+  src += [join_paths(meson.current_source_dir(), 'Particles', file)]
 endforeach
 
 src_basename = [
@@ -120,7 +120,7 @@ src_basename = [
   'Surface.cpp'
 ]
 foreach file : src_basename
-  src += [join_paths('../Lib/2D', file)]
+  src += [join_paths(meson.source_root(), 'src/Lib/2D', file)]
 endforeach
 
 src_basename = [
@@ -129,7 +129,7 @@ src_basename = [
   'ScriptHelper.cpp'
 ]
 foreach file : src_basename
-  src += [join_paths('Scripts', file)]
+  src += [join_paths(meson.current_source_dir(), 'Scripts', file)]
 endforeach
 
 src_basename = [
@@ -145,7 +145,7 @@ src_basename = [
   'StringUtil.cpp'
 ]
 foreach file : src_basename
-  src += [join_paths('../Lib/Util', file)]
+  src += [join_paths(meson.source_root(), 'src/Lib/Util', file)]
 endforeach
 
 src_basename = [
@@ -183,7 +183,7 @@ src_basename = [
   'TileSet.cpp'
 ]
 foreach file : src_basename
-  src += [join_paths('Classes', file)]
+  src += [join_paths(meson.current_source_dir(), 'Classes', file)]
 endforeach
 
 src_basename = [
@@ -196,7 +196,7 @@ src_basename = [
   'Projectile.cpp'
 ]
 foreach file : src_basename
-  src += [join_paths('Weapons', file)]
+  src += [join_paths(meson.current_source_dir(), 'Weapons', file)]
 endforeach
 
 src_basename = [
@@ -208,7 +208,7 @@ src_basename = [
   'PowerUpInterface.cpp',
 ]
 foreach file : src_basename
-  src += [join_paths('PowerUps', file)]
+  src += [join_paths(meson.current_source_dir(), 'PowerUps', file)]
 endforeach
 
 
@@ -220,14 +220,14 @@ src_basename = [
   'SDLSound.cpp'
 ]
 foreach file : src_basename
-  src += [join_paths('System', file)]
+  src += [join_paths(meson.current_source_dir(), 'System', file)]
 endforeach
 
 src_basename = [
   'ResourceManager.cpp',
 ]
 foreach file : src_basename
-  src += [join_paths('Resources', file)]
+  src += [join_paths(meson.current_source_dir(), 'Resources', file)]
 endforeach
 
 src_basename = [
@@ -292,7 +292,7 @@ src_basename = [
   'Game/MiniMapViewAlt.cpp'
 ]
 foreach file : src_basename
-  src += [join_paths('Views', file)]
+  src += [join_paths(meson.current_source_dir(), 'Views', file)]
 endforeach
 
 src_basename = [
@@ -305,7 +305,7 @@ src_basename = [
   'TCPListenSocket.cpp'
 ]
 foreach file : src_basename
-  src += [join_paths('../Lib/Network', file)]
+  src += [join_paths(meson.source_root(), 'src/Lib/Network', file)]
 endforeach
 
 src_basename = [
@@ -313,7 +313,7 @@ src_basename = [
   'command_line.cpp',
 ]
 foreach file : src_basename
-  src += [join_paths('../Lib/optionmm', file)]
+  src += [join_paths(meson.source_root(), 'src/Lib/optionmm', file)]
 endforeach
 
 src_basename = [
@@ -321,7 +321,7 @@ src_basename = [
   'BitArray.cpp',
 ]
 foreach file : src_basename
-  src += [join_paths('../Lib/ArrayUtil', file)]
+  src += [join_paths(meson.source_root(), 'src/Lib/ArrayUtil', file)]
 endforeach
 
 src_basename = [
@@ -332,10 +332,10 @@ src_basename = [
   'Angle.cpp'
 ]
 foreach file : src_basename
-  src += [join_paths('../Lib/Types', file)]
+  src += [join_paths(meson.source_root(), 'src/Lib/Types', file)]
 endforeach
 
-src += ['Core/NetworkGlobals.cpp']
+src += [join_paths(meson.current_source_dir(), 'Core/NetworkGlobals.cpp')]
 
 lib_netpanzer = both_libraries(
   'netpanzer',
