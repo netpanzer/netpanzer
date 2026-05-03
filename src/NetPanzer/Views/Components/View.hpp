@@ -31,6 +31,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "cButton.hpp"
 #include "cInputField.hpp"
 
+#define _VIEW_BUFSIZ 128
+
 enum DEFAULT_VIEW_BUTTON { CLOSE_VIEW_BUTTON, MINMAX_VIEW_BUTTON };
 
 class View : public iRect {
@@ -76,12 +78,12 @@ class View : public iRect {
   int prevHighlightedButton;
 
   int selectedInputField;
-  char *searchName;
-  char *title;
-  char *subTitle;
+  char searchName[_VIEW_BUFSIZ];
+  char title[_VIEW_BUFSIZ];
+  char subTitle[_VIEW_BUFSIZ];
   int status;
 
-  char *statusText;
+  char statusText[_VIEW_BUFSIZ];
 
   enum { RESIZE_XMINSIZE = 15 };
   enum { RESIZE_YMINSIZE = 15 };

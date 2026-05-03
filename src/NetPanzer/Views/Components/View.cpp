@@ -99,9 +99,9 @@ View::~View() {
     delete *f;
   }
 
-  free(title);
-  free(subTitle);
-  free(searchName);
+  *title = '\0';
+  *subTitle = '\0';
+  *searchName = '\0';
 }  // end ~View::View
 
 // reset
@@ -117,10 +117,10 @@ void View::reset() {
   highlightedButton = -1;
   prevHighlightedButton = -1;
   selectedInputField = -1;
-  searchName = 0;
-  title = 0;
-  subTitle = 0;
-  statusText = 0;
+  *searchName = '\0';
+  *title = '\0';
+  *subTitle = '\0';
+  *statusText = '\0';
   focusComponent = 0;
 
   setSearchName("donut");
@@ -174,9 +174,8 @@ void View::drawTitle(Surface &viewArea) {
                      : inactiveWindowTitleBodyColor;
   s.fill(bgColor);
 
-  char strBuf[256];
-
-  sprintf(strBuf, "%s%s", title, subTitle);
+  char strBuf[_VIEW_BUFSIZ * 2];
+  snprintf(strBuf, sizeof strBuf, "%s%s", title, subTitle);
 
   s.bltStringCenter(strBuf, getActive() ? activeWindowTitleTextColor
                                         : inactiveWindowTitleTextColor, bgColor);
@@ -1047,15 +1046,10 @@ void View::addButtonCenterText(const iXY &pos, const int &xSize,
 // Purpose: Sets the title of the window.
 //---------------------------------------------------------------------------
 void View::setSearchName(const char *searchName) {
-  free(View::searchName);
-  View::searchName = 0;
+  *View::searchName = '\0';
 
-  if (searchName != 0) {
-    View::searchName = strdup(searchName);
-    if (View::searchName == 0) {
-      throw Exception("ERROR: Unable to allocate searchName: %s", searchName);
-    }
-  }
+  if (searchName != 0)
+    snprintf(View::searchName, sizeof View::searchName, "%s", searchName);
 }  // end View::setSearchName
 
 // setTitle
@@ -1063,17 +1057,12 @@ void View::setSearchName(const char *searchName) {
 // Purpose: Sets the title of the window.
 //---------------------------------------------------------------------------
 void View::setTitle(const char *title) {
-  if (View::title != 0) {
-    free(View::title);
-    View::title = 0;
+  if (*View::title != '\0') {
+    *View::title = '\0';
   }
 
-  if (title != 0) {
-    View::title = strdup(title);
-    if (View::title == 0) {
-      throw Exception("ERROR: Unable to allocate title: %s", title);
-    }
-  }
+  if (title != 0)
+    snprintf(View::title, sizeof View::title, "%s", title);
 }  // end View::setTitle
 
 // setSubTitle
@@ -1081,17 +1070,12 @@ void View::setTitle(const char *title) {
 // Purpose: Sets the subTitle of the window.
 //---------------------------------------------------------------------------
 void View::setSubTitle(const char *subTitle) {
-  if (View::subTitle != 0) {
-    free(View::subTitle);
-    View::subTitle = 0;
+  if (*View::subTitle != '\0') {
+    *View::subTitle = '\0';
   }
 
-  if (subTitle != 0) {
-    View::subTitle = strdup(subTitle);
-    if (View::subTitle == 0) {
-      throw Exception("ERROR: Unable to allocate subTitle: %s", subTitle);
-    }
-  }
+  if (subTitle != 0)
+    snprintf(View::subTitle, sizeof View::subTitle, "%s", subTitle);
 }  // end View::setSubTitle
 
 // showStatus
@@ -1099,18 +1083,12 @@ void View::setSubTitle(const char *subTitle) {
 // Purpose: Sets the status bar text.
 //---------------------------------------------------------------------------
 void View::showStatus(const char *string) {
-  if (statusText != 0) {
-    free(statusText);
-    statusText = 0;
+  if (*statusText != '\0') {
+    *statusText = '\0';
   }
 
-  if (string != 0) {
-    statusText = strdup(string);
-    if (statusText == 0) {
-      throw Exception("ERROR: statusText == 0");
-    }
-  }
-
+  if (string != 0)
+    snprintf(View::statusText, sizeof View::statusText, "%s", string);
 }  // end View::showStatus
 
 // drawStatus
@@ -1128,7 +1106,7 @@ void View::drawStatus(Surface &dest) {
   s.fill(bgColor);
 
   // Draw the status text.
-  if (statusText != nullptr) {
+  if (*statusText != '\0') {
     int pos = (DEFAULT_STATUS_BAR_HEIGHT - Surface::getFontHeight()) >> 1;
 
     s.bltString(pos, pos, statusText, Color::black, bgColor);
