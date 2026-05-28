@@ -16,21 +16,20 @@ on:
     branches: master
     paths:
     - '**/appimage.yml'
-    - '**/AppRun'
-    - '**/make-appimage.sh'
+    - 'support/appimage/**'
 
 env:
   VERSION: ${{ inputs.version }}
 
 jobs:
   build-appimage:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        platform:
-          - linux/amd64
-          - linux/arm64
-          - linux/arm/v7
+        os:
+          - ubuntu-24.04        # native amd64
+          - ubuntu-24.04-arm    # native arm64
     steps:
     - name: Set version
       run: |
@@ -43,20 +42,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - if: ${{ ! contains(matrix.platform, 'amd64') }}
-      uses: docker/setup-qemu-action@v3
-
     - name: Build AppImage
-      run: |
-        docker run -t \
-        --platform=${{ matrix.platform }} \
-        --rm \
-        -e HOSTUID=$(id -u) \
-        -e VERSION \
-        -v $GITHUB_WORKSPACE:/workspace \
-        -w /workspace andy5995/linuxdeploy:v2-focal support/appimage/make-appimage.sh
-        # Docs for this container are at
-        # https://github.com/andy5995/linuxdeploy-build-helper-container
+      # Container docs: https://github.com/andy5995/linuxdeploy-build-helper-container
+      run: docker compose -f support/appimage/docker-compose.yml run --rm build
 
     - name: Create sha256sum
       run: |
@@ -80,7 +68,9 @@ jobs:
         omitBodyDuringUpdate: true
         omitNameDuringUpdate: true
         tag: appimage-weekly
-        removeArtifacts: ${{ matrix.platform == 'linux/amd64' }}
+        # Only the amd64 job clears stale artifacts so the arm64 job's
+        # upload isn't deleted afterwards.
+        removeArtifacts: ${{ matrix.os == 'ubuntu-24.04' }}
 
     - if: ${{ github.ref != 'refs/heads/master' }}
       name: Upload AppImage
