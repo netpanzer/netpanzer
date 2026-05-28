@@ -79,8 +79,6 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt remove -y firefox # save a little time during upgrade
-        sudo apt upgrade -y
         sudo apt install -y \
           python3 \
           python3-setuptools
