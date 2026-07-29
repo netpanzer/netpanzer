@@ -23,8 +23,11 @@ if get_option('nls') and not platform_is_windows
     elif host_sys == 'netbsd'
       intl_prefixes = ['/usr/pkg']
     elif host_sys == 'darwin'
-      # Homebrew keeps gettext keg-only, so it isn't symlinked into the
-      # Homebrew prefix unless it was force-linked. Ask brew where it is.
+      # Older Homebrew kept gettext keg-only, so it wasn't symlinked into the
+      # Homebrew prefix unless it was force-linked. Asking brew where it is
+      # covers both layouts, and the prefix isn't on the default search path
+      # either way. Note that 'brew --prefix <formula>' succeeds even when the
+      # formula isn't installed, so the result still has to be probed.
       brew = find_program('brew', required: false)
       if brew.found()
         brew_gettext = run_command(brew, '--prefix', 'gettext', check: false)

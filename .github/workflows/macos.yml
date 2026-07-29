@@ -56,8 +56,9 @@ jobs:
           pkg-config \
           sdl2_ttf \
           sdl2_mixer
-        # gettext is keg-only; force-linking puts msgfmt on PATH so the
-        # translations get built. Meson locates libintl on its own.
+        # Make sure msgfmt is on PATH so the translations get built; older
+        # gettext formulas were keg-only. Harmless when it is already linked.
+        # Meson locates libintl on its own either way.
         brew link --force gettext
 
     - name: Build
