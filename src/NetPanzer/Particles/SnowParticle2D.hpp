@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -19,36 +19,30 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __SnowParticle2D_hpp__
 #define __SnowParticle2D_hpp__
 
-
-
 #include "2D/Surface.hpp"
-#include "Types/fXYZ.hpp"
 #include "Classes/SpriteSorter.hpp"
+#include "Types/fXYZ.hpp"
 
+class SnowParticle2D {
+ private:
+  fXYZ pos;
+  float totalTime;
+  float color;
+  Uint8 size;
+  float age;
+  Uint8 lifetime;
+  float timeElapsedPeriod;
 
-class SnowParticle2D
-{
-private:
-    fXYZ  pos;
-    float totalTime;
-    float color;
-    Uint8  size;
-    float age;
-    Uint8  lifetime;
-    float timeElapsedPeriod;
+ public:
+  SnowParticle2D();
+  virtual ~SnowParticle2D() {}
 
-public:
-    SnowParticle2D();
-	virtual ~SnowParticle2D()
-	{ }
+  void init(fXYZ pos, unsigned size);
+  void reset();
 
-    void init(fXYZ pos, unsigned size);
-    void reset();
+  virtual void sim();
+  virtual void draw(const Surface &dest, SpriteSorter &sorter);
 
-    virtual void sim();
-    virtual void draw(const Surface &dest, SpriteSorter &sorter);
+};  // end SnowParticle2D
 
-}
-; // end SnowParticle2D
-
-#endif // __SnowParticle2D_hpp__
+#endif  // __SnowParticle2D_hpp__

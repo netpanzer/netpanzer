@@ -18,20 +18,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __IPAddressView_h__
 #define __IPAddressView_h__
 
-#include "Views/Components/View.hpp"
 #include "2D/Surface.hpp"
+#include "Views/Components/View.hpp"
 
 //---------------------------------------------------------------------------
-class IPAddressView : public View
-{
-public:
- static cInputFieldString szServer;
-	
- IPAddressView();
+class IPAddressView : public View {
+ public:
+  static cInputFieldString szServer;
 
- void Init();
+  IPAddressView();
 
- virtual void doDraw(Surface &windowArea, Surface &clientArea); 
-}; // end IPAddressView
+  void Init();
 
-#endif // end __IPAddressView_h__
+  virtual void doDraw(Surface &windowArea, Surface &clientArea);
+};  // end IPAddressView
+
+#endif  // end __IPAddressView_h__

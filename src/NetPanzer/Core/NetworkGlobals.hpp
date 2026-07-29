@@ -18,10 +18,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __NETWORK_GLOBALS_HPP__
 #define __NETWORK_GLOBALS_HPP__
 
-#define NETPANZER_DEFAULT_PORT_TCP     3030
-#define NETPANZER_PROTOCOL_VERSION     1122
-#define MASTERSERVER_PORT             28900
+#define NETPANZER_DEFAULT_PORT_TCP 3030
+#define NETPANZER_PROTOCOL_VERSION 1128
+#define MASTERSERVER_PORT 28900
+#define AUTHSERVER_PORT 28888
 
-const char * getNetpanzerProtocolMessage(const int protocol);
+const char* getNetpanzerProtocolMessage(const int protocol);
 
 #endif

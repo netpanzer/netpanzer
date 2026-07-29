@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  netpanzer-server:
+    image: ghcr.io/netpanzer/netpanzer:latest
+    container_name: netpanzer-server
+    ports:
+      - "3031:3031/tcp"
+      - "3031:3031/udp"
+    command: netpanzer -d
+    user: npserver
+    volumes:
+      - ./opt:/home/npserver/.netpanzer
+    restart: unless-stopped

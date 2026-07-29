@@ -1,0 +1,17 @@
+hitpoints =  200;
+attack =  30;
+reload =  20;
+range =  11;
+regen =  20;
+defend_range =  8;
+speed_rate =  20;
+speed_factor =  4;
+image =  "pics/menus/vehicleSelectionView/bobcat.bmp"
+bodysprite =  "BobcHNSD.pak"
+bodyshadow =  "BobcHSSD.pak"
+turretsprite =  "BobcTNSD.pak"
+turretshadow =  "BobcTSSD.pak"
+soundselected =  "lt-selected"
+soundfire =  "lt-fire"
+weapon =  "SHELL"
+boundbox =  60

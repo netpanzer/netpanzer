@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -20,43 +20,44 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <vector>
 
-#include "PowerUps/PowerUp.hpp"
-#include "Util/Timer.hpp"
 #include "Classes/Network/NetPacket.hpp"
 #include "Network/ClientSocket.hpp"
+#include "PowerUps/PowerUp.hpp"
+#include "Util/Timer.hpp"
 
-class PowerUpInterface
-{
-protected:
-    typedef std::vector<PowerUp *> PowerUpList;
-    static PowerUpList powerup_list;
-    
-    static PowerUpID getNextPowerUpID();
-    
-    static int power_up_limit;
-    static int power_up_regen_time_upper_bound;
-    static int power_up_regen_time_lower_bound;
+class PowerUpInterface {
+ protected:
+  typedef std::vector<PowerUp*> PowerUpList;
+  static PowerUpList powerup_list;
 
-    static Timer regen_timer;
+  static PowerUpID getNextPowerUpID();
 
-    static void setPowerUpLimits( unsigned long map_size_x, unsigned long map_size_y );
+  static int power_up_limit;
+  static int power_up_regen_time_upper_bound;
+  static int power_up_regen_time_lower_bound;
 
-    static void generatePowerUp();
+  static Timer regen_timer;
 
-    static void netMessagePowerUpCreate(const NetMessage* message);
-    static void netMessagePowerUpHit(const NetMessage* message );
+  static void setPowerUpLimits(unsigned long map_size_x,
+                               unsigned long map_size_y);
 
-public:
+  static void generatePowerUp();
 
-    static void initialize();
-    static void resetLogic();
+  static void netMessagePowerUpCreate(const NetMessage* message);
+  static void netMessagePowerUpHit(const NetMessage* message);
 
-    static void updateState();
-    static void offloadGraphics( SpriteSorter &sorter );
+ public:
+  static void initialize();
+  static void uninitialize();
+  static void resetLogic();
 
-    static void processNetMessages(const NetMessage* message );
+  static void updateState();
+  static void offloadGraphics(SpriteSorter& sorter);
 
-    static void syncPowerUps( ClientSocket * client );
+  static void processNetMessages(const NetMessage* message);
+
+  static void syncPowerUps(ClientSocket* client);
+  static void syncPowerUpsBC();
 };
 
-#endif // ** _POWERUP_INTERFACE_HPP
+#endif  // ** _POWERUP_INTERFACE_HPP

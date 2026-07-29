@@ -1,4 +1,4 @@
-/* 
+/*
 Copyright (C) 2008 by Aaron Perez <aaronps@gmail.com>
 
 This program is free software; you can redistribute it and/or modify
@@ -19,29 +19,30 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #ifndef _RESOURCEMANAGER_HPP
-#define	_RESOURCEMANAGER_HPP
+#define _RESOURCEMANAGER_HPP
+
+#include <string>
+#include <vector>
 
 #include "Core/CoreTypes.hpp"
-#include <vector>
-#include <string>
 
 // forward declarations
 class Surface;
 
-class ResourceManager
-{
-public:
-    static void initialize();
-    static void finalize();
+class ResourceManager {
+ public:
+  static void initialize();
+  static void finalize();
 
-    static int loadAllFlags(Surface& flags, std::vector<std::string>& names);
-    static bool loadFlag(Surface* dest, std::string name);
-    static Surface * getFlag(FlagID flag);
+  static int loadAllFlags(Surface& flags, std::vector<std::string>& names);
+  static bool loadFlag(Surface* dest, std::string name);
+  static Surface* getFlag(FlagID flag);
 
-    static void getFlagData(const FlagID flag, Uint8 * dest, const size_t dest_len);
-    static void updateFlagData(const FlagID flag, const Uint8 * src, const size_t src_len);
-    static int getFlagUsedCount(const FlagID flag);
+  static void getFlagData(const FlagID flag, Uint8* dest,
+                          const size_t dest_len);
+  static void updateFlagData(const FlagID flag, const Uint8* src,
+                             const size_t src_len);
+  static int getFlagUsedCount(const FlagID flag);
 };
 
-#endif	/* _RESOURCEMANAGER_HPP */
-
+#endif /* _RESOURCEMANAGER_HPP */
