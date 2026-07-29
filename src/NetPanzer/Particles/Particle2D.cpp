@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 //---------------------------------------------------------------------------
 
+#ifndef TEST_LIB
+
 #include "Particles/Particle2D.hpp"
 
 #include "2D/PackedSurface.hpp"
@@ -108,11 +110,14 @@ void Particle2D::removeMe() {
 // removeAll
 //---------------------------------------------------------------------------
 void Particle2D::removeAll() {
-  // Delete all particles in the vector
-  for (Particle2D* particle : particles) {
-    delete particle;
+  // ~Particle2D() calls removeMe(), which mutates 'particles' via swap-and-pop.
+  // Iterating the vector while it shrinks reads past the end (AddressSanitizer
+  // reports a container-overflow) and skips the particles that get swapped down
+  // into slots the loop has already passed, leaking them. Always delete the
+  // last element instead; removeMe() then only has to pop_back().
+  while (!particles.empty()) {
+    delete particles.back();
   }
-  particles.clear();
 }  // end Particle2D::removeAll
 
 // simAll
@@ -128,8 +133,12 @@ void Particle2D::simAll() {
 // drawAll
 //---------------------------------------------------------------------------
 void Particle2D::drawAll(const Surface &clientArea, SpriteSorter &sorter) {
-  // Iterate through all particles in the vector
-  for (Particle2D* particle : particles) {
+  // draw() can delete the particle (see SparkParticle2D::draw), so this has the
+  // same constraint as simAll(): iterate backwards by index. The element that
+  // swap-and-pop moves is always one this loop has already visited, and new
+  // particles are appended past the current index.
+  for (size_t i = particles.size(); i > 0; --i) {
+    Particle2D* particle = particles[i - 1];
     particle->draw(clientArea, sorter);
   }
 }  // end Particle2D::drawAll
@@ -246,3 +255,48 @@ int Particle2D::getFarAway(const fXYZ &worldPos) {
   // The particle must be near the screen.
   return 0;
 }  // end Particle2D::getFarAway
+
+#else
+
+#include "Particles/Particle2D.hpp"
+#include "test.hpp"
+
+// Deleting a particle removes it from the vector that removeAll() walks, so
+// removeAll() has to tolerate the container changing underneath it. Getting
+// this wrong reads past the end of the vector, which aborts under
+// AddressSanitizer, and leaves particles behind. See issue #286.
+void testRemoveAllDeletesEveryParticle(void) {
+  const int count = 8;
+
+  for (int i = 0; i < count; i++) {
+    // Each particle adds itself to the static list, which owns it from here.
+    Particle2D *particle = new Particle2D(fXYZ(float(i), 0.0f, 0.0f));
+    (void)particle;
+  }
+  assert(Particle2D::getFrameCount() == count);
+
+  Particle2D::removeAll();
+  assert(Particle2D::getFrameCount() == 0);
+
+  // The list has to stay usable afterwards.
+  Particle2D *particle = new Particle2D(fXYZ(0.0f, 0.0f, 0.0f));
+  (void)particle;
+  assert(Particle2D::getFrameCount() == 1);
+
+  Particle2D::removeAll();
+  assert(Particle2D::getFrameCount() == 0);
+
+  return;
+}
+
+// main() must be defined with the args in this format, otherwise we may get an
+// "undefined reference to SDL_main"
+int main(int argc, char *argv[]) {
+  (void)argc;
+  (void)argv;
+
+  testRemoveAllDeletesEveryParticle();
+  return 0;
+}
+
+#endif

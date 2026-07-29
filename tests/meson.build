@@ -1,7 +1,8 @@
 test_cases = [
   '../src/Lib/package',
   '../src/Lib/2D/CachedFontRenderer',
-  '../src/Lib/Util/FileSystem'
+  '../src/Lib/Util/FileSystem',
+  '../src/NetPanzer/Particles/Particle2D'
   ]
 
 fs = import('fs')
