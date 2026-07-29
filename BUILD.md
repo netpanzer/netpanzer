@@ -18,6 +18,15 @@ building it. Here's a list of them:
 - [gettext](https://www.gnu.org/software/gettext/) (If you want to install
 translations, otherwise, use '-Dnls=false' when setting up the build).
 
+Note for macOS users: gettext installed by Homebrew (both `/usr/local` and
+`/opt/homebrew`) or by MacPorts (`/opt/local`) is located automatically, so no
+extra `CFLAGS`/`LDFLAGS` are needed. If you installed it somewhere else, point
+the compiler at it with `CFLAGS=-I<prefix>/include LDFLAGS=-L<prefix>/lib`. The
+translations additionally need `msgfmt` on your `PATH`. Recent Homebrew links
+gettext into the main prefix, so `msgfmt` is already there; older versions kept
+it keg-only, in which case either run `brew link --force gettext` or add
+`$(brew --prefix gettext)/bin` to `PATH`.
+
 Note: some dependencies may have different names depending on your OS and
 package manager, and commonly have a '-dev' or '-devel' suffix. If the
 dependencies aren't available from your package manager, meson will download
@@ -45,9 +54,21 @@ After meson has configured your build directory, change to it, then run
     meson devenv
 
 You only need to do that once in the terminal you're working in. That sets the
-environmental variable `NETPANZER_DATADIR` to the source root. When you build
-netpanzer, the binary will be output to your build directory. You can run it
-from there, and it will find the data in the parent directory.
+environmental variable `NETPANZER_DATADIR` to the 'data' directory in the source
+root. When you build netpanzer, the binary will be output to your build
+directory. You can run it from there, and it will find the data in the parent
+directory.
+
+If you would rather set the variable by hand, it has to point at the 'data'
+directory itself, not at the source root:
+
+    export NETPANZER_DATADIR=$PWD/data
+
+Note that `meson test` does not apply the `meson devenv` environment, so the
+tests need it too. Either run them from inside `meson devenv`, or wrap the
+command:
+
+    meson devenv -C _build meson test --suite=netpanzer
 
 To build netpanzer:
 

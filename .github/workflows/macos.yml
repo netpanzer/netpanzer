@@ -56,46 +56,17 @@ jobs:
           pkg-config \
           sdl2_ttf \
           sdl2_mixer
+        # Make sure msgfmt is on PATH so the translations get built; older
+        # gettext formulas were keg-only. Harmless when it is already linked.
+        # Meson locates libintl on its own either way.
         brew link --force gettext
-
-    - name: Locate gettext
-      run: |
-        brew --prefix gettext
-
-    - name: Set environment variables for gettext and tools
-      run: |
-        GETTEXT_PREFIX=$(brew --prefix gettext)
-        echo "export PATH=\"$GETTEXT_PREFIX/bin:/usr/local/opt/meson/bin:/usr/local/opt/ninja/bin:\$PATH\"" >> $GITHUB_ENV
-        echo "export LDFLAGS=\"-L$GETTEXT_PREFIX/lib\"" >> $GITHUB_ENV
-        echo "export CPPFLAGS=\"-I$GETTEXT_PREFIX/include\"" >> $GITHUB_ENV
-        echo "export PKG_CONFIG_PATH=\"$GETTEXT_PREFIX/lib/pkgconfig\"" >> $GITHUB_ENV
-
-    - name: Verify gettext installation
-      run: |
-        GETTEXT_PREFIX=$(brew --prefix gettext)
-        export PATH="$GETTEXT_PREFIX/bin:/usr/local/opt/meson/bin:/usr/local/opt/ninja/bin:$PATH"
-        export LDFLAGS="-L$GETTEXT_PREFIX/lib"
-        export CPPFLAGS="-I$GETTEXT_PREFIX/include"
-        export PKG_CONFIG_PATH="$GETTEXT_PREFIX/lib/pkgconfig"
-        echo "PATH=$PATH"
-        echo "LDFLAGS=$LDFLAGS"
-        echo "CPPFLAGS=$CPPFLAGS"
-        echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
 
     - name: Build
       run: |
-        GETTEXT_PREFIX=$(brew --prefix gettext)
-        export PATH="$GETTEXT_PREFIX/bin:/usr/local/opt/meson/bin:/usr/local/opt/ninja/bin:$PATH"
-        export LDFLAGS="-L$GETTEXT_PREFIX/lib"
-        export CPPFLAGS="-I$GETTEXT_PREFIX/include"
-        export PKG_CONFIG_PATH="$GETTEXT_PREFIX/lib/pkgconfig"
         ./setup-build.sh _build
         ninja -v -C _build
 
     - name: Test
       run: |
-        GETTEXT_PREFIX=$(brew --prefix gettext)
-        export PATH="$GETTEXT_PREFIX/bin:/usr/local/opt/meson/bin:/usr/local/opt/ninja/bin:$PATH"
-        export PKG_CONFIG_PATH="$GETTEXT_PREFIX/lib/pkgconfig"
         cd _build
         meson test --suite=netpanzer -v
