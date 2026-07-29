@@ -18,6 +18,14 @@ building it. Here's a list of them:
 - [gettext](https://www.gnu.org/software/gettext/) (If you want to install
 translations, otherwise, use '-Dnls=false' when setting up the build).
 
+Note for macOS users: gettext installed by Homebrew (both `/usr/local` and
+`/opt/homebrew`) or by MacPorts (`/opt/local`) is located automatically, so no
+extra `CFLAGS`/`LDFLAGS` are needed. If you installed it somewhere else, point
+the compiler at it with `CFLAGS=-I<prefix>/include LDFLAGS=-L<prefix>/lib`. The
+translations additionally need `msgfmt` on your `PATH`; with Homebrew, gettext
+is keg-only, so either run `brew link --force gettext` or add
+`$(brew --prefix gettext)/bin` to `PATH`.
+
 Note: some dependencies may have different names depending on your OS and
 package manager, and commonly have a '-dev' or '-devel' suffix. If the
 dependencies aren't available from your package manager, meson will download
