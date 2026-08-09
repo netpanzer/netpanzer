@@ -23,6 +23,21 @@ another 2 weeks polishing for the first release. Since then development has pick
 down, with various different teams and maintainers. The current maintainer of the game and masterserver
 is "winrid" on GitHub.
 
+## AI Policy
+
+All communication - pull request titles, descriptions, comments - must be written by a human. Anyone doing otherwise is instantly banned from the project forever.
+
+**The use of AI for development outside the core team members is not allowed.**
+
+The fact is you can vibe code a Netpanzer clone in five minutes. Netpanzer now serves the purpose as something we enjoy working on when we
+have time. This does not mean reading 50+ untested changed files by Claude or asking Claude "review this PR".
+
+Nobody cares about fixing sanitizer bugs or a 500kb memory leak in Netpanzer. Find something more impactful to do that doesn't waste my time.
+
+All PRs must include a video or screenshot showing the change, or the affected component still working.
+
+All graphics system related changes must be tested on Linux and Windows.
+
 ## To Play
 
 Go to the Releases tab in GitHub and download the version for your OS. The version in Linux repos as of 2024
