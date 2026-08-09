@@ -18,19 +18,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __ViewGlobals_hpp__
 #define __ViewGlobals_hpp__
 
-#include "SDL.h"
+#include <SDL.h>
 
-#define topLeftBorderColor           (Color::gray)
-#define bottomRightBorderColor       (Color::black)
+#define topLeftBorderColor (Color::gray)
+#define bottomRightBorderColor (Color::black)
 
-#define componentBodyColor           (Color::white) //41
-#define componentTextColor           (Color::black) //input fields background
-#define componentInActiveTextColor   (Color::darkGray) // arrows
-#define componentActiveTextColor     (Color::gray) // arrows over
-#define componentFocusTextColor      (Color::red)
+#define componentBodyColor (Color::white)             // 41
+#define componentTextColor (Color::black)             // input fields background
+#define componentInActiveTextColor (Color::darkGray)  // arrows
+#define componentActiveTextColor (Color::gray)        // arrows over
+#define componentFocusTextColor (Color::red)
 
-#define activeWindowTitleTextColor   (Color::black)
-#define activeWindowTitleBodyColor   (componentBodyColor)
+#define activeWindowTitleTextColor (Color::black)
+#define activeWindowTitleBodyColor (componentBodyColor)
 #define inactiveWindowTitleTextColor (Color::black)
 #define inactiveWindowTitleBodyColor (componentBodyColor)
 
@@ -40,4 +40,4 @@ extern Uint8 gBackground;
 void setForeground(Uint8 color);
 void setBackground(Uint8 color);
 
-#endif // end __ViewGlobals_hpp__
+#endif  // end __ViewGlobals_hpp__

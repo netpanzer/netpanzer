@@ -18,28 +18,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __PlayerNameView_hpp__
 #define __PlayerNameView_hpp__
 
-#include "Views/Components/View.hpp"
 #include "2D/Surface.hpp"
+#include "Views/Components/View.hpp"
 
 //---------------------------------------------------------------------------
-class PlayerNameView : public View
-{
-public:
-    PlayerNameView();
-    virtual ~PlayerNameView();
+class PlayerNameView : public View {
+ public:
+  PlayerNameView();
+  virtual ~PlayerNameView();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+  virtual void doDraw(Surface &windowArea, Surface &clientArea);
 
-    void init();
+  void init();
 
-private:
-    static void textChanged(cInputField* input);
+ private:
+  static void textChanged(cInputField *input);
 
-    enum { BORDER_SPACE           =  4 };
-    // irc nick is 16 chars max, 2 = "np", 1 spare for digit if nick is taken
-    enum { INPUT_FIELD_CHARACTERS = 20 };
+  enum { BORDER_SPACE = 4 };
+  // irc nick is 16 chars max, 2 = "np", 1 spare for digit if nick is taken
+  enum { INPUT_FIELD_CHARACTERS = 20 };
 
-    cInputFieldString playerName;
-}; // end PlayerNameView
+  cInputFieldString playerName;
+};  // end PlayerNameView
 
-#endif // end __PlayerNameView_hpp__
+#endif  // end __PlayerNameView_hpp__

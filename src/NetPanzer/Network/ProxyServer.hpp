@@ -18,27 +18,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __PROXYSERVER_HPP__
 #define __PROXYSERVER_HPP__
 
-#include <string>
 #include <sstream>
+#include <string>
 
 #include "Network/TCPSocket.hpp"
 
-class ProxyServer
-{
-public:
-    std::string proxyserver;
-    std::string proxyserveruser;
-    std::string proxyserverpass;
+class ProxyServer {
+ public:
+  std::string proxyserver;
+  std::string proxyserveruser;
+  std::string proxyserverpass;
 
-    void setProxy(const std::string& p,const std::string& u="",const std::string& pass="") {
-        proxyserver=p; proxyserveruser=u; proxyserverpass=pass; 
-    }
-    static void makeBase64(std::string& base64, const std::string& str);
-    void getProxyConnect(std::stringstream& buffer,
-            const std::string& serveraddress);
-    void sendProxyConnect(network::TCPSocket& socket,
-            const std::string& serveraddress);
+  void setProxy(const std::string& p, const std::string& u = "",
+                const std::string& pass = "") {
+    proxyserver = p;
+    proxyserveruser = u;
+    proxyserverpass = pass;
+  }
+  static void makeBase64(std::string& base64, const std::string& str);
+  void getProxyConnect(std::stringstream& buffer,
+                       const std::string& serveraddress);
+  void sendProxyConnect(network::TCPSocket& socket,
+                        const std::string& serveraddress);
 };
 
 #endif
-

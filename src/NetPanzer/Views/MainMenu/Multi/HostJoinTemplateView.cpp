@@ -16,27 +16,31 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "HostJoinTemplateView.hpp"
 
 #include <ctype.h>
+
 #include <sstream>
-#include "HostJoinTemplateView.hpp"
-#include "Views/Components/Desktop.hpp"
-#include "Views/Components/newButton.hpp"
-#include "HostJoinTemplateView.hpp"
-#include "Interfaces/GameConfig.hpp"
-#include "Interfaces/PlayerGameManager.hpp"
-#include "HostView.hpp"
-#include "Util/Exception.hpp"
-#include "MapSelectionView.hpp"
-#include "PlayerNameView.hpp"
+
+#include "package.hpp"
 #include "2D/Palette.hpp"
-#include "Views/GameViewGlobals.hpp"
-#include "IPAddressView.hpp"
-#include "ServerListView.hpp"
-#include "TipsView.hpp"
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/NetworkServer.hpp"
+#include "HostJoinTemplateView.hpp"
+#include "HostView.hpp"
+#include "IPAddressView.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Interfaces/PlayerGameManager.hpp"
+#include "Localization.hpp"
+#include "MapSelectionView.hpp"
+#include "PlayerNameView.hpp"
 #include "Resources/ResourceManager.hpp"
+#include "ServerListView.hpp"
+#include "TipsView.hpp"
+#include "Util/Exception.hpp"
+#include "Views/Components/Desktop.hpp"
+#include "Views/Components/newButton.hpp"
+#include "Views/GameViewGlobals.hpp"
 
 char HostJoinTemplateView::gameTypeBuf[256];
 
@@ -51,87 +55,75 @@ int cOrange;
 // Button functions.
 /////////////////////////////////////////////////////////////////////////////
 
-static void bPlay()
-{
-    if ( GameConfig::player_name->length() == 0 )
-        return;
+static void bPlay() {
+  if (GameConfig::player_name->length() == 0) return;
 
-    // Check a few things which should be ok.
-    if (strlen(HostJoinTemplateView::gameTypeBuf) == 0) {
-        return;
-    }
-    if (MapSelectionView::curMap == -1) {
-        return;
-    }
-    if (gameconfig->hostorjoin == _game_session_join &&
-        strcmp(IPAddressView::szServer.getString(), "") == 0)
-        return;
+  // Check a few things which should be ok.
+  if (strlen(HostJoinTemplateView::gameTypeBuf) == 0) {
+    return;
+  }
+  if (MapSelectionView::curMap == -1) {
+    return;
+  }
+  if (gameconfig->hostorjoin == _game_session_join &&
+      strcmp(IPAddressView::szServer.getString(), "") == 0)
+    return;
 
-    // Close all menu views.
-    Desktop::setVisibilityAllWindows(false);
+  // Close all menu views.
+  Desktop::setVisibilityAllWindows(false);
 
-    if(gameconfig->hostorjoin == _game_session_join) {
-        gameconfig->serverConnect = IPAddressView::szServer.getString();
-        IPAddressView::szServer.setString("");
-    }
+  if (gameconfig->hostorjoin == _game_session_join) {
+    gameconfig->serverConnect = IPAddressView::szServer.getString();
+    IPAddressView::szServer.setString("");
+  }
 
-    serverlistview->endQuery();
+  serverlistview->endQuery();
 
-    MenuTemplateView::backgroundSurface.free();
+  MenuTemplateView::backgroundSurface.free();
 
-    ResourceManager::updateFlagData( 0,
-                                     GameConfig::player_flag_data,
-                                     sizeof(GameConfig::player_flag_data) );
+  ResourceManager::updateFlagData(0, GameConfig::player_flag_data,
+                                  sizeof(GameConfig::player_flag_data));
 
-    PlayerGameManager* manager = (PlayerGameManager*) gamemanager;
-    manager->launchMultiPlayerGame();
+  PlayerGameManager* manager = (PlayerGameManager*)gamemanager;
+  manager->launchMultiPlayerGame();
 }
 
 // HostJoinTemplateView
 //---------------------------------------------------------------------------
-HostJoinTemplateView::HostJoinTemplateView() : MenuTemplateView()
-{
-    setSearchName("HostJoinTemplateView");
-    setTitle("");
-    setSubTitle("");
-    add( new newButton( "PLAY", "Play", playPos, 1) );
-} // end HostJoinTemplateView constructor
+HostJoinTemplateView::HostJoinTemplateView() : MenuTemplateView() {
+  setSearchName("HostJoinTemplateView");
+  setTitle("");
+  setSubTitle("");
+  add(new newButton("PLAY", _("Play"), playPos, 1));
+}  // end HostJoinTemplateView constructor
 
 // doDraw
 //---------------------------------------------------------------------------
-void HostJoinTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
-{
-    MenuTemplateView::doDraw(viewArea, clientArea);
+void HostJoinTemplateView::doDraw(Surface& viewArea, Surface& clientArea) {
+  MenuTemplateView::doDraw(viewArea, clientArea);
 
-    //View::doDraw(viewArea, clientArea);
-} // end doDraw
+  // View::doDraw(viewArea, clientArea);
+}  // end doDraw
 
 // doActivate
 //---------------------------------------------------------------------------
-void HostJoinTemplateView::doActivate()
-{
-    MenuTemplateView::doActivate();
+void HostJoinTemplateView::doActivate() {
+  MenuTemplateView::doActivate();
 
-    sprintf(currentMultiView, "%s", searchName);
-} // end doActivate
+  sprintf(currentMultiView, "%s", searchName);
+}  // end doActivate
 
 // loadBackgroundSurface
 //---------------------------------------------------------------------------
-void HostJoinTemplateView::loadBackgroundSurface()
-{
-    MenuTemplateView::loadBackgroundSurface();
-} // end HostJoinTemplateView::loadBackgroundSurface
+void HostJoinTemplateView::loadBackgroundSurface() {
+  MenuTemplateView::loadBackgroundSurface();
+}  // end HostJoinTemplateView::loadBackgroundSurface
 
-void HostJoinTemplateView::onComponentClicked(Component* c)
-{
-    string cname = c->getName();
-    if ( !cname.compare("Button.PLAY") )
-    {
-        bPlay();
-    }
-    else
-    {
-        MenuTemplateView::onComponentClicked(c);
-    }
-
+void HostJoinTemplateView::onComponentClicked(Component* c) {
+  std::string cname = c->getName();
+  if (!cname.compare("Button.PLAY")) {
+    bPlay();
+  } else {
+    MenuTemplateView::onComponentClicked(c);
+  }
 }

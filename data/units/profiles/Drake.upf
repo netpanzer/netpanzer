@@ -1,0 +1,17 @@
+hitpoints =  300;
+attack =  180;
+reload =  50;
+range =  31;
+regen =  55;
+defend_range =  24;
+speed_rate =  16;
+speed_factor =  2;
+image =  "pics/menus/vehicleSelectionView/drake.bmp"
+bodysprite =  "DrakHNSD.pak"
+bodyshadow =  "DrakHSSD.pak"
+turretsprite =  "DrakTNSD.pak"
+turretshadow =  "DrakTSSD.pak"
+soundselected =  "ht-selected"
+soundfire =  "ht-fire"
+weapon =  "SHELL"
+boundbox =  60

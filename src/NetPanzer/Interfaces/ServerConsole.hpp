@@ -18,31 +18,31 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __SERVERCONSOLE_HPP__
 #define __SERVERCONSOLE_HPP__
 
-#include <string>
 #include <SDL_thread.h>
+
+#include <string>
+
 #include "DedicatedGameManager.hpp"
 
 class DedicatedGameManager;
 
-class ServerConsole
-{
-public:
-    ServerConsole(DedicatedGameManager* manager);
-    ~ServerConsole();
+class ServerConsole {
+ public:
+  ServerConsole(DedicatedGameManager* manager);
+  ~ServerConsole();
 
-    void startThread();
-    void executeCommand(const std::string& command);
-    
-private:
-    static int _run(ServerConsole* _this);
-    void run();
-    
-    void commandQuit();
+  void startThread();
+  void executeCommand(const std::string& command);
 
-    volatile bool running;
-    SDL_Thread* thread;
-    DedicatedGameManager* manager;
+ private:
+  static int _run(ServerConsole* _this);
+  void run();
+
+  void commandQuit();
+
+  volatile bool running;
+  SDL_Thread* thread;
+  DedicatedGameManager* manager;
 };
 
 #endif
-

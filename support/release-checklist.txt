@@ -1,0 +1,85 @@
+## Change version number
+
+meson.build
+support/scripts/prep-appimage.sh
+
+Remove from meson default options:
+
+    'b_sanitize=address,undefined',
+    'b_lundef=false'
+
+Those two options can be disabled easily enough by package maintainers, but
+anybody else who wants to build from the release wouldn't necessarily know
+they should be disabled. Having that enabled slows the game down a bit.
+
+
+## Translations
+
+(In the build directory)
+meson compile netpanzer-pot
+meson compile netpanzer-update-po
+
+## ChangeLog
+
+Update/Review
+
+commit changes (NOTE: meson dist only packages *committed* changes)
+
+## Source Distribution Archive
+
+meson dist --no-tests --include-subprojects
+
+    meson adds all files tracked by version control so...
+
+    Remove unneeded directories from the resulting xz file
+    (The process will be in the GitHub workflow)
+
+    Remove subprojects/packagecache (when --include-subprojects is used, the extracted
+    source should be included. We'll check the first time around)
+
+    Remove any directories that aren't needed for building or packaging, ie,
+    keep files like netpanzer.png but remove scripts used for packaging. Keep
+    scripts used to build the appimage or create docker images I think).
+
+Example:
+
+        xz -d ${REL_TAR}.xz
+        tar --delete -f ${REL_TAR} rmw-${VERSION}/support
+        xz ${REL_TAR}
+        sha256sum ${REL_TAR}.xz > ${REL_TAR}.xz.sha256sum
+
+## AppImage
+
+run:
+
+support/appimage/prep-appimage.sh
+
+Or run the workflow after all release-related changes have been pushed to the
+master branch. Download the artifact and attach the files from the zip to the
+release page.
+
+## Docker Image
+
+Docker image should be created from the workflow, as it push an amd64 and
+arm64 image. This can be automated when releases are pushed. For now, the
+workflow has a "dispatch" trigger, so you can click "run workflow" at
+https://github.com/netpanzer/netpanzer/actions/workflows/docker.yml and you'll
+be prompted for the tag. The default is "latest".
+
+## Post release
+
+Change version number to a dev version (see files above). Note messon doesn't
+allow alpha characters and typically projects use something like 0.9.0.555 for
+dev versions.
+
+
+Add back to meson default options:
+
+    'b_sanitize=address,undefined',
+    'b_lundef=false'
+
+
+Close milestone (https://github.com/netpanzer/netpanzer/milestones)
+
+
+

@@ -19,38 +19,38 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _HEARTBEAT_HPP
 #define _HEARTBEAT_HPP
 
+#include <SDL.h>
+
+#include <map>
+#include <vector>
+
 #include "Network/TCPSocket.hpp"
 #include "Util/NTimer.hpp"
-#include "SDL.h"
-#include <vector>
-#include <map>
 
-using namespace std;
 using namespace network;
 
 class MasterserverInfo;
 
-class Heartbeat : public TCPSocketObserver
-{
-public:
-    Heartbeat();
-    ~Heartbeat();
-    void checkHeartbeat();
-    
-protected:
-    void onConnected(TCPSocket *so);
-    void onDisconected(TCPSocket *so);
-    void onDataReceived(TCPSocket *so, const char *data, const int len);
-    void onSocketError(TCPSocket *so);
-    void startHeartbeat();
-    
-private:
-    NTimer nextHeartbeat;
-    string hb_message;
-    vector<Address> mslist;
-    typedef map<TCPSocket *, MasterserverInfo *> MSMap;
-    typedef MSMap::iterator MSMapIterator;
-    MSMap masterservers;
+class Heartbeat : public TCPSocketObserver {
+ public:
+  Heartbeat();
+  ~Heartbeat();
+  void checkHeartbeat();
+
+ protected:
+  void onConnected(TCPSocket *so);
+  void onDisconnected(network::TCPSocket *so);
+  void onDataReceived(TCPSocket *so, const char *data, const int len);
+  void onSocketError(TCPSocket *so);
+  void startHeartbeat();
+
+ private:
+  NTimer nextHeartbeat;
+  std::string hb_message;
+  std::vector<Address> mslist;
+  typedef std::map<TCPSocket *, MasterserverInfo *> MSMap;
+  typedef MSMap::iterator MSMapIterator;
+  MSMap masterservers;
 };
 
 #endif

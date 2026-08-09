@@ -19,24 +19,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef NETWORKMANAGER_HPP
 #define NETWORKMANAGER_HPP
 
-namespace network
-{
+namespace network {
 
 class Address;
 
-class NetworkManager
-{
-public:
-    static bool initialize();
-    static void cleanUp();
+class NetworkManager {
+ public:
+  static bool initialize();
+  static void cleanUp();
 
-    static void run();
+  static void run();
 
-    static int queryAddress(Address& address);
+  static int queryAddress(Address& address);
 
-private:
-    static int resolver_worker(void *);
+ private:
+  static int resolver_worker(void*);
 };
 
-}
-#endif // NETWORKMANAGER_HPP
+}  // namespace network
+#endif  // NETWORKMANAGER_HPP

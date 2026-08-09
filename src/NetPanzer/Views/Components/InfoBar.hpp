@@ -19,32 +19,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #ifndef _INFOBAR_HPP
-#define	_INFOBAR_HPP
+#define _INFOBAR_HPP
 
 #include "Views/Components/Component.hpp"
 
-class InfoBar : public Component
-{
-public:
-    InfoBar(int x, int y)
-    {
-        position.x = x;
-        position.y = y;
-    }
-    
-    void draw(Surface &dest);
-    
-    virtual void render()
-    {
-        // nothing
-    }
-    
-    void actionPerformed(const mMouseEvent &me)
-    {
-        // nothing
-    }
+class InfoBar : public Component {
+ public:
+  InfoBar(int x, int y) {
+    position.x = x;
+    position.y = y;
+  }
+
+  void draw(Surface &dest);
+
+  static bool bar_on;
+
+  virtual void render() {
+    // nothing
+  }
+
+  void actionPerformed(const mMouseEvent &me) {
+    // nothing
+  }
 };
 
-
-#endif	/* _INFOBAR_HPP */
-
+#endif /* _INFOBAR_HPP */

@@ -20,45 +20,37 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _SOCKETMANAGER_HPP
 
 #include <set>
-#include "SocketBase.hpp"
-#include "TCPSocket.hpp"
-#include "SocketSet.hpp"
 
-using namespace std;
+#include "SocketBase.hpp"
+#include "SocketSet.hpp"
+#include "TCPSocket.hpp"
 
 namespace network {
-    
-class SocketManager
-{
-public:
-    SocketManager() {};
-    ~SocketManager() {};
-    
-    static void handleEvents();
-    
-protected:
-    friend class SocketBase; // the only allowed to add/remove
-    static void addSocket(SocketBase *s)
-    {
-        newSockets.insert(s);
-    }
-    
-    static void removeSocket(SocketBase *s)
-    {
-        s->state = SocketBase::DESTROYING;
-    }
-    
-    static void removeInvalidSockets();
 
-private:
-    typedef set<SocketBase *> Sockets;
-    typedef set<SocketBase *>::iterator SocketsIterator;
-    
-    static SocketSet sset;
-    static Sockets socketList;
-    static Sockets newSockets;
+class SocketManager {
+ public:
+  SocketManager(){};
+  ~SocketManager(){};
+
+  static void handleEvents();
+
+ protected:
+  friend class SocketBase;  // the only allowed to add/remove
+  static void addSocket(SocketBase *s) { newSockets.insert(s); }
+
+  static void removeSocket(SocketBase *s) { s->state = SocketBase::DESTROYING; }
+
+  static void removeInvalidSockets();
+
+ private:
+  typedef std::set<SocketBase *> Sockets;
+  typedef std::set<SocketBase *>::iterator SocketsIterator;
+
+  static SocketSet sset;
+  static Sockets socketList;
+  static Sockets newSockets;
 };
 
-} // namespace
+}  // namespace network
 
 #endif

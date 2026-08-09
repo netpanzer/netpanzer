@@ -18,54 +18,56 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __MenuTemplateView_hpp__
 #define __MenuTemplateView_hpp__
 
-#include "Views/MainMenu/SpecialButtonView.hpp"
-#include "2D/Surface.hpp"
 #include "2D/PackedSurface.hpp"
+#include "2D/Surface.hpp"
 #include "Types/iRect.hpp"
 #include "Types/iXY.hpp"
+#include "Views/MainMenu/SpecialButtonView.hpp"
 
 //--------------------------------------------------------------------------
-class MenuTemplateView : public RMouseHackView
-{
-protected:
-    static  void loadNetPanzerLogo();
+class MenuTemplateView : public RMouseHackView {
+ protected:
+  static void loadNetPanzerLogo();
 
-    virtual void loadBackgroundSurface();
-    virtual void loadMainBackgroundSurface();
-    virtual void loadTitleSurface();
+  virtual void loadBackgroundSurface();
+  virtual void loadMainBackgroundSurface();
+  virtual void loadTitleSurface();
 
-    void doLoadBackgroundSurface(const std::string& string);
-    void doLoadTitleSurface(const std::string& string);
+  void doLoadBackgroundSurface(const std::string &string);
+  void doLoadTitleSurface(const std::string &string);
 
-    float curTitleFlashTime;  // Where am I at in the flash?
-    float titleFlashTimeHalf; // Time it takes for a half flash.
+  // float curTitleFlashTime;  // Where am I at in the flash?
+  // float titleFlashTimeHalf; // Time it takes for a half flash.
 
-    typedef void (*ITEM_FUNC)(void);
-    void onComponentClicked(Component *c);
+  typedef void (*ITEM_FUNC)(void);
+  void onComponentClicked(Component *c);
 
-public:
-    MenuTemplateView();
+ public:
+  MenuTemplateView();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
-    virtual void doDrawM(Surface &windowArea, Surface &clientArea);
-    virtual void doDrawAlt(Surface &windowArea, Surface &clientArea);
-    virtual void doActivate();
-    virtual void doDeactivate();
-    virtual void processEvents();
+  virtual void doDraw(Surface &windowArea, Surface &clientArea);
+  virtual void doDrawM(Surface &windowArea, Surface &clientArea);
+  virtual void doDrawAlt(Surface &windowArea, Surface &clientArea);
+  virtual void doActivate();
+  virtual void doDeactivate();
+  virtual void processEvents();
 
-    void initInGameOptionButtons();
-    void initPreGameOptionButtons();
+  void initInGameOptionButtons();
+  void initPreGameOptionButtons();
+  void drawVersionNumber(Surface &clientArea);
 
-    virtual void initButtons();
+  virtual void initButtons();
 
-    static char currentMultiView[256];  // Used to keep track of where you are in the multiplayer menus.
-    static char currentView[256];       // Used to keep track of which menu you are currently in.
+  static char currentMultiView[256];  // Used to keep track of where you are in
+                                      // the multiplayer menus.
+  static char currentView[256];  // Used to keep track of which menu you are
+                                 // currently in.
 
-    //static PackedSurface netPanzerLogo;
-    static bool          firstTimeInMenu;
-    //static PackedSurface globeSurface;
-    static Surface       backgroundSurface;
-    static PackedSurface titlePackedSurface;
-}; // end MenuTemplateView
+  // static PackedSurface netPanzerLogo;
+  static bool firstTimeInMenu;
+  // static PackedSurface globeSurface;
+  static Surface backgroundSurface;
+  static PackedSurface titlePackedSurface;
+};  // end MenuTemplateView
 
-#endif // end __MenuTemplateView_hpp__
+#endif  // end __MenuTemplateView_hpp__

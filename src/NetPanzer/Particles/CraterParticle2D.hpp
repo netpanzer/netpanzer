@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -19,53 +19,44 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __CraterParticle2D_hpp__
 
 #include <vector>
+
 #include "Particles/Particle2D.hpp"
 
 class Surface;
 
-class CraterCacheInfo
-{
-public:
-    iRect     bounds;
-    iXY       pos;
+class CraterCacheInfo {
+ public:
+  iRect bounds;
+  iXY pos;
 };
 
 // CraterParticle2D
 //--------------------------------------------------------------------------
-class CraterParticle2D : public Particle2D
-{
-public:
-    CraterParticle2D(const fXYZ  &pos);
+class CraterParticle2D : public Particle2D {
+ public:
+  CraterParticle2D(const fXYZ &pos);
 
-    static void init();
+  static void init();
+  static void uninit();
+  static PackedSurface staticPackedCrater;
 
-    static PackedSurface staticPackedCrater;
+  static int getCacheHitCount() { return cacheHitCount; }
+  static int getCacheMissCount() { return cacheMissCount; }
 
-    static int getCacheHitCount()
-    {
-        return cacheHitCount;
-    }
-    static int getCacheMissCount()
-    {
-        return cacheMissCount;
-    }
+ protected:
+  virtual void draw(const Surface &dest, SpriteSorter &sorter);
+  virtual void sim();
 
-protected:
+  // Statistic data.
+  static int cacheHitCount;
+  static int cacheMissCount;
+  static int halfBoundsSize;
 
-    virtual void draw(const Surface &dest, SpriteSorter &sorter);
-    virtual void sim();
+  static std::vector<CraterCacheInfo> craterCache;
+  static int curCraterIndex;
 
-    // Statistic data.
-    static int cacheHitCount;
-    static int cacheMissCount;
-    static int halfBoundsSize;
+  int cacheIndex;  // Which cache slot I was in.
 
-    static std::vector<CraterCacheInfo> craterCache;
-    static int curCraterIndex;
+};  // end CraterParticle2D
 
-    int cacheIndex;  // Which cache slot I was in.
-
-}
-; // end CraterParticle2D
-
-#endif // __CraterParticle2D_hpp__
+#endif  // __CraterParticle2D_hpp__
