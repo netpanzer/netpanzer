@@ -159,7 +159,11 @@ bool SDLVideo::setVideoMode(int new_width, int new_height, int bpp,
   }
 
   LOGGER.debug("Creating new render texture.");
-  texture = SDL_CreateTextureFromSurface(renderer, surface);
+  // Streaming, so render() can write into it instead of allocating a new
+  // texture every frame.
+  texture =
+      SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
+                        SDL_TEXTUREACCESS_STREAMING, new_width, new_height);
 
   if (texture == nullptr) {
     LOGGER.warning("Couldn't create render texture: %s", SDL_GetError());
@@ -206,13 +210,44 @@ SDL_Surface *SDLVideo::getSurface() { return surface; }
 SDL_Window *SDLVideo::getWindow() { return window; }
 
 void SDLVideo::render() {
-  // This mechanism is only about 5-10% slower than SDL_BlitSurface &&
-  // SDL_UpdateWindowSurface. But, it gets us a lot (simpler code, much nicer
-  // rendering and scaling).
-  if (texture != nullptr) {
-    SDL_DestroyTexture(texture);
+  // The texture is created once in setVideoMode; here the indexed screen is
+  // expanded into it through a palette lookup table.
+  if (texture == nullptr || surface == nullptr) return;
+
+  void *pixels = nullptr;
+  int pitch = 0;
+  if (SDL_LockTexture(texture, nullptr, &pixels, &pitch) != 0) {
+    LOGGER.warning("Couldn't lock render texture: %s", SDL_GetError());
+    return;
   }
-  texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+  // Rebuilt per frame: 256 entries is cheap next to a screen of pixels, and it
+  // stays correct whoever changed the palette since the last one.
+  Uint32 lut[256];
+  const SDL_Palette *pal = surface->format->palette;
+  const int color_count = (pal != nullptr) ? pal->ncolors : 0;
+  for (int i = 0; i < 256; i++) {
+    if (i < color_count) {
+      const SDL_Color &c = pal->colors[i];
+      lut[i] =
+          0xFF000000u | ((Uint32)c.r << 16) | ((Uint32)c.g << 8) | (Uint32)c.b;
+    } else {
+      lut[i] = 0xFF000000u;
+    }
+  }
+
+  const Uint8 *src = (const Uint8 *)surface->pixels;
+  Uint8 *dst = (Uint8 *)pixels;
+  for (int y = 0; y < surface->h; y++) {
+    const Uint8 *src_row = src + (size_t)y * surface->pitch;
+    Uint32 *dst_row = (Uint32 *)(dst + (size_t)y * pitch);
+    for (int x = 0; x < surface->w; x++) {
+      dst_row[x] = lut[src_row[x]];
+    }
+  }
+
+  SDL_UnlockTexture(texture);
+
   SDL_RenderClear(renderer);
   SDL_RenderCopy(renderer, texture, nullptr, nullptr);
   SDL_RenderPresent(renderer);
