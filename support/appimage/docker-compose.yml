@@ -1,0 +1,13 @@
+services:
+  build:
+    environment:
+      # HOSTUID/HOSTGID are auto-detected by v3-jammy from the
+      # bind-mounted workspace owner; export them only to override.
+      HOSTUID: ${HOSTUID}
+      HOSTGID: ${HOSTGID}
+      VERSION: ${VERSION}
+    image: andy5995/linuxdeploy:v3-jammy
+    volumes:
+      - ../../:/workspace
+    working_dir: /workspace
+    command: "${SCRIPT:-support/appimage/make-appimage.sh}"
