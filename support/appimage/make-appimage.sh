@@ -45,7 +45,7 @@ fi
 # Required version of SDL2 and and SDL2-ttf are too old in Ubuntu Focal, which is
 # the container distro for linuxdeploy.
 # See https://github.com/netpanzer/netpanzer/issues/235
-sudo apt update && sudo apt upgrade -y
+sudo apt update
 sudo apt install -y \
   gettext \
   liblua5.1-0-dev \

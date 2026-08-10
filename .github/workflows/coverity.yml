@@ -12,8 +12,6 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt update
-        sudo apt remove -y firefox # save a little time during upgrade
-        sudo apt upgrade -y
         sudo apt install -y \
           liblua5.1-0-dev \
           libphysfs-dev \
