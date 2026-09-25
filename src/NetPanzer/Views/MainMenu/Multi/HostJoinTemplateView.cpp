@@ -21,6 +21,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <ctype.h>
 
 #include <sstream>
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 #include "package.hpp"
 #include "2D/Palette.hpp"
@@ -41,6 +44,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/Desktop.hpp"
 #include "Views/Components/newButton.hpp"
 #include "Views/GameViewGlobals.hpp"
+#ifdef __EMSCRIPTEN__
+#include "Views/Game/LoadingView.hpp"
+#endif
 
 char HostJoinTemplateView::gameTypeBuf[256];
 
@@ -68,6 +74,14 @@ static void bPlay() {
   if (gameconfig->hostorjoin == _game_session_join &&
       strcmp(IPAddressView::szServer.getString(), "") == 0)
     return;
+
+#ifdef __EMSCRIPTEN__
+  // Reject unsupported destinations before closing the menu or starting a load.
+  const int selection = EM_ASM_INT({ return Module.selectGameServer(UTF8ToString($0)); },
+                                   IPAddressView::szServer.getString());
+  if (!selection) return;
+  static_cast<LoadingView*>(Desktop::getView("LoadingView"))->setNeedPassword(selection == 2);
+#endif
 
   // Close all menu views.
   Desktop::setVisibilityAllWindows(false);

@@ -265,6 +265,10 @@ void PlayerGameManager::shutdownNetworkSubSystem() {
 
 //-----------------------------------------------------------------
 void PlayerGameManager::hostMultiPlayerGame() {
+#ifdef __EMSCRIPTEN__
+  LOGGER.warning("Hosting is unavailable in the browser. Join a server instead.");
+  return;
+#endif
   PlayerState *player_state;
   Timer wait;
 
@@ -492,6 +496,8 @@ bool PlayerGameManager::mainLoop() {
 //-----------------------------------------------------------------
 void PlayerGameManager::processSystemKeys() {
   if (Desktop::getVisible("GameView")) {
+#ifndef __EMSCRIPTEN__
+    // The web build uses browser fullscreen and screenshot facilities.
     if (KeyboardInterface::getKeyState(SDLK_LALT) ||
         KeyboardInterface::getKeyState(SDLK_RALT)) {
       if (KeyboardInterface::getKeyPressed(SDLK_RETURN)) {
@@ -503,6 +509,7 @@ void PlayerGameManager::processSystemKeys() {
     if (KeyboardInterface::getKeyState(SDLK_F9)) {
       Screen->doScreenshot();
     }
+#endif
 
     if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE)) {
       if (!Desktop::getView("OptionsView")->getVisible()) {

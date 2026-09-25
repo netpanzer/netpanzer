@@ -17,6 +17,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "NetworkClient.hpp"
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 #include "Classes/Network/ClientConnectDaemon.hpp"
 #include "Classes/Network/NetworkState.hpp"
@@ -54,6 +57,9 @@ void NetworkClient::onClientConnected(ClientSocket *s) {
 }
 
 void NetworkClient::onClientDisconnected(ClientSocket *s, const char *msg) {
+#ifdef __EMSCRIPTEN__
+  EM_ASM({ Module.onGameStatus?.(UTF8ToString($0), 'disconnected'); }, msg);
+#endif
   if (NetworkState::status == _network_state_bot)  // client bot only
   {
     // do nothing

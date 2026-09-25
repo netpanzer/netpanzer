@@ -42,8 +42,14 @@ void initialize(const char* argv0, const char* application) {
   const char* tmp_basedir = PHYSFS_getBaseDir();
   char basedir[strlen(tmp_basedir) + sizeof "/data"];
   snprintf(basedir, sizeof basedir, "%s/data", tmp_basedir);
-  const char* userdir = PHYSFS_getUserDir();
+  std::string userDirectory = PHYSFS_getUserDir();
+  // Allows isolated server/bot profiles without changing the user's home.
+  if (const char* overrideDir = getenv("NETPANZER_USERDIR"))
+    if (*overrideDir) userDirectory = overrideDir;
   const char* dirsep = PHYSFS_getDirSeparator();
+  if (!userDirectory.empty() && userDirectory.back() != *dirsep)
+    userDirectory += dirsep;
+  const char* userdir = userDirectory.c_str();
   char* writedir = new char[strlen(userdir) + strlen(application) + 2];
 
   sprintf(writedir, "%s.%s", userdir, application);

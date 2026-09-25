@@ -65,6 +65,17 @@ void TipsView::doDraw(Surface &viewArea, Surface &clientArea) {
   const PIX bgColor = Color::lightGray;
   clientArea.fill(bgColor);
 
+#ifdef __EMSCRIPTEN__
+  clientArea.bltString(4, Surface::getFontHeight(),
+      "Choose a server below, or enter its address above.", Color::darkGray, bgColor);
+  clientArea.bltString(4, Surface::getFontHeight() + 12,
+      "Hosting is unavailable. Use the browser Fullscreen button.", Color::darkGray, bgColor);
+  clientArea.bltString(4, Surface::getFontHeight() + 24,
+      "Ping is measured from the gateway; ? means status unknown.", Color::darkGray, bgColor);
+  View::doDraw(viewArea, clientArea);
+  return;
+#endif
+
   switch (tipnumber) {
     case 0:
       clientArea.bltString(

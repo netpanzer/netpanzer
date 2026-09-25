@@ -20,6 +20,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <iostream>
 #include <sstream>
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 #include "Core/NetworkGlobals.hpp"
 #include "IPAddressView.hpp"
@@ -31,6 +34,36 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Game/LoadingView.hpp"
 
 ServerListView* serverlistview = 0;
+
+#ifdef __EMSCRIPTEN__
+static int webRequestSequence = 0;
+
+extern "C" EMSCRIPTEN_KEEPALIVE void netpanzer_web_server(
+    int request, const char* address, int port, const char* name,
+    const char* map, int players, int maxplayers, int ping, int protocol,
+    int password, int auth, int running) {
+  if (!serverlistview || serverlistview->webRequest != request) return;
+  auto* server = new masterserver::ServerInfo();
+  server->address = address;
+  server->port = port;
+  server->name = name;
+  server->map = map;
+  server->players = players;
+  server->maxplayers = maxplayers;
+  server->ping = ping;
+  // Private servers may not publish status; let the join handshake check them.
+  server->protocol = protocol < 0 ? NETPANZER_PROTOCOL_VERSION : protocol;
+  server->needs_password = password;
+  server->auth_on = auth;
+  server->status = running ? masterserver::ServerInfo::RUNNING : masterserver::ServerInfo::TIMEOUT;
+  serverlistview->addWebServer(server);
+}
+
+extern "C" EMSCRIPTEN_KEEPALIVE void netpanzer_web_servers_done(int request, const char* message) {
+  if (serverlistview && serverlistview->webRequest == request)
+    serverlistview->webStatus = message;
+}
+#endif
 
 ServerListView::ServerListView() : queryThread(0) {
   setSearchName("ServerListView");
@@ -59,6 +92,7 @@ ServerListView::ServerListView() : queryThread(0) {
 
 ServerListView::~ServerListView() {
   delete queryThread;
+  for (auto* server : serverlist) delete server;
   serverlistview = 0;
 }
 
@@ -78,6 +112,13 @@ void ServerListView::refresh() {
     delete *i;
   serverlist.clear();
 
+#ifdef __EMSCRIPTEN__
+  webRequest = ++webRequestSequence;
+  webStatus = "Querying website servers...";
+  EM_ASM({ Module.refreshGameServers($0); }, webRequest);
+  return;
+#endif
+
   bool mylock = false;
   if (!screen->getDoesExist()) {
     screen->lock();
@@ -92,6 +133,10 @@ void ServerListView::refresh() {
 }
 
 void ServerListView::endQuery() {
+#ifdef __EMSCRIPTEN__
+  webRequest = 0;  // Ignore late HTTP responses after leaving the Join screen.
+  EM_ASM({ Module.cancelGameServerRefresh(); });
+#endif
   if (queryThread) {
     delete queryThread;
     queryThread = 0;
@@ -131,6 +176,9 @@ void ServerListView::doDraw(Surface& windowArea, Surface& clientArea) {
       msg = queryThread->getStateMessage();
     } else {
       msg = "Resolving masterserver address";
+#ifdef __EMSCRIPTEN__
+      msg = webStatus.c_str();
+#endif
     }
     clientArea.bltString(0, 0, msg, Color::white, bgColor);
     View::doDraw(windowArea, clientArea);
@@ -153,10 +201,12 @@ void ServerListView::doDraw(Surface& windowArea, Surface& clientArea) {
                            Color::gray, bgColor);
     } else {
       std::stringstream playerstr;
-      playerstr << server.players << "/" << server.maxplayers;
+      if (server.players < 0 || server.maxplayers < 0) playerstr << "?/?";
+      else playerstr << server.players << "/" << server.maxplayers;
 
       std::stringstream pingstr;
-      pingstr << server.ping;
+      if (server.ping < 0) pingstr << "?";
+      else pingstr << server.ping;
 
       std::stringstream servaddr;
       servaddr << server.address << ':' << server.port;

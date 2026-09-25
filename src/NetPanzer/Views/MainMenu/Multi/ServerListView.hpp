@@ -31,6 +31,11 @@ class ServerListView : public View {
   void refresh();
   void endQuery();
   masterserver::ServerList getViewModel();
+#ifdef __EMSCRIPTEN__
+  int webRequest = 0;
+  std::string webStatus = "Select a server offered by this website";
+  void addWebServer(masterserver::ServerInfo* server) { serverlist.push_back(server); }
+#endif
 
   virtual void doDraw(Surface& windowArea, Surface& clientArea);
   virtual int lMouseUp(const iXY& up_pos, const iXY& down_pos);

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "local",
+    "name": "Local battlefield",
+    "host": "127.0.0.1",
+    "port": 3030
+  },
+  {
+    "id": "second",
+    "name": "Second battlefield",
+    "host": "127.0.0.1",
+    "port": 3031
+  }
+]

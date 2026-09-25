@@ -193,11 +193,16 @@ void OptionsTemplateView::initButtons() {
                     Color::gray));
   y += yOffset;
   x = xTextStart;
+#ifndef __EMSCRIPTEN__
   checkBoxFullscreen = new CheckBox();
   checkBoxFullscreen->setLabel("Fullscreen");
   checkBoxFullscreen->setLocation(x + col, y);
   checkBoxFullscreen->setStateChangedCallback(this);
   add(checkBoxFullscreen);
+#else
+  checkBoxFullscreen = nullptr;
+  add(new Label(x, y, "Display: browser toolbar / window size", windowTextColor, componentBodyColor));
+#endif
   y += yOffset;
   x = xTextStart;
   checkBoxDrawAllShadows = new CheckBox();
@@ -208,6 +213,7 @@ void OptionsTemplateView::initButtons() {
   add(checkBoxDrawAllShadows);
 
   x = xTextStart;
+#ifndef __EMSCRIPTEN__
   choiceResolution = new Choice();
   choiceResolution->setName("Resolution");
   choiceResolution->addItem("current");
@@ -226,6 +232,9 @@ void OptionsTemplateView::initButtons() {
   add(choiceResolution);
   current_width = 0;
   current_height = 0;
+#else
+  choiceResolution = nullptr;
+#endif
   y += yOffset;
 
   x = xTextStart;
@@ -329,7 +338,7 @@ void OptionsTemplateView::initButtons() {
 // doDraw
 //---------------------------------------------------------------------------
 void OptionsTemplateView::doDraw(Surface &viewArea, Surface &clientArea) {
-  checkBoxFullscreen->setState(GameConfig::video_fullscreen);
+  if (checkBoxFullscreen) checkBoxFullscreen->setState(GameConfig::video_fullscreen);
   checkBoxBlendSmoke->setState(GameConfig::video_blendsmoke);
   checkBoxDrawAllShadows->setState(GameConfig::video_shadows);
 

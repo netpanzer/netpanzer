@@ -87,6 +87,13 @@ bool handleSDLEvents() {
         KeyboardInterface::keyReleased(event.key.keysym.sym);
         break;
     }
+#ifdef __EMSCRIPTEN__
+    // The menus sample button/key state once per frame. Preserve each edge
+    // when the browser queues a complete quick click between two frames.
+    if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP ||
+        event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
+      return false;
+#endif
   }
 
   return false;

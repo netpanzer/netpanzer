@@ -337,6 +337,12 @@ endforeach
 
 src += ['Core/NetworkGlobals.cpp']
 
+if platform_is_web
+lib_netpanzer = static_library('netpanzer', src,
+  include_directories: inc_dirs, dependencies: deps, install: false)
+netpanzer_dep_static = declare_dependency(link_with: lib_netpanzer,
+  include_directories: inc_dirs, dependencies: deps)
+else
 lib_netpanzer = both_libraries(
   'netpanzer',
   src,
@@ -358,3 +364,4 @@ netpanzer_dep_shared = declare_dependency(
   include_directories: inc_dirs,
   dependencies: [deps, sdl2main_dep]
   )
+endif

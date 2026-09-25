@@ -34,6 +34,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 #include <fstream>
 #include <optionmm/command_line.hpp>
@@ -364,7 +367,30 @@ BaseGameManager* initialise(int argc, char** argv) {
   }
 }
 
+#ifdef __EMSCRIPTEN__
+static void browserFrame(void* context) {
+  auto* manager = static_cast<BaseGameManager*>(context);
+  try {
+    if (manager->mainLoop()) return;
+    emscripten_cancel_main_loop();
+    manager->shutdown();
+    delete manager;
+    shutdown(true);
+    ScriptManager::close();
+    network::NetworkManager::cleanUp();
+    EM_ASM({ if (Module.onGameExit) Module.onGameExit(); });
+  } catch (const std::exception& e) {
+    emscripten_cancel_main_loop();
+    LOGGER.warning("Browser frame failed: %s", e.what());
+    EM_ASM({ if (Module.onAbort) Module.onAbort(UTF8ToString($0)); }, e.what());
+  }
+}
+#endif
+
 int main(int argc, char *argv[]) {
+#ifdef __EMSCRIPTEN__
+  setenv("NETPANZER_DATADIR", "/data", 1);
+#endif
 #ifdef ENABLE_NLS
   Package::assignLocaleDir();
   setlocale(LC_ALL, "");
@@ -385,8 +411,13 @@ int main(int argc, char *argv[]) {
   // a usefull error message and SDL has a chance to shutdown...
   try {
     if (manager->launchNetPanzerGame()) {
+#ifdef __EMSCRIPTEN__
+      emscripten_set_main_loop_arg(browserFrame, manager, 0, false);
+      return 0;
+#else
       while (manager->mainLoop())
         ;
+#endif
     }
 
     manager->shutdown();

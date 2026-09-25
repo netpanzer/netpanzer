@@ -20,6 +20,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Network/ClientSocket.hpp"
 
 #include <string.h>
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 #include <iomanip>
 #include <iostream>
@@ -59,6 +62,13 @@ ClientSocket::ClientSocket(ClientSocketObserver *o,
     //        const char *server= proxy.proxyserver != ""
     //                ? proxy.proxyserver.c_str() : whole_servername.c_str();
     UtilInterface::splitServerPort(whole_servername, servername, &port);
+
+#ifdef __EMSCRIPTEN__
+    if (!EM_ASM_INT({ return Module.selectGameServer(UTF8ToString($0)); },
+                    whole_servername.c_str())) {
+      throw Exception("Select a server offered by this website.");
+    }
+#endif
 
     network::Address serveraddr = network::Address::resolve(servername, port);
 

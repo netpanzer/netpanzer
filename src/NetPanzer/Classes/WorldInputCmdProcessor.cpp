@@ -115,6 +115,11 @@ void WorldInputCmdProcessor::cycleSelectedUnits(unsigned long new_list_index) {
 }
 
 void WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos) {
+#ifdef __EMSCRIPTEN__
+  // Leaving the canvas (including a fullscreen transition) must not keep
+  // scrolling with the last clamped position at its edge.
+  if (SDL_GetMouseFocus() != Screen->getWindow()) return;
+#endif
   double time_slice;
   long scroll_increment;
   float scroll_rate;

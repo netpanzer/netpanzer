@@ -30,7 +30,16 @@ double TimerInterface::timeSlice = 0;
 // start
 //--------------------------------------------------------------------------
 void TimerInterface::start() {
+#ifdef __EMSCRIPTEN__
+  // requestAnimationFrame yields between frames; include that time in the
+  // simulation step, and avoid a huge step after returning to a hidden tab.
+  const TimeStamp current = now();
+  timeSlice = current - frameStartTime;
+  if (timeSlice > 0.1) timeSlice = 0.1;
+  frameStartTime = current;
+#else
   frameStartTime = now();
+#endif
 
 }  // end TimerInterface::start
 
@@ -38,7 +47,9 @@ void TimerInterface::start() {
 //--------------------------------------------------------------------------
 void TimerInterface::update() {
   // Get the current time of the frame.
+#ifndef __EMSCRIPTEN__
   timeSlice = now() - frameStartTime;
+#endif
 
   if (timeSlice > 0.0f) {
     fps = 1.0f / timeSlice;

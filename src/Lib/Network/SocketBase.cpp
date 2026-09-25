@@ -157,6 +157,10 @@ void SocketBase::setReuseAddr() {
 }
 
 void SocketBase::setNoDelay() {
+#ifdef __EMSCRIPTEN__
+  // TCP options belong to the gateway's native socket.
+  return;
+#endif
 #if defined _WIN32 || defined __MINGW32__
   if (state >= CONFIGURED)  //  && state < LISTENING
 #else

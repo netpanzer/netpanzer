@@ -2,6 +2,12 @@
 .sconsign.dblite
 AppDir
 build
+build-web/
+build-web-native/
+support/web/node_modules/
+support/web/test-results/
+dist-web/
+.emsdk/
 netpanzer
 pak2bmp
 bmp2pak

@@ -90,8 +90,10 @@ bool NetworkManager::initialize() {
 #endif
 
   network_running = true;
+#ifndef __EMSCRIPTEN__
   semaphore = SDL_CreateSemaphore(0);
   resolverThread = SDL_CreateThread(resolver_worker, "np-resolver", 0);
+#endif
 
   return true;
 }
@@ -99,6 +101,7 @@ bool NetworkManager::initialize() {
 void NetworkManager::cleanUp() {
   network_running = false;
 
+#ifndef __EMSCRIPTEN__
   SDL_SemPost(semaphore);
   int st;
   SDL_WaitThread(resolverThread, &st);
@@ -106,6 +109,7 @@ void NetworkManager::cleanUp() {
   SDL_DestroySemaphore(semaphore);
   semaphore = 0;
   resolverThread = 0;
+#endif
 
   rqueue.clear();
 
@@ -115,6 +119,7 @@ void NetworkManager::cleanUp() {
 }
 
 void NetworkManager::run() {
+#ifndef __EMSCRIPTEN__
   if (resolving && !resolver_busy)  // finished resolv
   {
     resolving = false;
@@ -157,6 +162,7 @@ void NetworkManager::run() {
     }
   }
 
+#endif
   SocketManager::handleEvents();
 }
 
@@ -172,13 +178,20 @@ int NetworkManager::queryAddress(Address &address) {
     hints.ai_flags = AI_PASSIVE;
   }
 
-  hints.ai_flags |= AI_NUMERICHOST | AI_NUMERICSERV;
+  hints.ai_flags |= AI_NUMERICSERV;
+#ifndef __EMSCRIPTEN__
+  hints.ai_flags |= AI_NUMERICHOST;
+#endif
 
   int res =
       getaddrinfo(address.str_host.size() > 0 ? address.str_host.c_str() : 0,
                   address.str_port.c_str(), &hints, &firstaddress);
   if (res) {
     freeaddrinfo(firstaddress);
+#ifdef __EMSCRIPTEN__
+    address.status = Address::ST_ERROR;
+    return address.status;
+#endif
 
     for (std::list<Address>::iterator i = rqueue.begin(); i != rqueue.end();
          i++) {

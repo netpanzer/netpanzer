@@ -87,6 +87,11 @@ The scripts take the same options as `meson setup`, which you can view by:
 
 See [support/cross/README.md](support/cross/README.md)
 
+## Browser (WebAssembly)
+
+See [support/web/README.md](support/web/README.md) for the Emscripten build,
+local HTTP/WebSocket server, bots, browser tests, and website deployment.
+
 ## Installing
 
 Common options to use before installing netpanzer:

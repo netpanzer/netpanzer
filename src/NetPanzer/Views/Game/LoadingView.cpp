@@ -8,6 +8,9 @@
  */
 
 #include "LoadingView.hpp"
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/ScreenSurface.hpp"
@@ -125,6 +128,9 @@ void LoadingView::onComponentClicked(Component* c) {
 }
 
 void LoadingView::update(const NPString& text) {
+#ifdef __EMSCRIPTEN__
+  EM_ASM({ Module.onGameStatus?.(UTF8ToString($0), 'loading'); }, text.c_str());
+#endif
   LOGGER.info("Loading: %s", text.c_str());
   lines.pop_back();
   lines.push_back(text);
@@ -132,6 +138,9 @@ void LoadingView::update(const NPString& text) {
 }
 
 void LoadingView::append(const NPString& text) {
+#ifdef __EMSCRIPTEN__
+  EM_ASM({ Module.onGameStatus?.(UTF8ToString($0), 'loading'); }, text.c_str());
+#endif
   LOGGER.info("Loading: %s", text.c_str());
   if (lines.size() >= LINELIMIT) {
     lines.pop_front();
@@ -141,6 +150,9 @@ void LoadingView::append(const NPString& text) {
 }
 
 void LoadingView::loadFinish() {
+#ifdef __EMSCRIPTEN__
+  EM_ASM({ Module.onGameStatus?.('Connected · F1 for help', 'playing'); });
+#endif
   Desktop::setVisibilityAllWindows(false);
 
   // XXX rebuild the particle stuff here for units...
@@ -202,6 +214,9 @@ void LoadingView::loadFinish_d() {
 }
 
 void LoadingView::loadError() {
+#ifdef __EMSCRIPTEN__
+  EM_ASM({ Module.onGameStatus?.('Could not join the game. Open Join to choose a server and retry.', 'error'); });
+#endif
   if (gameconfig->quickConnect) {
     GameManager::exitNetPanzer();
   } else if (Desktop::getVisible("LoadingView")) {

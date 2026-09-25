@@ -36,6 +36,13 @@ mingw_flags = [
 
 host_sys = host_machine.system()
 platform_is_windows = (host_sys == 'windows')
+platform_is_web = (host_sys == 'emscripten')
+
+if platform_is_web
+  # PhysicsFS uses the single-threaded pthread stubs supplied by Emscripten.
+  meson.override_dependency('threads', declare_dependency())
+  add_project_arguments('-fexceptions', language: ['c', 'cpp'])
+endif
 
 add_project_arguments(cc.get_supported_arguments(extra_flags), language: 'c')
 add_project_arguments(cxx.get_supported_arguments(extra_flags), language: 'cpp')
@@ -100,6 +107,11 @@ if not phyfs_dep.found()
 endif
 deps += phyfs_dep
 
+sdl2main_dep = []
+if platform_is_web
+  sdl_flags = ['-sUSE_SDL=2', '-sUSE_SDL_TTF=2', '-sUSE_SDL_MIXER=2']
+  deps += declare_dependency(compile_args: sdl_flags, link_args: sdl_flags)
+else
 sdl2_dep = dependency('SDL2', version: '>=2.0.18', required: false)
 if not sdl2_dep.found()
   sdl2_dep = cc.find_library('SDL2', has_headers: 'SDL.h', required: false)
@@ -183,12 +195,31 @@ if not sdl2_mixer_dep.found()
   endif
 endif
 deps += sdl2_mixer_dep
+endif
 
 inc_dirs = [include_directories('.')]
 
 subdir('src')
 
-subdir('src/tools')
+if platform_is_web
+  ldflags += [
+    '-fexceptions',
+    '-sALLOW_MEMORY_GROWTH=1',
+    '-sINITIAL_MEMORY=134217728',
+    '-sSTACK_SIZE=5242880',
+    '-sMAXIMUM_MEMORY=1073741824',
+    '-sFORCE_FILESYSTEM=1',
+    '-sEXPORTED_RUNTIME_METHODS=callMain,FS,ccall',
+    '-sINVOKE_RUN=0',
+    '-sEXIT_RUNTIME=0',
+    '-sENVIRONMENT=web',
+    '--preload-file', meson.project_source_root() / 'data@/data',
+  ]
+  configure_file(input: 'support/web/index.html', output: 'index.html', copy: true)
+  configure_file(input: 'support/web/launcher.js', output: 'launcher.js', copy: true)
+else
+  subdir('src/tools')
+endif
 exe = executable(
   'netpanzer',
   'src/NetPanzer/Core/main.cpp',
@@ -198,11 +229,13 @@ exe = executable(
   install : true
 )
 
+if not platform_is_web
 test(
   'test_' + meson.project_name(),
   exe,
   args: '--help',
   )
+endif
 
 install_subdir(
   'data',
@@ -221,7 +254,7 @@ install_data(
   install_dir : get_option('docdir')
   )
 
-if get_option('build_tests')
+if get_option('build_tests') and not platform_is_web
   subdir('tests')
 endif
 

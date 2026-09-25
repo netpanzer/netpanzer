@@ -17,6 +17,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "AreYouSureResignView.hpp"
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 #include "2D/Palette.hpp"
 #include "Classes/ScreenSurface.hpp"
@@ -68,6 +71,9 @@ static void bYES() {
   UStyleSelectionView::rstyle_mem = 0;
 
   Desktop::setVisibility("MainView", true);
+#ifdef __EMSCRIPTEN__
+  EM_ASM({ Module.onGameStatus?.('Choose Join to select another server.', 'menu'); });
+#endif
 
   View *v = Desktop::getView("OptionsView");
 

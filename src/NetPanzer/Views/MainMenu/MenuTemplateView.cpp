@@ -54,6 +54,7 @@ static void bMain() {
 }
 
 static void bHost() {
+#ifndef __EMSCRIPTEN__
   gameconfig->hostorjoin = _game_session_host;
   Desktop::setVisibilityAllWindows(false);
   Desktop::setVisibility("HostView", true);
@@ -61,6 +62,7 @@ static void bHost() {
   Desktop::setVisibility("HostOptionsView", true);
   Desktop::setVisibility("MapSelectionView", true);
   Desktop::setVisibility("PlayerNameView", true);
+#endif
 }
 static void bJoin() {
   gameconfig->hostorjoin = _game_session_join;
@@ -143,7 +145,9 @@ void MenuTemplateView::initPreGameOptionButtons() {
                 std::vector<Component *>{
                     new newButton("MAIN", _("Main"), emptyPos, 0),
                     new newButton("JOIN", _("Join"), emptyPos, 0),
+#ifndef __EMSCRIPTEN__
                     new newButton("HOST", _("Host"), emptyPos, 0),
+#endif
                     new newButton("OPTIONS", _("Options"), emptyPos, 0),
                     new newButton("CREDITS", "Credits", emptyPos, 0),
                     new newButton("HELP", _("Help"), emptyPos, 0),

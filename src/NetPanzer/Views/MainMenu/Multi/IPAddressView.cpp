@@ -28,6 +28,9 @@ cInputFieldString IPAddressView::szServer;
 IPAddressView::IPAddressView() : View() {
   setSearchName("IPAddressView");
   setTitle("Server IP Address");
+#ifdef __EMSCRIPTEN__
+  setTitle("Server Address");
+#endif
   setSubTitle("");
 
   setAllowResize(false);

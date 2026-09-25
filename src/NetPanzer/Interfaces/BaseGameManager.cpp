@@ -171,7 +171,9 @@ bool BaseGameManager::mainLoop() {
   graphicsLoop();
   simLoop();
 
+#ifndef __EMSCRIPTEN__
   sleeping();
+#endif
   TimerInterface::update();
 
   return running;
