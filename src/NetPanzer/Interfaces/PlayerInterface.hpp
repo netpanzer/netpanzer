@@ -53,7 +53,11 @@ class PlayerInterface {
   }
 
   static bool isLocalPlayer(PlayerID player) {
-    return player == local_player_index;
+    // A dedicated server has no local player (local_player_index stays
+    // INVALID_PLAYER_ID), and remote sockets that have not been given a
+    // player slot yet also report INVALID_PLAYER_ID. Never treat that as
+    // the local player, or unjoined clients get local (admin) privileges.
+    return player != INVALID_PLAYER_ID && player == local_player_index;
   }
 
   static bool isValidPlayerID(const PlayerID player) {

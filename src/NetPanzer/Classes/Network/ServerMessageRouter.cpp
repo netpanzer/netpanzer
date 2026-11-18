@@ -55,6 +55,17 @@ void ServerMessageRouter::routePacket(const NetPacket* packet) {
   const NetMessage* message = packet->getNetMessage();
   PlayerState* player = PlayerInterface::getPlayer(packet->fromPlayer);
 
+  // A remote client without a player slot is still in the connect handshake.
+  // The only thing it is allowed to send is connect messages; everything else
+  // (chat, player, objective, system, ...) assumes a joined player.
+  if (packet->fromClient && !player &&
+      message->message_class != _net_message_class_connect) {
+    LOGGER.warning("Dropping message (class %d, id %d) from client without a "
+                   "player slot",
+                   message->message_class, message->message_id);
+    return;
+  }
+
   switch (message->message_class) {
     case _net_message_class_terminal:
       if (player) {
