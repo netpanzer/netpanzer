@@ -4,11 +4,14 @@ concurrency:
   cancel-in-progress: true
 
 on:
+  # Run manually for release packages: builds optimized and stripped.
+  workflow_dispatch:
   push:
     branches: master
     paths:
     - 'src/**/**'
     - 'support/**/*.cpp'
+    - 'support/scripts/package-windows-portable.py'
     - '**meson.build'
     - 'setup-build.*'
     - 'subprojects/*.wrap'
@@ -17,6 +20,7 @@ on:
     branches: master
     paths:
     - 'src/**/**'
+    - 'support/scripts/package-windows-portable.py'
     - '**meson.build'
     - 'setup-build.*'
     - 'subprojects/*.wrap'
@@ -58,7 +62,11 @@ jobs:
 
       - name: Setup
         run: |
-          .\setup-build.bat _build
+          if ("${{ github.event_name }}" -eq "workflow_dispatch") {
+            .\setup-build.bat _build -Dbuildtype=release -Dstrip=true
+          } else {
+            .\setup-build.bat _build
+          }
 
       - name: Build
         run: |
@@ -70,8 +78,19 @@ jobs:
           cd _build
           meson test --suite=netpanzer -v
 
+      - name: Package portable zip
+        run: |
+          python support/scripts/package-windows-portable.py --build-dir _build --out-dir dist
+
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: netpanzer_winbin
           path: ${{ github.workspace }}/_build/*.exe
+
+      - name: Upload portable zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: netpanzer_windows_portable
+          path: ${{ github.workspace }}/dist/*.zip
+          if-no-files-found: error
