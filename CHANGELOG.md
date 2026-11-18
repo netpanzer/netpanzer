@@ -1,5 +1,22 @@
 # NetPanzer Changelog
 
+## 0.9.2
+
+This is a security release. Server operators should upgrade.
+
+## Security
+* Server: Fixed clients that had not finished joining being treated as the local player on dedicated servers, which let them run admin server commands without the admin password. Messages other than connect messages from clients without a player slot are now dropped. Reported by Dickson Wu (SEAL & CertiK). Fixed by @winrid in https://github.com/netpanzer/netpanzer/pull/295
+
+## Bugs Fixed
+* Core: Fix container-overflow when deleting all particles by @winrid in https://github.com/netpanzer/netpanzer/pull/287
+* Build: Fix libintl detection on macOS by @winrid in https://github.com/netpanzer/netpanzer/pull/285
+* Build: Disable SDL2 subproject test build by @winrid in https://github.com/netpanzer/netpanzer/pull/280
+
+## 0.9.1
+
+## Bugs Fixed
+* Core: Fix High CPU Usage For Bots and Servers by @winrid in https://github.com/netpanzer/netpanzer/pull/279
+
 ## 0.9.0 - "Fulvio"
 
 0.9.0 brings a lot of changes over 0.8, and is the first release of NetPanzer since 2017. It is dedicated to our friend Fu who passed away in 2024,
