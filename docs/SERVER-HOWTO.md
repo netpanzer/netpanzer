@@ -10,12 +10,16 @@ for details.
 
 Here's a series of commands to setup a dedicated server that will survive server restarts and crashes.
 
-First, we'll download the game server and start it, to test:
+The prebuilt server needs glibc 2.34 or newer (Debian 12, Ubuntu 22.04 or later) and a few libraries:
+
+    sudo apt install libsdl2-2.0-0 libsdl2-mixer-2.0-0 libsdl2-ttf-2.0-0 libphysfs1 liblua5.1-0
+
+Then download the game server and start it, to test:
 
     cd
     mkdir netpanzer && cd netpanzer
-    wget https://github.com/netpanzer/netpanzer/releases/download/v0.9.0/netpanzer-0.9.0-linux-x86.tar.gz
-    tar -xvf netpanzer-0.9.0-linux-x86.tar.gz
+    wget https://github.com/netpanzer/netpanzer/releases/download/v0.9.2/netpanzer-0.9.2-linux-x86.tar.gz
+    tar -xvf netpanzer-0.9.2-linux-x86.tar.gz
     mkdir -p ~/.netpanzer/config
     echo "server.interactive_console = false" > ~/.netpanzer/config/server.cfg
     ./netpanzer -d
