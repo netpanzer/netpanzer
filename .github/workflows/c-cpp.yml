@@ -30,8 +30,7 @@ jobs:
       fail-fast: true
       matrix:
         name: [standard]
-        # 20.04 supported until >= April 2025
-        ubuntu: [20.04, 22.04, 24.04]
+        ubuntu: [22.04, 24.04]
         cc: [gcc, clang]
         include:
           - name: with-lto
@@ -84,15 +83,9 @@ jobs:
         sudo apt install -y \
           python3 \
           python3-setuptools
-        if [ "${{ matrix.ubuntu }}" != "20.04" ]; then
-          sudo apt install -y \
+        sudo apt install -y \
           meson \
           ninja-build
-        else
-          sudo apt install -y python3-pip
-          python -m pip install --upgrade pip
-          pip install meson ninja
-        fi
         if [ -n "${{ matrix.cross-file }}" ]; then
           if [ "${{ contains(matrix.cross-file, 'linux') }}" == "true" ]; then
             sudo apt install -y \
