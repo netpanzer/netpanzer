@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #ifndef _SCRIPTHELPER_HPP
-#define	_SCRIPTHELPER_HPP
+#define _SCRIPTHELPER_HPP
 
 #include "lua/lua.hpp"
 
@@ -34,43 +34,40 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define GETSVTYPE_BOOLEAN ScriptHelper::get_boolean
 #define SETSVTYPE_BOOLEAN ScriptHelper::set_boolean
 
-typedef int (*ScriptBindFunction) (lua_State *L, void *v);
+typedef int (*ScriptBindFunction)(lua_State *L, void *v);
 
 /* member info for get and set handlers */
-typedef const struct s_ScriptVarBindRecord
-{
-    const char *name;        /* var name */
-    ScriptBindFunction func; /* get or set function for type of data */
-    void * data;             /* pointer to your data */
-}  ScriptVarBindRecord;
+typedef const struct s_ScriptVarBindRecord {
+  const char *name;        /* var name */
+  ScriptBindFunction func; /* get or set function for type of data */
+  void *data;              /* pointer to your data */
+} ScriptVarBindRecord;
 
-class ScriptHelper
-{
-public:
-    static int get_byte (lua_State *L, void *v);
-    static int set_byte (lua_State *L, void *v);
+class ScriptHelper {
+ public:
+  static int get_byte(lua_State *L, void *v);
+  static int set_byte(lua_State *L, void *v);
 
-    static int get_int (lua_State *L, void *v);
-    static int set_int (lua_State *L, void *v);
+  static int get_int(lua_State *L, void *v);
+  static int set_int(lua_State *L, void *v);
 
-    static int get_number (lua_State *L, void *v);
-    static int set_number (lua_State *L, void *v);
+  static int get_number(lua_State *L, void *v);
+  static int set_number(lua_State *L, void *v);
 
-    static int get_string (lua_State *L, void *v);
-    static int set_string (lua_State *L, void *v);
+  static int get_string(lua_State *L, void *v);
+  static int set_string(lua_State *L, void *v);
 
-    static int get_boolean (lua_State *L, void *v);
-    static int set_boolean (lua_State *L, void *v);
+  static int get_boolean(lua_State *L, void *v);
+  static int set_boolean(lua_State *L, void *v);
 
-private:
-    friend class ScriptManager;
-    
-    static int staticVarCall(lua_State *L);
-    static int index_handler (lua_State *L);
-    static int newindex_handler (lua_State *L);
-    static int next_handler(lua_State *L);
-    static int autotable_indexhandler(lua_State *L);
+ private:
+  friend class ScriptManager;
+
+  static int staticVarCall(lua_State *L);
+  static int index_handler(lua_State *L);
+  static int newindex_handler(lua_State *L);
+  static int next_handler(lua_State *L);
+  static int autotable_indexhandler(lua_State *L);
 };
 
-#endif	/* _SCRIPTHELPER_HPP */
-
+#endif /* _SCRIPTHELPER_HPP */

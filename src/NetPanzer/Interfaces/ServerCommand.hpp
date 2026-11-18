@@ -20,20 +20,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 
-class ServerCommand
-{
-public:
-    enum CommandType {
-        QUIT, CHAT, STATUS, MAPCHANGE, KICK
-    };
-    
-    CommandType type;
-    std::string argument;
+class ServerCommand {
+ public:
+  enum CommandType { QUIT, CHAT, STATUS, MAPCHANGE, KICK };
 
-    ServerCommand(CommandType newtype, std::string arg = "")
-        : type(newtype), argument(arg)
-    { }
+  CommandType type;
+  std::string argument;
+
+  ServerCommand(CommandType newtype, std::string arg = "")
+      : type(newtype), argument(arg) {}
 };
 
 #endif
-

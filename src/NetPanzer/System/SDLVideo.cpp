@@ -1,237 +1,241 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "SDLVideo.hpp"
+
+#include <stdlib.h>
+#include <time.h>
 
 #include <iostream>
 #include <string>
 
-#include <time.h>
-
-#include "Util/Log.hpp"
+#include "2D/Color.hpp"
+#include "Interfaces/ConsoleInterface.hpp"
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
+#include "Util/Log.hpp"
 #include "Util/NTimer.hpp"
-#include "SDLVideo.hpp"
-#include <stdlib.h>
+#include "Util/Log.hpp"
+#include "package.hpp"
 
-#include "Interfaces/ConsoleInterface.hpp"
-#include "2D/Color.hpp"
+#if defined _WIN32 || defined __MINGW32__
 
-#ifdef _WIN32
-  #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/GameConfig.hpp"
+
 #endif
 
-#ifndef PACKAGE_VERSION
-	#define PACKAGE_VERSION "testing"
+SDLVideo *Screen;  // get rid of this later...
+
+SDLVideo::SDLVideo() : window(0) {
+#if defined _WIN32
+#if not defined __MINGW32__
+  if (GameConfig::video_usedirectx) {
+    putenv("SDL_VIDEODRIVER=directx");
+  }
 #endif
-
-SDLVideo* Screen; // get rid of this later...
-
-static int best_bpp = 0;
-
-SDLVideo::SDLVideo()
-        : frontBuffer(0), backBuffer(0)
-{
-#ifdef _WIN32
-    if ( GameConfig::video_usedirectx ) {
-        putenv("SDL_VIDEODRIVER=directx");
-    }
 #endif
-    if(SDL_InitSubSystem(SDL_INIT_VIDEO)) {
-        throw Exception("Couldn't initialize SDL_video subsystem: %s",
-                SDL_GetError());
-    }
-
-    if ( ! best_bpp )
-    {
-        const SDL_VideoInfo *v = SDL_GetVideoInfo();
-        if ( v )
-        {
-            best_bpp = v->vfmt->BitsPerPixel;
-        }
-    }
-
-    // XXX unfortunately SDL initializes the keyboard again :-/
-    SDL_EnableUNICODE(1);
+  this->window = nullptr;
+  this->renderer = nullptr;
+  this->surface = nullptr;
+  this->texture = nullptr;
+  this->is_fullscreen = false;
+  if (SDL_InitSubSystem(SDL_INIT_VIDEO)) {
+    throw Exception("Couldn't initialize SDL_video subsystem: %s",
+                    SDL_GetError());
+  }
 }
 
-SDLVideo::~SDLVideo()
-{
-    if ( backBuffer && backBuffer != frontBuffer )
-    {
-        SDL_FreeSurface(backBuffer);
-    }
-    
-    SDL_QuitSubSystem(SDL_INIT_VIDEO);
+SDLVideo::~SDLVideo() {
+  if (texture != nullptr) {
+    SDL_DestroyTexture(texture);
+  }
+  if (surface != nullptr) {
+    SDL_FreeSurface(surface);
+  }
+  if (renderer != nullptr) {
+    SDL_DestroyRenderer(renderer);
+  }
+  if (window != nullptr) {
+    SDL_DestroyWindow(window);
+  }
+
+  SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-static bool getNearestFullScreenMode(int flags, int* width, int* height)
-{
-    SDL_Rect** modes = SDL_ListModes(0, flags);
-    if ( modes == 0 )
-    {
+bool SDLVideo::setVideoMode(int new_width, int new_height, int bpp,
+                            bool fullscreen) {
+  const bool was_fullscreen = this->is_fullscreen;
+  this->is_fullscreen = fullscreen;
+
+  if (window == nullptr) {
+    LOGGER.debug("Creating new window.");
+    if (fullscreen) {
+      // use the native desktop resolution, and scale linearly later using
+      // renderer
+      window = SDL_CreateWindow(
+          Package::getFullyQualifiedName().c_str(), SDL_WINDOWPOS_UNDEFINED,
+          SDL_WINDOWPOS_UNDEFINED, 0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP);
+    } else {
+      window = SDL_CreateWindow(
+          Package::getFullyQualifiedName().c_str(), SDL_WINDOWPOS_UNDEFINED,
+          SDL_WINDOWPOS_UNDEFINED, new_width, new_height, 0);
+    }
+    if (window == nullptr) {
+        LOGGER.warning("Couldn't create a window: %s", SDL_GetError());
         return false;
     }
-    else if ( modes != (SDL_Rect**)-1 )
-    {
-        unsigned int min_x_dif = -1;
-        unsigned int min_y_dif = -1;
-        unsigned int nearest = 0;
-        for ( int n = 0; modes[n]; ++n )
-        {
-            unsigned int new_x_dif = abs((*width) - modes[n]->w);
 
-            if ( new_x_dif <= min_x_dif )
-            {
-                unsigned int new_y_dif = abs((*height) - modes[n]->h);
-                if ( new_y_dif <= min_y_dif )
-                {
-                    nearest = n;
-                    min_x_dif = new_x_dif;
-                    min_y_dif = new_y_dif;
-                }
-            }
+    LOGGER.debug("Showing window.");
+    SDL_ShowWindow(window); // has to happen before fullscreen switch to fix cursor stuck in region issue
+    SDL_RaiseWindow(window);
+
+    LOGGER.debug("Creating new renderer.");
+    renderer = SDL_CreateRenderer(window, -1, 0);
+
+    if (renderer == nullptr) {
+        LOGGER.warning("Couldn't create renderer: %s", SDL_GetError());
+        return false;
+    }
+  } else {
+    LOGGER.debug("Showing window.");
+    SDL_ShowWindow(window);  // has to happen before fullscreen switch to fix
+    // cursor stuck in region issue
+    SDL_RaiseWindow(window);
+    if (fullscreen) {
+      if (was_fullscreen) {
+        // no change
+      } else {
+        LOGGER.debug("Setting fullscreen.");
+        const int setFullscreenResult = SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+        if (setFullscreenResult < 0) {
+            LOGGER.warning("Could not set fullscreen: %s", SDL_GetError());
         }
-        *width = modes[nearest]->w;
-        *height = modes[nearest]->h;
+      }
+    } else {
+      if (was_fullscreen) {
+        LOGGER.debug("Disabling fullscreen.");
+        const int disableFullScreenResult = SDL_SetWindowFullscreen(window, 0);
+        if (disableFullScreenResult < 0) {
+            LOGGER.warning("Could not disable fullscreen: %s", SDL_GetError());
+        }
+      }
+      LOGGER.debug("Setting window size.");
+      SDL_SetWindowSize(window, new_width, new_height);
     }
+  }
 
-    return true;
+  if (surface != nullptr) {
+    LOGGER.debug("Cleaning up old surface.");
+    SDL_FreeSurface(surface);
+  }
+
+  LOGGER.debug("Creating surface.");
+  surface = SDL_CreateRGBSurfaceWithFormat(0, new_width, new_height, 8,
+                                           SDL_PIXELFORMAT_INDEX8);
+
+  if (surface == nullptr) {
+    LOGGER.warning("Couldn't create render surface: %s", SDL_GetError());
+    return false;
+  }
+
+  if (texture != nullptr) {
+    LOGGER.debug("Destroying old texture.");
+    SDL_DestroyTexture(texture);
+  }
+
+  LOGGER.debug("Creating new render texture.");
+  texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+  if (texture == nullptr) {
+    LOGGER.warning("Couldn't create render texture: %s", SDL_GetError());
+    return false;
+  }
+
+  // make the scaled rendering look smoother.
+  // Note: "linear" made game look blurry when game resolution did not match
+  // monitor resolution.
+  LOGGER.debug("Setting render hints.");
+  SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+  // TODO add option for letter boxing.
+  //  Currently, this breaks right mouse movement w/ SDL_WarpMouseInWindow in fullscreen
+//  LOGGER.debug("Setting render logical size.");
+//  const int setLogicalSizeResult = SDL_RenderSetLogicalSize(renderer, new_width, new_height);
+//  if (setLogicalSizeResult < 0) {
+//    LOGGER.warning("Couldn't set logical resolution: %d %d %s", new_width, new_height, SDL_GetError());
+//  }
+
+  // let's scare the mouse :)
+  // this fixes the mouse cursor stuck to a small region after resolution change
+  LOGGER.debug("Showing cursor.");
+  const int showCursorResult = SDL_ShowCursor(SDL_DISABLE);
+  if (showCursorResult < 0) {
+    LOGGER.warning("Couldn't show cursor: %s", SDL_GetError());
+    // can still try to continue
+  }
+
+  // Center the mouse after changing the resolution - also helps mouse cursor
+  // from getting stuck in old region
+  int centerX = new_width / 2;
+  int centerY = new_height / 2;
+  LOGGER.debug("Warping mouse into window...");
+  SDL_WarpMouseInWindow(window, centerX, centerY);
+  SDL_SetWindowGrab(window, fullscreen ? SDL_TRUE : SDL_FALSE);
+  return true;
 }
 
-
-void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
-{
-    if ( backBuffer && backBuffer != frontBuffer )
-    {
-        SDL_FreeSurface(backBuffer);
-    }
-    
-    int new_width = width;
-    int new_height = height;
-
-    if ( flags&SDL_FULLSCREEN )
-    {
-        //bpp = best_bpp;
-        getNearestFullScreenMode(flags, &new_width, &new_height);
-        LOGGER.warning("Setting fullscreen mode %d x %d (original %d x %d)",
-                             new_width, new_height, width, height);
-    }
-//    else
-//    {
-//        bpp = 0;
-//    }
-
-    flags |= SDL_HWPALETTE;
-
-    frontBuffer = SDL_SetVideoMode(new_width, new_height, bpp, flags);
-    if(!frontBuffer)
-    {
-        throw Exception("Couldn't set display mode (%dx%d, %X): %s",
-                        new_width, new_height, flags, SDL_GetError());
-    }
-
-    backBuffer = frontBuffer;
-//    backBuffer = SDL_CreateRGBSurface(SDL_SWSURFACE, new_width, new_height,
-//                                      8, 0, 0, 0, 0);
-//    if(!backBuffer)
-//    {
-//        throw Exception("Couldn't create backBuffer");
-//    }
-
-    // let's scare the mouse :)
-    SDL_ShowCursor(SDL_DISABLE);
-    // and set a window title
-    SDL_WM_SetCaption("NetPanzer " PACKAGE_VERSION, 0);
+void SDLVideo::setPalette(SDL_Color *color) {
+  SDL_SetPaletteColors(surface->format->palette, color, 0, 256);
 }
 
-bool SDLVideo::isDisplayModeAvailable(int width, int height, int bpp,
-                                     Uint32 flags)
-{
-    flags |= SDL_HWPALETTE; // SDL_ANYFORMAT
-    int res = SDL_VideoModeOK(width, height, bpp, flags);
+SDL_Surface *SDLVideo::getSurface() { return surface; }
+SDL_Window *SDLVideo::getWindow() { return window; }
 
-    LOGGER.warning("Mode %dx%dx%d %s is %s", width, height, bpp,
-                   (flags&SDL_FULLSCREEN)?"full screen":"windowed",
-                   res?"available":"NOT available");
-    
-    return SDL_VideoModeOK(width, height, bpp, flags);
+void SDLVideo::render() {
+  // This mechanism is only about 5-10% slower than SDL_BlitSurface &&
+  // SDL_UpdateWindowSurface. But, it gets us a lot (simpler code, much nicer
+  // rendering and scaling).
+  if (texture != nullptr) {
+    SDL_DestroyTexture(texture);
+  }
+  texture = SDL_CreateTextureFromSurface(renderer, surface);
+  SDL_RenderClear(renderer);
+  SDL_RenderCopy(renderer, texture, nullptr, nullptr);
+  SDL_RenderPresent(renderer);
 }
 
-void SDLVideo::lockDoubleBuffer(unsigned char **buffer)
-{
-    if(SDL_MUSTLOCK(backBuffer) && SDL_LockSurface(backBuffer))
-        throw Exception("Couldn't lock display buffer");
+void SDLVideo::doScreenshot() {
+  // this is called blind faith
+  static NTimer timer(1000);
 
-    *buffer = (unsigned char *)backBuffer->pixels;
+  if (!timer.isTimeOut()) {
+    return;
+  }
+
+  filesystem::mkdir("screenshots");
+
+  char buf[256];
+  time_t curtime = time(0);
+  struct tm *loctime = localtime(&curtime);
+  strftime(buf, sizeof(buf), "screenshots/%Y%m%d_%H%M%S.bmp", loctime);
+
+  std::string bmpfile = filesystem::getRealWriteName(buf);
+  SDL_SaveBMP(surface, bmpfile.c_str());
+  ConsoleInterface::postMessage(Color::cyan, false, 0,
+                                "Screenshot saved as: %s", buf);
+  timer.reset();
 }
-
-void SDLVideo::unlockDoubleBuffer()
-{
-    if(SDL_MUSTLOCK(backBuffer))
-        SDL_UnlockSurface(backBuffer);
-}
-
-void SDLVideo::copyDoubleBufferandFlip()
-{
-    if ( backBuffer && backBuffer != frontBuffer)
-    {
-        SDL_BlitSurface(backBuffer, 0, frontBuffer, 0);
-    }
-    
-    SDL_UpdateRect(frontBuffer, 0, 0, 0, 0);
-}
-
-void SDLVideo::setPalette(SDL_Color *color)
-{
-    if ( backBuffer && backBuffer != frontBuffer)
-    {
-        SDL_SetColors(backBuffer, color, 0, 256);
-    }
-    
-    SDL_SetColors(frontBuffer, color, 0, 256);
-}
-
-SDL_Surface* SDLVideo::getSurface()
-{
-    return backBuffer;
-}
-
-void SDLVideo::doScreenshoot()
-{
-    // this is called blind faith
-    static NTimer timer(1000);
-
-    if ( ! timer.isTimeOut() )
-    {
-        return;
-    }
-
-    filesystem::mkdir("screenshoots");
-
-    char buf[256];
-    time_t curtime = time(0);
-    struct tm* loctime = localtime(&curtime);
-    strftime(buf, sizeof(buf), "screenshoots/%Y%m%d_%H%M%S.bmp", loctime);
-
-    std::string bmpfile = filesystem::getRealWriteName(buf);
-    SDL_SaveBMP(backBuffer, bmpfile.c_str());
-    ConsoleInterface::postMessage(Color::cyan, false, 0, "Screenshoot saved as: %s", buf);
-    timer.reset();
-}
-

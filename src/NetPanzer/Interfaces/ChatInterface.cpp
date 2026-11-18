@@ -16,346 +16,348 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "2D/Color.hpp"
-
 #include "Interfaces/ChatInterface.hpp"
-#include "Interfaces/ConsoleInterface.hpp"
-#include "Interfaces/PlayerInterface.hpp"
-#include "Classes/Network/NetworkState.hpp"
-#include "Classes/Network/NetworkServer.hpp"
+
+#include "2D/Color.hpp"
 #include "Classes/Network/NetworkClient.hpp"
+#include "Classes/Network/NetworkServer.hpp"
+#include "Classes/Network/NetworkState.hpp"
+#include "Interfaces/ConsoleInterface.hpp"
+#include "Interfaces/MapInterface.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Scripts/ScriptManager.hpp"
 #include "Util/Log.hpp"
 
-#include "Scripts/ScriptManager.hpp"
+enum { _net_message_id_chat_mesg_req, _net_message_id_chat_mesg };
 
-enum { _net_message_id_chat_mesg_req,
-       _net_message_id_chat_mesg
-};
-
-enum { _chat_mesg_scope_player_set,
-       _chat_mesg_scope_alliance,
-       _chat_mesg_scope_enemies,
-       _chat_mesg_scope_all,
-       _chat_mesg_scope_server
+enum {
+  _chat_mesg_scope_player_set,
+  _chat_mesg_scope_alliance,
+  _chat_mesg_scope_enemies,
+  _chat_mesg_scope_all,
+  _chat_mesg_scope_server
 };
 
 #define CHATREQUEST_HEADER_LEN (sizeof(NetMessage) + sizeof(Uint8))
-#define CHATMESG_HEADER_LEN (sizeof(NetMessage) + sizeof(Uint8) + sizeof(PlayerID))
+#define CHATMESG_HEADER_LEN \
+  (sizeof(NetMessage) + sizeof(Uint8) + sizeof(PlayerID))
 #define MAX_CHAT_MSG_LEN (_MAX_NET_PACKET_SIZE - CHATMESG_HEADER_LEN)
 
-class ChatMesgRequest : public NetMessage
-{
-public:
-    Uint8 message_scope;
-    char message_text[MAX_CHAT_MSG_LEN];
+class ChatMesgRequest : public NetMessage {
+ public:
+  Uint8 message_scope;
+  char message_text[MAX_CHAT_MSG_LEN];
 
-    ChatMesgRequest()
-    {
-        reset();
-    }
+  ChatMesgRequest() { reset(); }
 
-    void reset()
-    {
-        message_class = _net_message_class_chat;
-        message_id = _net_message_id_chat_mesg_req;
-        message_scope = _chat_mesg_scope_all;
-    }
+  void reset() {
+    message_class = _net_message_class_chat;
+    message_id = _net_message_id_chat_mesg_req;
+    message_scope = _chat_mesg_scope_all;
+  }
 
-    int getTextLen(size_t size) const
-    {
-        return size - CHATREQUEST_HEADER_LEN;
-    }
+  int getTextLen(size_t size) const { return size - CHATREQUEST_HEADER_LEN; }
 
 } __attribute__((packed));
 
+class ChatMesg : public NetMessage {
+ public:
+  Uint8 message_scope;
 
-class ChatMesg: public NetMessage
-{
-public:
-    Uint8  message_scope;
-private:
-    PlayerID source_player_index;
-public:
-    char message_text[MAX_CHAT_MSG_LEN];
+ private:
+  PlayerID source_player_index;
 
-    ChatMesg()
-    {
-        message_class = _net_message_class_chat;
-        message_id = _net_message_id_chat_mesg;
-        memset(message_text, 0, sizeof(message_text));
-    }
+ public:
+  char message_text[MAX_CHAT_MSG_LEN];
 
-    int getTextLen(size_t size) const
-    {
-        return size - CHATMESG_HEADER_LEN;
-    }
+  ChatMesg() {
+    message_class = _net_message_class_chat;
+    message_id = _net_message_id_chat_mesg;
+    memset(message_text, 0, sizeof(message_text));
+  }
 
-    PlayerID getSourcePlayerIndex() const
-    {
-        return source_player_index;
-    }
+  int getTextLen(size_t size) const { return size - CHATMESG_HEADER_LEN; }
 
-    void setSourcePlayerIndex(PlayerID playerIndex)
-    {
-        source_player_index = playerIndex;
-    }
+  PlayerID getSourcePlayerIndex() const { return source_player_index; }
+
+  void setSourcePlayerIndex(PlayerID playerIndex) {
+    source_player_index = playerIndex;
+  }
 } __attribute__((packed));
 
-static void chatMessageRequest(const NetPacket* packet)
-{
-    const ChatMesgRequest* chat_request = (const ChatMesgRequest*) packet->getNetMessage();
+static void chatMessageRequest(const NetPacket* packet) {
+  const ChatMesgRequest* chat_request =
+      (const ChatMesgRequest*)packet->getNetMessage();
 
-    if (   chat_request->message_scope == _chat_mesg_scope_server
-        && NetworkState::getNetworkStatus() == _network_state_server
-        && packet->fromClient )
-    {
-        LOGGER.warning("CI_CMR CHEAT Player %u tried to chat as server", packet->fromPlayer);
-        return;
+  if (chat_request->message_scope == _chat_mesg_scope_server &&
+      NetworkState::getNetworkStatus() == _network_state_server &&
+      packet->fromClient) {
+    LOGGER.warning("CI_CMR CHEAT Player %u tried to chat as server",
+                   packet->fromPlayer);
+    return;
+  }
+
+  bool post_on_server = false;
+  ChatMesg chat_mesg;
+  int text_len = chat_request->getTextLen(packet->size);
+  const NPString text(chat_request->message_text, 0, text_len);
+
+  // LOGGER.warning("CHAT PACKET LENGTH %u", text_len);
+
+  if (text_len > 150) {
+    ChatInterface::serversayTo(packet->fromPlayer, "Max 150 chars allowed!");
+    return;
+  }
+
+  chat_mesg.setSourcePlayerIndex(packet->fromPlayer);
+  chat_mesg.message_scope = chat_request->message_scope;
+  text.copy(chat_mesg.message_text, text_len);
+
+  if (chat_request->message_scope == _chat_mesg_scope_all) {
+    if (text[0] != '/' ||
+        !ScriptManager::runServerCommand(text.substr(1), packet->fromPlayer)) {
+      SERVER->broadcastMessage(&chat_mesg, CHATMESG_HEADER_LEN + text_len);
+      post_on_server = true;
     }
+  }
+  // XXX ALLY
+  else if (chat_request->message_scope == _chat_mesg_scope_alliance) {
+    PlayerID max_players;
+    PlayerID local_player_index;
 
-    bool post_on_server = false;
-    ChatMesg chat_mesg;
-    int text_len = chat_request->getTextLen(packet->size);
-    const NPString text(chat_request->message_text, 0, text_len);
+    local_player_index = PlayerInterface::getLocalPlayerIndex();
 
-    //LOGGER.warning("CHAT PACKET LENGTH %u", text_len);
-
-    if (text_len > 150)
-    {
-        ChatInterface::serversayTo(packet->fromPlayer, "Max 150 chars allowed!");
-        return;
-    }
-
-
-    chat_mesg.setSourcePlayerIndex(packet->fromPlayer);
-    chat_mesg.message_scope = chat_request->message_scope;
-    text.copy(chat_mesg.message_text, text_len);
-
-    if ( chat_request->message_scope == _chat_mesg_scope_all )
-    {
-        if ( text[0] != '/' || ! ScriptManager::runServerCommand(text.substr(1), packet->fromPlayer) )
-        {
-            SERVER->broadcastMessage(&chat_mesg, CHATMESG_HEADER_LEN + text_len);
-            post_on_server = true;
+    max_players = PlayerInterface::getMaxPlayers();
+    for (PlayerID i = 0; i < max_players; ++i) {
+      if (PlayerInterface::isAllied(packet->fromPlayer, i) == true) {
+        if (local_player_index != i) {
+          SERVER->sendMessage(i, &chat_mesg, CHATMESG_HEADER_LEN + text_len);
+        } else {
+          post_on_server = true;
         }
-    }
-        // XXX ALLY
-    else if (chat_request->message_scope == _chat_mesg_scope_alliance)
-    {
-        PlayerID max_players;
-        PlayerID local_player_index;
-
-        local_player_index = PlayerInterface::getLocalPlayerIndex();
-
-        max_players = PlayerInterface::getMaxPlayers();
-        for (PlayerID i = 0; i < max_players; ++i)
-        {
-            if ( PlayerInterface::isAllied( packet->fromPlayer, i) == true )
-            {
-                if (local_player_index != i)
-                {
-                    SERVER->sendMessage(i, &chat_mesg, CHATMESG_HEADER_LEN + text_len);
-                }
-                else
-                {
-                    post_on_server = true;
-                }
-            }
-        }
-
-        if ( packet->fromPlayer == PlayerInterface::getLocalPlayerIndex() )
-        {
-            post_on_server = true;
-        }
-        else
-        {
-            SERVER->sendMessage(packet->fromPlayer,
-                                &chat_mesg, CHATMESG_HEADER_LEN + text_len);
-        }
-    }
-    else if ( chat_request->message_scope == _chat_mesg_scope_server )
-    {
-        SERVER->broadcastMessage(&chat_mesg, CHATMESG_HEADER_LEN + text_len);
-        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s", text.c_str());
-        return;
+      }
     }
 
-    if ( post_on_server == true )
-    {
-        PlayerState *player_state;
+    if (packet->fromPlayer == PlayerInterface::getLocalPlayerIndex()) {
+      post_on_server = true;
+    } else {
+      SERVER->sendMessage(packet->fromPlayer, &chat_mesg,
+                          CHATMESG_HEADER_LEN + text_len);
+    }
+  } else if (chat_request->message_scope == _chat_mesg_scope_server) {
+    if (MapInterface::chat_color_scheme == 0) {
+      SERVER->broadcastMessage(&chat_mesg, CHATMESG_HEADER_LEN + text_len);
+      ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s",
+                                    text.c_str());
+    } else {
+      SERVER->broadcastMessage(&chat_mesg, CHATMESG_HEADER_LEN + text_len);
+      ConsoleInterface::postMessage(Color::darkBlue, false, 0, "Server: %s",
+                                    text.c_str());
+    }
+    return;
+  }
 
-        player_state = PlayerInterface::getPlayer(packet->fromPlayer);
+  if (post_on_server == true) {
+    PlayerState* player_state;
 
-        if (PlayerInterface::isPlayerActive(packet->fromPlayer))
-        {
+    player_state = PlayerInterface::getPlayer(packet->fromPlayer);
 
-        PIX color = Color::white;
+    if (PlayerInterface::isPlayerActive(packet->fromPlayer)) {
+      PIX color = Color::white;
 
-        switch (chat_request->message_scope)
-        {
+      switch (chat_request->message_scope) {
         case _chat_mesg_scope_all:
-                color = Color::white;
-                break;
+          if (MapInterface::chat_color_scheme == 0) {
+            color = Color::white;
+          } else {
+            color = Color::black;
+          }
+          break;
 
         case _chat_mesg_scope_alliance:
-                color = Color::yellow;
-                break;
+          if (MapInterface::chat_color_scheme == 0) {
+            color = Color::yellow;
+          } else {
+            color = Color::yellow;
+          }
+          break;
 
         case _chat_mesg_scope_server:
-                color = Color::unitAqua;
-                break;
-
-        } // ** switch
-
-        // TODO add unitcolor
-        ConsoleInterface::postMessage(color, true, player_state->getFlag(),
-                        "%s: %s", player_state->getName().c_str(), text.c_str());
-
-        }
-        else
-        {
-        LOGGER.warning("Player not active trying to send msg!");
-        //SERVER->kickClient(SERVER->getClientSocketByPlayerIndex((unsigned short) packet->fromPlayer));
-        return;
-        }
-
-
-    }
-}
-
-void ChatInterface::clientHandleChatMessage(const NetMessage* message, size_t size)
-{
-    if ( message->message_id != _net_message_id_chat_mesg )
-    {
-        LOGGER.warning("CI_CHCM Received wrong message type: %u",
-                       message->message_id);
-        return;
-    }
-
-    const ChatMesg *chat_mesg = (const ChatMesg*) message;
-
-    if ( chat_mesg->message_scope != _chat_mesg_scope_server
-        && chat_mesg->getSourcePlayerIndex() >= PlayerInterface::getMaxPlayers())
-    {
-            LOGGER.warning("CI_CHCM Received message, incorrect player value: %u, max is %u.",
-                            chat_mesg->getSourcePlayerIndex(),
-                            PlayerInterface::getMaxPlayers());
-            return;
-    }
-
-    int text_len = chat_mesg->getTextLen(size);
-    const NPString text(chat_mesg->message_text, text_len);
-
-    if ( chat_mesg->message_scope == _chat_mesg_scope_server )
-    {
-        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s",
-                                      text.c_str());
-        return;
-    }
-
-    PlayerState *player_state;
-    player_state = PlayerInterface::getPlayer(chat_mesg->getSourcePlayerIndex());
-
-    PIX color = Color::white;
-
-    switch (chat_mesg->message_scope)
-    {
-    case _chat_mesg_scope_all:
-            color = Color::white;
-            break;
-
-    case _chat_mesg_scope_alliance:
-            color = Color::yellow;
-            break;
-
-    case _chat_mesg_scope_server:
+          if (MapInterface::chat_color_scheme == 0) {
             color = Color::unitAqua;
-            break;
+          } else {
+            color = Color::darkBlue;
+          }
+          break;
 
-    } // ** switch
+      }  // ** switch
 
-    ConsoleInterface::postMessage(color, true, player_state->getFlag(), "%s: %s",
-                                  player_state->getName().c_str(), text.c_str());
-}
+      // TODO add unitcolor
+      ConsoleInterface::postMessage(color, true, player_state->getFlag(),
+                                    "%s: %s", player_state->getName().c_str(),
+                                    text.c_str());
 
-void ChatInterface::processChatMessages(const NetPacket* packet)
-{
-    switch (packet->getNetMessage()->message_id)
-    {
-        case _net_message_id_chat_mesg_req:
-            chatMessageRequest(packet);
-            break;
-
-        default:
-            LOGGER.warning("CI_PCM Received unknown chat message (id %d-%d)",
-                            packet->getNetMessage()->message_class,
-                            packet->getNetMessage()->message_id);
+    } else {
+      LOGGER.warning("Player not active trying to send msg!");
+      // SERVER->kickClient(SERVER->getClientSocketByPlayerIndex((unsigned
+      // short) packet->fromPlayer));
+      return;
     }
+  }
 }
 
-static void sendScopedMessage(const NPString& message, Uint8 scope)
-{
+void ChatInterface::clientHandleChatMessage(const NetMessage* message,
+                                            size_t size) {
+  if (message->message_id != _net_message_id_chat_mesg) {
+    LOGGER.warning("CI_CHCM Received wrong message type: %u",
+                   message->message_id);
+    return;
+  }
+
+  const ChatMesg* chat_mesg = (const ChatMesg*)message;
+
+  if (chat_mesg->message_scope != _chat_mesg_scope_server &&
+      chat_mesg->getSourcePlayerIndex() >= PlayerInterface::getMaxPlayers()) {
+    LOGGER.warning(
+        "CI_CHCM Received message, incorrect player value: %u, max is %u.",
+        chat_mesg->getSourcePlayerIndex(), PlayerInterface::getMaxPlayers());
+    return;
+  }
+
+  int text_len = chat_mesg->getTextLen(size);
+  const NPString text(chat_mesg->message_text, text_len);
+
+  PlayerState* player_state;
+  player_state = PlayerInterface::getPlayer(chat_mesg->getSourcePlayerIndex());
+
+  PIX color = Color::white;
+
+  if (MapInterface::chat_color_scheme == 0) {
+    if (chat_mesg->message_scope == _chat_mesg_scope_server) {
+      ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s",
+                                    text.c_str());
+      return;
+    }
+
+    // PlayerState *player_state;
+    // player_state =
+    // PlayerInterface::getPlayer(chat_mesg->getSourcePlayerIndex());
+
+    // PIX color = Color::white;
+
+    switch (chat_mesg->message_scope) {
+      case _chat_mesg_scope_all:
+        color = Color::white;
+        break;
+
+      case _chat_mesg_scope_alliance:
+        color = Color::yellow;
+        break;
+
+      case _chat_mesg_scope_server:
+        color = Color::unitAqua;
+        break;
+
+    }  // ** switch
+
+  } else {
+    if (chat_mesg->message_scope == _chat_mesg_scope_server) {
+      ConsoleInterface::postMessage(Color::darkBlue, false, 0, "Server: %s",
+                                    text.c_str());
+      return;
+    }
+
+    switch (chat_mesg->message_scope) {
+      case _chat_mesg_scope_all:
+        color = Color::black;
+        break;
+
+      case _chat_mesg_scope_alliance:
+        color = Color::yellow;
+        break;
+
+      case _chat_mesg_scope_server:
+        color = Color::darkBlue;
+        break;
+
+    }  // ** switch
+  }
+
+  if (player_state->getMute() == false) {
+    ConsoleInterface::postMessage(color, true, player_state->getFlag(),
+                                  "%s: %s", player_state->getName().c_str(),
+                                  text.c_str());
+  }
+}
+
+void ChatInterface::processChatMessages(const NetPacket* packet) {
+  switch (packet->getNetMessage()->message_id) {
+    case _net_message_id_chat_mesg_req:
+      chatMessageRequest(packet);
+      break;
+
+    default:
+      LOGGER.warning("CI_PCM Received unknown chat message (id %d-%d)",
+                     packet->getNetMessage()->message_class,
+                     packet->getNetMessage()->message_id);
+  }
+}
+
+static void sendScopedMessage(const NPString& message, Uint8 scope) {
+  unsigned int text_len = std::min(message.length(), MAX_CHAT_MSG_LEN);
+  ChatMesgRequest cmsg;
+
+  message.copy(cmsg.message_text, text_len);
+  cmsg.message_scope = scope;
+
+  if (NetworkState::status == _network_state_client) {
+    CLIENT->sendMessage(&cmsg, CHATREQUEST_HEADER_LEN + text_len);
+  } else {
+    EnqueueIncomingPacket(&cmsg, CHATREQUEST_HEADER_LEN + text_len,
+                          PlayerInterface::getLocalPlayerIndex(), 0);
+  }
+}
+
+void ChatInterface::say(const NPString& message) {
+  sendScopedMessage(message, _chat_mesg_scope_all);
+}
+
+void ChatInterface::teamsay(const NPString& message) {
+  sendScopedMessage(message, _chat_mesg_scope_alliance);
+}
+
+void ChatInterface::serversay(const NPString& message) {
+  sendScopedMessage(message, _chat_mesg_scope_server);
+}
+
+void ChatInterface::serversayTo(const PlayerID player,
+                                const NPString& message) {
+  if (!PlayerInterface::isValidPlayerID(player)) {
+    LOGGER.warning("CI_SST CHEAT Try to say something to unexisting player: %u",
+                   player);
+  }
+
+  if (!PlayerInterface::isPlayerActive(player)) {
+    LOGGER.warning("CI_SST CHEAT Try to say something to inactive player: %u",
+                   player);
+  }
+
+  if (PlayerInterface::isLocalPlayer(player)) {
+    if (MapInterface::chat_color_scheme == 0) {
+      ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s",
+                                    message.c_str());
+    } else {
+      ConsoleInterface::postMessage(Color::darkBlue, false, 0, "Server: %s",
+                                    message.c_str());
+    }
+  } else {
     unsigned int text_len = std::min(message.length(), MAX_CHAT_MSG_LEN);
-    ChatMesgRequest cmsg;
+    ChatMesg cmsg;
 
     message.copy(cmsg.message_text, text_len);
-    cmsg.message_scope = scope;
+    cmsg.setSourcePlayerIndex(PlayerInterface::getLocalPlayerIndex());
+    cmsg.message_scope = _chat_mesg_scope_server;
 
-    if (NetworkState::status == _network_state_client)
-    {
-        CLIENT->sendMessage(&cmsg, CHATREQUEST_HEADER_LEN + text_len);
-    }
-    else
-    {
-        EnqueueIncomingPacket(&cmsg, CHATREQUEST_HEADER_LEN + text_len,
-                              PlayerInterface::getLocalPlayerIndex(), 0);
-    }
+    SERVER->sendMessage(player, &cmsg, CHATMESG_HEADER_LEN + text_len);
+  }
 }
-
-void ChatInterface::say(const NPString& message)
-{
-    sendScopedMessage(message, _chat_mesg_scope_all);
-}
-
-void ChatInterface::teamsay(const NPString& message)
-{
-    sendScopedMessage(message, _chat_mesg_scope_alliance);
-}
-
-void ChatInterface::serversay(const NPString& message)
-{
-    sendScopedMessage(message, _chat_mesg_scope_server);
-}
-
-void ChatInterface::serversayTo(const PlayerID player, const NPString& message)
-{
-    if ( ! PlayerInterface::isValidPlayerID(player) )
-    {
-        LOGGER.warning("CI_SST CHEAT Try to say something to unexisting player: %u",
-                       player);
-    }
-
-    if ( ! PlayerInterface::isPlayerActive(player) )
-    {
-        LOGGER.warning("CI_SST CHEAT Try to say something to inactive player: %u",
-                       player);
-    }
-
-    if ( PlayerInterface::isLocalPlayer(player) )
-    {
-        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s",
-                                      message.c_str());
-    }
-    else
-    {
-        unsigned int text_len = std::min(message.length(), MAX_CHAT_MSG_LEN);
-        ChatMesg cmsg;
-
-        message.copy(cmsg.message_text, text_len);
-        cmsg.setSourcePlayerIndex(PlayerInterface::getLocalPlayerIndex());
-        cmsg.message_scope = _chat_mesg_scope_server;
-
-        SERVER->sendMessage(player, &cmsg, CHATMESG_HEADER_LEN + text_len);
-    }
-}
-

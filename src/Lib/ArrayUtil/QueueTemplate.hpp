@@ -20,107 +20,82 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "ArrayTemplate.hpp"
 
-template< class TYPE >
-class QueueTemplate : public ArrayTemplate< TYPE >
-{
-public:
-    size_t front;
-    size_t rear;
+template <class TYPE>
+class QueueTemplate : public ArrayTemplate<TYPE> {
+ public:
+  size_t front;
+  size_t rear;
 
-    QueueTemplate( )
-    { }
+  QueueTemplate() {}
 
-    QueueTemplate( size_t size );
+  QueueTemplate(size_t size);
 
-    void initialize( size_t size );
+  void initialize(size_t size);
 
-    void reset()
-    {
-        front = 0;
-        rear = 0;
-    }
+  void reset() {
+    front = 0;
+    rear = 0;
+  }
 
-    bool enqueue(const TYPE& object )
-    {
-        this->add( object, (rear + 1) % this->size );
-        rear = (rear + 1) % this->size;
+  bool enqueue(const TYPE& object) {
+    this->add(object, (rear + 1) % this->size);
+    rear = (rear + 1) % this->size;
 
-        if ( front == rear )
-            return( false );
+    if (front == rear) return (false);
 
-        return( true );
-    }
+    return (true);
+  }
 
-    TYPE dequeue()
-    {
-        assert( front != rear );
+  TYPE dequeue() {
+    assert(front != rear);
 
-        front = ( front + 1 ) % this->size;
-        return( this->array[ front ] );
-    }
+    front = (front + 1) % this->size;
+    return (this->array[front]);
+  }
 
-    void pop()
-    {
-        assert( front != rear );
+  void pop() {
+    assert(front != rear);
 
-        front = ( front + 1 ) % this->size;
-    }
+    front = (front + 1) % this->size;
+  }
 
-    TYPE getFirst()
-    {
-        assert( front != rear );
+  TYPE getFirst() {
+    assert(front != rear);
 
-        return( this->array[ (( front + 1 ) % this->size) ] );
-    }
+    return (this->array[((front + 1) % this->size)]);
+  }
 
-    TYPE * getFirstPtr()
-    {
-        assert( front != rear );
+  TYPE* getFirstPtr() {
+    assert(front != rear);
 
-        return( &(this->array[ (( front + 1 ) % this->size) ]) );
-    }
+    return (&(this->array[((front + 1) % this->size)]));
+  }
 
+  bool isEmpty() const { return front == rear; }
 
-    bool isEmpty() const
-    {
-        return front == rear;
-    }
+  bool isFull() const { return front == (rear + 1) % this->size; }
 
-    bool isFull () const
-    {
-        return front == (rear + 1) % this->size;
-    }
+  bool isReady() const { return front != rear; }
 
-    bool isReady() const
-    {
-        return front != rear;
-    }
-
-    unsigned long itemCount() const
-    {
-        if ( front > rear )
-            return ( (rear+1) + ( (this->size-1) - front ) );
-        else
-            return ( rear - front );
-    }
+  unsigned long itemCount() const {
+    if (front > rear)
+      return ((rear + 1) + ((this->size - 1) - front));
+    else
+      return (rear - front);
+  }
 };
 
-
-template< class TYPE >
-QueueTemplate< TYPE >::QueueTemplate( size_t size )
-        : ArrayTemplate<TYPE>( size )
-{
-    front = 0;
-    rear = 0;
+template <class TYPE>
+QueueTemplate<TYPE>::QueueTemplate(size_t size) : ArrayTemplate<TYPE>(size) {
+  front = 0;
+  rear = 0;
 }
 
-template< class TYPE >
-void QueueTemplate< TYPE >::initialize( size_t size )
-{
-    ArrayTemplate< TYPE >::initialize( size );
-    front = 0;
-    rear = 0;
+template <class TYPE>
+void QueueTemplate<TYPE>::initialize(size_t size) {
+  ArrayTemplate<TYPE>::initialize(size);
+  front = 0;
+  rear = 0;
 }
 
-
-#endif // ** _QUEUETEMPLATE_HPP
+#endif  // ** _QUEUETEMPLATE_HPP

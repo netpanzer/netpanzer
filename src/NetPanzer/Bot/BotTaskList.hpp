@@ -20,27 +20,25 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class BotTask;
 
-#include "Units/UnitBase.hpp"
-
 #include <map>
-typedef std::map<UnitID, BotTask*> bottasks_t;
+
+#include "Units/UnitBase.hpp"
+typedef std::map<UnitID, BotTask *> bottasks_t;
 
 class BotTaskList {
-    public:
-        enum {
-            TASK_IDLE,
-            TASK_MOVE,
-            TASK_ATTACK
-        };
-    private:
-        bottasks_t m_tasks;
+ public:
+  enum { TASK_IDLE, TASK_MOVE, TASK_ATTACK };
 
-        void adjustLastUnitLoc(UnitBase *unit);
-    public:
-        ~BotTaskList();
+ private:
+  bottasks_t m_tasks;
 
-        void setUnitTask(UnitBase *unit, int task);
-        int queryUnitTask(UnitBase *unit);
+  void adjustLastUnitLoc(UnitBase *unit);
+
+ public:
+  ~BotTaskList();
+
+  void setUnitTask(UnitBase *unit, int task);
+  int queryUnitTask(UnitBase *unit);
 };
 
 #endif

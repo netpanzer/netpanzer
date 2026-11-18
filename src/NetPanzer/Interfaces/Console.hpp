@@ -20,16 +20,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <iostream>
 
-class Console
-{
-public:
-    static void initialize();
-    static void shutdown();
+class Console {
+ public:
+  static void initialize();
+  static void shutdown();
 
-    static void mapSwitch(const std::string& mapname);
-   
-    static std::ostream* server;
+  static void mapSwitch(const std::string& mapname);
+
+  static std::ostream* server;
 };
 
 #endif
-

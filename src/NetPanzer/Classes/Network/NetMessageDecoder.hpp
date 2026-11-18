@@ -20,19 +20,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Classes/Network/NetPacket.hpp"
 
-class NetMessageDecoder
-{
-private:
-    MultiMessage decode_message;
-    size_t size;
-    size_t offset;
+class NetMessageDecoder {
+ private:
+  MultiMessage decode_message;
+  size_t size;
+  size_t offset;
 
-public:
-    NetMessageDecoder();
-    ~NetMessageDecoder();
+ public:
+  NetMessageDecoder();
+  ~NetMessageDecoder();
 
-    void setDecodeMessage(const NetMessage* message, const size_t size);
-    Uint16 decodeMessage(NetMessage** message);
+  void setDecodeMessage(const NetMessage* message, const size_t size);
+  Uint16 decodeMessage(NetMessage** message);
 };
 
 #endif

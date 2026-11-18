@@ -16,27 +16,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __TipsView_hpp__
 #define __TipsView_hpp__
 
-#include "Views/Components/View.hpp"
 #include "2D/Surface.hpp"
+#include "Views/Components/View.hpp"
 #include "Views/MainMenu/MenuTemplateView.hpp"
 
 //--------------------------------------------------------------------------
-class TipsView : public View
-{
-protected:
-    virtual void loadTitleSurface();
+class TipsView : public View {
+ protected:
+  virtual void loadTitleSurface();
 
-    int tipnumber;
+  int tipnumber;
 
+ public:
+  TipsView();
 
-
-public:
-
-
-    TipsView();
-
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
-
+  virtual void doDraw(Surface &windowArea, Surface &clientArea);
 };
 
 #endif

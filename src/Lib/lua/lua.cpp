@@ -1,3 +1,3 @@
 #include "lua/lua.hpp"
 
-lua_State * globalLuaState;
+lua_State* globalLuaState;

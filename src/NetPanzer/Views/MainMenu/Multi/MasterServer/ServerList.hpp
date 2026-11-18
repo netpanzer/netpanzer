@@ -18,21 +18,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __SERVERLIST_HPP__
 #define __SERVERLIST_HPP__
 
-#include <vector>
 #include <SDL_mutex.h>
+
+#include <vector>
+
 #include "ServerInfo.hpp"
 
-namespace masterserver
-{
+namespace masterserver {
 
-class ServerList : public std::vector<ServerInfo*>
-{
-public:
-    ServerList();
-    ~ServerList();
+class ServerList : public std::vector<ServerInfo*> {
+ public:
+  ServerList();
+  ~ServerList();
 };
 
-} // end of namespace masterserver
+}  // end of namespace masterserver
 
 #endif
-

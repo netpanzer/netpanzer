@@ -17,229 +17,137 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 //---------------------------------------------------------------------------
 
+#ifndef TEST_LIB
 
-#include "Util/Exception.hpp"
 #include "Particles/Particle2D.hpp"
-#include "Util/TimerInterface.hpp"
+
 #include "2D/PackedSurface.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
-
-
-static Particle2D theRealZParticle2D(fXYZ(0, 0, 0));
-Particle2D *const Particle2D::zParticle2D = &theRealZParticle2D;
+#include "Util/Exception.hpp"
+#include "Util/TimerInterface.hpp"
 
 // Static variables.
-int   Particle2D::frameCount          = 0;
-int   Particle2D::peakCount           = 0;
-int   Particle2D::bltTo               = BLT_TO_SPRITE_SORTER;
-int   Particle2D::createParticles     = 1;
-int   Particle2D::drawParticles       = 1;
-
-// Pre-allocation variables.
-const  size_t MAX_PARTICLE_CLASS_SIZE = 512;
-const  int    MAX_PARTICLES           = 3000;
-//static size_t biggestParticle         = 0;
-
-static Particle2D *firstAvailableParticle;
-static char particleArray[MAX_PARTICLES][MAX_PARTICLE_CLASS_SIZE];
-
-// operator new
-//---------------------------------------------------------------------------
-void *Particle2D::operator new(size_t numBytes)
-{
-    // Make sure particle list is initted.
-    static int once = 0;
-    if (!once) {
-        once = 1;
-
-        // Insert all particles into available list.
-        firstAvailableParticle = (Particle2D *)particleArray[0];
-
-        for (int i = 0; i < MAX_PARTICLES - 1; i++) {
-            ((Particle2D *)particleArray[i])->next = (Particle2D *)particleArray[i + 1];
-        }
-
-        ((Particle2D *)particleArray[MAX_PARTICLES - 1])->next = 0;
-    }
-
-    // Check global particle disable flag.
-    if (!createParticles) {
-        throw "particles disabled";
-    }
-
-    // Check for trying to create a particle that's too big.
-    if (numBytes > MAX_PARTICLE_CLASS_SIZE) {
-        throw Exception("ERROR: Tried to create a particle with class size %d bytes, but max particle class object size is %d bytes", (int)numBytes,
-                int(MAX_PARTICLE_CLASS_SIZE));
-    }
-
-    // Check if all slots used.
-    if (firstAvailableParticle == 0) {
-        throw "all particle slots used";
-    }
-
-    // Remove particle from available list and return it.
-    Particle2D *p = firstAvailableParticle;
-    firstAvailableParticle = firstAvailableParticle->next;
-
-    return p;
-} // end Particle2D::operator new
-
-// operator delete
-//---------------------------------------------------------------------------
-void Particle2D::operator delete(void *block)
-{
-    // !TEST! Make sure the particle we re freeing was created using our operator new.
-#ifdef _DEBUG
-    {
-        int n = ((char *)block - &particleArray[0][0]) / (sizeof(particleArray[0]));
-        assert(n >= 0);
-        assert(n < MAX_PARTICLES);
-        assert(particleArray[n] == block);
-    }
-#endif
-
-    // Insert particle into available list.
-    Particle2D *p = (Particle2D *)block;
-    p->next = firstAvailableParticle;
-    firstAvailableParticle = p;
-} // end Particle2D::operator delete
+std::vector<Particle2D*> Particle2D::particles;
+int Particle2D::frameCount = 0;
+int Particle2D::peakCount = 0;
+int Particle2D::bltTo = BLT_TO_SPRITE_SORTER;
+int Particle2D::createParticles = 1;
+int Particle2D::drawParticles = 1;
 
 // Particle2D
 //---------------------------------------------------------------------------
-Particle2D::Particle2D(const fXYZ &pos)
-{
-    reset();
+Particle2D::Particle2D(const fXYZ &pos) {
+  reset();
 
-    Particle2D::pos = pos;
-
-    if (this == zParticle2D) {
-        prev = next = zParticle2D;
-    } else {
-        prev = next = 0;
-        insertMe();
-    }
-} // end Particle2D
+  Particle2D::pos = pos;
+  vectorIndex = static_cast<size_t>(-1);
+  insertMe();
+}  // end Particle2D
 
 // ~Particle2D
 //---------------------------------------------------------------------------
-Particle2D::~Particle2D()
-{
-    removeMe();
-
-} // end Particle2D::~Particle2D
+Particle2D::~Particle2D() { removeMe(); }  // end Particle2D::~Particle2D
 
 // reset
 //---------------------------------------------------------------------------
-void Particle2D::reset()
-{
-    age             = 0.0f;
-    lifetime        = 0.0f;
-    isAlive         = true;
-    direction.zero();
-    pos.zero();
-    velocity.zero();
-    acceleration.zero();
-    layer           = 6;
-    shadowLayer     = 5;
-    scale           = 1.0f;
-    index           = 0;
-    FPSMin          = 4;
-    FPSRand         = 0;
+void Particle2D::reset() {
+  age = 0.0f;
+  lifetime = 0.0f;
+  isAlive = true;
+  direction.zero();
+  pos.zero();
+  velocity.zero();
+  acceleration.zero();
+  layer = 6;
+  shadowLayer = 5;
+  scale = 1.0f;
+  index = 0;
+  FPSMin = 4;
+  FPSRand = 0;
 
-} // end Particle2D::reset
+}  // end Particle2D::reset
 
 // insertMe
 //---------------------------------------------------------------------------
-// Purpose: Inserts a new particle into the list.
+// Purpose: Inserts a new particle into the vector.
 //---------------------------------------------------------------------------
-void Particle2D::insertMe()
-{
-    // If we're inserting, we should not already be in the list.
-    assert(prev == 0);
-    assert(next == 0);
+void Particle2D::insertMe() {
+  // If we're inserting, we should not already be in the vector
+  assert(vectorIndex == static_cast<size_t>(-1));
 
-    // Insert me into the list
-    prev              = zParticle2D;
-    next              = zParticle2D->next;
-    zParticle2D->next = this;
-    next->prev        = this;
+  // Add to vector
+  vectorIndex = particles.size();
+  particles.push_back(this);
 
-    frameCount++;
+  frameCount++;
 
-    if (frameCount > peakCount) {
-        peakCount = frameCount;
-    }
-} // end Particle2D::insertMe
+  if (frameCount > peakCount) {
+    peakCount = frameCount;
+  }
+}  // end Particle2D::insertMe
 
 // removeMe
 //---------------------------------------------------------------------------
-// Purpose: Removes the particle from the list.
+// Purpose: Removes the particle from the vector using swap-and-pop.
 //---------------------------------------------------------------------------
-void Particle2D::removeMe()
-{
-    // removeMe from the list
-    if (prev != 0) prev->next = next;
-    if (next != 0) next->prev = prev;
+void Particle2D::removeMe() {
+  // Check if we're actually in the vector
+  if (vectorIndex == static_cast<size_t>(-1)) return;
 
-    prev = next = this;
+  // Swap with last element and pop (O(1) removal)
+  size_t lastIndex = particles.size() - 1;
+  if (vectorIndex != lastIndex) {
+    particles[vectorIndex] = particles[lastIndex];
+    particles[vectorIndex]->vectorIndex = vectorIndex;
+  }
+  particles.pop_back();
+  vectorIndex = static_cast<size_t>(-1);
 
-    frameCount--;
+  frameCount--;
 
-} // end Particle2D::removeMe
+}  // end Particle2D::removeMe
 
 // removeAll
 //---------------------------------------------------------------------------
-void Particle2D::removeAll()
-{
-    // Go through and remove all the particles.
-    Particle2D *e = zParticle2D->next;
-    Particle2D *nextPtr;
-
-    while (e != zParticle2D) {
-        nextPtr = e->next;
-        delete e;
-        e = nextPtr;
-    }
-} // end Particle2D::removeAll
+void Particle2D::removeAll() {
+  // ~Particle2D() calls removeMe(), which mutates 'particles' via swap-and-pop.
+  // Iterating the vector while it shrinks reads past the end (AddressSanitizer
+  // reports a container-overflow) and skips the particles that get swapped down
+  // into slots the loop has already passed, leaking them. Always delete the
+  // last element instead; removeMe() then only has to pop_back().
+  while (!particles.empty()) {
+    delete particles.back();
+  }
+}  // end Particle2D::removeAll
 
 // simAll
 //---------------------------------------------------------------------------
-void Particle2D::simAll()
-{
-    // Go through and simulate all the particles.
-    Particle2D *e = zParticle2D->next;
-    Particle2D *nextPtr;
-
-    while (e != zParticle2D) {
-        nextPtr = e->next;
-        e->sim();
-        e = nextPtr;
-    }
-} // end Particle2D::simAll
+void Particle2D::simAll() {
+  // Iterate backwards so that swap-and-pop during deletion doesn't affect unprocessed particles
+  for (size_t i = particles.size(); i > 0; --i) {
+    Particle2D* particle = particles[i - 1];
+    particle->sim();
+  }
+}  // end Particle2D::simAll
 
 // drawAll
 //---------------------------------------------------------------------------
-void Particle2D::drawAll(const Surface &clientArea, SpriteSorter &sorter)
-{
-    // Go through and draw all the particles.
-    Particle2D *e = zParticle2D->next;
-    Particle2D *nextPtr;
-
-
-    while (e != zParticle2D) {
-        nextPtr = e->next;
-        e->draw(clientArea, sorter);
-        e = nextPtr;
-    }
-} // end Particle2D::drawAll
+void Particle2D::drawAll(const Surface &clientArea, SpriteSorter &sorter) {
+  // draw() can delete the particle (see SparkParticle2D::draw), so this has the
+  // same constraint as simAll(): iterate backwards by index. The element that
+  // swap-and-pop moves is always one this loop has already visited, and new
+  // particles are appended past the current index.
+  for (size_t i = particles.size(); i > 0; --i) {
+    Particle2D* particle = particles[i - 1];
+    particle->draw(clientArea, sorter);
+  }
+}  // end Particle2D::drawAll
 
 // draw
 //---------------------------------------------------------------------------
 // Purpose: Draws a single particle, no simulation.
 //---------------------------------------------------------------------------
-void Particle2D::draw(const Surface&, SpriteSorter&)
-{} // end draw
+void Particle2D::draw(const Surface &, SpriteSorter &) {}  // end draw
 
 // Particle2D::sim
 //---------------------------------------------------------------------------
@@ -248,107 +156,147 @@ void Particle2D::draw(const Surface&, SpriteSorter&)
 //          function.  Otherwise, when the delete occurs, you may try to access
 //          a variable through a null pointer.  Bad...
 //---------------------------------------------------------------------------
-void Particle2D::sim()
-{
-    age += TimerInterface::getTimeSlice();
+void Particle2D::sim() {
+  age += TimerInterface::getTimeSlice();
 
-    // -1 = infinity
-    if (lifetime != -1) {
-        if (!isAlive) {
-            delete this;
-            return;
-        }
+  // -1 = infinity
+  if (lifetime != -1) {
+    if (!isAlive) {
+      delete this;
+      return;
     }
+  }
 
-} // end Particle2D::sim
+}  // end Particle2D::sim
 
 // getFPS
 //--------------------------------------------------------------------------
-int Particle2D::getFPS(int FPSmin, int FPSrand)
-{
-    // Get the random particle fps.
-    int FPS = FPSmin;
+int Particle2D::getFPS(int FPSmin, int FPSrand) {
+  // Get the random particle fps.
+  int FPS = FPSmin;
 
-    if (FPSrand > 0) {
-        FPS = (rand() % FPSrand) + FPSmin;
-    }
+  if (FPSrand > 0) {
+    FPS = (rand() % FPSrand) + FPSmin;
+  }
 
-    return FPS;
-} // end Particle2D::getFPS
+  return FPS;
+}  // end Particle2D::getFPS
 
 // getPakIndex
 //--------------------------------------------------------------------------
-int Particle2D::getPakIndex(float scale, int pakImageCount)
-{
-    int destIndex = (int) (scale * float(pakImageCount));
+int Particle2D::getPakIndex(float scale, int pakImageCount) {
+  int destIndex = (int)(scale * float(pakImageCount));
 
-    if (destIndex > pakImageCount - 1) {
-        destIndex = pakImageCount - 1;
-    }
+  if (destIndex > pakImageCount - 1) {
+    destIndex = pakImageCount - 1;
+  }
 
-    return destIndex;
-} // end Particle2D::getPakIndex
+  return destIndex;
+}  // end Particle2D::getPakIndex
 
 // getScale
 //--------------------------------------------------------------------------
-float Particle2D::getScale(float scaleMin, float scaleRand)
-{
-    return (float(rand()) / float(RAND_MAX)) * scaleRand + scaleMin;
-} // end Particle2D::getScale
+float Particle2D::getScale(float scaleMin, float scaleRand) {
+  return (float(rand()) / float(RAND_MAX)) * scaleRand + scaleMin;
+}  // end Particle2D::getScale
 
 // getLifetime
 //--------------------------------------------------------------------------
-float Particle2D::getLifetime(float lifetimeMin, float lifetimeRand)
-{
-    return (float(rand()) / float(RAND_MAX)) * lifetimeRand + lifetimeMin;
-} // end Particle2D::getLifetime
+float Particle2D::getLifetime(float lifetimeMin, float lifetimeRand) {
+  return (float(rand()) / float(RAND_MAX)) * lifetimeRand + lifetimeMin;
+}  // end Particle2D::getLifetime
 
 // getFarAway
 //--------------------------------------------------------------------------
-int Particle2D::getFarAway(const fXYZ &worldPos)
-{
-    // Get the distance of the particle from the gameView.
-    iRect gameViewRect;
-    WorldViewInterface::getViewWindow(&gameViewRect);
+int Particle2D::getFarAway(const fXYZ &worldPos) {
+  // Get the distance of the particle from the gameView.
+  iRect gameViewRect;
+  WorldViewInterface::getViewWindow(&gameViewRect);
 
-    iXY gameViewCenter;
+  iXY gameViewCenter;
 
-    gameViewCenter.x = ((gameViewRect.max.x - gameViewRect.min.x) >> 1) + gameViewRect.min.x;
-    gameViewCenter.y = ((gameViewRect.max.y - gameViewRect.min.y) >> 1) + gameViewRect.min.y;
+  gameViewCenter.x =
+      ((gameViewRect.max.x - gameViewRect.min.x) >> 1) + gameViewRect.min.x;
+  gameViewCenter.y =
+      ((gameViewRect.max.y - gameViewRect.min.y) >> 1) + gameViewRect.min.y;
 
-    iXY distanceFromGameView;
+  iXY distanceFromGameView;
 
-    distanceFromGameView.x = int(worldPos.x) - gameViewCenter.x;
-    distanceFromGameView.y = int(worldPos.z) - gameViewCenter.y;
+  distanceFromGameView.x = int(worldPos.x) - gameViewCenter.x;
+  distanceFromGameView.y = int(worldPos.z) - gameViewCenter.y;
 
-    int speedUpDistance;
+  int speedUpDistance;
 
-    // XXX hacked around
-    int SCREEN_XPIX = 1024;
-    int SCREEN_YPIX = 768;
+  // XXX hacked around
+  int SCREEN_XPIX = 1024;
+  int SCREEN_YPIX = 768;
 
-    if ((SCREEN_XPIX == 640) && (SCREEN_YPIX == 480)) {
-        speedUpDistance = 480;
-    } else if ((SCREEN_XPIX == 800) && (SCREEN_YPIX == 600)) {
-        speedUpDistance = 600;
-    } else if ((SCREEN_XPIX == 1024) && (SCREEN_YPIX == 768)) {
-        speedUpDistance = 768;
-    } else if ((SCREEN_XPIX == 1280) && (SCREEN_YPIX == 1024)) {
-        speedUpDistance = 1024;
-    } else {
-        speedUpDistance = 1280;
-    }
+  if ((SCREEN_XPIX == 640) && (SCREEN_YPIX == 480)) {
+    speedUpDistance = 480;
+  } else if ((SCREEN_XPIX == 800) && (SCREEN_YPIX == 600)) {
+    speedUpDistance = 600;
+  } else if ((SCREEN_XPIX == 1024) && (SCREEN_YPIX == 768)) {
+    speedUpDistance = 768;
+  } else if ((SCREEN_XPIX == 1280) && (SCREEN_YPIX == 1024)) {
+    speedUpDistance = 1024;
+  } else {
+    speedUpDistance = 1280;
+  }
 
-    // Check to see if the distance is so far from the screen that it
-    // can be sped up.
-    if (distanceFromGameView.x >  speedUpDistance ||
-            distanceFromGameView.x < -speedUpDistance ||
-            distanceFromGameView.y >  speedUpDistance ||
-            distanceFromGameView.y < -speedUpDistance) {
-        return 1;
-    }
+  // Check to see if the distance is so far from the screen that it
+  // can be sped up.
+  if (distanceFromGameView.x > speedUpDistance ||
+      distanceFromGameView.x < -speedUpDistance ||
+      distanceFromGameView.y > speedUpDistance ||
+      distanceFromGameView.y < -speedUpDistance) {
+    return 1;
+  }
 
-    // The particle must be near the screen.
-    return 0;
-} // end Particle2D::getFarAway
+  // The particle must be near the screen.
+  return 0;
+}  // end Particle2D::getFarAway
 
+#else
+
+#include "Particles/Particle2D.hpp"
+#include "test.hpp"
+
+// Deleting a particle removes it from the vector that removeAll() walks, so
+// removeAll() has to tolerate the container changing underneath it. Getting
+// this wrong reads past the end of the vector, which aborts under
+// AddressSanitizer, and leaves particles behind. See issue #286.
+void testRemoveAllDeletesEveryParticle(void) {
+  const int count = 8;
+
+  for (int i = 0; i < count; i++) {
+    // Each particle adds itself to the static list, which owns it from here.
+    Particle2D *particle = new Particle2D(fXYZ(float(i), 0.0f, 0.0f));
+    (void)particle;
+  }
+  assert(Particle2D::getFrameCount() == count);
+
+  Particle2D::removeAll();
+  assert(Particle2D::getFrameCount() == 0);
+
+  // The list has to stay usable afterwards.
+  Particle2D *particle = new Particle2D(fXYZ(0.0f, 0.0f, 0.0f));
+  (void)particle;
+  assert(Particle2D::getFrameCount() == 1);
+
+  Particle2D::removeAll();
+  assert(Particle2D::getFrameCount() == 0);
+
+  return;
+}
+
+// main() must be defined with the args in this format, otherwise we may get an
+// "undefined reference to SDL_main"
+int main(int argc, char *argv[]) {
+  (void)argc;
+  (void)argv;
+
+  testRemoveAllDeletesEveryParticle();
+  return 0;
+}
+
+#endif

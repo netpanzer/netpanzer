@@ -1,0 +1,72 @@
+name: MacOS
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: master
+    paths:
+    - 'src/**/**'
+    - 'support/**/*.cpp'
+    - '**meson.build'
+    - 'setup-build.*'
+    - 'subprojects/*.wrap'
+    - '**/macos.yml'
+  pull_request:
+    branches: master
+    paths:
+    - 'src/**/**'
+    - '**meson.build'
+    - 'setup-build.*'
+    - 'subprojects/*.wrap'
+    - '**/macos.yml'
+
+jobs:
+  build:
+    name: ${{ matrix.build.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        build:
+        - name: macos
+          os: macos-latest
+
+    runs-on: ${{ matrix.build.os }}
+    env:
+      NETPANZER_DATADIR: ${{ github.workspace }}/data
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: false
+
+    - name: Show info
+      run: |
+        export -p
+        echo '${{ toJSON(matrix) }}'
+
+    - name: Install dependencies
+      run: |
+        brew update
+        brew install \
+          meson \
+          ninja \
+          gettext \
+          physfs \
+          pkg-config \
+          sdl2_ttf \
+          sdl2_mixer
+        # Make sure msgfmt is on PATH so the translations get built; older
+        # gettext formulas were keg-only. Harmless when it is already linked.
+        # Meson locates libintl on its own either way.
+        brew link --force gettext
+
+    - name: Build
+      run: |
+        ./setup-build.sh _build
+        ninja -v -C _build
+
+    - name: Test
+      run: |
+        cd _build
+        meson test --suite=netpanzer -v
